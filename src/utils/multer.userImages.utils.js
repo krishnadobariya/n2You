@@ -20,7 +20,7 @@ var upload = multer({
             cb(null, true);
         } else {
             cb(null, false);
-            return cb(new Error('Only jpg or png allowed'));
+            return cb(new Error('Only jpg or jpeg allowed'));
         }
     }
 });
