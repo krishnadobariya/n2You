@@ -7,6 +7,6 @@ const port = process.env.PORT || 3000;
 
 const server = http.createServer(app);
 
-server.listen(3000, () => {
-    console.log(`app is running port ${port}`);
-})
+server.listen(process.env.PORT || 3000, function(){
+  console.log("Express server listening on port %d in %s mode");
+});
