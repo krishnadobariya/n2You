@@ -13,8 +13,10 @@ app.use(bodyParser.json());
 app.use(express.static('public'));
 app.use('/images', express.static('images'));
 const userRoutes = require("./src/routes/user.routes");
+const postRoutes = require("./src/routes/post.routes");
 
 app.use('/user', userRoutes);
+app.use('/posts', postRoutes);
 
 
 module.exports = app;
