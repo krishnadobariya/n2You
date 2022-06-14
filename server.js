@@ -3,10 +3,10 @@ require('dotenv').config();
 
 const app = require('./app');
 
-const port = process.env.PORT || 3000;
+const port = process.env.PORT || 80;
 
 const server = http.createServer(app);
 
-server.listen(process.env.PORT || 3000, function(){
+server.listen(process.env.PORT || 80, function(){
   console.log("Express server listening on port %d in %s mode");
 });
