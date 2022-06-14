@@ -1,16 +1,34 @@
 const userModel = require("../model/user.model");
 const APIResponse = require("../helper/APIResponse");
 const status = require("http-status");
-
+const cloudinary = require("../utils/cloudinary.utils");
+const fs = require("fs");
 
 exports.userRegister = async (req, res, next) => {
     try {
+        const cloudinaryImageUploadMethod = async file => {
+            return new Promise(resolve => {
+                cloudinary.uploader.upload( file , (err, res) => {
+                  if (err) return res.status(500).send("upload image error")
+                    resolve({
+                      res: res.secure_url
+                    }) 
+                  }
+                ) 
+            })
+          }
+     
 
-        const data = []
-        const images = req.files;
-        images.map((name, index) => {
-            data.push(req.files[index].filename)
-        });
+        const urls = []
+        const files = req.files
+
+        for (const file of files) {
+            const { path } = file
+
+            const newPath = await cloudinaryImageUploadMethod(path)
+            urls.push(newPath)
+        }
+
 
         const user = userModel({
             polyDating: req.body.polyDating,
@@ -24,7 +42,7 @@ exports.userRegister = async (req, res, next) => {
             relationshipSatus: req.body.relationshipSatus,
             IntrestedIn: req.body.IntrestedIn,
             Bio: req.body.Bio,
-            photo: data,
+            photo: urls,
             hopingToFind: req.body.hopingToFind,
             jobTitle: req.body.jobTitle,
             wantChildren: req.body.wantChildren,
