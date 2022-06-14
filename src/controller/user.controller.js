@@ -2,7 +2,6 @@ const userModel = require("../model/user.model");
 const APIResponse = require("../helper/APIResponse");
 const status = require("http-status");
 const cloudinary = require("../utils/cloudinary.utils");
-const fs = require("fs");
 
 exports.userRegister = async (req, res, next) => {
     try {
