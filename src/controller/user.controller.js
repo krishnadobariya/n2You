@@ -32,17 +32,18 @@ exports.userRegister = async (req, res, next) => {
         console.log(findEmail);
         if (findEmail) {
             res.status(status.NOT_ACCEPTABLE).json(
-                new APIResponse("Not Allowed, Email Already Exist", true, 406)
+                new APIResponse("Not Allowed, Email Already Exist", false, 406)
             )
         } else {
             const phoneNum = req.body.phoneNum;
+
             const countryCode = req.body.countryCode
             console.log(`${countryCode}${phoneNum}`);
             const findNumber = await userModel.findOne({ phoneNumber: `${countryCode}${phoneNum}` });
             console.log("findnumber", findNumber);
             if (findNumber) {
                 res.status(status.NOT_ACCEPTABLE).json(
-                    new APIResponse("Number Already Exist, It must be Unique", true, 406)
+                    new APIResponse("Number Already Exist, It must be Unique", false, 406)
                 )
             } else {
                 const user = userModel({
@@ -82,7 +83,7 @@ exports.userRegister = async (req, res, next) => {
     } catch (error) {
         console.log("Error:", error);
         res.status(status.INTERNAL_SERVER_ERROR).json(
-            new APIResponse("Something Went Wrong", true, 500, error.message)
+            new APIResponse("Something Went Wrong", false, 500, error.message)
         )
     }
 }

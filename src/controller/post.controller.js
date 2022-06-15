@@ -41,9 +41,12 @@ exports.addPostVideo = async (req, res, next) => {
 
                 const posts = postModal({
                     userId: mongoose.Types.ObjectId(id),
-                    posts: [urls],
+                    posts: [{
+                        post: urls,
+                        description: req.body.description
+                    }],
                     email: userFindForViedos.email,
-                    description: req.body.description
+
                 })
 
                 const saveData = await posts.save();
@@ -53,6 +56,10 @@ exports.addPostVideo = async (req, res, next) => {
             } else {
                 const urls = []
                 const files = req.files
+                const finalData = [{
+                    post: urls,
+                    description: req.body.description
+                }]
 
                 for (const file of files) {
                     const { path } = file
@@ -60,21 +67,21 @@ exports.addPostVideo = async (req, res, next) => {
                     const newPath = await cloudinaryImageUploadMethod(path)
                     urls.push(newPath)
                 }
-                const updatePosts = await postModal.updateOne({ userId: req.params.id }, { $push: { posts: urls } })
+                const updatePosts = await postModal.updateOne({ userId: req.params.id }, { $push: { posts: finalData } })
                 res.status(status.OK).json(
-                    new APIResponse("Update successfully!", true, 201)
+                    new APIResponse("Post added successfully!", true, 201)
                 )
             }
         } else {
             res.status(status.NOT_FOUND).json(
-                new APIResponse("User not found", true, 404)
+                new APIResponse("User not found", false, 404)
             )
         }
 
     } catch (error) {
         console.log("Error:", error);
         res.status(status.INTERNAL_SERVER_ERROR).json(
-            new APIResponse("Something Went Wrong", true, 500, error.message)
+            new APIResponse("Something Went Wrong", false, 500, error.message)
         )
     }
 }
@@ -112,9 +119,11 @@ exports.addPostImages = async (req, res, next) => {
                 console.log(req.params.id);
                 const posts = postModal({
                     userId: mongoose.Types.ObjectId(id),
-                    posts: [urls],
-                    email: userFindForImages.email,
-                    description: req.body.description
+                    posts: [{
+                        post: urls,
+                        description: req.body.description
+                    }],
+                    email: userFindForImages.email
                 })
                 console.log(posts);
                 const saveData = await posts.save();
@@ -124,29 +133,35 @@ exports.addPostImages = async (req, res, next) => {
             } else {
                 const urls = []
                 const files = req.files
+                const finalData = [{
+                    post: urls,
+                    description: req.body.description
+                }]
 
+
+                console.log("final data", finalData);
                 for (const file of files) {
                     const { path } = file
 
                     const newPath = await cloudinaryImageUploadMethod(path)
                     urls.push(newPath)
                 }
-                const updatePosts = await postModal.updateOne({ userId: req.params.id }, { $push: { posts: urls } })
+                const updatePosts = await postModal.updateOne({ userId: req.params.id }, { $push: { posts: finalData } })
                 res.status(status.OK).json(
-                    new APIResponse("Update successfully!", true, 201)
+                    new APIResponse("Post added successfully!", true, 201)
                 )
             }
 
         } else {
             res.status(status.NOT_FOUND).json(
-                new APIResponse("User not found", true, 404)
+                new APIResponse("User not found", false, 404)
             )
         }
 
     } catch (error) {
         console.log("Error:", error);
         res.status(status.INTERNAL_SERVER_ERROR).json(
-            new APIResponse("Something Went Wrong", true, 500, error.message)
+            new APIResponse("Something Went Wrong", false, 500, error.message)
         )
     }
 }
@@ -159,12 +174,16 @@ exports.getPostsbyUseId = async (req, res, next) => {
         const userFindInPosts = await postModal.findOne({ userId: id });
         if (userFindInPosts) {
             const userWisePosts = await postModal.findOne({ userId: req.params.id })
+            console.log(userWisePosts);
             if (userWisePosts.posts) {
                 const storeAllpostsUserWise = [];
                 const getAllPostsUserWise = userWisePosts.posts;
-                // console.log("data", data);
+                console.log("getAllPostsUserWise", getAllPostsUserWise);
                 getAllPostsUserWise.map((result, index) => {
-                    const finalResult = result[0].res;
+                    const finalResult = {
+                        res: result.post[0].res,
+                        description: result.description
+                    }
                     storeAllpostsUserWise.push(finalResult);
                 })
                 res.status(status.OK).json(
@@ -172,19 +191,19 @@ exports.getPostsbyUseId = async (req, res, next) => {
                 )
             } else {
                 res.status(status.NOT_FOUND).json(
-                    new APIResponse("Not Posted!", true, 404)
+                    new APIResponse("Not Posted!", false, 404)
                 )
             }
         } else {
             res.status(status.NOT_FOUND).json(
-                new APIResponse("User Not Found!", true, 404)
+                new APIResponse("User Not Found!", false, 404)
             )
         }
 
     } catch (error) {
         console.log("Error:", error);
         res.status(status.INTERNAL_SERVER_ERROR).json(
-            new APIResponse("Something Went Wrong", true, 500, error.message)
+            new APIResponse("Something Went Wrong", false, 500, error.message)
         )
     }
 }
