@@ -6,15 +6,18 @@ const requestSchema = mongoose.Schema({
         ref: 'User',
         required: true
     },
-    RequestedEmail: {
-        type: String,
-        ref: 'User',
-        required: true
-    },
-    accepted: {
-        type: Boolean,
-        default: 0
-    }
+    RequestedEmails: [{
+        requestedEmail: {
+            type: String,
+            ref: 'User',
+            required: true
+        },
+        accepted: {
+            type: Number,
+            default: 0
+        }
+    }],
+
 
 }, {
     timestamps: true
@@ -23,4 +26,4 @@ const requestSchema = mongoose.Schema({
 });
 
 
-module.exports = requestSchema;
+module.exports = mongoose.model('Request', requestSchema);

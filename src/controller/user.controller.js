@@ -62,7 +62,7 @@ exports.userRegister = async (req, res, next) => {
 
             const saveData = await user.save();
             res.status(status.CREATED).json(
-                new APIResponse("User Register", true, 200, saveData)
+                new APIResponse("User Register", true, 201, saveData)
             )
         }
 
