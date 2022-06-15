@@ -25,7 +25,9 @@ const userSchema = mongoose.Schema({
             validator: validator.isEmail,
             message: '{VALUE} is not a valid email',
             isAsync: false
-        }
+        },
+        unique: true
+        
     },
     firstName: {
         type: String,
