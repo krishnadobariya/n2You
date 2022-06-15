@@ -68,6 +68,11 @@ const userSchema = mongoose.Schema({
         type: Boolean,
         require: true
     },
+    phoneNumber: {
+        type: String,
+        required: true,
+        unique: true
+    },
     extraAtrribute: {
         bodyType: {
             type: String,
@@ -89,7 +94,9 @@ const userSchema = mongoose.Schema({
             type: String,
             require: true
         }
-    }
+
+    },
+
 }, {
     timestamps: true
 }, {
