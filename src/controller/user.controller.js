@@ -28,8 +28,8 @@ exports.userRegister = async (req, res, next) => {
             urls.push(newPath)
         }
 
-        const findEmail = userModel.findOne({ email: req.body.email });
-
+        const findEmail = await userModel.findOne({ email: req.body.email });
+        console.log(findEmail);
         if (findEmail) {
             res.status(status.NOT_ACCEPTABLE).json(
                 new APIResponse("Not Allowed, Email Already Exist", true, 406)
