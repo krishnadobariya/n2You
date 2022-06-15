@@ -119,7 +119,7 @@ exports.showPostsOnalyAcceptedPerson = async (req, res, next) => {
             const acceptedOrNot = await requestModel.find({ RequestedEmails: { $elemMatch: { requestedEmail: req.params.RequestedEmail, accepted: 1 } } });
             if (acceptedOrNot[0] == undefined) {
                 res.status(status.NOT_FOUND).json(
-                    new APIResponse("Requested Email Not Found which is Accepted by user!", true, 404)
+                    new APIResponse("User not Found or Requested Email Not Found which is Accepted by user!", true, 404)
                 )
             } else {
 
