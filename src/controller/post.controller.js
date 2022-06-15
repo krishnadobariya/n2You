@@ -210,18 +210,6 @@ exports.getPostsbyUseId = async (req, res, next) => {
 //     }
 // }
 
-exports.sendRequest = (req, res, next) => {
-    try {
-
-        
-
-    } catch (error) {
-        console.log("Error:", error);
-        res.status(status.INTERNAL_SERVER_ERROR).json(
-            new APIResponse("Something Went Wrong", true, 500, error.message)
-        )
-    }
-}
 
 exports.showPostsOnalyAcceptedPerson = (req, res, next) => {
     try {

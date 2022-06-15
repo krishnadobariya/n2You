@@ -7,16 +7,16 @@ exports.userRegister = async (req, res, next) => {
     try {
         const cloudinaryImageUploadMethod = async file => {
             return new Promise(resolve => {
-                cloudinary.uploader.upload( file , (err, res) => {
-                  if (err) return res.status(500).send("upload image error")
+                cloudinary.uploader.upload(file, (err, res) => {
+                    if (err) return res.status(500).send("upload image error")
                     resolve({
-                      res: res.secure_url
-                    }) 
-                  }
-                ) 
+                        res: res.secure_url
+                    })
+                }
+                )
             })
-          }
-     
+        }
+
 
         const urls = []
         const files = req.files
@@ -28,36 +28,44 @@ exports.userRegister = async (req, res, next) => {
             urls.push(newPath)
         }
 
+        const findEmail = userModel.findOne({ email: req.body.email });
 
-        const user = userModel({
-            polyDating: req.body.polyDating,
-            HowDoYouPoly: req.body.HowDoYouPoly,
-            loveToGive: req.body.loveToGive,
-            polyRelationship: req.body.polyRelationship,
-            email: req.body.email,
-            firstName: req.body.firstName,
-            birthDate: req.body.birthDate,
-            identity: req.body.identity,
-            relationshipSatus: req.body.relationshipSatus,
-            IntrestedIn: req.body.IntrestedIn,
-            Bio: req.body.Bio,
-            photo: urls,
-            hopingToFind: req.body.hopingToFind,
-            jobTitle: req.body.jobTitle,
-            wantChildren: req.body.wantChildren,
-            extraAtrribute: {
-                bodyType: req.body.bodyType,
-                height: req.body.height,
-                smoking: req.body.smoking,
-                drinking: req.body.drinking,
-                hobbies: req.body.hobbies
-            }
-        })
+        if (findEmail) {
+            res.status(status.NOT_ACCEPTABLE).json(
+                new APIResponse("Not Allowed, Email Already Exist", true, 406)
+            )
+        } else {
+            const user = userModel({
+                polyDating: req.body.polyDating,
+                HowDoYouPoly: req.body.HowDoYouPoly,
+                loveToGive: req.body.loveToGive,
+                polyRelationship: req.body.polyRelationship,
+                email: req.body.email,
+                firstName: req.body.firstName,
+                birthDate: req.body.birthDate,
+                identity: req.body.identity,
+                relationshipSatus: req.body.relationshipSatus,
+                IntrestedIn: req.body.IntrestedIn,
+                Bio: req.body.Bio,
+                photo: urls,
+                hopingToFind: req.body.hopingToFind,
+                jobTitle: req.body.jobTitle,
+                wantChildren: req.body.wantChildren,
+                extraAtrribute: {
+                    bodyType: req.body.bodyType,
+                    height: req.body.height,
+                    smoking: req.body.smoking,
+                    drinking: req.body.drinking,
+                    hobbies: req.body.hobbies
+                }
+            })
 
-        const saveData = await user.save();
-        res.status(status.CREATED).json(
-            new APIResponse("User Register", true, 200, saveData)
-        )
+            const saveData = await user.save();
+            res.status(status.CREATED).json(
+                new APIResponse("User Register", true, 200, saveData)
+            )
+        }
+
     } catch (error) {
         console.log("Error:", error);
         res.status(status.INTERNAL_SERVER_ERROR).json(
