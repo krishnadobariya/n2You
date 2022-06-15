@@ -135,12 +135,7 @@ exports.showPostsOnalyAcceptedPerson = async (req, res, next) => {
                 const showPost = getAllPostData[0].posts;
                 const finalShowPost = [];
                 showPost.map((result, index) => {
-                    console.log("result", result);
-                    const getAllposts = {
-                        post: result.post[0].res,
-                        description: result.description
-                    }
-                    finalShowPost.push(getAllposts)
+                    finalShowPost.push(result)
                 })
 
                 if (finalShowPost[0] == undefined) {
