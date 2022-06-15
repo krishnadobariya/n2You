@@ -6,7 +6,7 @@ const APIResponse = require("../helper/APIResponse");
 exports.sendRequest = async (req, res, next) => {
     try {
 
-        const data = userModel.find({ email: req.params.userEmail, email: req.params.RequestedEmail });
+        const data = await userModel.find({ email: req.params.userEmail, email: req.params.RequestedEmail });
         console.log(data);
         if (data) {
 
