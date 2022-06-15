@@ -1,9 +1,10 @@
 const mongoose = require("mongoose");
 
 const postSchema = mongoose.Schema({
-    uesrId: {
+    userId: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: 'User'
+        ref: 'User',
+        required: true
     },
     posts: {
         type: Array
