@@ -175,16 +175,14 @@ exports.getPostsbyUseId = async (req, res, next) => {
         if (userFindInPosts) {
             const userWisePosts = await postModal.findOne({ userId: req.params.id })
             console.log(userWisePosts);
+
             if (userWisePosts.posts) {
                 const storeAllpostsUserWise = [];
                 const getAllPostsUserWise = userWisePosts.posts;
                 console.log("getAllPostsUserWise", getAllPostsUserWise);
                 getAllPostsUserWise.map((result, index) => {
-                    const finalResult = {
-                        res: result.post[0].res,
-                        description: result.description
-                    }
-                    storeAllpostsUserWise.push(finalResult);
+                    console.log("result", result);
+                    storeAllpostsUserWise.push(result);
                 })
                 res.status(status.OK).json(
                     new APIResponse("successfully get all Posts!", true, 200, storeAllpostsUserWise)
