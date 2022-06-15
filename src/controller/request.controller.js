@@ -117,36 +117,39 @@ exports.showPostsOnalyAcceptedPerson = async (req, res, next) => {
         const userFoundOrNot = await requestModel.findOne({ userEmail: req.params.userEmail })
         if (userFoundOrNot) {
             const acceptedOrNot = await requestModel.find({ RequestedEmails: { $elemMatch: { requestedEmail: req.params.RequestedEmail, accepted: 1 } } });
+
             if (acceptedOrNot[0] == undefined) {
                 res.status(status.NOT_FOUND).json(
                     new APIResponse("User not Found or Requested Email Not Found which is Accepted by user!", true, 404)
                 )
             } else {
+                console.log(req.params.RequestedEmail);
+                const getAllPostData = await postModel.aggregate([
+                    {
+                        $match: {
+                            email: req.params.RequestedEmail
+                        }
+                    }])
 
-                const getAllPostData = await postModel.aggregate([{
-                    $lookup: {
-                        from: "requests",
-                        localField: "userEmail",
-                        foreignField: "email",
-                        as: 'find_data'
+                const showPost = getAllPostData;
+                console.log(getAllPostData);
+                if (true) {
+                    const finalShowPost = [];
+                    showPost.map((result, index) => {
+                        finalShowPost.push(result)
+                    })
+
+                    if (finalShowPost[0] == undefined) {
+                        res.status(status.NOT_FOUND).json(
+                            new APIResponse("User not Posted Anything", false, 404)
+                        )
+                    } else {
+                        res.status(status.OK).json(
+                            new APIResponse("Show All posts", true, 200, finalShowPost)
+                        )
                     }
-                }])
-
-                const showPost = getAllPostData[0].posts;
-                const finalShowPost = [];
-                showPost.map((result, index) => {
-                    finalShowPost.push(result)
-                })
-
-                if (finalShowPost[0] == undefined) {
-                    res.status(status.NOT_FOUND).json(
-                        new APIResponse("User not Posted Anything", false, 404)
-                    )
-                } else {
-                    res.status(status.OK).json(
-                        new APIResponse("Show All posts", true, 200, finalShowPost)
-                    )
                 }
+
             }
 
         } else {
