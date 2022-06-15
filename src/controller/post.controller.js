@@ -42,11 +42,13 @@ exports.addPostVideo = async (req, res, next) => {
                 const posts = postModal({
                     userId: mongoose.Types.ObjectId(id),
                     posts: [urls],
+                    email: userFindForViedos.email,
+                    description: req.body.description
                 })
 
                 const saveData = await posts.save();
                 res.status(status.CREATED).json(
-                    new APIResponse("Posts Inserted successfully!", true, 200, saveData)
+                    new APIResponse("Posts Inserted successfully!", true, 201, saveData)
                 )
             } else {
                 const urls = []
@@ -94,6 +96,7 @@ exports.addPostImages = async (req, res, next) => {
         }
         const id = req.params.id
         const userFindForImages = await userModal.findOne({ _id: id });
+        console.log(userFindForImages);
         if (userFindForImages) {
             const checkInPost = await postModal.findOne({ userId: id });
             if (!checkInPost) {
@@ -110,11 +113,13 @@ exports.addPostImages = async (req, res, next) => {
                 const posts = postModal({
                     userId: mongoose.Types.ObjectId(id),
                     posts: [urls],
+                    email: userFindForImages.email,
+                    description: req.body.description
                 })
                 console.log(posts);
                 const saveData = await posts.save();
                 res.status(status.CREATED).json(
-                    new APIResponse("Posts Inserted successfully!", true, 200, saveData)
+                    new APIResponse("Posts Inserted successfully!", true, 201, saveData)
                 )
             } else {
                 const urls = []
@@ -167,12 +172,12 @@ exports.getPostsbyUseId = async (req, res, next) => {
                 )
             } else {
                 res.status(status.NOT_FOUND).json(
-                    new APIResponse("Not Posted!", true, 200)
+                    new APIResponse("Not Posted!", true, 404)
                 )
             }
         } else {
             res.status(status.NOT_FOUND).json(
-                new APIResponse("User Not Found!", true, 200)
+                new APIResponse("User Not Found!", true, 404)
             )
         }
 
@@ -211,15 +216,3 @@ exports.getPostsbyUseId = async (req, res, next) => {
 // }
 
 
-exports.showPostsOnalyAcceptedPerson = (req, res, next) => {
-    try {
-
-
-
-    } catch (error) {
-        console.log("Error:", error);
-        res.status(status.INTERNAL_SERVER_ERROR).json(
-            new APIResponse("Something Went Wrong", true, 500, error.message)
-        )
-    }
-}
