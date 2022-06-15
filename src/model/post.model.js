@@ -11,13 +11,16 @@ const postSchema = mongoose.Schema({
         ref: 'User',
         required: true
     },
-    posts: {
-        type: Array
-    },
-    description: {
-        type: String,
-        require: true
-    }
+    posts: [{
+        post: {
+            type: Array
+        },
+        description: {
+            type: String,
+            require: true
+        }
+    }],
+
 }, {
     timestamps: true
 }, {
