@@ -21,13 +21,12 @@ const userSchema = mongoose.Schema({
     email: {
         type: String,
         require: true,
+        unique: true,
         validate: {
             validator: validator.isEmail,
             message: '{VALUE} is not a valid email',
             isAsync: false
-        },
-        unique: true
-        
+        }
     },
     firstName: {
         type: String,
