@@ -210,7 +210,7 @@ exports.getPostsbyUseId = async (req, res, next) => {
 //     }
 // }
 
-exports.reqAcceptedOrNot = (req, res, next) => {
+exports.sendRequest = (req, res, next) => {
     try {
 
         

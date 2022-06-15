@@ -5,6 +5,6 @@ const upload = require('../utils/multer.userImages.utils');
 
 const userController = require("../controller/user.controller");
 
-router.post('/register', upload.array('posts'), userController.userRegister);
+router.post('/register', upload.array('photo'), userController.userRegister);
 
 module.exports = router;
