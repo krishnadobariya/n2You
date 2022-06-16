@@ -233,3 +233,94 @@ exports.getPostsbyUseId = async (req, res, next) => {
 // }
 
 
+// Edit Post
+
+exports.EditPosts = async (req, res, next) => {
+    try {
+
+        const UserId = req.params.UserId;
+        const PostId = req.params.PostId;
+
+        const findData = await postModal.findOne({
+            userId: UserId, "posts._id": PostId
+        })
+        if (findData) {
+            const findPostAndUser = await postModal.updateOne(
+                {
+                    userId: UserId, "posts._id": PostId
+                },
+                {
+                    $set: {
+                        "posts.$.description": req.body.description
+                    }
+                })
+
+            if (findPostAndUser.modifiedCount == 1) {
+                res.status(status.OK).json(
+                    new APIResponse("successfully Post Updated!", true, 200)
+                )
+            } else {
+                res.status(status.INTERNAL_SERVER_ERROR).json(
+                    new APIResponse("Somthing went Wrong", false, 500)
+                )
+            }
+        } else {
+            res.status(status.NOT_FOUND).json(
+                new APIResponse("User or Post Not Found!", false, 404)
+            )
+        }
+
+
+
+    } catch (error) {
+        console.log("Error:", error);
+        res.status(status.INTERNAL_SERVER_ERROR).json(
+            new APIResponse("Something Went Wrong", false, 500, error.message)
+        )
+    }
+}
+
+exports.deletePost = async (req, res, next) => {
+    try {
+        const UserId = req.params.UserId;
+        const PostId = req.params.PostId;
+
+        const findData = await postModal.findOne({
+            userId: UserId, "posts._id": PostId
+        })
+        console.log(findData);
+        if (findData) {
+            const findPostAndUser = await postModal.updateOne(
+                {
+                    userId: UserId
+                },
+                {
+                    $pull: {
+                        posts: {
+                            _id: PostId
+                        }
+                    }
+                })
+
+            if (findPostAndUser.modifiedCount == 1) {
+                res.status(status.OK).json(
+                    new APIResponse("successfully Post Deleted!", true, 200)
+                )
+            } else {
+                res.status(status.INTERNAL_SERVER_ERROR).json(
+                    new APIResponse("Somthing went Wrong", false, 500)
+                )
+            }
+        } else {
+            res.status(status.NOT_FOUND).json(
+                new APIResponse("User or Post Not Found!", false, 404)
+            )
+        }
+
+    } catch (error) {
+        console.log("Error:", error);
+        res.status(status.INTERNAL_SERVER_ERROR).json(
+            new APIResponse("Something Went Wrong", false, 500, error.message)
+        )
+    }
+}
