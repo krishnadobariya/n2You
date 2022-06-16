@@ -69,7 +69,7 @@ exports.addPostVideo = async (req, res, next) => {
                 }
                 const updatePosts = await postModal.updateOne({ userId: req.params.id }, { $push: { posts: finalData } })
                 res.status(status.OK).json(
-                    new APIResponse("Post added successfully!", true, 201)
+                    new APIResponse("Post added successfully!", true, 201, finalData)
                 )
             }
         } else {
@@ -148,7 +148,7 @@ exports.addPostImages = async (req, res, next) => {
                 }
                 const updatePosts = await postModal.updateOne({ userId: req.params.id }, { $push: { posts: finalData } })
                 res.status(status.OK).json(
-                    new APIResponse("Post added successfully!", true, 201)
+                    new APIResponse("Post added successfully!", true, 201, finalData)
                 )
             }
 
@@ -173,16 +173,16 @@ exports.getPostsbyUseId = async (req, res, next) => {
         const id = req.params.id
         const userFindInPosts = await postModal.findOne({ userId: id });
         if (userFindInPosts) {
+
             const userWisePosts = await postModal.findOne({ userId: req.params.id })
             console.log(userWisePosts);
-
             if (userWisePosts.posts) {
                 const storeAllpostsUserWise = [];
                 const getAllPostsUserWise = userWisePosts.posts;
                 console.log("getAllPostsUserWise", getAllPostsUserWise);
                 getAllPostsUserWise.map((result, index) => {
                     console.log("result", result);
-                    storeAllpostsUserWise.push(result);
+                    storeAllpostsUserWise.unshift(result);
                 })
                 res.status(status.OK).json(
                     new APIResponse("successfully get all Posts!", true, 200, storeAllpostsUserWise)
