@@ -107,8 +107,8 @@ exports.addPostImages = async (req, res, next) => {
         if (userFindForImages) {
             const checkInPost = await postModal.findOne({ userId: id });
             if (!checkInPost) {
-                const urls = []
-                const files = req.files
+                const urls = [];
+                const files = req.files;
 
                 for (const file of files) {
                     const { path } = file
