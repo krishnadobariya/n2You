@@ -14,7 +14,7 @@ const requestSchema = mongoose.Schema({
         },
         accepted: {
             type: Number,
-            default: 0
+            default: 2
         }
     }],
 

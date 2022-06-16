@@ -18,7 +18,7 @@ exports.sendRequest = async (req, res, next) => {
                         userEmail: req.params.userEmail,
                         RequestedEmails: [{
                             requestedEmail: req.params.RequestedEmail,
-                            accepted: 0
+                            accepted: 2
                         }],
 
                     })
@@ -46,7 +46,7 @@ exports.sendRequest = async (req, res, next) => {
                                 $push: {
                                     RequestedEmails: [{
                                         requestedEmail: req.params.RequestedEmail,
-                                        accepted: 0
+                                        accepted: 2
                                     }]
                                 }
                             })
