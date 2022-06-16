@@ -135,7 +135,6 @@ exports.serchFriend = async (req, res, next) => {
                 const a = result.requestedEmail
                 b.push(a);
             })
-
             const c = await userModel.aggregate([{
                 $match: {
                     email: {
@@ -154,8 +153,20 @@ exports.serchFriend = async (req, res, next) => {
             {
                 $lookup: {
                     from: 'requests',
-                    localField: 'RequestedEmails.requestedEmail',
-                    foreignField: 'email',
+                    let: {
+                        email: req.params.userEmail
+                    },
+                    pipeline: [
+                        {
+                            $match: {
+                                $expr: {
+                                    $eq: [
+                                        "$userEmail", "$$email"
+                                    ]
+                                }
+                            }
+                        }
+                    ],
                     as: 'form_data'
                 }
             },
@@ -174,7 +185,10 @@ exports.serchFriend = async (req, res, next) => {
                     jobTitle: "$jobTitle",
                     wantChildren: "$wantChildren",
                     posts: "$req_data",
-                    request: "$form_data"
+                    // request: "$form_data",
+                    result: "$form_data.RequestedEmails.requestedEmail",
+                    status: "$form_data.RequestedEmails.accepted"
+
                 }
             }])
 
@@ -182,6 +196,7 @@ exports.serchFriend = async (req, res, next) => {
 
 
             res.status(status.OK).json(
+
                 new APIResponse("show all erecord searchwise", true, 201, c)
             )
 
