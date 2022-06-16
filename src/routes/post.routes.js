@@ -6,5 +6,7 @@ const upload = require("../utils/multer.postImages.utils");
 router.post('/upload/videos/:id', upload.array('posts'), postController.addPostVideo);
 router.post('/upload/images/:id', upload.array('posts'), postController.addPostImages);
 router.get('/userWisePosts/:id', postController.getPostsbyUseId);
+router.put('/update/:UserId/:PostId', postController.EditPosts);
+router.delete('/delete/:UserId/:PostId' , postController.deletePost);
 
 module.exports = router;
