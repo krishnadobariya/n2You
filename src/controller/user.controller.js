@@ -94,51 +94,52 @@ exports.userRegister = async (req, res, next) => {
 
 exports.serchFriend = async (req, res, next) => {
     try {
-        const Regexname = new RegExp(req.body.name, 'i');
+        const Regexname = new RegExp(req.body.searchKey, 'i');
         const searchName = await userModel.find({ firstName: Regexname });
-        console.log("serchname is", searchName[0].email);
-        const data2 = [];
-        const data = searchName.map((result, index) => {
+        const reaquestedAllEmail = [];
+        searchName.map((result, index) => {
             console.log(result.email);
-            data2.push(result.email)
+            reaquestedAllEmail.push(result.email)
         })
 
-        console.log("data is", data2);
 
-        const data1 = await requestsModel.find(
+
+        const RequestedEmailExiestInUser = await requestsModel.find(
             {
                 userEmail: req.params.userEmail,
                 RequestedEmails: {
                     $elemMatch: {
                         requestedEmail: {
-                            $in: data2
+                            $in: reaquestedAllEmail
                         }
                     }
                 }
             }
         )
 
-        if (data1[0] == undefined) {
-            const f = {
+        if (RequestedEmailExiestInUser[0] == undefined) {
+            const UserNotAcceptedReuestedandNOtUseFriend = {
                 status: 3
             }
             res.status(status.NOT_FOUND).json(
-                new APIResponse("not user friend and not requested", true, 404, f)
+                new APIResponse("not user friend and not requested", true, 404, UserNotAcceptedReuestedandNOtUseFriend)
             )
-
-
         } else {
-            console.log("data1", data1);
-            const data4 = data1[0].RequestedEmails
-            const b = [];
-            data4.map((result, next) => {
-                const a = result.requestedEmail
-                b.push(a);
+
+
+            const statusByEmail = [];
+            const allRequestedEmail = RequestedEmailExiestInUser[0].RequestedEmails
+            const requestedEmailWitchIsInuserRequeted = [];
+            allRequestedEmail.map((result, next) => {
+                const resultEmail = result.requestedEmail
+                requestedEmailWitchIsInuserRequeted.push(resultEmail);
             })
-            const c = await userModel.aggregate([{
+
+
+            const meageAllTable = await userModel.aggregate([{
                 $match: {
                     email: {
-                        $in: b
+                        $in: requestedEmailWitchIsInuserRequeted
                     }
                 }
             },
@@ -154,18 +155,30 @@ exports.serchFriend = async (req, res, next) => {
                 $lookup: {
                     from: 'requests',
                     let: {
-                        email: req.params.userEmail
+
+                        userEmail: req.params.userEmail,
+                        email: "$email"
                     },
                     pipeline: [
                         {
                             $match: {
                                 $expr: {
-                                    $eq: [
-                                        "$userEmail", "$$email"
+                                    $and: [
+                                        {
+                                            $eq: [
+                                                "$userEmail", "$$userEmail"
+                                            ]
+                                        },
+                                        {
+                                            $in:
+                                                [
+                                                    "$$email", "$RequestedEmails.requestedEmail"
+                                                ]
+                                        }
                                     ]
                                 }
                             }
-                        }
+                        },
                     ],
                     as: 'form_data'
                 }
@@ -185,94 +198,59 @@ exports.serchFriend = async (req, res, next) => {
                     jobTitle: "$jobTitle",
                     wantChildren: "$wantChildren",
                     posts: "$req_data",
-                    // request: "$form_data",
-                    result: "$form_data.RequestedEmails.requestedEmail",
-                    status: "$form_data.RequestedEmails.accepted"
-
+                    result: "$form_data.RequestedEmails",
                 }
             }])
 
+            const emailDataDetail = meageAllTable[0].result;
 
+            for (const emailData of emailDataDetail) {
 
+                for (const requestEmail of emailData) {
+
+                    for (const meageAllTableEmail of meageAllTable) {
+                        if (requestEmail.requestedEmail == meageAllTableEmail.email) {
+                            console.log(requestEmail.accepted);
+                            if (requestEmail.accepted == 1) {
+                                var status1 = 1
+                                statusByEmail.push(status1)
+                            } else {
+                                var status2 = 2
+                                statusByEmail.push(status2)
+                            }
+                        }
+                    }
+                }
+            }
+
+            const final_data = [];
+
+            for (const [key, finalData] of meageAllTable.entries()) {
+                console.log(key);
+                const response = {
+                    details: finalData._id,
+                    polyDating: finalData.polyDating,
+                    HowDoYouPoly: finalData.HowDoYouPoly,
+                    loveToGive: finalData.loveToGive,
+                    polyRelationship: finalData.polyRelationship,
+                    firstName: finalData.firstName,
+                    email: finalData.email,
+                    relationshipSatus: finalData.relationshipSatus,
+                    Bio: finalData.Bio,
+                    hopingToFind: finalData.hopingToFind,
+                    jobTitle: finalData.jobTitle,
+                    wantChildren: finalData.wantChildren,
+                    posts: finalData.posts,
+                    status: statusByEmail[key]
+                }
+                final_data.push(response);
+            }
+            // let uniqueObjArray = [...new Map(final_data.map((item) => [item["details"], item])).values()];
 
             res.status(status.OK).json(
-
-                new APIResponse("show all erecord searchwise", true, 201, c)
+                new APIResponse("show all erecord searchwise", true, 201, final_data)
             )
-
-
         }
-
-
-        // const data3 = await userModel.aggregate([{
-        //     $match: {
-
-        //     }
-        // }])
-
-        // console.log(data3);
-        // console.log(data1[0]);
-        // if (data1[0] == undefined) {
-        //     const data = {
-        //         status: 3,
-        //         message: "Not requested and not User Friend"
-        //     }
-        //     res.status(status.CREATED).json(
-        //         new APIResponse("not Found", true, 201, data)
-        //     )
-        // } else {
-
-        //     const data1 = await requestsModel.find({
-        //         userEmail: req.params.userEmail,
-        //         "RequestedEmails.requestedEmail": {
-        //             $in: data2
-        //         },
-        //         "RequestedEmails.accepted": 1
-        //     })
-
-        //     if (data1) {
-        //         console.log(data1);
-        //         const data = {
-        //             status: 1,
-        //             message: "User Friend"
-        //         }
-        //         res.status(status.CREATED).json(
-        //             new APIResponse("not Found", true, 201, data)
-        //         )
-        //     } else {
-        //         const data = {
-        //             status: 1,
-        //             message: "User requested but not Accepted"
-        //         }
-        //         res.status(status.CREATED).json(
-        //             new APIResponse("not Found", true, 201, data)
-        //         )
-        //     }
-
-        // }
-
-        // console.log("data", data);
-        // const checkCondition = await userModel.aggregate([{
-        //     $match: {
-        //         firstName: {
-        //             $regex: Regexname
-        //         }
-        //     }
-        // },
-        // {
-        //     $lookup: {
-        //         from: "requests",
-        //         localField: 'userEmail',
-        //         foreignField: 'email',
-        //         as: 'final_data'
-        //     }
-        // },
-        // {
-        //     $unwind: '$final_data'
-        // }
-        // ])
-
-        // console.log(checkCondition);
     } catch (error) {
         console.log("Error:", error);
         res.status(status.INTERNAL_SERVER_ERROR).json(
