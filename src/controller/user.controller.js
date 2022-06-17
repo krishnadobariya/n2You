@@ -228,7 +228,7 @@ exports.serchFriend = async (req, res, next) => {
             for (const [key, finalData] of meageAllTable.entries()) {
                 console.log(key);
                 const response = {
-                    details: finalData._id,
+                    _id: finalData._id,
                     polyDating: finalData.polyDating,
                     HowDoYouPoly: finalData.HowDoYouPoly,
                     loveToGive: finalData.loveToGive,
