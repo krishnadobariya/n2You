@@ -7,6 +7,7 @@ router.post('/upload/videos/:id', upload.array('posts'), postController.addPostV
 router.post('/upload/images/:id', upload.array('posts'), postController.addPostImages);
 router.get('/userWisePosts/:id', postController.getPostsbyUseId);
 router.put('/update/:UserId/:PostId', postController.EditPosts);
-router.delete('/delete/:UserId/:PostId' , postController.deletePost);
+router.delete('/delete/:UserId/:PostId', postController.deletePost);
+router.get('/show/friend/:UserEmail', postController.userAllFriendPost);
 
 module.exports = router;
