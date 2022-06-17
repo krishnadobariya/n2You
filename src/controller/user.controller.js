@@ -30,7 +30,6 @@ exports.userRegister = async (req, res, next) => {
         }
 
         const findEmail = await userModel.findOne({ email: req.body.email });
-        console.log(findEmail);
         if (findEmail) {
             res.status(status.NOT_ACCEPTABLE).json(
                 new APIResponse("Not Allowed, Email Already Exist", false, 406)
@@ -39,9 +38,10 @@ exports.userRegister = async (req, res, next) => {
             const phoneNum = req.body.phoneNum;
 
             const countryCode = req.body.countryCode
-            console.log(`${countryCode}${phoneNum}`);
+
             const findNumber = await userModel.findOne({ phoneNumber: `${countryCode}${phoneNum}` });
-            console.log("findnumber", findNumber);
+
+
             if (findNumber) {
                 res.status(status.NOT_ACCEPTABLE).json(
                     new APIResponse("Number Already Exist, It must be Unique", false, 406)
@@ -98,7 +98,6 @@ exports.serchFriend = async (req, res, next) => {
         const searchName = await userModel.find({ firstName: Regexname });
         const reaquestedAllEmail = [];
         searchName.map((result, index) => {
-            console.log(result.email);
             reaquestedAllEmail.push(result.email)
         })
 
@@ -202,20 +201,36 @@ exports.serchFriend = async (req, res, next) => {
                 }
             }])
 
+            console.log(meageAllTable);
+
             const emailDataDetail = meageAllTable[0].result;
-
+            // console.log("emailDataDetail", emailDataDetail);
             for (const emailData of emailDataDetail) {
-
+                // console.log(emailData);
                 for (const requestEmail of emailData) {
 
                     for (const meageAllTableEmail of meageAllTable) {
+
+                        // const a = [];
+                        // a.push(meageAllTableEmail)
+                        // console.log(meageAllTableEmail);
+                        // let uniqueObjArray = [...new Map(a.map((item) => [item["details"], item])).values()];
+                        // console.log(uniqueObjArray);
+                        // console.log("this is",requestEmail.requestedEmail);
+                        // console.log("i am",meageAllTableEmail.email);
                         if (requestEmail.requestedEmail == meageAllTableEmail.email) {
-                            console.log(requestEmail.accepted);
+
                             if (requestEmail.accepted == 1) {
-                                var status1 = 1
+                                var status1 = {
+                                    status: 1,
+                                    email: requestEmail.requestedEmail
+                                }
                                 statusByEmail.push(status1)
                             } else {
-                                var status2 = 2
+                                var status2 = {
+                                    status: 2,
+                                    email: requestEmail.requestedEmail
+                                }
                                 statusByEmail.push(status2)
                             }
                         }
@@ -225,10 +240,19 @@ exports.serchFriend = async (req, res, next) => {
 
             const final_data = [];
 
+            console.log(statusByEmail);
+
+            const finalStatus = []
             for (const [key, finalData] of meageAllTable.entries()) {
-                console.log(key);
+                for (const [key, final1Data] of statusByEmail.entries())
+                    if (finalData.email === final1Data.email) {
+                        finalStatus.push(final1Data.status)
+                    }
+            }
+            for (const [key, finalData] of meageAllTable.entries()) {
+
                 const response = {
-                    _id: finalData._id,
+                    details: finalData._id,
                     polyDating: finalData.polyDating,
                     HowDoYouPoly: finalData.HowDoYouPoly,
                     loveToGive: finalData.loveToGive,
@@ -241,12 +265,11 @@ exports.serchFriend = async (req, res, next) => {
                     jobTitle: finalData.jobTitle,
                     wantChildren: finalData.wantChildren,
                     posts: finalData.posts,
-                    status: statusByEmail[key]
+                    status: finalStatus[key]
                 }
                 final_data.push(response);
             }
             // let uniqueObjArray = [...new Map(final_data.map((item) => [item["details"], item])).values()];
-
             res.status(status.OK).json(
                 new APIResponse("show all erecord searchwise", true, 201, final_data)
             )
