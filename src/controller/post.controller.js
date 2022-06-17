@@ -171,23 +171,39 @@ exports.addPostImages = async (req, res, next) => {
 
 exports.getPostsbyUseId = async (req, res, next) => {
     try {
-        const id = req.params.id
+        const id = req.params.id;
+
+
+
         const userFindInPosts = await postModal.findOne({ userId: id });
         if (userFindInPosts) {
 
-            const userWisePosts = await postModal.findOne({ userId: req.params.id })
-            console.log(userWisePosts);
+            const userWisePosts = await postModal.findOne({ userId: req.params.id });
             if (userWisePosts.posts) {
                 const storeAllpostsUserWise = [];
                 const getAllPostsUserWise = userWisePosts.posts;
-                console.log("getAllPostsUserWise", getAllPostsUserWise);
                 getAllPostsUserWise.map((result, index) => {
-                    console.log("result", result);
                     storeAllpostsUserWise.unshift(result);
                 })
-                res.status(status.OK).json(
-                    new APIResponse("successfully get all Posts!", true, 200, storeAllpostsUserWise)
-                )
+
+                datetime = "2022-06-17 18:34:26";
+                datw9 = "2022-06-17 17:48:7"
+                var theevent = new Date(datetime);
+                now = new Date(datw9);
+                var sec_num = (theevent - now) / 1000;
+                var days = Math.floor(sec_num / (3600 * 24));
+                var hours5 = Math.floor((sec_num - (days * (3600 * 24))) / 3600);
+                var minutes5 = Math.floor((sec_num - (days * (3600 * 24)) - (hours5 * 3600)) / 60);
+                var seconds5 = Math.floor(sec_num - (days * (3600 * 24)) - (hours5 * 3600) - (minutes5 * 60));
+
+                if (hours5 < 10) { hours5 = "0" + hours5; }
+                if (minutes5 < 10) { minutes5 = "0" + minutes5; }
+                if (seconds5 < 10) { seconds5 = "0" + seconds5; }
+
+                console.log("this one is ", days + ':' + hours5 + ':' + minutes5 + ':' + seconds5);
+
+
+
             } else {
                 res.status(status.NOT_FOUND).json(
                     new APIResponse("Not Posted!", false, 404)
@@ -241,6 +257,9 @@ exports.EditPosts = async (req, res, next) => {
 
         const UserId = req.params.UserId;
         const PostId = req.params.PostId;
+
+
+
 
         const findData = await postModal.findOne({
             userId: UserId, "posts._id": PostId
