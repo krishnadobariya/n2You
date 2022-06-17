@@ -4,6 +4,7 @@ const status = require("http-status");
 const postModal = require("../model/post.model");
 const userModal = require("../model/user.model");
 const { default: mongoose } = require("mongoose");
+const requestsModel = require("../model/requests.model");
 
 
 // Mutiple Videos Upload
@@ -325,3 +326,133 @@ exports.deletePost = async (req, res, next) => {
     }
 }
 
+exports.userAllFriendPost = async (req, res, next) => {
+    try {
+
+        const statusByEmail = [];
+        const data = await requestsModel.findOne({ userEmail: req.params.UserEmail });
+        console.log("data", data);
+        const allRequestedEmail = data.RequestedEmails
+        console.log("allRequestedEmail", allRequestedEmail);
+        const requestedEmailWitchIsInuserRequeted = [];
+        allRequestedEmail.map((result, next) => {
+            const resultEmail = result.requestedEmail
+            requestedEmailWitchIsInuserRequeted.push(resultEmail);
+        })
+
+
+        const meageAllTable = await userModal.aggregate([{
+            $match: {
+                email: {
+                    $in: requestedEmailWitchIsInuserRequeted
+                }
+            }
+        },
+        {
+            $lookup: {
+                from: 'posts',
+                localField: 'email',
+                foreignField: 'email',
+                as: 'req_data'
+            }
+        },
+        {
+            $lookup: {
+                from: 'requests',
+                let: {
+
+                    userEmail: req.params.UserEmail,
+                    email: "$email"
+                },
+                pipeline: [
+                    {
+                        $match: {
+                            $expr: {
+                                $and: [
+                                    {
+                                        $eq: [
+                                            "$userEmail", "$$userEmail"
+                                        ]
+                                    },
+                                    {
+                                        $in:
+                                            [
+                                                "$$email", "$RequestedEmails.requestedEmail"
+                                            ]
+                                    }
+                                ]
+                            }
+                        }
+                    },
+                ],
+                as: 'form_data'
+            }
+        },
+        {
+            $project: {
+
+                email: "$email",
+                posts: "$req_data",
+                result: "$form_data.RequestedEmails",
+            }
+        }])
+
+
+        const emailDataDetail = meageAllTable[0].result;
+
+        for (const emailData of emailDataDetail) {
+
+            for (const requestEmail of emailData) {
+
+                for (const meageAllTableEmail of meageAllTable) {
+
+                    console.log("meageAllTableEmail", meageAllTableEmail);
+
+                    if (requestEmail.requestedEmail == meageAllTableEmail.email) {
+
+                        if (requestEmail.accepted == 1) {
+                            var status1 = {
+                                email: requestEmail.requestedEmail,
+                                posts: meageAllTableEmail.posts[0].posts
+                            }
+                            statusByEmail.push(status1)
+                        } else {
+                            var status2 = {
+                                posts: "not accepted request",
+                                email: requestEmail.requestedEmail
+                            }
+                            statusByEmail.push(status2)
+                        }
+                    }
+                }
+            }
+        }
+
+        const final_data = [];
+
+        const finalStatus = []
+        for (const [key, finalData] of meageAllTable.entries()) {
+            for (const [key, final1Data] of statusByEmail.entries())
+                if (finalData.email === final1Data.email) {
+                    finalStatus.push(final1Data)
+                }
+        }
+        for (const [key, finalData] of meageAllTable.entries()) {
+
+            const response = {
+                data: finalStatus[key]
+            }
+            final_data.push(response);
+        }
+
+
+        res.status(status.OK).json(
+            new APIResponse("show all post When accept by the user", true, 201, final_data)
+        )
+    } catch (error) {
+        console.log("Error:", error);
+        res.status(status.INTERNAL_SERVER_ERROR).json(
+            new APIResponse("Something Went Wrong", false, 500, error.message)
+        )
+    }
+}

@@ -134,7 +134,6 @@ exports.serchFriend = async (req, res, next) => {
                 requestedEmailWitchIsInuserRequeted.push(resultEmail);
             })
 
-
             const meageAllTable = await userModel.aggregate([{
                 $match: {
                     email: {
@@ -204,20 +203,14 @@ exports.serchFriend = async (req, res, next) => {
             console.log(meageAllTable);
 
             const emailDataDetail = meageAllTable[0].result;
-            // console.log("emailDataDetail", emailDataDetail);
+
             for (const emailData of emailDataDetail) {
-                // console.log(emailData);
+
                 for (const requestEmail of emailData) {
 
                     for (const meageAllTableEmail of meageAllTable) {
 
-                        // const a = [];
-                        // a.push(meageAllTableEmail)
-                        // console.log(meageAllTableEmail);
-                        // let uniqueObjArray = [...new Map(a.map((item) => [item["details"], item])).values()];
-                        // console.log(uniqueObjArray);
-                        // console.log("this is",requestEmail.requestedEmail);
-                        // console.log("i am",meageAllTableEmail.email);
+
                         if (requestEmail.requestedEmail == meageAllTableEmail.email) {
 
                             if (requestEmail.accepted == 1) {
@@ -239,8 +232,6 @@ exports.serchFriend = async (req, res, next) => {
             }
 
             const final_data = [];
-
-            console.log(statusByEmail);
 
             const finalStatus = []
             for (const [key, finalData] of meageAllTable.entries()) {
@@ -281,3 +272,5 @@ exports.serchFriend = async (req, res, next) => {
         )
     }
 }
+
+
