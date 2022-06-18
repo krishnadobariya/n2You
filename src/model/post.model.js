@@ -19,6 +19,11 @@ const postSchema = mongoose.Schema({
             type: String,
             require: true
         },
+        like: {
+            type: Number,
+            require: true,
+            default: 0
+        },
         createdAt: {
             type: Date,
             required: true,

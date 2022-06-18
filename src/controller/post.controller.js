@@ -148,6 +148,7 @@ exports.addPostImages = async (req, res, next) => {
                     urls.push(newPath);
                 }
                 await postModal.updateOne({ userId: req.params.id }, { $push: { posts: finalData } });
+                
                 res.status(status.OK).json(
                     new APIResponse("Post added successfully!", true, 201, finalData)
                 )
@@ -546,3 +547,5 @@ exports.userAllFriendPost = async (req, res, next) => {
         )
     }
 }
+
+

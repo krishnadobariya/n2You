@@ -8,17 +8,21 @@ exports.sendRequest = async (req, res, next) => {
     try {
 
         const checkUserExist = await userModel.findOne({ email: req.params.userEmail });
+
         if (checkUserExist) {
             const checkRequestedEmail = await userModel.findOne({ email: req.params.RequestedEmail });
+
             if (checkRequestedEmail) {
                 const emailExitInRequestedModel = await requestModel.findOne({ userEmail: req.params.userEmail })
 
                 if (!emailExitInRequestedModel) {
                     const request = requestModel({
+                        userId: checkUserExist._id,
                         userEmail: req.params.userEmail,
                         RequestedEmails: [{
                             requestedEmail: req.params.RequestedEmail,
-                            accepted: 2
+                            accepted: 2,
+                            userId: checkRequestedEmail._id
                         }],
 
                     })
@@ -46,7 +50,8 @@ exports.sendRequest = async (req, res, next) => {
                                 $push: {
                                     RequestedEmails: [{
                                         requestedEmail: req.params.RequestedEmail,
-                                        accepted: 2
+                                        accepted: 2,
+                                        userId: checkRequestedEmail._id
                                     }]
                                 }
                             })

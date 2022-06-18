@@ -6,6 +6,11 @@ const requestSchema = mongoose.Schema({
         ref: 'User',
         required: true
     },
+    userId: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'User',
+        required: true
+    },
     RequestedEmails: [{
         requestedEmail: {
             type: String,
@@ -15,6 +20,11 @@ const requestSchema = mongoose.Schema({
         accepted: {
             type: Number,
             default: 2
+        },
+        userId: {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: 'User',
+            required: true
         }
     }],
 
