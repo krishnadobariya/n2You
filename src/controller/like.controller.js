@@ -79,7 +79,7 @@ exports.LikeOrDislikeInUserPost = async (req, res, next) => {
 exports.showAllUserWhichIsLikePost = async (req, res, next) => {
     try {
 
-        const findUserWichIsLikePost = await likeModel.find({ postId: req.params.PostId });
+        const findUserWichIsLikePost = await likeModel.find({ postId: req.params.PostId  });
 
         if (findUserWichIsLikePost[0] == undefined) {
             res.status(status.NOT_FOUND).json(
@@ -89,7 +89,10 @@ exports.showAllUserWhichIsLikePost = async (req, res, next) => {
             const statusByEmail = [];
             const allRequestedId = [];
 
+           
+
             for (const findAllRequestedEmail of findUserWichIsLikePost) {
+                
                 allRequestedId.push(findAllRequestedEmail.reqUserId);
             }
             console.log("allRequestedId", allRequestedId);
@@ -155,75 +158,79 @@ exports.showAllUserWhichIsLikePost = async (req, res, next) => {
                     hopingToFind: "$hopingToFind",
                     jobTitle: "$jobTitle",
                     wantChildren: "$wantChildren",
-                    posts: "$req_data",
                     result: "$form_data.RequestedEmails",
                 }
             }])
 
+ 
+
+            const emailDataDetail = meageAllTable;
 
 
-            const emailDataDetail = meageAllTable[0].result;
+            console.log("emailDataDetail" , emailDataDetail);
+           
 
             for (const emailData of emailDataDetail) {
+            
+                for (findresult of emailData.result) {
+                    console.log("findresult", findresult);
 
-                for (const requestEmail of emailData) {
-
-                    for (const meageAllTableEmail of meageAllTable) {
-
-
-                        if (requestEmail.requestedEmail == meageAllTableEmail.email) {
-
-                            if (requestEmail.accepted == 1) {
-                                var status1 = {
-                                    status: 1,
-                                    email: requestEmail.requestedEmail
-                                }
-                                statusByEmail.push(status1)
-                            } else {
-                                var status2 = {
-                                    status: 2,
-                                    email: requestEmail.requestedEmail
-                                }
-                                statusByEmail.push(status2)
+                    for (accepted1 of findresult) {
+                      
+                        if (accepted1.accepted == 1) {
+                            var status1 = {
+                                status: 1,
+                                email: accepted1.requestedEmail
                             }
+                            statusByEmail.push(status1)
+                        } else {
+                            var status2 = {
+                                status: 2,
+                                email: accepted1.requestedEmail
+                            }
+                            statusByEmail.push(status2)
                         }
                     }
                 }
             }
-
-
-
+           
+            let uniqueObjArray = [...new Map(statusByEmail.map((item) => [item["email"], item])).values()];
+         
+    
             const final_data = [];
 
             const finalStatus = []
             for (const [key, finalData] of meageAllTable.entries()) {
-                for (const [key, final1Data] of statusByEmail.entries())
+                for (const [key, final1Data] of uniqueObjArray.entries())
                     if (finalData.email === final1Data.email) {
                         finalStatus.push(final1Data.status)
                     }
+    
             }
+
+            console.log(finalStatus);
             for (const [key, finalData] of meageAllTable.entries()) {
 
                 const response = {
                     details: finalData._id,
-                    polyDating: finalData.polyDating,
-                    HowDoYouPoly: finalData.HowDoYouPoly,
-                    loveToGive: finalData.loveToGive,
-                    polyRelationship: finalData.polyRelationship,
+                    // polyDating: finalData.polyDating,
+                    // HowDoYouPoly: finalData.HowDoYouPoly,
+                    // loveToGive: finalData.loveToGive,
+                    // polyRelationship: finalData.polyRelationship,
                     firstName: finalData.firstName,
                     email: finalData.email,
-                    relationshipSatus: finalData.relationshipSatus,
-                    Bio: finalData.Bio,
-                    hopingToFind: finalData.hopingToFind,
-                    jobTitle: finalData.jobTitle,
-                    wantChildren: finalData.wantChildren,
+                    // relationshipSatus: finalData.relationshipSatus,
+                    // Bio: finalData.Bio,
+                    // hopingToFind: finalData.hopingToFind,
+                    // jobTitle: finalData.jobTitle,
+                    // wantChildren: finalData.wantChildren,
                     status: finalStatus[key]
                 }
                 final_data.push(response);
             }
-            // let uniqueObjArray = [...new Map(final_data.map((item) => [item["details"], item])).values()];
+            // // let uniqueObjArray = [...new Map(final_data.map((item) => [item["details"], item])).values()];
             res.status(status.OK).json(
-                new APIResponse("show all erecord searchwise", true, 201, meageAllTable)
+                new APIResponse("show all erecord searchwise", true, 201, final_data)
             )
 
         }
