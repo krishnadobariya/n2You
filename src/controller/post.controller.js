@@ -18,26 +18,25 @@ exports.addPostVideo = async (req, res, next) => {
                     resolve({
                         res: res.secure_url
                     })
-                }
-                )
+                })
             })
         }
 
-        const id = req.params.id
+        const id = req.params.id;
         const userFindForViedos = await userModal.findOne({ _id: id });
 
         if (userFindForViedos) {
-            const checkInPost = await postModal.findOne({ userId: req.params.id });
-            console.log(checkInPost);
+            const checkInPost = await postModal.findOne({ userId: id });
+
             if (!checkInPost) {
-                const urls = []
-                const files = req.files
+                const urls = [];
+                const files = req.files;
 
                 for (const file of files) {
                     const { path } = file
 
-                    const newPath = await cloudinaryImageUploadMethod(path)
-                    urls.push(newPath)
+                    const newPath = await cloudinaryImageUploadMethod(path);
+                    urls.push(newPath);
                 }
 
                 const posts = postModal({
@@ -55,20 +54,22 @@ exports.addPostVideo = async (req, res, next) => {
                     new APIResponse("Posts Inserted successfully!", true, 201, saveData)
                 )
             } else {
-                const urls = []
+                const urls = [];
                 const files = req.files
                 const finalData = [{
                     post: urls,
                     description: req.body.description
-                }]
+                }];
 
                 for (const file of files) {
-                    const { path } = file
+                    const { path } = file;
 
-                    const newPath = await cloudinaryImageUploadMethod(path)
-                    urls.push(newPath)
+                    const newPath = await cloudinaryImageUploadMethod(path);
+                    urls.push(newPath);
                 }
-                const updatePosts = await postModal.updateOne({ userId: req.params.id }, { $push: { posts: finalData } })
+
+                await postModal.updateOne({ userId: req.params.id }, { $push: { posts: finalData } });
+
                 res.status(status.OK).json(
                     new APIResponse("Post added successfully!", true, 201, finalData)
                 )
@@ -98,13 +99,12 @@ exports.addPostImages = async (req, res, next) => {
                     resolve({
                         res: res.secure_url
                     })
-                }
-                )
+                })
             })
         }
-        const id = req.params.id
+        const id = req.params.id;
         const userFindForImages = await userModal.findOne({ _id: id });
-        console.log(userFindForImages);
+
         if (userFindForImages) {
             const checkInPost = await postModal.findOne({ userId: id });
             if (!checkInPost) {
@@ -114,10 +114,10 @@ exports.addPostImages = async (req, res, next) => {
                 for (const file of files) {
                     const { path } = file
 
-                    const newPath = await cloudinaryImageUploadMethod(path)
-                    urls.push(newPath)
+                    const newPath = await cloudinaryImageUploadMethod(path);
+                    urls.push(newPath);
                 }
-                console.log(req.params.id);
+
                 const posts = postModal({
                     userId: mongoose.Types.ObjectId(id),
                     posts: [{
@@ -126,28 +126,28 @@ exports.addPostImages = async (req, res, next) => {
                     }],
                     email: userFindForImages.email
                 })
-                console.log(posts);
+
+
                 const saveData = await posts.save();
                 res.status(status.CREATED).json(
                     new APIResponse("Posts Inserted successfully!", true, 201, saveData)
                 )
             } else {
-                const urls = []
-                const files = req.files
+                const urls = [];
+                const files = req.files;
                 const finalData = [{
                     post: urls,
                     description: req.body.description
-                }]
+                }];
 
 
-                console.log("final data", finalData);
                 for (const file of files) {
-                    const { path } = file
+                    const { path } = file;
 
-                    const newPath = await cloudinaryImageUploadMethod(path)
-                    urls.push(newPath)
+                    const newPath = await cloudinaryImageUploadMethod(path);
+                    urls.push(newPath);
                 }
-                const updatePosts = await postModal.updateOne({ userId: req.params.id }, { $push: { posts: finalData } })
+                await postModal.updateOne({ userId: req.params.id }, { $push: { posts: finalData } });
                 res.status(status.OK).json(
                     new APIResponse("Post added successfully!", true, 201, finalData)
                 )
@@ -173,12 +173,10 @@ exports.getPostsbyUseId = async (req, res, next) => {
     try {
         const id = req.params.id;
 
-
-
         const userFindInPosts = await postModal.findOne({ userId: id });
         if (userFindInPosts) {
 
-            const userWisePosts = await postModal.findOne({ userId: req.params.id });
+            const userWisePosts = await postModal.findOne({ userId: id });
             if (userWisePosts.posts) {
                 const storeAllpostsUserWise = [];
                 const getAllPostsUserWise = userWisePosts.posts;
@@ -186,23 +184,47 @@ exports.getPostsbyUseId = async (req, res, next) => {
                     storeAllpostsUserWise.unshift(result);
                 })
 
-                datetime = "2022-06-17 18:34:26";
-                datw9 = "2022-06-17 17:48:7"
-                var theevent = new Date(datetime);
-                now = new Date(datw9);
-                var sec_num = (theevent - now) / 1000;
-                var days = Math.floor(sec_num / (3600 * 24));
-                var hours5 = Math.floor((sec_num - (days * (3600 * 24))) / 3600);
-                var minutes5 = Math.floor((sec_num - (days * (3600 * 24)) - (hours5 * 3600)) / 60);
-                var seconds5 = Math.floor(sec_num - (days * (3600 * 24)) - (hours5 * 3600) - (minutes5 * 60));
+                const finalResponse = [];
 
-                if (hours5 < 10) { hours5 = "0" + hours5; }
-                if (minutes5 < 10) { minutes5 = "0" + minutes5; }
-                if (seconds5 < 10) { seconds5 = "0" + seconds5; }
+                for (const createResponse of storeAllpostsUserWise) {
 
-                console.log("this one is ", days + ':' + hours5 + ':' + minutes5 + ':' + seconds5);
+                    datetime = createResponse.createdAt;
+                    var userPostedDate = new Date(datetime);
+                    now = new Date();
+                    var sec_num = (now - userPostedDate) / 1000;
+                    var days = Math.floor(sec_num / (3600 * 24));
+                    var hours = Math.floor((sec_num - (days * (3600 * 24))) / 3600);
+                    var minutes = Math.floor((sec_num - (days * (3600 * 24)) - (hours * 3600)) / 60);
+                    var seconds = Math.floor(sec_num - (days * (3600 * 24)) - (hours * 3600) - (minutes * 60));
+
+                    if (hours < 10) { hours = "0" + hours; }
+                    if (minutes < 10) { minutes = "0" + minutes; }
+                    if (seconds < 10) { seconds = "0" + seconds; }
 
 
+                    const finalPostedTime = [];
+
+                    if (days > 0) {
+                        finalPostedTime.push(`${days} days`);
+                    } else if (hours > 0 && days == 0) {
+                        finalPostedTime.push(`${hours} hours`);
+                    } else if (minutes > 0 && hours == 0) {
+                        finalPostedTime.push(`${minutes} minute`);
+                    } else {
+                        finalPostedTime.push(`${seconds} second`);
+                    }
+
+                    const response = {
+                        createResponse,
+                        finalPostedTime
+                    }
+
+                    finalResponse.push(response)
+                }
+
+                res.status(status.OK).json(
+                    new APIResponse("Get Post user Wise!", true, 201, finalResponse)
+                )
 
             } else {
                 res.status(status.NOT_FOUND).json(
@@ -259,11 +281,10 @@ exports.EditPosts = async (req, res, next) => {
         const PostId = req.params.PostId;
 
 
-
-
         const findData = await postModal.findOne({
             userId: UserId, "posts._id": PostId
-        })
+        });
+
         if (findData) {
             const findPostAndUser = await postModal.updateOne(
                 {
@@ -273,7 +294,7 @@ exports.EditPosts = async (req, res, next) => {
                     $set: {
                         "posts.$.description": req.body.description
                     }
-                })
+                });
 
             if (findPostAndUser.modifiedCount == 1) {
                 res.status(status.OK).json(
@@ -308,7 +329,7 @@ exports.deletePost = async (req, res, next) => {
         const findData = await postModal.findOne({
             userId: UserId, "posts._id": PostId
         })
-        console.log(findData);
+
         if (findData) {
             const findPostAndUser = await postModal.updateOne(
                 {
@@ -320,7 +341,7 @@ exports.deletePost = async (req, res, next) => {
                             _id: PostId
                         }
                     }
-                })
+                });
 
             if (findPostAndUser.modifiedCount == 1) {
                 res.status(status.OK).json(
@@ -350,17 +371,16 @@ exports.userAllFriendPost = async (req, res, next) => {
 
         const statusByEmail = [];
         const data = await requestsModel.findOne({ userEmail: req.params.UserEmail });
-        console.log("data", data);
         const allRequestedEmail = data.RequestedEmails
-        console.log("allRequestedEmail", allRequestedEmail);
         const requestedEmailWitchIsInuserRequeted = [];
+
         allRequestedEmail.map((result, next) => {
-            const resultEmail = result.requestedEmail
+            const resultEmail = result.requestedEmail;
             requestedEmailWitchIsInuserRequeted.push(resultEmail);
-        })
+        });
 
 
-        const meageAllTable = await userModal.aggregate([{
+        const meargAllTable = await userModal.aggregate([{
             $match: {
                 email: {
                     $in: requestedEmailWitchIsInuserRequeted
@@ -417,22 +437,62 @@ exports.userAllFriendPost = async (req, res, next) => {
         }])
 
 
-        const emailDataDetail = meageAllTable[0].result;
+        const emailDataDetail = meargAllTable[0].result;
 
         for (const emailData of emailDataDetail) {
 
             for (const requestEmail of emailData) {
 
-                for (const meageAllTableEmail of meageAllTable) {
+                for (const meargAllTableEmail of meargAllTable) {
 
-                    console.log("meageAllTableEmail", meageAllTableEmail);
-
-                    if (requestEmail.requestedEmail == meageAllTableEmail.email) {
+                    if (requestEmail.requestedEmail == meargAllTableEmail.email) {
 
                         if (requestEmail.accepted == 1) {
+
+                            const finalResponse = [];
+
+                            for (const allposts of meargAllTableEmail.posts) {
+
+                                for (const getallposts of allposts.posts) {
+
+                                    const userPostDate = getallposts.createdAt;
+
+                                    datetime = userPostDate;
+                                    var userPostedDate = new Date(datetime);
+                                    now = new Date();
+                                    var sec_num = (now - userPostedDate) / 1000;
+                                    var days = Math.floor(sec_num / (3600 * 24));
+                                    var hours = Math.floor((sec_num - (days * (3600 * 24))) / 3600);
+                                    var minutes = Math.floor((sec_num - (days * (3600 * 24)) - (hours * 3600)) / 60);
+                                    var seconds = Math.floor(sec_num - (days * (3600 * 24)) - (hours * 3600) - (minutes * 60));
+
+                                    if (hours < 10) { hours = "0" + hours; }
+                                    if (minutes < 10) { minutes = "0" + minutes; }
+                                    if (seconds < 10) { seconds = "0" + seconds; }
+
+                                    const finalPostedTime = [];
+                                    if (days > 0) {
+                                        finalPostedTime.push(`${days} days`);
+                                    } else if (hours > 0 && days == 0) {
+                                        finalPostedTime.push(`${hours} hours`);
+                                    } else if (minutes > 0 && hours == 0) {
+                                        finalPostedTime.push(`${minutes} minute`);
+                                    } else {
+                                        finalPostedTime.push(`${seconds} second`);
+                                    }
+
+
+                                    const response = {
+                                        getallposts,
+                                        finalPostedTime
+                                    }
+                                    finalResponse.push(response);
+                                }
+                            }
+
                             var status1 = {
                                 email: requestEmail.requestedEmail,
-                                posts: meageAllTableEmail.posts[0].posts
+                                posts: finalResponse
                             }
                             statusByEmail.push(status1)
                         } else {
@@ -450,13 +510,13 @@ exports.userAllFriendPost = async (req, res, next) => {
         const final_data = [];
 
         const finalStatus = []
-        for (const [key, finalData] of meageAllTable.entries()) {
+        for (const [key, finalData] of meargAllTable.entries()) {
             for (const [key, final1Data] of statusByEmail.entries())
                 if (finalData.email === final1Data.email) {
                     finalStatus.push(final1Data)
                 }
         }
-        for (const [key, finalData] of meageAllTable.entries()) {
+        for (const [key, finalData] of meargAllTable.entries()) {
 
             const response = {
                 data: finalStatus[key]

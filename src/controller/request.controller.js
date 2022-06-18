@@ -31,7 +31,7 @@ exports.sendRequest = async (req, res, next) => {
                     const inRequested = [];
                     const allRequestedEmail = emailExitInRequestedModel.RequestedEmails
                     allRequestedEmail.map((result, index) => {
-                        console.log(result.requestedEmail);
+
                         if (result.requestedEmail == req.params.RequestedEmail) {
                             inRequested.push(true)
                         }
@@ -123,7 +123,7 @@ exports.showPostsOnalyAcceptedPerson = async (req, res, next) => {
                     new APIResponse("User not Found or Requested Email Not Found which is Accepted by user!", true, 404)
                 )
             } else {
-                console.log(req.params.RequestedEmail);
+
                 const getAllPostData = await postModel.aggregate([
                     {
                         $match: {
@@ -132,7 +132,7 @@ exports.showPostsOnalyAcceptedPerson = async (req, res, next) => {
                     }])
 
                 const showPost = getAllPostData;
-                console.log(getAllPostData);
+
                 if (true) {
                     const finalShowPost = [];
                     showPost.map((result, index) => {

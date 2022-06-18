@@ -200,8 +200,6 @@ exports.serchFriend = async (req, res, next) => {
                 }
             }])
 
-            console.log(meageAllTable);
-
             const emailDataDetail = meageAllTable[0].result;
 
             for (const emailData of emailDataDetail) {
