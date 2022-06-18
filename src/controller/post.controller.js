@@ -189,6 +189,7 @@ exports.getPostsbyUseId = async (req, res, next) => {
                 for (const createResponse of storeAllpostsUserWise) {
 
                     datetime = createResponse.createdAt;
+                    console.log(datetime);
                     var userPostedDate = new Date(datetime);
                     now = new Date();
                     var sec_num = (now - userPostedDate) / 1000;
@@ -204,13 +205,18 @@ exports.getPostsbyUseId = async (req, res, next) => {
 
                     const finalPostedTime = [];
 
-                    if (days > 0) {
+                    if (days > 30) {
+                        let whenUserPosted = userPostedDate;
+                        const fullDate = new Date(whenUserPosted).toDateString()
+                        finalPostedTime.push(`${fullDate}`);
+                    }
+                    if (days > 0 && days < 30) {
                         finalPostedTime.push(`${days} days`);
                     } else if (hours > 0 && days == 0) {
                         finalPostedTime.push(`${hours} hours`);
                     } else if (minutes > 0 && hours == 0) {
                         finalPostedTime.push(`${minutes} minute`);
-                    } else {
+                    } else if (seconds > 0 && minutes == 0 && hours == 0 && days === 0) {
                         finalPostedTime.push(`${seconds} second`);
                     }
 
@@ -471,13 +477,18 @@ exports.userAllFriendPost = async (req, res, next) => {
                                     if (seconds < 10) { seconds = "0" + seconds; }
 
                                     const finalPostedTime = [];
-                                    if (days > 0) {
+                                    if (days > 30) {
+                                        let whenUserPosted = userPostedDate;
+                                        const fullDate = new Date(whenUserPosted).toDateString()
+                                        finalPostedTime.push(`${fullDate}`);
+                                    }
+                                    if (days > 0 && days < 30) {
                                         finalPostedTime.push(`${days} days`);
                                     } else if (hours > 0 && days == 0) {
                                         finalPostedTime.push(`${hours} hours`);
                                     } else if (minutes > 0 && hours == 0) {
                                         finalPostedTime.push(`${minutes} minute`);
-                                    } else {
+                                    } else if (seconds > 0 && minutes == 0 && hours == 0 && days === 0) {
                                         finalPostedTime.push(`${seconds} second`);
                                     }
 
