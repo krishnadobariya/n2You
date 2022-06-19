@@ -101,8 +101,6 @@ exports.serchFriend = async (req, res, next) => {
             reaquestedAllEmail.push(result.email)
         })
 
-
-
         const RequestedEmailExiestInUser = await requestsModel.find(
             {
                 userEmail: req.params.userEmail,
@@ -115,6 +113,35 @@ exports.serchFriend = async (req, res, next) => {
                 }
             }
         )
+
+
+        const emailGet = [];
+
+        for (const emailExist of RequestedEmailExiestInUser) {
+
+            console.log("emailExist", emailExist);
+            for (const getEmail of emailExist.RequestedEmails) {
+                emailGet.push(getEmail.requestedEmail)
+            }
+        }
+
+        console.log("emailGet", emailGet);
+
+        var difference = reaquestedAllEmail.filter(x => emailGet.indexOf(x) === -1);
+
+        const UniqueEmail = [];
+        for (const uniqueEmail of difference) {
+            const userDetail = await userModel.findOne({email: uniqueEmail});
+            console.log("userDetail" , userDetail);
+            const response = {
+                _id: userDetail._id,
+                email : uniqueEmail,
+                firstName : userDetail.firstName,
+                status: 3
+            }
+
+            UniqueEmail.push(response);
+        }
 
         if (RequestedEmailExiestInUser[0] == undefined) {
             const UserNotAcceptedReuestedandNOtUseFriend = {
@@ -200,16 +227,30 @@ exports.serchFriend = async (req, res, next) => {
                 }
             }])
 
-            const emailDataDetail = meageAllTable[0].result;
 
-            for (const emailData of emailDataDetail) {
+
+            const finalExistUser = [];
+
+            const emailDataDetail = meageAllTable;
+            for (const DataDetail of emailDataDetail) {
+                for (const reqEmail of reaquestedAllEmail) {
+                    if (DataDetail.email == reqEmail) {
+                        finalExistUser.push(DataDetail)
+                    }
+                }
+            }
+
+
+            console.log("finalExistUser", finalExistUser);
+            console.log("emailDataDetail", emailDataDetail);
+            for (const emailData of finalExistUser[0].result) {
 
                 for (const requestEmail of emailData) {
 
-                    for (const meageAllTableEmail of meageAllTable) {
-
+                    for (const meageAllTableEmail of finalExistUser) {
 
                         if (requestEmail.requestedEmail == meageAllTableEmail.email) {
+
 
                             if (requestEmail.accepted == 1) {
                                 var status1 = {
@@ -238,10 +279,10 @@ exports.serchFriend = async (req, res, next) => {
                         finalStatus.push(final1Data.status)
                     }
             }
-            for (const [key, finalData] of meageAllTable.entries()) {
+            for (const [key, finalData] of finalExistUser.entries()) {
 
                 const response = {
-                    details: finalData._id,
+                    _id: finalData._id,
                     polyDating: finalData.polyDating,
                     HowDoYouPoly: finalData.HowDoYouPoly,
                     loveToGive: finalData.loveToGive,
@@ -258,9 +299,14 @@ exports.serchFriend = async (req, res, next) => {
                 }
                 final_data.push(response);
             }
+
+
+
+            const final_response = [...final_data, ...UniqueEmail]
+            console.log(final_data, ...UniqueEmail);
             // let uniqueObjArray = [...new Map(final_data.map((item) => [item["details"], item])).values()];
             res.status(status.OK).json(
-                new APIResponse("show all erecord searchwise", true, 201, final_data)
+                new APIResponse("show all erecord searchwise", true, 201, final_response)
             )
         }
     } catch (error) {
@@ -270,5 +316,7 @@ exports.serchFriend = async (req, res, next) => {
         )
     }
 }
+
+
 
 
