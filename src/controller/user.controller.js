@@ -318,5 +318,3 @@ exports.serchFriend = async (req, res, next) => {
 }
 
 
-
-
