@@ -92,7 +92,7 @@ exports.userRegister = async (req, res, next) => {
 
 // Search Friend
 
-exports.serchFriend = async (req, res, next) => {
+exports.searchFriend = async (req, res, next) => {
     try {
         const Regexname = new RegExp(req.body.searchKey, 'i');
         const searchName = await userModel.find({ firstName: Regexname });
@@ -131,12 +131,12 @@ exports.serchFriend = async (req, res, next) => {
 
         const UniqueEmail = [];
         for (const uniqueEmail of difference) {
-            const userDetail = await userModel.findOne({email: uniqueEmail});
-            console.log("userDetail" , userDetail);
+            const userDetail = await userModel.findOne({ email: uniqueEmail });
+            console.log("userDetail", userDetail);
             const response = {
                 _id: userDetail._id,
-                email : uniqueEmail,
-                firstName : userDetail.firstName,
+                email: uniqueEmail,
+                firstName: userDetail.firstName,
                 status: 3
             }
 
@@ -144,12 +144,18 @@ exports.serchFriend = async (req, res, next) => {
         }
 
         if (RequestedEmailExiestInUser[0] == undefined) {
-            const UserNotAcceptedReuestedandNOtUseFriend = {
-                status: 3
+            const responseData = [];
+            for (const allrequestedDataNotAcceptedRequestAndNotFriend of reaquestedAllEmail) {
+                const userDetail = await userModel.findOne({ email: allrequestedDataNotAcceptedRequestAndNotFriend });
+                const response = {
+                    _id: userDetail._id,
+                    email: allrequestedDataNotAcceptedRequestAndNotFriend,
+                    firstName: userDetail.firstName,
+                    status: 3
+                }
+
+                responseData.push(response);
             }
-            res.status(status.NOT_FOUND).json(
-                new APIResponse("not user friend and not requested", true, 404, UserNotAcceptedReuestedandNOtUseFriend)
-            )
         } else {
 
 
@@ -306,7 +312,7 @@ exports.serchFriend = async (req, res, next) => {
             console.log(final_data, ...UniqueEmail);
             // let uniqueObjArray = [...new Map(final_data.map((item) => [item["details"], item])).values()];
             res.status(status.OK).json(
-                new APIResponse("show all erecord searchwise", true, 201, final_response)
+                new APIResponse("show all record searchwise", true, 201, final_response)
             )
         }
     } catch (error) {

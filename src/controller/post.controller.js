@@ -5,6 +5,7 @@ const postModal = require("../model/post.model");
 const userModal = require("../model/user.model");
 const { default: mongoose } = require("mongoose");
 const requestsModel = require("../model/requests.model");
+const commentModel = require("../model/comment.model");
 
 
 // Mutiple Videos Upload
@@ -148,7 +149,7 @@ exports.addPostImages = async (req, res, next) => {
                     urls.push(newPath);
                 }
                 await postModal.updateOne({ userId: req.params.id }, { $push: { posts: finalData } });
-                
+
                 res.status(status.OK).json(
                     new APIResponse("Post added successfully!", true, 201, finalData)
                 )
@@ -173,7 +174,7 @@ exports.addPostImages = async (req, res, next) => {
 exports.getPostsbyUseId = async (req, res, next) => {
     try {
         const id = req.params.id;
-
+        const finalResponse = [];
         const userFindInPosts = await postModal.findOne({ userId: id });
         if (userFindInPosts) {
 
@@ -185,7 +186,6 @@ exports.getPostsbyUseId = async (req, res, next) => {
                     storeAllpostsUserWise.unshift(result);
                 })
 
-                const finalResponse = [];
 
                 for (const createResponse of storeAllpostsUserWise) {
 
@@ -205,30 +205,41 @@ exports.getPostsbyUseId = async (req, res, next) => {
 
 
                     const finalPostedTime = [];
-
+                    const commentData = [];
                     if (days > 30) {
+                        const getComment = await commentModel.findOne({ postId: createResponse._id });
                         let whenUserPosted = userPostedDate;
                         const fullDate = new Date(whenUserPosted).toDateString()
                         finalPostedTime.push(`${fullDate}`);
+                        commentData.push(getComment)
                     }
                     if (days > 0 && days < 30) {
+                        const getComment = await commentModel.findOne({ postId: createResponse._id });
                         finalPostedTime.push(`${days} days`);
+                        commentData.push(getComment)
                     } else if (hours > 0 && days == 0) {
+                        const getComment = await commentModel.findOne({ postId: createResponse._id });
                         finalPostedTime.push(`${hours} hours`);
+                        commentData.push(getComment)
                     } else if (minutes > 0 && hours == 0) {
+                        const getComment = await commentModel.findOne({ postId: createResponse._id });
                         finalPostedTime.push(`${minutes} minute`);
+                        commentData.push(getComment)
                     } else if (seconds > 0 && minutes == 0 && hours == 0 && days === 0) {
+                        const getComment = await commentModel.findOne({ postId: createResponse._id });
                         finalPostedTime.push(`${seconds} second`);
+                        commentData.push(getComment)
                     }
 
                     const response = {
                         createResponse,
-                        finalPostedTime
+                        finalPostedTime,
+                        commentData
                     }
 
                     finalResponse.push(response)
-                }
 
+                }
                 res.status(status.OK).json(
                     new APIResponse("Get Post user Wise!", true, 201, finalResponse)
                 )
@@ -462,6 +473,7 @@ exports.userAllFriendPost = async (req, res, next) => {
 
                                 for (const getallposts of allposts.posts) {
 
+                                    console.log("getallposts", getallposts);
                                     const userPostDate = getallposts.createdAt;
 
                                     datetime = userPostDate;
@@ -478,25 +490,38 @@ exports.userAllFriendPost = async (req, res, next) => {
                                     if (seconds < 10) { seconds = "0" + seconds; }
 
                                     const finalPostedTime = [];
+                                    const commentData = [];
+
                                     if (days > 30) {
+                                        const getComment = await commentModel.findOne({ postId: getallposts._id });
                                         let whenUserPosted = userPostedDate;
                                         const fullDate = new Date(whenUserPosted).toDateString()
                                         finalPostedTime.push(`${fullDate}`);
+                                        commentData.push(getComment)
                                     }
                                     if (days > 0 && days < 30) {
+                                        const getComment = await commentModel.findOne({ postId: getallposts._id });
                                         finalPostedTime.push(`${days} days`);
+                                        commentData.push(getComment)
                                     } else if (hours > 0 && days == 0) {
+                                        const getComment = await commentModel.findOne({ postId: getallposts._id });
                                         finalPostedTime.push(`${hours} hours`);
+                                        commentData.push(getComment)
                                     } else if (minutes > 0 && hours == 0) {
+                                        const getComment = await commentModel.findOne({ postId: getallposts._id });
                                         finalPostedTime.push(`${minutes} minute`);
+                                        commentData.push(getComment)
                                     } else if (seconds > 0 && minutes == 0 && hours == 0 && days === 0) {
+                                        const getComment = await commentModel.findOne({ postId: getallposts._id });
                                         finalPostedTime.push(`${seconds} second`);
+                                        commentData.push(getComment)
                                     }
 
 
                                     const response = {
                                         getallposts,
-                                        finalPostedTime
+                                        finalPostedTime,
+                                        commentData
                                     }
                                     finalResponse.push(response);
                                 }
@@ -521,7 +546,7 @@ exports.userAllFriendPost = async (req, res, next) => {
 
         const final_data = [];
 
-        const finalStatus = []
+        const finalStatus = [];
         for (const [key, finalData] of meargAllTable.entries()) {
             for (const [key, final1Data] of statusByEmail.entries())
                 if (finalData.email === final1Data.email) {
