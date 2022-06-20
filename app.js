@@ -16,10 +16,12 @@ const userRoutes = require("./src/routes/user.routes");
 const postRoutes = require("./src/routes/post.routes");
 const requestRoutes = require("./src/routes/request.routes");
 const likeRoutes = require("./src/routes/like.routes");
+const commentRoutes = require("./src/routes/comment.routes");
 
 app.use('/user', userRoutes);
 app.use('/posts', postRoutes);
 app.use('/request', requestRoutes);
 app.use('/like', likeRoutes);
+app.use('/comment', commentRoutes);
 
 module.exports = app;

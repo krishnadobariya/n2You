@@ -132,27 +132,36 @@ exports.showAllUserWhichIsLikePost = async (req, res, next) => {
 
             const UniqueId = [];
             for (const uniqueId of difference) {
-                const userDetail = await userModel.findOne({_id : mongoose.Types.ObjectId(uniqueId)});
-                console.log("userDetail" , userDetail);
+                const userDetail = await userModel.findOne({ _id: mongoose.Types.ObjectId(uniqueId) });
+                console.log("userDetail", userDetail);
                 const response = {
                     _id: uniqueId,
-                    email : userDetail.email,
-                    firstName : userDetail.firstName,
+                    email: userDetail.email,
+                    firstName: userDetail.firstName,
                     status: 3
                 }
-    
+
                 UniqueId.push(response);
             }
 
 
-            console.log("UniqueId" , UniqueId);
+            console.log("UniqueId", UniqueId);
 
             if (RequestedEmailExiestInUser[0] == undefined) {
-                const UserNotAcceptedReuestedandNOtUseFriend = {
-                    status: 3
+                const responseData = [];
+                for (const allrequestedDataNotAcceptedRequestAndNotFriend of allRequestedId) {
+                    const userDetail = await userModel.findOne({ _id: mongoose.Types.ObjectId(allrequestedDataNotAcceptedRequestAndNotFriend) });
+                    const response = {
+                        _id: allrequestedDataNotAcceptedRequestAndNotFriend,
+                        email: userDetail.email,
+                        firstName: userDetail.firstName,
+                        status: 3
+                    }
+
+                    responseData.push(response);
                 }
                 res.status(status.NOT_FOUND).json(
-                    new APIResponse("not user friend and not requested", true, 404, UserNotAcceptedReuestedandNOtUseFriend)
+                    new APIResponse("not user friend and not requested", true, 200, responseData)
                 )
             } else {
 
@@ -236,7 +245,7 @@ exports.showAllUserWhichIsLikePost = async (req, res, next) => {
 
 
                 console.log("meageAllTable", meageAllTable);
-        
+
                 const finalExistUser = [];
 
                 const emailDataDetail = meageAllTable;
@@ -247,42 +256,18 @@ exports.showAllUserWhichIsLikePost = async (req, res, next) => {
                         }
                     }
                 }
-    
-                console.log("finalExistUser" , finalExistUser);
-                // console.log("emailDataDetail" , emailDataDetail);
-                // for (const emailData of finalExistUser[0].result) {
 
-                //     for (findresult of emailData.result) {
-                //         // console.log("findresult", findresult);
-
-                //         for (accepted1 of findresult) {
-
-                //             if (accepted1.accepted == 1) {
-                //                 var status1 = {
-                //                     status: 1,
-                //                     email: accepted1.requestedEmail
-                //                 }
-                //                 statusByEmail.push(status1)
-                //             } else {
-                //                 var status2 = {
-                //                     status: 2,
-                //                     email: accepted1.requestedEmail
-                //                 }
-                //                 statusByEmail.push(status2)
-                //             }
-                //         }
-                //     }
-                // }
+                console.log("finalExistUser", finalExistUser);
 
                 for (const emailData of finalExistUser[0].result) {
 
                     for (const requestEmail of emailData) {
-    
+
                         for (const meageAllTableEmail of finalExistUser) {
-    
+
                             if (requestEmail.requestedEmail == meageAllTableEmail.email) {
-    
-                                console.log("requestEmail" , requestEmail);
+
+                                console.log("requestEmail", requestEmail);
                                 if (requestEmail.accepted == 1) {
                                     var status1 = {
                                         status: 1,
@@ -334,7 +319,7 @@ exports.showAllUserWhichIsLikePost = async (req, res, next) => {
                 console.log(final_data, ...UniqueId);
                 // let uniqueObjArray = [...new Map(final_data.map((item) => [item["details"], item])).values()];
                 res.status(status.OK).json(
-                    new APIResponse("show all erecord searchwise", true, 201, final_response)
+                    new APIResponse("show all record which is Like Post", true, 201, final_response)
                 )
             }
 
