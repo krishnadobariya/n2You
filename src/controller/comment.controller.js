@@ -66,7 +66,7 @@ exports.replyComment = async (req, res, next) => {
     try {
 
         const findPost = await commentModel.findOne({ postId: req.params.postId })
-
+h
         if (findPost == null) {
             res.status(status.NOT_FOUND).json(
                 new APIResponse("Post Not Found", false, 404)
@@ -106,7 +106,7 @@ exports.replyComment = async (req, res, next) => {
 
 
                 }
-            }
+            }    
         }
 
     } catch (error) {
