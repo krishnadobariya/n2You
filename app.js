@@ -17,11 +17,13 @@ const postRoutes = require("./src/routes/post.routes");
 const requestRoutes = require("./src/routes/request.routes");
 const likeRoutes = require("./src/routes/like.routes");
 const commentRoutes = require("./src/routes/comment.routes");
+const blockUnblockUser = require("./src/routes/blockuser.routes")
 
 app.use('/user', userRoutes);
 app.use('/posts', postRoutes);
 app.use('/request', requestRoutes);
 app.use('/like', likeRoutes);
 app.use('/comment', commentRoutes);
+app.use('/blockUnblockUser', blockUnblockUser)
 
 module.exports = app;
