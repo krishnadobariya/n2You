@@ -101,6 +101,9 @@ exports.searchFriend = async (req, res, next) => {
             reaquestedAllEmail.push(result.email)
         })
 
+        console.log("HRTHGRT");
+        console.log("reaquestedAllEmail", reaquestedAllEmail);
+
         const RequestedEmailExiestInUser = await requestsModel.find(
             {
                 userEmail: req.params.userEmail,
@@ -116,6 +119,8 @@ exports.searchFriend = async (req, res, next) => {
 
 
         const emailGet = [];
+
+        console.log("RequestedEmailExiestInUser", RequestedEmailExiestInUser);
 
         for (const emailExist of RequestedEmailExiestInUser) {
 
