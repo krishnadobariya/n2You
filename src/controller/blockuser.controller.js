@@ -71,11 +71,11 @@ exports.blockUserList = async (req, res, next) => {
         const userFound = await blockUnblockUserModel.findOne({ userId: req.params.userId })
         if (userFound == null) {
             res.status(status.NOT_FOUND).json(
-                new APIResponse("User Not Found", false, 404)
+                new APIResponse("User Not Found", "false", 404, "0")
             );
         } else {
             const finalListOfBlockUser = [];
-            console.log("userFound", userFound);
+
             for (const finalData of userFound.blockUnblockUser) {
                 const blockUser = {
                     userId: finalData.blockUserId,
@@ -85,14 +85,14 @@ exports.blockUserList = async (req, res, next) => {
             }
 
             res.status(status.CREATED).json(
-                new APIResponse("block List!", true, 201, finalListOfBlockUser)
+                new APIResponse("block List!", "true", 201, "1", finalListOfBlockUser)
             )
         }
 
     } catch (error) {
         console.log("Error:", error);
         res.status(status.INTERNAL_SERVER_ERROR).json(
-            new APIResponse("Something Went Wrong", false, 500, error.message)
+            new APIResponse("Something Went Wrong", "false", 500, "0", error.message)
         );
     }
 }
@@ -103,19 +103,19 @@ exports.unBlockUser = async (req, res, next) => {
         const userFound = await blockUnblockUserModel.findOne({ userId: req.params.userId })
         if (userFound == null) {
             res.status(status.NOT_FOUND).json(
-                new APIResponse("User Not Found", false, 404)
+                new APIResponse("User Not Found", "false", 404, "0")
             );
         } else {
             const blockUserFound = await blockUnblockUserModel.findOne({ "blockUnblockUser._id": req.params.blockUserId })
             if (blockUserFound == null) {
                 res.status(status.NOT_FOUND).json(
-                    new APIResponse("blockUser Not Found", false, 404)
+                    new APIResponse("blockUser Not Found", "false", 404, "0")
                 );
             } else {
                 const checkBlockUserExistInUser = await blockUnblockUserModel.findOne({ userId: req.params.userId, "blockUnblockUser._id": req.params.blockUserId })
                 if (checkBlockUserExistInUser == null) {
                     res.status(status.NOT_FOUND).json(
-                        new APIResponse("Not Found", false, 404)
+                        new APIResponse("Not Found", "false", 404, "0")
                     );
                 } else {
                     if (req.params.blockUnblock == 0) {
@@ -132,12 +132,12 @@ exports.unBlockUser = async (req, res, next) => {
                             });
 
                         res.status(status.OK).json(
-                            new APIResponse("unblockUser successfully!", true, 200)
+                            new APIResponse("unblockUser successfully!", "true", 200, "1")
                         )
 
                     } else {
                         res.status(status.NOT_FOUND).json(
-                            new APIResponse("Not allowed", false, 404)
+                            new APIResponse("Not allowed", "false", 404, "0")
                         );
                     }
                 }
@@ -149,7 +149,7 @@ exports.unBlockUser = async (req, res, next) => {
     } catch (error) {
         console.log("Error:", error);
         res.status(status.INTERNAL_SERVER_ERROR).json(
-            new APIResponse("Something Went Wrong", false, 500, error.message)
+            new APIResponse("Something Went Wrong", "false", 500, "0", error.message)
         );
     }
 }
