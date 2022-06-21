@@ -52,7 +52,7 @@ exports.addPostVideo = async (req, res, next) => {
 
                 const saveData = await posts.save();
                 res.status(status.CREATED).json(
-                    new APIResponse("Posts Inserted successfully!", true, 201, saveData)
+                    new APIResponse("Posts Inserted successfully!", "true", 201, "1", saveData)
                 )
             } else {
                 const urls = [];
@@ -72,19 +72,19 @@ exports.addPostVideo = async (req, res, next) => {
                 await postModal.updateOne({ userId: req.params.id }, { $push: { posts: finalData } });
 
                 res.status(status.OK).json(
-                    new APIResponse("Post added successfully!", true, 201, finalData)
+                    new APIResponse("Post added successfully!", "true", 201, "1", finalData)
                 )
             }
         } else {
             res.status(status.NOT_FOUND).json(
-                new APIResponse("User not found", false, 404)
+                new APIResponse("User not found", "false", 404, "0")
             )
         }
 
     } catch (error) {
         console.log("Error:", error);
         res.status(status.INTERNAL_SERVER_ERROR).json(
-            new APIResponse("Something Went Wrong", false, 500, error.message)
+            new APIResponse("Something Went Wrong", "false", 500, "0", error.message)
         )
     }
 }
@@ -131,7 +131,7 @@ exports.addPostImages = async (req, res, next) => {
 
                 const saveData = await posts.save();
                 res.status(status.CREATED).json(
-                    new APIResponse("Posts Inserted successfully!", true, 201, saveData)
+                    new APIResponse("Posts Inserted successfully!", "true", 201, "1", saveData)
                 )
             } else {
                 const urls = [];
@@ -151,20 +151,20 @@ exports.addPostImages = async (req, res, next) => {
                 await postModal.updateOne({ userId: req.params.id }, { $push: { posts: finalData } });
 
                 res.status(status.OK).json(
-                    new APIResponse("Post added successfully!", true, 201, finalData)
+                    new APIResponse("Post added successfully!", "true", 201, "1", finalData)
                 )
             }
 
         } else {
             res.status(status.NOT_FOUND).json(
-                new APIResponse("User not found", false, 404)
+                new APIResponse("User not found", "false", 404, "0")
             )
         }
 
     } catch (error) {
         console.log("Error:", error);
         res.status(status.INTERNAL_SERVER_ERROR).json(
-            new APIResponse("Something Went Wrong", false, 500, error.message)
+            new APIResponse("Something Went Wrong", "false", 500, "0", error.message)
         )
     }
 }
@@ -241,24 +241,24 @@ exports.getPostsbyUseId = async (req, res, next) => {
 
                 }
                 res.status(status.OK).json(
-                    new APIResponse("Get Post user Wise!", true, 201, finalResponse)
+                    new APIResponse("Get Post user Wise!", "true", 201, "1", finalResponse)
                 )
 
             } else {
                 res.status(status.NOT_FOUND).json(
-                    new APIResponse("Not Posted!", false, 404)
+                    new APIResponse("Not Posted!", "false", 404, "0")
                 )
             }
         } else {
             res.status(status.NOT_FOUND).json(
-                new APIResponse("User Not Found!", false, 404)
+                new APIResponse("User Not Found!", "false", 404, "0")
             )
         }
 
     } catch (error) {
         console.log("Error:", error);
         res.status(status.INTERNAL_SERVER_ERROR).json(
-            new APIResponse("Something Went Wrong", false, 500, error.message)
+            new APIResponse("Something Went Wrong", "false", 500, "0", error.message)
         )
     }
 }
@@ -316,16 +316,16 @@ exports.EditPosts = async (req, res, next) => {
 
             if (findPostAndUser.modifiedCount == 1) {
                 res.status(status.OK).json(
-                    new APIResponse("successfully Post Updated!", true, 200)
+                    new APIResponse("successfully Post Updated!", "true", 200, "1")
                 )
             } else {
                 res.status(status.INTERNAL_SERVER_ERROR).json(
-                    new APIResponse("Somthing went Wrong", false, 500)
+                    new APIResponse("Somthing went Wrong", "false", 500, "0")
                 )
             }
         } else {
             res.status(status.NOT_FOUND).json(
-                new APIResponse("User or Post Not Found!", false, 404)
+                new APIResponse("User or Post Not Found!", "false", 404, "0")
             )
         }
 
@@ -334,7 +334,7 @@ exports.EditPosts = async (req, res, next) => {
     } catch (error) {
         console.log("Error:", error);
         res.status(status.INTERNAL_SERVER_ERROR).json(
-            new APIResponse("Something Went Wrong", false, 500, error.message)
+            new APIResponse("Something Went Wrong", "false", 500, "0", error.message)
         )
     }
 }
@@ -363,23 +363,23 @@ exports.deletePost = async (req, res, next) => {
 
             if (findPostAndUser.modifiedCount == 1) {
                 res.status(status.OK).json(
-                    new APIResponse("successfully Post Deleted!", true, 200)
+                    new APIResponse("successfully Post Deleted!", "true", 200, "1")
                 )
             } else {
                 res.status(status.INTERNAL_SERVER_ERROR).json(
-                    new APIResponse("Somthing went Wrong", false, 500)
+                    new APIResponse("Somthing went Wrong", "false", 500, "0")
                 )
             }
         } else {
             res.status(status.NOT_FOUND).json(
-                new APIResponse("User or Post Not Found!", false, 404)
+                new APIResponse("User or Post Not Found!", "false", 404, "0")
             )
         }
 
     } catch (error) {
         console.log("Error:", error);
         res.status(status.INTERNAL_SERVER_ERROR).json(
-            new APIResponse("Something Went Wrong", false, 500, error.message)
+            new APIResponse("Something Went Wrong", "false", 500, "0", error.message)
         )
     }
 }
@@ -475,7 +475,7 @@ exports.userAllFriendPost = async (req, res, next) => {
 
                                     for (const getallposts of allposts.posts) {
 
-                                        console.log("getallposts", getallposts);
+
                                         const userPostDate = getallposts.createdAt;
 
                                         datetime = userPostDate;
@@ -565,18 +565,18 @@ exports.userAllFriendPost = async (req, res, next) => {
 
 
             res.status(status.OK).json(
-                new APIResponse("show all post When accept by the user", true, 201, final_data)
+                new APIResponse("show all post When accept by the user", "true", 201, "1", final_data)
             )
         } else {
             res.status(status.OK).json(
-                new APIResponse("user not have any friends", false, 400)
+                new APIResponse("user not have any friends", "false", 400, "0")
             )
         }
 
     } catch (error) {
         console.log("Error:", error);
         res.status(status.INTERNAL_SERVER_ERROR).json(
-            new APIResponse("Something Went Wrong", false, 500, error.message)
+            new APIResponse("Something Went Wrong", "false", 500, "0", error.message)
         )
     }
 }
