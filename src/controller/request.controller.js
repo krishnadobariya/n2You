@@ -90,13 +90,14 @@ exports.userAcceptedRequesteOrNot = async (req, res, next) => {
         const reqConfirm = req.body.accepted;
         const reqestEmail = req.params.email;
 
-        const checkRequestEmail = await requestModel.find({ "RequestedEmails.requestedEmail": reqestEmail });
+
+        const checkRequestEmail = await requestModel.findOne({ userId: req.params.userId, "RequestedEmails.requestedEmail": reqestEmail });
         if (!checkRequestEmail) {
             res.status(status.NOT_FOUND).json(
                 new APIResponse("Request Not Found", false, 404)
             )
         } else {
-            const updatePosts = await requestModel.updateOne({ "RequestedEmails.requestedEmail": reqestEmail },
+            const updatePosts = await requestModel.updateOne({ userId: req.params.userId, "RequestedEmails.requestedEmail": reqestEmail },
                 {
                     $set: {
                         "RequestedEmails.$.accepted": 1
@@ -170,5 +171,6 @@ exports.showPostsOnalyAcceptedPerson = async (req, res, next) => {
         )
     }
 }
+
 
 
