@@ -11,19 +11,19 @@ exports.CommetInsert = async (req, res, next) => {
 
         if (findPost == null) {
             res.status(status.NOT_FOUND).json(
-                new APIResponse("Post Not Found", false, 404)
+                new APIResponse("Post Not Found", "false", 404, "0")
             );
 
         } else {
             const findUser = await userModel.findOne({ _id: req.params.userId });
             if (findUser == null) {
                 res.status(status.NOT_FOUND).json(
-                    new APIResponse("User Not Found", false, 404)
+                    new APIResponse("User Not Found", "false", 404, "0")
                 );
             } else {
 
                 const findPostInCommentModel = await commentModel.findOne({ postId: req.params.postId })
-                console.log("findPostInCommentModel", findPostInCommentModel);
+
                 if (findPostInCommentModel) {
 
                     const finalData = {
@@ -34,7 +34,7 @@ exports.CommetInsert = async (req, res, next) => {
                     await commentModel.updateOne({ postId: req.params.postId }, { $push: { comments: finalData } });
 
                     res.status(status.OK).json(
-                        new APIResponse("comment added successfully!", true, 201, finalData)
+                        new APIResponse("comment added successfully!", "true", 201, "1", finalData)
                     )
                 } else {
                     const comment = commentModel({
@@ -47,7 +47,7 @@ exports.CommetInsert = async (req, res, next) => {
 
                     const saveData = await comment.save();
                     res.status(status.CREATED).json(
-                        new APIResponse("comment Added", true, 201, saveData)
+                        new APIResponse("comment Added", "true", 201, "1", saveData)
                     )
                 }
 
@@ -56,7 +56,7 @@ exports.CommetInsert = async (req, res, next) => {
     } catch (error) {
         console.log("Error:", error);
         res.status(status.INTERNAL_SERVER_ERROR).json(
-            new APIResponse("Something Went Wrong", false, 500, error.message)
+            new APIResponse("Something Went Wrong", "false", 500, "0", error.message)
         );
     }
 }
@@ -66,22 +66,22 @@ exports.replyComment = async (req, res, next) => {
     try {
 
         const findPost = await commentModel.findOne({ postId: req.params.postId })
-h
+        h
         if (findPost == null) {
             res.status(status.NOT_FOUND).json(
-                new APIResponse("Post Not Found", false, 404)
+                new APIResponse("Post Not Found", "false", 404, "0")
             );
         } else {
             const findUser = await userModel.findOne({ _id: req.params.userId });
             if (findUser == null) {
                 res.status(status.NOT_FOUND).json(
-                    new APIResponse("User Not Found", false, 404)
+                    new APIResponse("User Not Found", "false", 404, "0")
                 );
             } else {
                 const findComment = await commentModel.findOne({ "comments._id": req.params.commentId })
                 if (findComment == null) {
                     res.status(status.NOT_FOUND).json(
-                        new APIResponse("Comment Not Found", false, 404)
+                        new APIResponse("Comment Not Found", "false", 404, "0")
                     );
                 } else {
 
@@ -89,7 +89,7 @@ h
 
                     if (postInComment == null) {
                         res.status(status.NOT_FOUND).json(
-                            new APIResponse("Not Found", false, 404)
+                            new APIResponse("Not Found", "false", 404, "0")
                         );
                     } else {
                         const finalData = {
@@ -100,19 +100,19 @@ h
                         await commentModel.updateOne({ postId: req.params.postId, "comments._id": req.params.commentId }, { $push: { "comments.$.replyUser": finalData } });
 
                         res.status(status.OK).json(
-                            new APIResponse("Reply Added Successfully", true, 200, finalData)
+                            new APIResponse("Reply Added Successfully", "true", 200, "1", finalData)
                         );
                     }
 
 
                 }
-            }    
+            }
         }
 
     } catch (error) {
         console.log("Error:", error);
         res.status(status.INTERNAL_SERVER_ERROR).json(
-            new APIResponse("Something Went Wrong", false, 500, error.message)
+            new APIResponse("Something Went Wrong", "false", 500, "0", error.message)
         );
     }
 }
