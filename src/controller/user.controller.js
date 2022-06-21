@@ -392,9 +392,9 @@ exports.getDataUserWise = async (req, res, next) => {
 
             const getAllPosts = [];
             for (const userAllData of data) {
-           
+
                 for (const userPost of userAllData.posts) {
-                  
+
                     for (const getPost of userPost.posts) {
 
                         const userPostDate = getPost.createdAt;
