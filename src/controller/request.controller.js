@@ -29,7 +29,7 @@ exports.sendRequest = async (req, res, next) => {
 
                     const saveData = await request.save();
                     res.status(status.CREATED).json(
-                        new APIResponse("Request Send successfully!", true, 201, saveData)
+                        new APIResponse("Request Send successfully!", true, 201, 1, saveData)
                     )
                 } else {
                     const inRequested = [];
@@ -42,7 +42,7 @@ exports.sendRequest = async (req, res, next) => {
                     })
                     if (inRequested[0] == true) {
                         res.status(status.ALREADY_REPORTED).json(
-                            new APIResponse("Already requesed!", true, 208)
+                            new APIResponse("Already requesed!", "false", 208, "0")
                         )
                     } else {
                         const updatePosts = await requestModel.updateOne({ userEmail: req.params.userEmail },
@@ -57,7 +57,7 @@ exports.sendRequest = async (req, res, next) => {
                             })
 
                         res.status(status.CREATED).json(
-                            new APIResponse("Request Send successfully!", true, 201)
+                            new APIResponse("Request Send successfully!", "true", 201, "1")
                         )
                     }
 
@@ -65,19 +65,19 @@ exports.sendRequest = async (req, res, next) => {
 
             } else {
                 res.status(status.NOT_FOUND).json(
-                    new APIResponse("User Not Found!", false, 404)
+                    new APIResponse("User Not Found!", "false", 404, "0")
                 )
             }
         } else {
             res.status(status.NOT_FOUND).json(
-                new APIResponse("User Not Found!", false, 404)
+                new APIResponse("User Not Found!", "false", 404, "0")
             )
         }
 
     } catch (error) {
         console.log("Error:", error);
         res.status(status.INTERNAL_SERVER_ERROR).json(
-            new APIResponse("Something Went Wrong", false, 500, error.message)
+            new APIResponse("Something Went Wrong", "false", 500, "0", error.message)
         )
     }
 }
@@ -94,7 +94,7 @@ exports.userAcceptedRequesteOrNot = async (req, res, next) => {
         const checkRequestEmail = await requestModel.findOne({ userId: req.params.userId, "RequestedEmails.requestedEmail": reqestEmail });
         if (!checkRequestEmail) {
             res.status(status.NOT_FOUND).json(
-                new APIResponse("Request Not Found", false, 404)
+                new APIResponse("Request Not Found", "false", 404, "0")
             )
         } else {
             const updatePosts = await requestModel.updateOne({ userId: req.params.userId, "RequestedEmails.requestedEmail": reqestEmail },
@@ -105,14 +105,14 @@ exports.userAcceptedRequesteOrNot = async (req, res, next) => {
                 })
 
             res.status(status.OK).json(
-                new APIResponse("request accepted successfully!", true, 200)
+                new APIResponse("request accepted successfully!", "true", 200, "1")
             )
         }
 
     } catch (error) {
         console.log("Error:", error);
         res.status(status.INTERNAL_SERVER_ERROR).json(
-            new APIResponse("Something Went Wrong", false, 500, error.message)
+            new APIResponse("Something Went Wrong", "false", 500, "0", error.message)
         )
     }
 }
@@ -126,7 +126,7 @@ exports.showPostsOnalyAcceptedPerson = async (req, res, next) => {
 
             if (acceptedOrNot[0] == undefined) {
                 res.status(status.NOT_FOUND).json(
-                    new APIResponse("User not Found or Requested Email Not Found which is Accepted by user!", true, 404)
+                    new APIResponse("User not Found or Requested Email Not Found which is Accepted by user!", "false", 404, "0")
                 )
             } else {
 
@@ -147,11 +147,11 @@ exports.showPostsOnalyAcceptedPerson = async (req, res, next) => {
 
                     if (finalShowPost[0] == undefined) {
                         res.status(status.NOT_FOUND).json(
-                            new APIResponse("User not Posted Anything", false, 404)
+                            new APIResponse("User not Posted Anything", "false", 404, "0")
                         )
                     } else {
                         res.status(status.OK).json(
-                            new APIResponse("Show All posts", true, 200, finalShowPost)
+                            new APIResponse("Show All posts", "true", 200, "1", finalShowPost)
                         )
                     }
                 }
@@ -160,17 +160,19 @@ exports.showPostsOnalyAcceptedPerson = async (req, res, next) => {
 
         } else {
             res.status(status.NOT_FOUND).json(
-                new APIResponse("User Not Found!", false, 404)
+                new APIResponse("User Not Found!", "false", 404, "0")
             )
         }
 
     } catch (error) {
         console.log("Error:", error);
         res.status(status.INTERNAL_SERVER_ERROR).json(
-            new APIResponse("Something Went Wrong", false, 500, error.message)
+            new APIResponse("Something Went Wrong", "false", 500, "0", error.message)
         )
     }
 }
+
+
 
 
 
