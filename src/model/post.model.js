@@ -21,7 +21,10 @@ const postSchema = mongoose.Schema({
         },
         like: {
             type: Number,
-            require: true,
+            default: 0
+        },
+        report: {
+            type: Number,
             default: 0
         },
         createdAt: {
