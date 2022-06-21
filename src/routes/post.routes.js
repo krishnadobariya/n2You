@@ -9,5 +9,6 @@ router.get('/userWisePosts/:id', postController.getPostsbyUseId);
 router.put('/update/:UserId/:PostId', postController.EditPosts);
 router.delete('/delete/:UserId/:PostId', postController.deletePost);
 router.get('/show/friend/:UserEmail', postController.userAllFriendPost);
+router.put('/reportAdd/:UserId/:PostId', postController.reportAdd);
 
 module.exports = router;

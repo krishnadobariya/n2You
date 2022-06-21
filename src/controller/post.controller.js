@@ -581,4 +581,38 @@ exports.userAllFriendPost = async (req, res, next) => {
     }
 }
 
+exports.reportAdd = async (req, res, next) => {
+    try {
 
+        const userFind = await postModal.findOne({ userId: req.params.UserId })
+        console.log(userFind);
+
+        if (userFind == null) {
+            res.status(status.NOT_FOUND).json(
+                new APIResponse("User Not Found!", "false", 404, "0")
+            )
+        } else {
+            const postFind = await postModal.findOne({
+                userId: req.params.UserId,
+                "posts._id": req.params.PostId
+            })
+
+            if (postFind == null) {
+                res.status(status.NOT_FOUND).json(
+                    new APIResponse("User or Post Not Found!", "false", 404, "0")
+                )
+            } else {
+                 
+                await postModal.updateOne({ "posts._id": req.params.PostId }, { $inc: { "posts.$.report": 1 } });
+                res.status(status.CREATED).json(
+                    new APIResponse("report Added", "true", 201, "1")
+                );
+            }
+        }
+    } catch (error) {
+        console.log("Error:", error);
+        res.status(status.INTERNAL_SERVER_ERROR).json(
+            new APIResponse("Something Went Wrong", "false", 500, "0", error.message)
+        )
+    }
+}
