@@ -3,6 +3,8 @@ const APIResponse = require("../helper/APIResponse");
 const status = require("http-status");
 const cloudinary = require("../utils/cloudinary.utils");
 const requestsModel = require("../model/requests.model");
+const { default: mongoose } = require("mongoose");
+const commentModel = require("../model/comment.model");
 
 exports.userRegister = async (req, res, next) => {
     try {
@@ -325,7 +327,7 @@ exports.searchFriend = async (req, res, next) => {
                     const final_response = [...final_data, ...UniqueEmail]
                     console.log(final_data, ...UniqueEmail);
                     // let uniqueObjArray = [...new Map(final_data.map((item) => [item["details"], item])).values()];
-                    
+
                     res.status(status.OK).json(
                         new APIResponse("show all record searchwise", true, 201, 1, final_response)
                     )
@@ -341,6 +343,145 @@ exports.searchFriend = async (req, res, next) => {
     }
 }
 
+exports.getDataUserWise = async (req, res, next) => {
+    try {
 
+        const userFind = await userModel.findOne({ _id: req.params.UserId })
+
+        if (userFind == null) {
+            res.status(status.NOT_FOUND).json(
+                new APIResponse("user not Found", "false", 404, "0")
+            )
+        } else {
+
+            const data = await userModel.aggregate([
+                {
+                    $match: {
+                        _id: mongoose.Types.ObjectId(req.params.UserId)
+                    }
+                },
+                {
+                    $lookup: {
+                        from: "posts",
+                        localField: "_id",
+                        foreignField: "userId",
+                        as: "datas"
+                    }
+                }, {
+                    $project: {
+                        polyDating: '$polyDating',
+                        email: "$email",
+                        polyDating: '$polyDating',
+                        loveToGive: '$loveToGive',
+                        polyRelationship: '$polyRelationship',
+                        firstName: '$firstName',
+                        birthDate: '$birthDate',
+                        identity: '$identity',
+                        relationshipSatus: '$relationshipSatus',
+                        IntrestedIn: '$IntrestedIn',
+                        Bio: '$Bio',
+                        photo: '$photo',
+                        hopingToFind: '$hopingToFind',
+                        jobTitle: 'jobTitle',
+                        wantChildren: '$wantChildren',
+                        phoneNumber: '$phoneNumber',
+                        extraAtrribute: '$extraAtrribute',
+                        posts: '$datas'
+                    }
+                }])
+
+            const getAllPosts = [];
+            for (const userAllData of data) {
+           
+                for (const userPost of userAllData.posts) {
+                  
+                    for (const getPost of userPost.posts) {
+
+                        const userPostDate = getPost.createdAt;
+
+
+                        datetime = userPostDate;
+                        var userPostedDate = new Date(datetime);
+                        now = new Date();
+                        var sec_num = (now - userPostedDate) / 1000;
+                        var days = Math.floor(sec_num / (3600 * 24));
+                        var hours = Math.floor((sec_num - (days * (3600 * 24))) / 3600);
+                        var minutes = Math.floor((sec_num - (days * (3600 * 24)) - (hours * 3600)) / 60);
+                        var seconds = Math.floor(sec_num - (days * (3600 * 24)) - (hours * 3600) - (minutes * 60));
+
+                        if (hours < 10) { hours = "0" + hours; }
+                        if (minutes < 10) { minutes = "0" + minutes; }
+                        if (seconds < 10) { seconds = "0" + seconds; }
+
+                        const finalPostedTime = [];
+                        const commentData = [];
+
+                        if (days > 30) {
+                            const getComment = await commentModel.findOne({ postId: getPost._id });
+                            let whenUserPosted = userPostedDate;
+                            const fullDate = new Date(whenUserPosted).toDateString()
+                            finalPostedTime.push(`${fullDate}`);
+                            commentData.push(getComment)
+                        }
+                        if (days > 0 && days < 30) {
+                            const getComment = await commentModel.findOne({ postId: getPost._id });
+                            finalPostedTime.push(`${days} days`);
+                            commentData.push(getComment)
+                        } else if (hours > 0 && days == 0) {
+                            const getComment = await commentModel.findOne({ postId: getPost._id });
+                            finalPostedTime.push(`${hours} hours`);
+                            commentData.push(getComment)
+                        } else if (minutes > 0 && hours == 0) {
+                            const getComment = await commentModel.findOne({ postId: getPost._id });
+                            finalPostedTime.push(`${minutes} minute`);
+                            commentData.push(getComment)
+                        } else if (seconds > 0 && minutes == 0 && hours == 0 && days === 0) {
+                            const getComment = await commentModel.findOne({ postId: getPost._id });
+                            finalPostedTime.push(`${seconds} second`);
+                            commentData.push(getComment)
+                        }
+
+
+                        const response = {
+                            getPost,
+                            finalPostedTime,
+                            commentData
+                        }
+                        getAllPosts.push(response);
+                    }
+                }
+            }
+
+            const response = {
+                polyDating: data[0].polyDating,
+                email: data[0].email,
+                loveToGive: data[0].loveToGive,
+                polyRelationship: data[0].polyRelationship,
+                firstName: data[0].firstName,
+                birthDate: data[0].birthDate,
+                identity: data[0].identity,
+                relationshipSatus: data[0].relationshipSatus,
+                IntrestedIn: data[0].IntrestedIn,
+                Bio: data[0].Bio,
+                photo: data[0].photo,
+                hopingToFind: data[0].hopingToFind,
+                jobTitle: data[0].jobTitle,
+                wantChildren: data[0].wantChildren,
+                phoneNumber: data[0].phoneNumber,
+                extraAtrribute: data[0].extraAtrribute,
+                getAllPosts
+            }
+            res.status(status.OK).json(
+                new APIResponse("show UserWise get", "true", 201, "1", response)
+            )
+        }
+
+
+    } catch (error) {
+        res.status(status.INTERNAL_SERVER_ERROR).json(
+            new APIResponse("Something Went Wrong", "false", 500, "0", error.message)
+        )
+    }
+}
 
 
