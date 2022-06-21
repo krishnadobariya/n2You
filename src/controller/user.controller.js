@@ -122,7 +122,7 @@ exports.searchFriend = async (req, res, next) => {
                 }
             )
 
-            if (RequestedEmailExiestInUser == null) {
+            if (RequestedEmailExiestInUser[0] == undefined) {
                 res.status(status.NOT_FOUND).json(
                     new APIResponse("Requested Email Not Exiest In User or User not Found", "false", 404, "0")
                 )
@@ -134,13 +134,11 @@ exports.searchFriend = async (req, res, next) => {
 
                 for (const emailExist of RequestedEmailExiestInUser) {
 
-                    console.log("emailExist", emailExist);
+
                     for (const getEmail of emailExist.RequestedEmails) {
                         emailGet.push(getEmail.requestedEmail)
                     }
                 }
-
-                console.log("emailGet", emailGet);
 
                 var difference = reaquestedAllEmail.filter(x => emailGet.indexOf(x) === -1);
 
@@ -159,7 +157,7 @@ exports.searchFriend = async (req, res, next) => {
                 }
 
 
-                if (RequestedEmailExiestInUser == null) {
+                if (RequestedEmailExiestInUser[0] == undefined) {
                     const responseData = [];
                     for (const allrequestedDataNotAcceptedRequestAndNotFriend of reaquestedAllEmail) {
                         const userDetail = await userModel.findOne({ email: allrequestedDataNotAcceptedRequestAndNotFriend });
