@@ -83,6 +83,55 @@ exports.sendRequest = async (req, res, next) => {
 }
 
 
+exports.getRequestUserWise = async (req, res, next) => {
+    try {
+        const allNotAcceptedRequestes = [];
+        const findUserInRequestModel = await requestModel.findOne({ userEmail: req.params.userEmail });
+        if (findUserInRequestModel == null) {
+            res.status(status.NOT_FOUND).json(
+                new APIResponse("User Not Found!", "false", 404, "0")
+            )
+        } else {
+            const RequestEmail = findUserInRequestModel.RequestedEmails;
+            const Requests = [];
+            for (const allRequestEmail of RequestEmail) {
+                const finalResponse = {
+                    RequestEmail: allRequestEmail.requestedEmail,
+                    accepted: allRequestEmail.accepted
+                }
+                Requests.push(finalResponse)
+            }
+
+
+            for (const notAcceptedRequest of Requests) {
+                if (notAcceptedRequest.accepted == 0) {
+                    allNotAcceptedRequestes.push(notAcceptedRequest)
+                }
+            }
+
+            if (allNotAcceptedRequestes[0] == undefined) {
+                res.status(status.NOT_FOUND).json(
+                    new APIResponse("Request accpted by the User!", "false", 404, "0")
+                )
+            } else {
+                res.status(status.NOT_FOUND).json(
+                    new APIResponse("All Reuested User", "true", 200, "1", allNotAcceptedRequestes)
+                )
+            }
+
+            console.log(allNotAcceptedRequestes);
+
+        }
+
+
+    } catch (error) {
+        console.log("Error:", error);
+        res.status(status.INTERNAL_SERVER_ERROR).json(
+            new APIResponse("Something Went Wrong", "false", 500, "0", error.message)
+        )
+    }
+}
+
 exports.userAcceptedRequesteOrNot = async (req, res, next) => {
     try {
 

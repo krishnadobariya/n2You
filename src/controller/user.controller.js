@@ -325,6 +325,7 @@ exports.searchFriend = async (req, res, next) => {
                     const final_response = [...final_data, ...UniqueEmail]
                     console.log(final_data, ...UniqueEmail);
                     // let uniqueObjArray = [...new Map(final_data.map((item) => [item["details"], item])).values()];
+                    
                     res.status(status.OK).json(
                         new APIResponse("show all record searchwise", true, 201, 1, final_response)
                     )
