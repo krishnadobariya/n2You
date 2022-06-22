@@ -15,12 +15,12 @@ exports.LikeOrDislikeInUserPost = async (req, res, next) => {
             const postFindInPostModel = await postModel.findOne({ userId: req.params.user_id, "posts._id": req.params.post_id });
 
             if (postFindInPostModel) {
-             
+
                 if (req.params.value == 1) {
                     const data = await postModel.updateOne({ "posts._id": req.params.post_id }, { $inc: { "posts.$.like": 1 } });
 
                     const checkUserInLike = await likeModel.findOne({ reqUserId: req.params.req_user_id, postId: req.params.post_id });
-                   
+
                     if (checkUserInLike == null) {
                         const InsertIntoLikeTable = likeModel({
                             userId: req.params.user_id,
@@ -42,10 +42,11 @@ exports.LikeOrDislikeInUserPost = async (req, res, next) => {
                 } else {
                     await postModel.updateOne({ "posts._id": req.params.post_id }, { $inc: { "posts.$.like": -1 } });
 
-                    const checkUserInLike = await likeModel.findOne({ userId: req.params.req_user_id });
+                    const checkUserInLike = await likeModel.findOne({ reqUserId: req.params.req_user_id });
+                    console.log(checkUserInLike);
                     if (checkUserInLike) {
 
-                        await likeModel.deleteOne({ userId: req.params.req_user_id });
+                        await likeModel.deleteOne({ reqUserId: req.params.req_user_id });
                         res.status(status.NOT_FOUND).json(
                             new APIResponse("First Time Like Or Second Time Dislike , Like Not Added", "false", 404, "0")
                         );
@@ -97,6 +98,7 @@ exports.showAllUserWhichIsLikePost = async (req, res, next) => {
                 allRequestedId.push((findAllRequestedEmail.reqUserId).toString());
             }
 
+
             const RequestedEmailExiestInUser = await requestsModel.findOne(
                 {
                     userId: req.params.user_id,
@@ -118,20 +120,22 @@ exports.showAllUserWhichIsLikePost = async (req, res, next) => {
             } else {
                 const emailGet = [];
 
-                for (const emailExist of RequestedEmailExiestInUser) {
+                console.log(RequestedEmailExiestInUser);
 
-         
-                    for (const getEmail of emailExist.RequestedEmails) {
-                        emailGet.push((getEmail.userId).toString())
-                    }
+
+
+
+                for (const getEmail of RequestedEmailExiestInUser.RequestedEmails) {
+                    emailGet.push((getEmail.userId).toString())
                 }
+
 
                 var difference = allRequestedId.filter(x => emailGet.indexOf(x) === -1);
 
                 const UniqueId = [];
                 for (const uniqueId of difference) {
                     const userDetail = await userModel.findOne({ _id: mongoose.Types.ObjectId(uniqueId) });
-                   
+
                     const response = {
                         _id: uniqueId,
                         email: userDetail.email,

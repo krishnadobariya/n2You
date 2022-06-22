@@ -126,16 +126,15 @@ exports.replyComment = async (req, res, next) => {
 exports.editComment = async (req, res, next) => {
     try {
 
-        const findPost = await commentModel.findOne({ postId: req.params.Post_id });
+        const findPost = await commentModel.findOne({ postId: req.params.post_id });
         if (findPost == null) {
             res.status(status.NOT_FOUND).json(
                 new APIResponse("Post Not Found", "false", 404, "0")
             );
         } else {
             const athorizeUser = await commentModel.findOne({
-                postId: req.params.Post_id,
-                "comments._id": req.params.comment_id,
-                "comments.userId": req.params.User_id
+                postId: req.params.post_id,
+                "comments._id": req.params.comment_id
             })
 
             if (athorizeUser == null) {
@@ -143,7 +142,7 @@ exports.editComment = async (req, res, next) => {
                     new APIResponse("No Have any access", "false", 401, "0")
                 );
             } else {
-                await commentModel.updateOne({ postId: req.params.Post_id, "comments._id": req.params.comment_id }, { "comments.$.comment": req.body.comment });
+                await commentModel.updateOne({ postId: req.params.post_id, "comments._id": req.params.comment_id }, { "comments.$.comment": req.body.comment });
 
                 res.status(status.OK).json(
                     new APIResponse("Reply updated Successfully", "true", 200, "1")
@@ -169,15 +168,15 @@ exports.deleteComment = async (req, res, next) => {
             );
         } else {
             const athorizeUser = await commentModel.findOne({
-                postId: req.params.Post_id,
-                "comments._id": req.params.comment_id,
-                "comments.userId": req.params.User_id
+                postId: req.params.post_id,
+                "comments._id": req.params.comment_id
             })
 
             if (athorizeUser == null) {
                 const athorizeUser = await commentModel.findOne({
                     postId: req.params.post_id,
-                    userId: req.params.user_id
+                    userId: req.params.user_id,
+
                 })
                 if (athorizeUser == null) {
                     res.status(status.UNAUTHORIZED).json(
@@ -238,8 +237,7 @@ exports.replyCommentEdit = async (req, res, next) => {
             );
         } else {
             const athorizeUser = await commentModel.findOne({
-                postId: req.params.Post_id,
-                "comments.replyUser.userId": req.params.user_id,
+                postId: req.params.post_id,
                 "comments.replyUser._id": req.params.comment_reply_id
             })
 
@@ -251,7 +249,7 @@ exports.replyCommentEdit = async (req, res, next) => {
 
                 await commentModel.updateOne(
                     {
-                        postId: mongoose.Types.ObjectId(req.params.Post_id),
+                        postId: mongoose.Types.ObjectId(req.params.post_id),
                         "comments.replyUser._id": req.params.comment_reply_id
 
                     },
@@ -306,6 +304,7 @@ exports.replyCommitDelete = async (req, res, next) => {
                     await commentModel.updateOne(
                         {
                             postId: req.params.post_id,
+                            userId: req.params.user_id,
                         },
                         {
                             $pull: {

@@ -103,6 +103,7 @@ exports.searchFriend = async (req, res, next) => {
             reaquestedAllEmail.push(result.email)
         })
 
+
         if (reaquestedAllEmail[0] == undefined) {
             res.status(status.NOT_FOUND).json(
                 new APIResponse("No User Found", 'false', 404, '0')
@@ -121,7 +122,8 @@ exports.searchFriend = async (req, res, next) => {
                 }
             )
 
-            if (RequestedEmailExiestInUser[0] == undefined) {
+
+            if (RequestedEmailExiestInUser == null) {
                 res.status(status.NOT_FOUND).json(
                     new APIResponse("Requested Email Not Exiest In User or User not Found", "false", 404, "0")
                 )
@@ -129,22 +131,17 @@ exports.searchFriend = async (req, res, next) => {
 
                 const emailGet = [];
 
-
-
-                for (const emailExist of RequestedEmailExiestInUser) {
-
-
-                    for (const getEmail of emailExist.RequestedEmails) {
-                        emailGet.push(getEmail.requestedEmail)
-                    }
+                for (const getEmail of RequestedEmailExiestInUser.RequestedEmails) {
+                    emailGet.push(getEmail.requestedEmail)
                 }
 
                 var difference = reaquestedAllEmail.filter(x => emailGet.indexOf(x) === -1);
 
+
                 const UniqueEmail = [];
                 for (const uniqueEmail of difference) {
                     const userDetail = await userModel.findOne({ email: uniqueEmail });
-                 
+
                     const response = {
                         _id: userDetail._id,
                         email: uniqueEmail,
@@ -156,7 +153,8 @@ exports.searchFriend = async (req, res, next) => {
                 }
 
 
-                if (RequestedEmailExiestInUser[0] == undefined) {
+
+                if (RequestedEmailExiestInUser == null) {
                     const responseData = [];
                     for (const allrequestedDataNotAcceptedRequestAndNotFriend of reaquestedAllEmail) {
                         const userDetail = await userModel.findOne({ email: allrequestedDataNotAcceptedRequestAndNotFriend });
@@ -173,7 +171,7 @@ exports.searchFriend = async (req, res, next) => {
 
 
                     const statusByEmail = [];
-                    const allRequestedEmail = RequestedEmailExiestInUser[0].RequestedEmails
+                    const allRequestedEmail = RequestedEmailExiestInUser.RequestedEmails
                     const requestedEmailWitchIsInuserRequeted = [];
                     allRequestedEmail.map((result, next) => {
                         const resultEmail = result.requestedEmail
@@ -250,6 +248,8 @@ exports.searchFriend = async (req, res, next) => {
 
                     const finalExistUser = [];
 
+                    console.log(finalExistUser);
+
                     const emailDataDetail = meageAllTable;
                     for (const DataDetail of emailDataDetail) {
                         for (const reqEmail of reaquestedAllEmail) {
@@ -319,7 +319,7 @@ exports.searchFriend = async (req, res, next) => {
 
 
                     const final_response = [...final_data, ...UniqueEmail]
-             
+
                     // let uniqueObjArray = [...new Map(final_data.map((item) => [item["details"], item])).values()];
 
                     res.status(status.OK).json(
