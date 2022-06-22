@@ -18,7 +18,7 @@ const commentSchema = mongoose.Schema({
             required: true
         },
         comment: {
-            type: String,
+            type: String,      
             required: true
         },
         replyUser: [{
