@@ -11,6 +11,5 @@ server.listen(port, function () {
   console.log("Express server listening on port %d in %s mode");
 });
 
-
 const io = new Server(server);
 require("./src/webSocket/socket")(io);
