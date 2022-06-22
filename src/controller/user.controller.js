@@ -103,9 +103,6 @@ exports.searchFriend = async (req, res, next) => {
             reaquestedAllEmail.push(result.email)
         })
 
-        console.log("HRTHGRT");
-        console.log("reaquestedAllEmail", reaquestedAllEmail);
-
         if (reaquestedAllEmail[0] == undefined) {
             res.status(status.NOT_FOUND).json(
                 new APIResponse("No User Found", 'false', 404, '0')
@@ -113,7 +110,7 @@ exports.searchFriend = async (req, res, next) => {
         } else {
             const RequestedEmailExiestInUser = await requestsModel.findOne(
                 {
-                    userEmail: req.params.userEmail,
+                    userEmail: req.params.user_email,
                     RequestedEmails: {
                         $elemMatch: {
                             requestedEmail: {
@@ -147,7 +144,7 @@ exports.searchFriend = async (req, res, next) => {
                 const UniqueEmail = [];
                 for (const uniqueEmail of difference) {
                     const userDetail = await userModel.findOne({ email: uniqueEmail });
-                    console.log("userDetail", userDetail);
+                 
                     const response = {
                         _id: userDetail._id,
                         email: uniqueEmail,
@@ -203,7 +200,7 @@ exports.searchFriend = async (req, res, next) => {
                             from: 'requests',
                             let: {
 
-                                userEmail: req.params.userEmail,
+                                userEmail: req.params.user_email,
                                 email: "$email"
                             },
                             pipeline: [
@@ -262,9 +259,6 @@ exports.searchFriend = async (req, res, next) => {
                         }
                     }
 
-
-                    console.log("finalExistUser", finalExistUser);
-                    console.log("emailDataDetail", emailDataDetail);
                     for (const emailData of finalExistUser[0].result) {
 
                         for (const requestEmail of emailData) {
@@ -325,7 +319,7 @@ exports.searchFriend = async (req, res, next) => {
 
 
                     const final_response = [...final_data, ...UniqueEmail]
-                    console.log(final_data, ...UniqueEmail);
+             
                     // let uniqueObjArray = [...new Map(final_data.map((item) => [item["details"], item])).values()];
 
                     res.status(status.OK).json(
@@ -346,7 +340,7 @@ exports.searchFriend = async (req, res, next) => {
 exports.getDataUserWise = async (req, res, next) => {
     try {
 
-        const userFind = await userModel.findOne({ _id: req.params.UserId })
+        const userFind = await userModel.findOne({ _id: req.params.user_id })
 
         if (userFind == null) {
             res.status(status.NOT_FOUND).json(
@@ -357,7 +351,7 @@ exports.getDataUserWise = async (req, res, next) => {
             const data = await userModel.aggregate([
                 {
                     $match: {
-                        _id: mongoose.Types.ObjectId(req.params.UserId)
+                        _id: mongoose.Types.ObjectId(req.params.user_id)
                     }
                 },
                 {

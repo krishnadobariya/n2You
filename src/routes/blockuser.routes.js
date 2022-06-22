@@ -3,7 +3,7 @@ const router = express.Router();
 
 const blockUnblockUserController = require("../controller/blockuser.controller");
 
-router.post('/add/:userId/:blockUserId/:blockUnblock', blockUnblockUserController.blockUser);
-router.get('/list/:userId', blockUnblockUserController.blockUserList);
-router.post('/unblockUser/:userId/:blockUserId/:blockUnblock', blockUnblockUserController.unBlockUser);
+router.post('/add/:user_id/:block_user_id/:blockUnblock', blockUnblockUserController.blockUser);
+router.get('/list/:user_id', blockUnblockUserController.blockUserList);
+router.post('/unblockUser/:user_id/:block_user_id/:blockUnblock', blockUnblockUserController.unBlockUser);
 module.exports = router;

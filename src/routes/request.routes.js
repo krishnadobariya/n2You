@@ -3,9 +3,9 @@ const router = express.Router();
 
 const requestController = require("../controller/request.controller");
 
-router.post("/send/:userEmail/:RequestedEmail", requestController.sendRequest);
-router.get("/get/:userEmail", requestController.getRequestUserWise);
-router.post("/userAcceptedRequesteOrNot/:userId/:email", requestController.userAcceptedRequesteOrNot);
-router.post("/showPostsOnalyAcceptedPerson/:userEmail/:RequestedEmail", requestController.showPostsOnalyAcceptedPerson);
+router.post("/send/:user_email/:requested_email", requestController.sendRequest);
+router.get("/get/:user_email", requestController.getRequestUserWise);
+router.post("/userAcceptedRequesteOrNot/:user_id/:email", requestController.userAcceptedRequesteOrNot);
+router.post("/showPostsOnalyAcceptedPerson/:user_email/:requested_email", requestController.showPostsOnalyAcceptedPerson);
 
 module.exports = router
