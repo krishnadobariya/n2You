@@ -190,7 +190,7 @@ exports.getPostsbyUseId = async (req, res, next) => {
                 for (const createResponse of storeAllpostsUserWise) {
 
                     datetime = createResponse.createdAt;
-                    console.log(datetime);
+
                     var userPostedDate = new Date(datetime);
                     now = new Date();
                     var sec_num = (now - userPostedDate) / 1000;
@@ -206,6 +206,8 @@ exports.getPostsbyUseId = async (req, res, next) => {
 
                     const finalPostedTime = [];
                     const commentData = [];
+
+
                     if (days > 30) {
                         const getComment = await commentModel.findOne({ postId: createResponse._id });
                         let whenUserPosted = userPostedDate;
@@ -295,8 +297,8 @@ exports.getPostsbyUseId = async (req, res, next) => {
 exports.EditPosts = async (req, res, next) => {
     try {
 
-        const UserId = req.params.UserId;
-        const PostId = req.params.PostId;
+        const UserId = req.params.user_id;
+        const PostId = req.params.post_id;
 
 
         const findData = await postModal.findOne({
@@ -341,8 +343,8 @@ exports.EditPosts = async (req, res, next) => {
 
 exports.deletePost = async (req, res, next) => {
     try {
-        const UserId = req.params.UserId;
-        const PostId = req.params.PostId;
+        const UserId = req.params.user_id;
+        const PostId = req.params.post_id;
 
         const findData = await postModal.findOne({
             userId: UserId, "posts._id": PostId
@@ -388,8 +390,8 @@ exports.userAllFriendPost = async (req, res, next) => {
     try {
 
         const statusByEmail = [];
-        const data = await requestsModel.findOne({ userEmail: req.params.UserEmail });
-        console.log(data);
+        const data = await requestsModel.findOne({ userEmail: req.params.user_email });
+
         if (data !== null) {
             const allRequestedEmail = data.RequestedEmails
             const requestedEmailWitchIsInuserRequeted = [];
@@ -420,7 +422,7 @@ exports.userAllFriendPost = async (req, res, next) => {
                     from: 'requests',
                     let: {
 
-                        userEmail: req.params.UserEmail,
+                        userEmail: req.params.user_email,
                         email: "$email"
                     },
                     pipeline: [
@@ -494,6 +496,8 @@ exports.userAllFriendPost = async (req, res, next) => {
                                         const finalPostedTime = [];
                                         const commentData = [];
 
+
+
                                         if (days > 30) {
                                             const getComment = await commentModel.findOne({ postId: getallposts._id });
                                             let whenUserPosted = userPostedDate;
@@ -518,7 +522,6 @@ exports.userAllFriendPost = async (req, res, next) => {
                                             finalPostedTime.push(`${seconds} second`);
                                             commentData.push(getComment)
                                         }
-
 
                                         const response = {
                                             getallposts,
@@ -584,8 +587,8 @@ exports.userAllFriendPost = async (req, res, next) => {
 exports.reportAdd = async (req, res, next) => {
     try {
 
-        const userFind = await postModal.findOne({ userId: req.params.UserId })
-        console.log(userFind);
+        const userFind = await postModal.findOne({ userId: req.params.user_id })
+
 
         if (userFind == null) {
             res.status(status.NOT_FOUND).json(
@@ -593,8 +596,8 @@ exports.reportAdd = async (req, res, next) => {
             )
         } else {
             const postFind = await postModal.findOne({
-                userId: req.params.UserId,
-                "posts._id": req.params.PostId
+                userId: req.params.user_id,
+                "posts._id": req.params.post_id
             })
 
             if (postFind == null) {
@@ -602,8 +605,8 @@ exports.reportAdd = async (req, res, next) => {
                     new APIResponse("User or Post Not Found!", "false", 404, "0")
                 )
             } else {
-                 
-                await postModal.updateOne({ "posts._id": req.params.PostId }, { $inc: { "posts.$.report": 1 } });
+
+                await postModal.updateOne({ "posts._id": req.params.post_id }, { $inc: { "posts.$.report": 1 } });
                 res.status(status.CREATED).json(
                     new APIResponse("report Added", "true", 201, "1")
                 );

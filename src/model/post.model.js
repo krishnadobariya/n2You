@@ -23,6 +23,10 @@ const postSchema = mongoose.Schema({
             type: Number,
             default: 0
         },
+        comment: {
+            type: Number,
+            default: 0
+        },
         report: {
             type: Number,
             default: 0
