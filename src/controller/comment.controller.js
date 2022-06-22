@@ -3,6 +3,7 @@ const status = require("http-status");
 const postModel = require("../model/post.model");
 const userModel = require("../model/user.model");
 const commentModel = require("../model/comment.model");
+const { default: mongoose } = require("mongoose");
 
 exports.CommetInsert = async (req, res, next) => {
     try {
@@ -245,16 +246,22 @@ exports.replyCommentEdit = async (req, res, next) => {
                     new APIResponse("No Have any access", "false", 401, "0")
                 );
             } else {
+
+                console.log(a);
                 await commentModel.updateOne(
                     {
-                        postId: req.params.PostId,
-                        "comments.replyUser._id": req.params.commentReplayId
+                        postId: mongoose.Types.ObjectId(req.params.PostId),
+                        "comments.replyUser._id": req.params.commentReplayId,
+                        "comments._id" : req.params.commentId
+                        
                     },
                     {
                         $set: {
-                            "comments.$[].replyUser.$.replyMesage": req.body.replyMessage
-                        }
-                    }
+                            "comments.$.replyUser.$[i].replyMesage": req.body.replyMessage
+                        },
+
+                    },
+                    { arrayFilters: [{ "i._id":  req.params.commentReplayId}] }
                 );
 
                 res.status(status.OK).json(
@@ -262,6 +269,73 @@ exports.replyCommentEdit = async (req, res, next) => {
                 );
             }
         }
+    } catch (error) {
+        console.log("Error:", error);
+        res.status(status.INTERNAL_SERVER_ERROR).json(
+            new APIResponse("Something Went Wrong", "false", 500, "0", error.message)
+        );
+    }
+}
+
+exports.replyCommitDelete = async (req, res, next) => {
+    try {
+
+
+        const findPost = await commentModel.findOne({ postId: req.params.post_id });
+        if (findPost == null) {
+            res.status(status.NOT_FOUND).json(
+                new APIResponse("Post Not Found", "false", 404, "0")
+            );
+        } else {
+            const athorizeUser = await commentModel.findOne({
+                postId: req.params.post_id,
+                "comments._id": req.params.comment_id,
+                "comments.replyUser.userId": req.params.user_id,
+                "comments.replyUser._id": req.params.comment_reply_id
+            })
+
+            if (athorizeUser == null) {
+                const athorizeUser = await commentModel.findOne({
+                    postId: req.params.post_id,
+                    userId: req.params.user_id
+                })
+                if (athorizeUser == null) {
+                    res.status(status.UNAUTHORIZED).json(
+                        new APIResponse("No Have any access", "false", 401, "0")
+                    );
+                } else {
+                    await commentModel.updateOne(
+                        {
+                            postId: req.params.post_id,
+                        },
+                         {
+                        $pull: {
+                            "comments.replyUser._id": req.body.comment_reply_id
+                        },
+                    }
+                    );
+
+                    res.status(status.OK).json(
+                        new APIResponse("Reply deleted Successfully", "true", 200, "1")
+                    );
+                }
+
+            } else {
+                await commentModel.updateOne(
+                    {
+                        postId: req.params.post_id,
+                    },
+                    {$pull: {
+                        "comments.replyUser._id": req.body.comment_reply_id
+                    },}
+                );
+
+                res.status(status.OK).json(
+                    new APIResponse("Reply deleted Successfully", "true", 200, "1")
+                );
+            }
+        }
+
     } catch (error) {
         console.log("Error:", error);
         res.status(status.INTERNAL_SERVER_ERROR).json(
