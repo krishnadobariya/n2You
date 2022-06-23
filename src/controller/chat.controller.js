@@ -40,7 +40,7 @@ exports.getUserWithChat = async (req, res, next) => {
         const findAllRecordInChat1 = await chatRoomModel.find({ user1: req.params.user_id });
         const findAllRecordInChat2 = await chatRoomModel.find({ user2: req.params.user_id });
 
-        if (findAllRecordInChat1 && findAllRecordInChat2) {
+        if (findAllRecordInChat1 || findAllRecordInChat2) {
 
             const meargeData = [...findAllRecordInChat1, ...findAllRecordInChat2]
 
@@ -122,15 +122,7 @@ exports.getUserWithChat = async (req, res, next) => {
             res.status(status.OK).json(
                 new APIResponse("show all record with chat", true, 201, 1, response)
             )
-
-        } else if (findAllRecordInChat1) {
-
-            console.log("findAllRecordInChat1", findAllRecordInChat1);
-
-        } else if (findAllRecordInChat2) {
-
-            console.log("findAllRecordInChat2", findAllRecordInChat2);
-
+            
         } else {
             res.status(status.NOT_FOUND).json(
                 new APIResponse("user not Found", "false", 404, "0")
