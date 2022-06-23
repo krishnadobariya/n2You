@@ -84,7 +84,7 @@ function socket(io) {
                 requestedId: arg.requestd_id,
             })
 
-            console.log("validUser", validUser);
+
             if (validUser == null) {
                 const createChat = chatModels({
                     userId: arg.user_id,
@@ -96,9 +96,9 @@ function socket(io) {
                 })
 
                 const saveData = await createChat.save();
-                console.log("saveData", saveData);
 
-                io.to(userRoom).emit("chatReceive", "success");
+
+                io.emit("chatReceive", saveData);
 
             } else {
                 const finalData = {
@@ -106,7 +106,7 @@ function socket(io) {
                     text: arg.text
                 }
 
-                console.log("finalData", finalData);
+
                 const data = await chatModels.updateOne(
                     {
                         userId: arg.user_id,
@@ -117,8 +117,8 @@ function socket(io) {
                     }
                 );
 
-                console.log("data", data);
-                io.to(userRoom).emit("chatReceive", finalData);
+
+                io.emit("chatReceive", finalData);
             }
 
         })
