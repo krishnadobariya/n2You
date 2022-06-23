@@ -3,8 +3,8 @@ const app = express();
 const cors = require('cors');
 const morgan = require('morgan');
 const bodyParser = require("body-parser");
-const io = require("./server");
 require('./src/db/conn');
+
 
 app.use(cors());
 app.use(morgan('dev'));
