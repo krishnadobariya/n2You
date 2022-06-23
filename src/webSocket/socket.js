@@ -107,7 +107,7 @@ function socket(io) {
                 }
 
                 console.log("finalData", finalData);
-                await chatModels.updateOne(
+                const data = await chatModels.updateOne(
                     {
                         userId: arg.user_id,
                         requestedId: arg.requestd_id
@@ -117,6 +117,7 @@ function socket(io) {
                     }
                 );
 
+                console.log("data", data);
                 io.to(userRoom).emit("chatReceive", finalData);
             }
 
