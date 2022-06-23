@@ -1,67 +1,6 @@
 
 const chatModels = require("./models/chat.models");
-
-
-
-// function socket(io) {
-
-
-//     io.on('connection', (socket) => {
-
-//         socket.on("created", async (arg) => {
-
-//             const chatRoomFind = await chatRoomModel.findOne({
-//                 userId: mongoose.Types.ObjectId(arg.user_id),
-//                 requestedUserId: mongoose.Types.ObjectId(arg.requested_user_id)
-//             })
-//             console.log("chatRoomFind", chatRoomFind);
-
-//             if (chatRoomFind == null) {
-//                 socket.emit("created", "Chat Room Not Created")
-//             } else {
-//                 const findChatRoom = await chatModel.findOne({ chatRoomId: chatRoomFind._id })
-//                 if (findChatRoom == null) {
-//                     const chatobj = chatModel({
-//                         chatRoomId: chatRoomFind._id,
-//                         chat: {
-//                             sender: arg.sender,
-//                             text: arg.text
-//                         }
-
-//                     })
-
-//                     const insertData = await chatobj.save();
-
-//                     socket.emit("created", "send successfully")
-//                 } else {
-//                     const finalData = {
-//                         sender: arg.sender,
-//                         text: arg.text
-//                     }
-
-//                     await chatModel.updateOne({ chatRoomId: chatRoomFind._id, }, { $push: { chat: finalData } });
-//                     socket.emit("created", "send successfully")
-//                 }
-
-//             }
-
-
-//             socket.to("getChat", (data) => {
-//                 console.log(data);
-//                 chat
-//             })
-//         })
-
-//         socket.on("createRoom", (data) => {
-//             console.log("data2", data);
-//             createRoom(data, socket);
-//         })
-//     })
-
-
-// }
-
-// module.exports = socket;
+const chatRoomModel = require("./models/chatRoom.model");
 
 function socket(io) {
 
@@ -70,57 +9,205 @@ function socket(io) {
     io.on('connection', (socket) => {
 
         socket.on("joinUser", function (data) {
-            const userRoom = `User${data.requestd_id}`
+            const userRoom = `User${data.user_1}`
             socket.join(userRoom)
         })
 
         socket.on("chat", async (arg) => {
-            const userRoom = `${arg.requestd_id}`
+            const userRoom = `${arg.user_1}`
             console.log("userRoom:::", userRoom);
 
 
-            const validUser = await chatModels.findOne({
-                userId: arg.user_id,
-                requestedId: arg.requestd_id,
+            const addInChatRoom = await chatRoomModel.findOne({
+                user1: arg.user_1,
+                user2: arg.user_2,
+            })
+
+            const checkUsers = await chatRoomModel.findOne({
+                user1: arg.user_2,
+                user2: arg.user_1,
             })
 
 
-            if (validUser == null) {
-                const createChat = chatModels({
-                    userId: arg.user_id,
-                    requestedId: arg.requestd_id,
-                    chat: {
-                        text: arg.text,
-                        sender: arg.sender_id
-                    }
+            console.log("addInChatRoom", addInChatRoom);
+
+            console.log("checkUsers", checkUsers);
+            if (addInChatRoom == null && checkUsers == null) {
+                const insertChatRoom = chatRoomModel({
+                    user1: arg.user_1,
+                    user2: arg.user_2
                 })
 
-                const saveData = await createChat.save();
+                await insertChatRoom.save();
 
+                const getChatRoom = await chatRoomModel.findOne({
+                    user1: arg.user_1,
+                    user2: arg.user_2
+                })
 
-                io.emit("chatReceive", saveData);
+                const alterNateChatRoom = await chatRoomModel.findOne({
+                    user1: arg.user_2,
+                    user2: arg.user_1
+                })
 
+                if (getChatRoom == null && alterNateChatRoom == null) {
+                    io.emit("chatReceive", "chat room not found");
+                } else {
+
+                    if (getChatRoom) {
+
+                        if (arg.sender_id == arg.user_1 || arg.sender_id == arg.user_2) {
+                            const data = chatModels({
+                                chatRoomId: getChatRoom._id,
+                                chat: {
+                                    sender: arg.sender_id,
+                                    text: arg.text
+                                }
+                            })
+
+                            await data.save();
+
+                            io.emit("chatReceive", arg.text)
+
+                        } else {
+                            io.emit("chatReceive", "sender not found");
+                        }
+
+                    } else {
+                        if (arg.sender_id == arg.user_1 || arg.sender_id == arg.user_2) {
+                            const data = chatModels({
+                                chatRoomId: alterNateChatRoom._id,
+                                chat: {
+                                    sender: arg.sender_id,
+                                    text: arg.text
+                                }
+                            })
+
+                            await data.save();
+                            io.emit("chatReceive", arg.text)
+
+                        } else {
+                            io.emit("chatReceive", "sender not found");
+                        }
+                    }
+
+                }
             } else {
-                const finalData = {
-                    sender: arg.sender_id,
-                    text: arg.text
+                const getChatRoom = await chatRoomModel.findOne({
+                    user1: arg.user_1,
+                    user2: arg.user_2
+                })
+
+                const alterNateChatRoom = await chatRoomModel.findOne({
+                    user1: arg.user_2,
+                    user2: arg.user_1
+                })
+
+
+                if (getChatRoom == null && alterNateChatRoom == null) {
+                    io.emit("chatReceive", "chat room not found");
+
+                } else {
+
+                    if (getChatRoom) {
+                        const find1 = await chatModels.findOne({
+                            chatRoomId: getChatRoom._id
+                        })
+
+                        if (find1 == null) {
+                            if (arg.sender_id == arg.user_1 || arg.sender_id == arg.user_2) {
+                                const data = chatModels({
+                                    chatRoomId: getChatRoom._id,
+                                    chat: {
+                                        sender: arg.sender_id,
+                                        text: arg.text
+                                    }
+                                })
+
+                                await data.save();
+
+                                io.emit("chatReceive", arg.text)
+
+                            } else {
+                                io.emit("chatReceive", "sender not found");
+                            }
+                        } else {
+
+                            if (arg.sender_id == arg.user_1 || arg.sender_id == arg.user_2) {
+
+                                const finalData = {
+                                    sender: arg.sender_id,
+                                    text: arg.text
+                                }
+
+
+                                await chatModels.updateOne({
+                                    chatRoomId: getChatRoom._id,
+                                }, {
+                                    $push: {
+                                        chat: finalData
+                                    }
+                                })
+
+                                io.emit("chatReceive", finalData.text)
+
+                            } else {
+                                io.emit("chatReceive", "sender not found");
+                            }
+                        }
+
+
+                    } else {
+                        const find2 = await chatModels.findOne({
+                            chatRoomId: alterNateChatRoom._id
+                        })
+
+                        console.log(find2);
+                        if (find2 == null) {
+                            if (arg.sender_id == arg.user_1 || arg.sender_id == arg.user_2) {
+                                const data = chatModels({
+                                    chatRoomId: alterNateChatRoom._id,
+                                    chat: {
+                                        sender: arg.sender_id,
+                                        text: arg.text
+                                    }
+                                })
+
+                                await data.save();
+                                io.emit("chatReceive", arg.text)
+
+                            } else {
+                                io.emit("chatReceive", "sender not found");
+                            }
+                        } else {
+                            if (arg.sender_id == arg.user_1 || arg.sender_id == arg.user_2) {
+
+                                const finalData = {
+                                    sender: arg.sender_id,
+                                    text: arg.text
+                                }
+
+
+                                await chatModels.updateOne({
+                                    chatRoomId: alterNateChatRoom._id,
+                                }, {
+                                    $push: {
+                                        chat: finalData
+                                    }
+                                })
+
+                                io.emit("chatReceive", finalData.text)
+
+                            } else {
+                                io.emit("chatReceive", "sender not found");
+                            }
+                        }
+
+
+                    }
                 }
 
-
-                const data = await chatModels.updateOne(
-                    {
-                        userId: arg.user_id,
-                        requestedId: arg.requestd_id
-                    },
-                    {
-                        $push: { chat: finalData }
-                    }
-                );
-
-
-                io.emit("chatReceive", finalData);
             }
-
         })
 
     })
