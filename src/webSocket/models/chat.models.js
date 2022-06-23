@@ -1,15 +1,10 @@
 const mongoose = require("mongoose");
 
 const chatSchema = mongoose.Schema({
-    userId: {
+    chatRoomId: {
         type: mongoose.Schema.Types.ObjectId,
         required: true,
         ref: 'User'
-    },
-    requestedId: {
-        type: mongoose.Schema.Types.ObjectId,
-        required: true,
-        ref: 'User',
     },
     chat: [
         {
@@ -22,6 +17,10 @@ const chatSchema = mongoose.Schema({
             createdAt: {
                 type: Date,
                 default: Date.now()
+            },
+            read: {
+                type: Number,
+                default: 0
             }
         }
     ]

@@ -1,22 +1,17 @@
 const mongoose = require("mongoose");
 
 const chatRoomSchema = mongoose.Schema({
-    userId: {
+    user1: {
+        type: mongoose.Schema.Types.ObjectId,
+        required: true,
+        ref: 'User'
+    },
+    user2: {
         type: mongoose.Schema.Types.ObjectId,
         required: true,
         ref: 'User',
-
-    },
-    requestedId: {
-        type: mongoose.Schema.Types.ObjectId,
-        required: true,
-        ref: 'User',
     },
 
-    createdAt: {
-        type: Date,
-        default: Date.now()
-    }
 }, {
     timestamps: true
 }, {
