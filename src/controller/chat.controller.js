@@ -142,15 +142,13 @@ exports.getUserWithChat = async (req, res, next) => {
 exports.countReadUnreadMessage = async (req, res, next) => {
     try {
 
-
-        console.log(mongoose.Types.ObjectId(req.params.user_1));
         const findData = await chatRoomModel.findOne({
             _id: mongoose.Types.ObjectId(req.params.chat_room),
             user1: mongoose.Types.ObjectId(req.params.user_1),
             user2: mongoose.Types.ObjectId(req.params.user_2)
         })
 
-        console.log("findData", findData);
+
 
         if (findData == null) {
             const findData = await chatRoomModel.findOne({
@@ -202,20 +200,22 @@ exports.countReadUnreadMessage = async (req, res, next) => {
                 const unreadMessageByuser2 = [];
 
 
-                for (const getChat of getAllChat) {
-                    console.log(getChat.sender);
-                    if (getChat.sender == req.params.user_1) {
 
+                for (const getChat of getAllChat) {
+
+                    if (getChat.sender == req.params.user_1) {
+                        console.log("1", getChat.read);
                         var defaltReadforUser1 = defaltReadforUser1 + getChat.read;
                         const response = [{
                             unreadMessage: defaltReadforUser1,
                             unreadMessageUserId: req.params.user_2
                         }]
-                            ;
+
                         unreadMessageByUser1.push(response)
 
                     } else if (getChat.sender == req.params.user_2) {
-                        console.log(getChat.read);
+
+                        console.log("2", getChat.read);
                         var defaltReadforUser2 = defaltReadforUser2 + getChat.read;
                         const response = [{
                             unreadMessage: defaltReadforUser2,
@@ -298,28 +298,30 @@ exports.countReadUnreadMessage = async (req, res, next) => {
 
 
             const getAllChat = data[0].chat;
-            var defaltRead = 0
+            var defaltReadforUser1 = 0;
+            var defaltReadforUser2 = 0;
             const unreadMessageByUser1 = [];
             const unreadMessageByuser2 = [];
 
 
             for (const getChat of getAllChat) {
-                console.log(getChat.sender);
-                if (getChat.sender == req.params.user_1) {
 
-                    var defaltRead = defaltRead + getChat.read;
+                if (getChat.sender == req.params.user_1) {
+                    console.log("1", getChat.read);
+                    var defaltReadforUser1 = defaltReadforUser1 + getChat.read;
                     const response = [{
-                        unreadMessage: defaltRead,
+                        unreadMessage: defaltReadforUser1,
                         unreadMessageUserId: req.params.user_2
                     }]
-                        ;
+
                     unreadMessageByUser1.push(response)
 
                 } else if (getChat.sender == req.params.user_2) {
-                    console.log(getChat.read);
-                    var defaltRead = defaltRead + getChat.read;
+
+
+                    var defaltReadforUser2 = defaltReadforUser2 + getChat.read;
                     const response = [{
-                        unreadMessage: defaltRead,
+                        unreadMessage: defaltReadforUser2,
                         unreadMessageUserId: req.params.user_1
                     }]
 
