@@ -20,7 +20,7 @@ const chatSchema = mongoose.Schema({
             },
             read: {
                 type: Number,
-                default: 0
+                default: 1
             }
         }
     ]
