@@ -40,12 +40,17 @@ exports.getUserWithChat = async (req, res, next) => {
         const findAllRecordInChat1 = await chatRoomModel.find({ user1: req.params.user_id });
         const findAllRecordInChat2 = await chatRoomModel.find({ user2: req.params.user_id });
 
-        if (findAllRecordInChat1 || findAllRecordInChat2) {
+        console.log(findAllRecordInChat1);
+        console.log(findAllRecordInChat2);
+        if (findAllRecordInChat1[0] == undefined && findAllRecordInChat2[0] == undefined) {
+
+            res.status(status.NOT_FOUND).json(
+                new APIResponse("user don't chat with any person", "false", 404, "0")
+            )
+
+        } else {
 
             const meargeData = [...findAllRecordInChat1, ...findAllRecordInChat2]
-
-
-
             const data = await userModel.aggregate([
                 {
                     $match: {
@@ -95,7 +100,7 @@ exports.getUserWithChat = async (req, res, next) => {
                 }
             ])
 
-            console.log("data", data);
+
             const getAllChat = [];
             const findData = data[0].result
 
@@ -121,11 +126,6 @@ exports.getUserWithChat = async (req, res, next) => {
 
             res.status(status.OK).json(
                 new APIResponse("show all record with chat", true, 201, 1, response)
-            )
-            
-        } else {
-            res.status(status.NOT_FOUND).json(
-                new APIResponse("user not Found", "false", 404, "0")
             )
         }
 
