@@ -18,7 +18,7 @@ exports.readChat = async (req, res, next) => {
             )
 
         } else {
-            await chatModels.updateMany({ chatRoomId: req.params.chat_room_id }, { $set: { "chat.$[].read": 1 } });
+            await chatModels.updateMany({ chatRoomId: req.params.chat_room_id }, { $set: { "chat.$[].read": 0 } });
 
             res.status(status.OK).json(
                 new APIResponse("Read updated", "true", 200, "1")
@@ -125,7 +125,7 @@ exports.getUserWithChat = async (req, res, next) => {
             }
 
             res.status(status.OK).json(
-                new APIResponse("show all record with chat", true, 201, 1, response)
+                new APIResponse("show all record with chat", "true", 201, "1", response)
             )
         }
 
@@ -138,3 +138,239 @@ exports.getUserWithChat = async (req, res, next) => {
     }
 }
 
+
+exports.countReadUnreadMessage = async (req, res, next) => {
+    try {
+
+
+        console.log(mongoose.Types.ObjectId(req.params.user_1));
+        const findData = await chatRoomModel.findOne({
+            _id: mongoose.Types.ObjectId(req.params.chat_room),
+            user1: mongoose.Types.ObjectId(req.params.user_1),
+            user2: mongoose.Types.ObjectId(req.params.user_2)
+        })
+
+        console.log("findData", findData);
+
+        if (findData == null) {
+            const findData = await chatRoomModel.findOne({
+                _id: mongoose.Types.ObjectId(req.params.chat_room),
+                user1: req.params.user_2,
+                user2: req.params.user_1
+            })
+
+            if (findData == null) {
+                res.status(status.NOT_FOUND).json(
+                    new APIResponse("not found user", "false", 404, "0")
+                );
+            } else {
+                const data = await chatModels.aggregate([
+                    {
+                        $match: {
+                            chatRoomId: mongoose.Types.ObjectId(req.params.chat_room)
+                        }
+                    },
+                    {
+                        $lookup: {
+                            from: 'chatrooms',
+                            let: {
+                                chatRoom: mongoose.Types.ObjectId(req.params.chat_room)
+                            },
+                            pipeline: [
+                                {
+                                    $match: {
+                                        $expr: {
+                                            $eq: [
+                                                "$_id",
+                                                "$$chatRoom"
+                                            ]
+                                        }
+                                    }
+                                }
+                            ],
+                            as: "result"
+                        }
+                    },
+                ])
+
+
+
+                const getAllChat = data[0].chat;
+                var defaltReadforUser1 = 0;
+                var defaltReadforUser2 = 0;
+                const unreadMessageByUser1 = [];
+                const unreadMessageByuser2 = [];
+
+
+                for (const getChat of getAllChat) {
+                    console.log(getChat.sender);
+                    if (getChat.sender == req.params.user_1) {
+
+                        var defaltReadforUser1 = defaltReadforUser1 + getChat.read;
+                        const response = [{
+                            unreadMessage: defaltReadforUser1,
+                            unreadMessageUserId: req.params.user_2
+                        }]
+                            ;
+                        unreadMessageByUser1.push(response)
+
+                    } else if (getChat.sender == req.params.user_2) {
+                        console.log(getChat.read);
+                        var defaltReadforUser2 = defaltReadforUser2 + getChat.read;
+                        const response = [{
+                            unreadMessage: defaltReadforUser2,
+                            unreadMessageUserId: req.params.user_1
+                        }]
+
+
+                        console.log(response);
+
+                        unreadMessageByuser2.push(response)
+                    }
+                }
+
+                const finalArray1 = unreadMessageByUser1[unreadMessageByUser1.length - 1];
+                const finalArray2 = unreadMessageByuser2[unreadMessageByuser2.length - 1];
+
+                if (finalArray1 && finalArray2) {
+                    meargeAllUserUnreadMessage = [...finalArray1, ...finalArray2];
+                    res.status(status.OK).json(
+                        new APIResponse("show all unread 1 chat", true, 200, 1, meargeAllUserUnreadMessage)
+                    )
+
+
+                } else if (finalArray1) {
+
+                    meargeAllUserUnreadMessage = [...finalArray1];
+                    res.status(status.OK).json(
+                        new APIResponse("show all unread 2 chat", true, 200, 1, meargeAllUserUnreadMessage)
+                    )
+
+
+                } else if (finalArray2) {
+
+                    meargeAllUserUnreadMessage = [...finalArray2];
+                    res.status(status.OK).json(
+                        new APIResponse("show all unread 3 chat", true, 200, 1, meargeAllUserUnreadMessage)
+                    )
+
+
+                } else {
+
+                    res.status(status.OK).json(
+                        new APIResponse("somthing went Wrong", "false", 500, "1")
+                    )
+
+                }
+
+
+            }
+        } else {
+            const data = await chatModels.aggregate([
+                {
+                    $match: {
+                        chatRoomId: mongoose.Types.ObjectId(req.params.chat_room)
+                    }
+                },
+                {
+                    $lookup: {
+                        from: 'chatrooms',
+                        let: {
+                            chatRoom: mongoose.Types.ObjectId(req.params.chat_room)
+                        },
+                        pipeline: [
+                            {
+                                $match: {
+                                    $expr: {
+                                        $eq: [
+                                            "$_id",
+                                            "$$chatRoom"
+                                        ]
+                                    }
+                                }
+                            }
+                        ],
+                        as: "result"
+                    }
+                },
+            ])
+
+
+
+            const getAllChat = data[0].chat;
+            var defaltRead = 0
+            const unreadMessageByUser1 = [];
+            const unreadMessageByuser2 = [];
+
+
+            for (const getChat of getAllChat) {
+                console.log(getChat.sender);
+                if (getChat.sender == req.params.user_1) {
+
+                    var defaltRead = defaltRead + getChat.read;
+                    const response = [{
+                        unreadMessage: defaltRead,
+                        unreadMessageUserId: req.params.user_2
+                    }]
+                        ;
+                    unreadMessageByUser1.push(response)
+
+                } else if (getChat.sender == req.params.user_2) {
+                    console.log(getChat.read);
+                    var defaltRead = defaltRead + getChat.read;
+                    const response = [{
+                        unreadMessage: defaltRead,
+                        unreadMessageUserId: req.params.user_1
+                    }]
+
+                    unreadMessageByuser2.push(response)
+                }
+            }
+
+            const finalArray1 = unreadMessageByUser1[unreadMessageByUser1.length - 1];
+            const finalArray2 = unreadMessageByuser2[unreadMessageByuser2.length - 1];
+
+            if (finalArray1 && finalArray2) {
+                meargeAllUserUnreadMessage = [...finalArray1, ...finalArray2];
+                res.status(status.OK).json(
+                    new APIResponse("show all unread chat", true, 200, 1, meargeAllUserUnreadMessage)
+                )
+
+
+            } else if (finalArray1) {
+
+                meargeAllUserUnreadMessage = [...finalArray1];
+                res.status(status.OK).json(
+                    new APIResponse("show all unread chat", true, 200, 1, meargeAllUserUnreadMessage)
+                )
+
+
+            } else if (finalArray2) {
+
+                meargeAllUserUnreadMessage = [...finalArray2];
+                res.status(status.OK).json(
+                    new APIResponse("show all unread chat", true, 200, 1, meargeAllUserUnreadMessage)
+                )
+
+
+            } else {
+
+                res.status(status.OK).json(
+                    new APIResponse("somthing went Wrong", "false", 500, "1")
+                )
+
+            }
+
+
+
+        }
+
+
+
+    } catch (error) {
+        console.log("Error:", error);
+        res.status(status.INTERNAL_SERVER_ERROR).json(
+            new APIResponse("Something Went Wrong", "false", 500, "0", error.message)
+        );
+    }
+}

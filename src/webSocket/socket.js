@@ -210,6 +210,19 @@ function socket(io) {
             }
         })
 
+        socket.on("readUnread", async (arg) => {
+            const findRoom = await chatModels.findOne({
+                chatRoomId: arg.chat_room
+            })
+
+            if (findRoom == null) {
+                io.emit("chatReceive", "chat room not found");
+            } else {
+                await chatModels.updateMany({ chatRoomId: arg.chat_room }, { $set: { "chat.$[].read": 0 } });
+                io.emit("chatReceive", "read All chat");
+            }
+        })
+
     })
 
 }
