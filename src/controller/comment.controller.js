@@ -99,7 +99,7 @@ exports.replyComment = async (req, res, next) => {
                     } else {
                         const finalData = {
                             userId: req.params.user_id,
-                            replyMesage: req.body.replyMesage
+                            replyMessage: req.body.replyMessage
                         }
 
                         await commentModel.updateOne({ postId: req.params.post_id, "comments._id": req.params.comment_id }, { $push: { "comments.$.replyUser": finalData } });
@@ -238,6 +238,7 @@ exports.replyCommentEdit = async (req, res, next) => {
         } else {
             const athorizeUser = await commentModel.findOne({
                 postId: req.params.post_id,
+                "comments.replyUser.userId": req.params.user_id,
                 "comments.replyUser._id": req.params.comment_reply_id
             })
 
@@ -255,7 +256,7 @@ exports.replyCommentEdit = async (req, res, next) => {
                     },
                     {
                         $set: {
-                            "comments.$.replyUser.$[i].replyMesage": req.body.replyMessage
+                            "comments.$.replyUser.$[i].replyMessage": req.body.replyMessage
                         },
 
                     },
@@ -287,13 +288,13 @@ exports.replyCommitDelete = async (req, res, next) => {
         } else {
             const athorizeUser = await commentModel.findOne({
                 postId: req.params.post_id,
+                "comments.replyUser.userId": req.params.user_id,
                 "comments.replyUser._id": req.params.comment_reply_id
             })
 
             if (athorizeUser == null) {
                 const athorizeUser = await commentModel.findOne({
                     postId: req.params.post_id,
-                    userId: req.params.user_id,
                     "comments.replyUser._id": req.params.comment_reply_id
                 })
                 if (athorizeUser == null) {
@@ -301,23 +302,36 @@ exports.replyCommitDelete = async (req, res, next) => {
                         new APIResponse("No Have any access", "false", 401, "0")
                     );
                 } else {
-                    await commentModel.updateOne(
-                        {
-                            postId: req.params.post_id,
-                            userId: req.params.user_id,
-                        },
-                        {
-                            $pull: {
-                                "comments.$[].replyUser": {
-                                    _id: req.params.comment_reply_id
-                                }
-                            }
-                        },
-                    );
 
-                    res.status(status.OK).json(
-                        new APIResponse("Reply deleted Successfully", "true", 200, "1")
-                    );
+                    const athorizeUser = await commentModel.findOne({
+                        postId: req.params.post_id,
+                        userId: req.params.user_id,
+                    })
+
+                    if (athorizeUser == null) {
+                        res.status(status.UNAUTHORIZED).json(
+                            new APIResponse("No Have any access", "false", 401, "0")
+                        );
+                    } else {
+                        await commentModel.updateOne(
+                            {
+                                postId: req.params.post_id,
+                                userId: req.params.user_id,
+                            },
+                            {
+                                $pull: {
+                                    "comments.$[].replyUser": {
+                                        _id: req.params.comment_reply_id
+                                    }
+                                }
+                            },
+                        );
+
+                        res.status(status.OK).json(
+                            new APIResponse("Reply deleted Successfully", "true", 200, "1")
+                        );
+                    }
+
                 }
 
             } else {

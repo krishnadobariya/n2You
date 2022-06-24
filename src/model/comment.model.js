@@ -18,7 +18,7 @@ const commentSchema = mongoose.Schema({
             required: true
         },
         comment: {
-            type: String,      
+            type: String,
             required: true
         },
         replyUser: [{
@@ -26,7 +26,7 @@ const commentSchema = mongoose.Schema({
                 type: mongoose.Schema.Types.ObjectId,
                 ref: 'User'
             },
-            replyMesage: {
+            replyMessage: {
                 type: String
             }
         }]
