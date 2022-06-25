@@ -73,6 +73,14 @@ const userSchema = mongoose.Schema({
         required: true,
         unique: true
     },
+    location: {
+        type: Object,
+        default: {
+            type: "Point",
+            coordinates: [0.0, 0.0],
+        },
+        index: '2dsphere'
+    },
     extraAtrribute: {
         bodyType: {
             type: String,
