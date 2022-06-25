@@ -237,8 +237,6 @@ exports.countReadUnreadMessage = async (req, res, next) => {
                     res.status(status.OK).json(
                         new APIResponse("show all unread 1 chat", true, 200, 1, meargeAllUserUnreadMessage)
                     )
-
-
                 } else if (finalArray1) {
 
                     meargeAllUserUnreadMessage = [...finalArray1];

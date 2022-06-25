@@ -8,5 +8,6 @@ const userController = require("../controller/user.controller");
 router.post('/register', upload.array('photo'), userController.userRegister);
 router.get('/search/:user_email', userController.searchFriend);
 router.get('/view/:user_id', userController.getDataUserWise);
+router.get('/nearestMe/:user_id', userController.userNearestMe);
 
-module.exports = router;
+module.exports = router; 

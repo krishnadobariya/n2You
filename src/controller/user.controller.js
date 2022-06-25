@@ -62,6 +62,13 @@ exports.userRegister = async (req, res, next) => {
                     IntrestedIn: req.body.IntrestedIn,
                     Bio: req.body.Bio,
                     photo: urls,
+                    location: {
+                        type: "Point",
+                        coordinates: [
+                            parseFloat(req.body.longitude),
+                            parseFloat(req.body.latitude),
+                        ],
+                    },
                     hopingToFind: req.body.hopingToFind,
                     jobTitle: req.body.jobTitle,
                     wantChildren: req.body.wantChildren,
@@ -479,3 +486,150 @@ exports.getDataUserWise = async (req, res, next) => {
 }
 
 
+exports.userNearestMe = async (req, res, next) => {
+    try {
+
+        const allUserWithProfileMatch = [];
+        const findUser = await userModel.findOne({
+            _id: req.params.user_id
+        })
+
+
+        if (findUser == null) {
+            res.status(status.NOT_FOUND).json(
+                new APIResponse("user not Found", "false", 404, "0")
+            )
+        } else {
+
+            var matchCordinates = await userModel.aggregate(
+                [
+                    {
+                        $geoNear: {
+                            near: {
+                                type: "Point",
+                                coordinates: [
+                                    parseFloat(findUser.location.coordinates[0]),
+                                    parseFloat(findUser.location.coordinates[1])
+
+                                ],
+                            },
+                            distanceField: "distanceFrom",
+                            maxDistance: 10000,
+                            minDistance: 0,
+                            uniqueDoc: true,
+                            spherical: true
+                        },
+                    },
+                ]
+            );
+
+
+
+            matchCordinates = matchCordinates.filter(function (item) {
+                // return true for salary greater than equals to 25000
+                return item._id != req.params.user_id;
+            });
+
+
+            const polyDating = findUser.polyDating
+            const HowDoYouPoly = findUser.HowDoYouPoly
+            const loveToGive = findUser.loveToGive
+            const polyRelationship = findUser.polyRelationship
+            const identity = findUser.identity
+            const relationshipSatus = findUser.relationshipSatus
+            const IntrestedIn = findUser.IntrestedIn
+            const hopingToFind = findUser.hopingToFind
+            const wantChildren = findUser.wantChildren
+
+            for (const chechUser of matchCordinates) {
+                var local = 0;
+
+
+
+                if (chechUser.polyDating == polyDating) {
+                    var local = local + 1
+                } else {
+                    var local = local + 0
+                }
+
+
+                if (chechUser.HowDoYouPoly == HowDoYouPoly) {
+                    var local = local + 1
+                } else {
+                    var local = local + 0
+                }
+
+
+                if (chechUser.loveToGive == loveToGive) {
+                    var local = local + 1
+                } else {
+                    var local = local + 0
+                }
+
+                if (chechUser.polyRelationship == polyRelationship) {
+                    var local = local + 1
+                } else {
+                    var local = local + 0
+                }
+
+                if (chechUser.identity == identity) {
+                    var local = local + 1
+                } else {
+                    var local = local + 0
+                }
+
+                if (chechUser.relationshipSatus == relationshipSatus) {
+                    var local = local + 1
+                } else {
+                    var local = local + 0
+                }
+
+
+                if (chechUser.IntrestedIn == IntrestedIn) {
+                    var local = local + 1
+                } else {
+                    var local = local + 0
+                }
+
+                if (chechUser.hopingToFind == hopingToFind) {
+                    var local = local + 1
+                } else {
+                    var local = local + 0
+                }
+
+                if (chechUser.wantChildren == wantChildren) {
+                    var local = local + 1
+                } else {
+                    var local = local + 0
+                }
+
+
+                const matchProfile = local / 9 * 100;
+
+                profileMatch = `${parseInt(matchProfile)}%`
+
+                const response = {
+                    chechUser,
+                    profileMatch
+                }
+
+                allUserWithProfileMatch.push(response)
+
+
+            }
+
+            res.status(status.OK).json(
+                new APIResponse("show User With ProfileMatch", "true", 201, "1", allUserWithProfileMatch)
+            )
+
+        }
+
+
+
+    } catch (error) {
+        console.log("error", error);
+        res.status(status.INTERNAL_SERVER_ERROR).json(
+            new APIResponse("Something Went Wrong", "false", 500, "0", error.message)
+        )
+    }
+}
