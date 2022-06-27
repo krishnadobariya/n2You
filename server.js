@@ -8,7 +8,7 @@ const port = process.env.PORT || 43760;
 const server = http.createServer(app);
 
 server.listen(port, function () {
-  console.log("Express server listening on port %d in %s mode");
+  console.log(`Express server listening on port ${port}`);
 });
 
 const io = new Server(server);
