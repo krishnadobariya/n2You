@@ -76,6 +76,9 @@ const userSchema = mongoose.Schema({
     fcm_token: {
         type: String
     },
+    basket: {
+        type: Number
+    },
     location: {
         type: Object,
         default: {

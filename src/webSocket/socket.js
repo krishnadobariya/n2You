@@ -22,14 +22,13 @@ function socket(io) {
             if (arg.sender_id == arg.user_1) {
                 const userFind = await userModel.findOne({ _id: arg.user_2 })
                 fcm_token.push(userFind.fcm_token)
-                console.log("userFind", userFind);
+             
             } else {
                 const userFind = await userModel.findOne({ _id: arg.user_1 })
                 fcm_token.push(userFind.fcm_token)
-                console.log("userFind", userFind);
+            
             }
 
-            console.log("fcm+_token", fcm_token);
             const addInChatRoom = await chatRoomModel.findOne({
                 user1: arg.user_1,
                 user2: arg.user_2,
@@ -41,9 +40,6 @@ function socket(io) {
             })
 
 
-            console.log("addInChatRoom", addInChatRoom);
-
-            console.log("checkUsers", checkUsers);
             if (addInChatRoom == null && checkUsers == null) {
                 const insertChatRoom = chatRoomModel({
                     user1: arg.user_1,
@@ -234,7 +230,6 @@ function socket(io) {
                             chatRoomId: alterNateChatRoom._id
                         })
 
-                        console.log(find2);
                         if (find2 == null) {
                             if (arg.sender_id == arg.user_1 || arg.sender_id == arg.user_2) {
                                 const data = chatModels({

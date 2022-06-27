@@ -545,8 +545,6 @@ exports.userNearestMe = async (req, res, next) => {
             for (const chechUser of matchCordinates) {
                 var local = 0;
 
-
-
                 if (chechUser.polyDating == polyDating) {
                     var local = local + 1
                 } else {
@@ -607,7 +605,13 @@ exports.userNearestMe = async (req, res, next) => {
 
                 const matchProfile = local / 9 * 100;
 
-                profileMatch = `${parseInt(matchProfile)}%`
+                profileMatch = `${parseInt(matchProfile)}`
+
+                const addInUser = await userModel.updateOne({
+                    _id: chechUser._id
+                }, {
+                    basket: profileMatch
+                })
 
                 const response = {
                     chechUser,
@@ -634,3 +638,47 @@ exports.userNearestMe = async (req, res, next) => {
         )
     }
 }
+
+exports.yesBasket = async (req, res, next) => {
+    try {
+
+        const findYesBasket = await userModel.find({
+            basket: { $lt: 100 }, basket: { $gt: 50 }
+        })
+
+        res.status(status.OK).json(
+            new APIResponse("show User which are basket in 50 - 100", "true", 201, "1", findYesBasket)
+        )
+
+    } catch (error) {
+        console.log("error", error);
+        res.status(status.INTERNAL_SERVER_ERROR).json(
+            new APIResponse("Something Went Wrong", "false", 500, "0", error.message)
+        )
+    }
+}
+
+
+exports.noBasket = async (req, res, next) => {
+    try {
+
+        const findNoBasket = await userModel.find({
+            basket:
+            {
+                $gte: 0,
+                $lt: 50
+            }
+        })
+
+        res.status(status.OK).json(
+            new APIResponse("show User which are basket in 0 - 50", "true", 201, "1", findNoBasket)
+        )
+
+    } catch (error) {
+        console.log("error", error);
+        res.status(status.INTERNAL_SERVER_ERROR).json(
+            new APIResponse("Something Went Wrong", "false", 500, "0", error.message)
+        )
+    }
+}
+

@@ -43,7 +43,7 @@ exports.LikeOrDislikeInUserPost = async (req, res, next) => {
                     await postModel.updateOne({ "posts._id": req.params.post_id }, { $inc: { "posts.$.like": -1 } });
 
                     const checkUserInLike = await likeModel.findOne({ reqUserId: req.params.req_user_id });
-                    console.log(checkUserInLike);
+    
                     if (checkUserInLike) {
 
                         await likeModel.deleteOne({ reqUserId: req.params.req_user_id });
@@ -120,11 +120,7 @@ exports.showAllUserWhichIsLikePost = async (req, res, next) => {
             } else {
                 const emailGet = [];
 
-                console.log(RequestedEmailExiestInUser);
-
-
-
-
+             
                 for (const getEmail of RequestedEmailExiestInUser.RequestedEmails) {
                     emailGet.push((getEmail.userId).toString())
                 }

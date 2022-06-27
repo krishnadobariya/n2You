@@ -9,9 +9,9 @@ const userModel = require("../model/user.model");
 exports.readChat = async (req, res, next) => {
     try {
 
-        console.log(req.params.user_id);
+      
         const findChatId = await chatModels.findOne({ chatRoomId: mongoose.Types.ObjectId(req.params.chat_room_id) })
-        console.log(findChatId);
+
         if (findChatId == null) {
             res.status(status.NOT_FOUND).json(
                 new APIResponse("User Not Found in Chat", "true", 404, "0")
@@ -40,8 +40,6 @@ exports.getUserWithChat = async (req, res, next) => {
         const findAllRecordInChat1 = await chatRoomModel.find({ user1: req.params.user_id });
         const findAllRecordInChat2 = await chatRoomModel.find({ user2: req.params.user_id });
 
-        console.log(findAllRecordInChat1);
-        console.log(findAllRecordInChat2);
         if (findAllRecordInChat1[0] == undefined && findAllRecordInChat2[0] == undefined) {
 
             res.status(status.NOT_FOUND).json(
@@ -210,7 +208,7 @@ exports.countReadUnreadMessage = async (req, res, next) => {
                 for (const getChat of getAllChat) {
 
                     if (getChat.sender == req.params.user_1) {
-                        console.log("1", getChat.read);
+                        
                         var defaltReadforUser1 = defaltReadforUser1 + getChat.read;
                         const response = [{
                             unreadMessage: defaltReadforUser1,
@@ -221,15 +219,13 @@ exports.countReadUnreadMessage = async (req, res, next) => {
 
                     } else if (getChat.sender == req.params.user_2) {
 
-                        console.log("2", getChat.read);
+                       
                         var defaltReadforUser2 = defaltReadforUser2 + getChat.read;
                         const response = [{
                             unreadMessage: defaltReadforUser2,
                             unreadMessageUserId: req.params.user_1
                         }]
 
-
-                        console.log(response);
 
                         unreadMessageByuser2.push(response)
                     }
