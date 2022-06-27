@@ -21,14 +21,14 @@ exports.blockUser = async (req, res, next) => {
                 );
 
             } else {
-                if (req.params.blockUnblock == 1) {
+                if (req.params.block_unblock == 1) {
                     const finduserIdInBlockModel = await blockUnblockUserModel.findOne({ userId: req.params.user_id })
                     if (finduserIdInBlockModel == null) {
                         const blockUser = blockUnblockUserModel({
                             userId: req.params.user_id,
                             blockUnblockUser: {
                                 blockUserId: req.params.block_user_id,
-                                blockUnblock: req.params.blockUnblock
+                                blockUnblock: req.params.block_unblock
                             }
                         })
 
@@ -39,7 +39,7 @@ exports.blockUser = async (req, res, next) => {
                     } else {
                         const finalData = {
                             blockUserId: req.params.block_user_id,
-                            blockUnblock: req.params.blockUnblock
+                            blockUnblock: req.params.block_unblock
                         }
 
                         await blockUnblockUserModel.updateOne({ userId: req.params.user_id }, { $push: { blockUnblockUser: finalData } });
@@ -119,7 +119,7 @@ exports.unBlockUser = async (req, res, next) => {
                         new APIResponse("Not Found", "false", 404, "0")
                     );
                 } else {
-                    if (req.params.blockUnblock == 0) {
+                    if (req.params.block_unblock == 0) {
                         const unBlockUser = await blockUnblockUserModel.updateOne(
                             {
                                 userId: req.params.user_id,

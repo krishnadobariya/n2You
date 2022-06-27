@@ -37,9 +37,9 @@ exports.userRegister = async (req, res, next) => {
                 new APIResponse("Not Allowed, Email Already Exist", "false", 406, "0")
             )
         } else {
-            const phoneNum = req.body.phoneNum;
+            const phoneNum = req.body.phone_num;
 
-            const countryCode = req.body.countryCode
+            const countryCode = req.body.country_code
 
             const findNumber = await userModel.findOne({ phoneNumber: `${countryCode}${phoneNum}` });
 
@@ -50,17 +50,17 @@ exports.userRegister = async (req, res, next) => {
                 )
             } else {
                 const user = userModel({
-                    polyDating: req.body.polyDating,
-                    HowDoYouPoly: req.body.HowDoYouPoly,
-                    loveToGive: req.body.loveToGive,
-                    polyRelationship: req.body.polyRelationship,
+                    polyDating: req.body.poly_dating,
+                    HowDoYouPoly: req.body.how_do_you_poly,
+                    loveToGive: req.body.love_to_give,
+                    polyRelationship: req.body.poly_relationship,
                     email: req.body.email,
-                    firstName: req.body.firstName,
-                    birthDate: req.body.birthDate,
+                    firstName: req.body.first_name,
+                    birthDate: req.body.birth_date,
                     identity: req.body.identity,
-                    relationshipSatus: req.body.relationshipSatus,
-                    IntrestedIn: req.body.IntrestedIn,
-                    Bio: req.body.Bio,
+                    relationshipSatus: req.body.relationship_satus,
+                    IntrestedIn: req.body.intrested_in,
+                    Bio: req.body.bio,
                     photo: urls,
                     location: {
                         type: "Point",
@@ -70,11 +70,11 @@ exports.userRegister = async (req, res, next) => {
                         ],
                     },
                     fcm_token: req.body.fcm_token,
-                    hopingToFind: req.body.hopingToFind,
-                    jobTitle: req.body.jobTitle,
-                    wantChildren: req.body.wantChildren,
+                    hopingToFind: req.body.hoping_to_find,
+                    jobTitle: req.body.job_title,
+                    wantChildren: req.body.want_children,
                     extraAtrribute: {
-                        bodyType: req.body.bodyType,
+                        bodyType: req.body.body_type,
                         height: req.body.height,
                         smoking: req.body.smoking,
                         drinking: req.body.drinking,
@@ -104,7 +104,7 @@ exports.userRegister = async (req, res, next) => {
 
 exports.searchFriend = async (req, res, next) => {
     try {
-        const Regexname = new RegExp(req.body.searchKey, 'i');
+        const Regexname = new RegExp(req.body.search_key, 'i');
         const searchName = await userModel.find({ firstName: Regexname });
         const reaquestedAllEmail = [];
         searchName.map((result, index) => {

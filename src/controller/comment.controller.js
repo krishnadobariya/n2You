@@ -99,7 +99,7 @@ exports.replyComment = async (req, res, next) => {
                     } else {
                         const finalData = {
                             userId: req.params.user_id,
-                            replyMessage: req.body.replyMessage
+                            replyMessage: req.body.reply_message
                         }
 
                         await commentModel.updateOne({ postId: req.params.post_id, "comments._id": req.params.comment_id }, { $push: { "comments.$.replyUser": finalData } });
@@ -256,7 +256,7 @@ exports.replyCommentEdit = async (req, res, next) => {
                     },
                     {
                         $set: {
-                            "comments.$.replyUser.$[i].replyMessage": req.body.replyMessage
+                            "comments.$.replyUser.$[i].replyMessage": req.body.reply_message
                         },
 
                     },
