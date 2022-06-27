@@ -19,7 +19,7 @@ const likeRoutes = require("./src/routes/like.routes");
 const commentRoutes = require("./src/routes/comment.routes");
 const blockUnblockUserRoutes = require("./src/routes/blockuser.routes");
 const chatRoutes = require("./src/routes/chat.routes");
-
+const sessionRoutes = require('./src/routes/session.routes');
 
 app.use('/user', userRoutes);
 app.use('/posts', postRoutes);
@@ -28,6 +28,7 @@ app.use('/like', likeRoutes);
 app.use('/comment', commentRoutes);
 app.use('/blockUnblockUser', blockUnblockUserRoutes);
 app.use('/chat', chatRoutes);
+app.use('/session', sessionRoutes);
 
 
 module.exports = app;

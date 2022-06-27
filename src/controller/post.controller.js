@@ -183,7 +183,7 @@ exports.getPostsbyUseId = async (req, res, next) => {
                 const storeAllpostsUserWise = [];
                 const getAllPostsUserWise = userWisePosts.posts;
                 getAllPostsUserWise.map((result, index) => {
-                    console.log("result is", result);
+              
                     storeAllpostsUserWise.unshift(result);
                 })
 
@@ -242,7 +242,6 @@ exports.getPostsbyUseId = async (req, res, next) => {
 
                     finalResponse.push(response)
 
-                    console.log("finalResponse", finalResponse);
 
                 }
                 res.status(status.OK).json(
@@ -532,8 +531,6 @@ exports.userAllFriendPost = async (req, res, next) => {
                                             commentData
                                         }
                                         finalResponse.push(response);
-
-                                        console.log("finalResponse", finalResponse);
 
                                     }
                                 }
