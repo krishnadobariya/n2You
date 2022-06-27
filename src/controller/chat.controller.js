@@ -110,8 +110,14 @@ exports.getUserWithChat = async (req, res, next) => {
                     chatRoomId: getChatId._id
                 })
 
+
+
+
+
                 for (const getChat of data) {
-                    getAllChat.push(getChat.chat);
+                    const getAllChatUser = getChat.chat
+                    const getChatPageWise = getAllChatUser.slice(req.query.skip, req.query.limit);
+                    getAllChat.push(getChatPageWise);
                 }
             }
 
@@ -295,6 +301,8 @@ exports.countReadUnreadMessage = async (req, res, next) => {
 
 
 
+
+
             const getAllChat = data[0].chat;
             var defaltReadforUser1 = 0;
             var defaltReadforUser2 = 0;
@@ -305,7 +313,7 @@ exports.countReadUnreadMessage = async (req, res, next) => {
             for (const getChat of getAllChat) {
 
                 if (getChat.sender == req.params.user_1) {
-                    console.log("1", getChat.read);
+
                     var defaltReadforUser1 = defaltReadforUser1 + getChat.read;
                     const response = [{
                         unreadMessage: defaltReadforUser1,
