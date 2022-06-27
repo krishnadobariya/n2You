@@ -1,7 +1,8 @@
 
 const chatModels = require("./models/chat.models");
 const chatRoomModel = require("./models/chatRoom.model");
-
+const Notification = require("../helper/firebaseHelper");
+const userModel = require("../model/user.model");
 function socket(io) {
 
     console.log("socket connected...");
@@ -17,7 +18,18 @@ function socket(io) {
             const userRoom = `${arg.user_1}`
             console.log("userRoom:::", userRoom);
 
+            const fcm_token = [];
+            if (arg.sender_id == arg.user_1) {
+                const userFind = await userModel.findOne({ _id: arg.user_2 })
+                fcm_token.push(userFind.fcm_token)
+                console.log("userFind", userFind);
+            } else {
+                const userFind = await userModel.findOne({ _id: arg.user_1 })
+                fcm_token.push(userFind.fcm_token)
+                console.log("userFind", userFind);
+            }
 
+            console.log("fcm+_token", fcm_token);
             const addInChatRoom = await chatRoomModel.findOne({
                 user1: arg.user_1,
                 user2: arg.user_2,
@@ -67,11 +79,29 @@ function socket(io) {
 
                             await data.save();
 
-                            io.emit("chatReceive", arg.text)
+                            io.emit("chatReceive", arg.text);
+
+                            const title = "n2you Notification";
+                            const body = `${arg.sender_id} send request to `;
+
+                            const text = arg.text;
+                            const sendBy = arg.sender_id;
+                            const registrationToken = fcm_token[0]
+
+                            Notification.sendPushNotificationFCM(
+                                registrationToken,
+                                title,
+                                body,
+                                text,
+                                sendBy,
+                                true
+                            );
 
                         } else {
                             io.emit("chatReceive", "sender not found");
                         }
+
+
 
                     } else {
                         if (arg.sender_id == arg.user_1 || arg.sender_id == arg.user_2) {
@@ -85,6 +115,20 @@ function socket(io) {
 
                             await data.save();
                             io.emit("chatReceive", arg.text)
+                            const title = "n2you Notification";
+                            const body = `${arg.sender_id} send request to `;
+
+                            const text = arg.text;
+                            const sendBy = arg.sender_id;
+                            const registrationToken = fcm_token[0]
+                            Notification.sendPushNotificationFCM(
+                                registrationToken,
+                                title,
+                                body,
+                                text,
+                                sendBy,
+                                true
+                            );
 
                         } else {
                             io.emit("chatReceive", "sender not found");
@@ -127,6 +171,20 @@ function socket(io) {
                                 await data.save();
 
                                 io.emit("chatReceive", arg.text)
+                                const title = "n2you Notification";
+                                const body = `${arg.sender_id} send request to `;
+
+                                const text = arg.text;
+                                const sendBy = arg.sender_id;
+                                const registrationToken = fcm_token[0]
+                                Notification.sendPushNotificationFCM(
+                                    registrationToken,
+                                    title,
+                                    body,
+                                    text,
+                                    sendBy,
+                                    true
+                                );
 
                             } else {
                                 io.emit("chatReceive", "sender not found");
@@ -150,6 +208,20 @@ function socket(io) {
                                 })
 
                                 io.emit("chatReceive", finalData.text)
+                                const title = "n2you Notification";
+                                const body = `${arg.sender_id} send request to `;
+
+                                const text = arg.text;
+                                const sendBy = arg.sender_id;
+                                const registrationToken = fcm_token[0]
+                                Notification.sendPushNotificationFCM(
+                                    registrationToken,
+                                    title,
+                                    body,
+                                    text,
+                                    sendBy,
+                                    true
+                                );
 
                             } else {
                                 io.emit("chatReceive", "sender not found");
@@ -175,6 +247,20 @@ function socket(io) {
 
                                 await data.save();
                                 io.emit("chatReceive", arg.text)
+                                const title = "n2you Notification";
+                                const body = `${arg.sender_id} send request to `;
+
+                                const text = arg.text;
+                                const sendBy = arg.sender_id;
+                                const registrationToken = fcm_token[0]
+                                Notification.sendPushNotificationFCM(
+                                    registrationToken,
+                                    title,
+                                    body,
+                                    text,
+                                    sendBy,
+                                    true
+                                );
 
                             } else {
                                 io.emit("chatReceive", "sender not found");
@@ -197,6 +283,22 @@ function socket(io) {
                                 })
 
                                 io.emit("chatReceive", finalData.text)
+                                const title = "n2you Notification";
+                                const body = `${arg.sender_id} send request to `;
+
+                                const text = arg.text;
+                                const sendBy = arg.sender_id;
+
+                                const registrationToken = fcm_token[0]
+
+                                Notification.sendPushNotificationFCM(
+                                    registrationToken,
+                                    title,
+                                    body,
+                                    text,
+                                    sendBy,
+                                    true
+                                );
 
                             } else {
                                 io.emit("chatReceive", "sender not found");

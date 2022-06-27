@@ -29,7 +29,7 @@ const commentSchema = mongoose.Schema({
             replyMessage: {
                 type: String
             }
-        }]
+        }] 
     }]
 }, {
     timestamps: true

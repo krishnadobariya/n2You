@@ -73,6 +73,9 @@ const userSchema = mongoose.Schema({
         required: true,
         unique: true
     },
+    fcm_token: {
+        type: String
+    },
     location: {
         type: Object,
         default: {
