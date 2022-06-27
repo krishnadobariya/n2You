@@ -183,6 +183,7 @@ exports.getPostsbyUseId = async (req, res, next) => {
                 const storeAllpostsUserWise = [];
                 const getAllPostsUserWise = userWisePosts.posts;
                 getAllPostsUserWise.map((result, index) => {
+                    console.log("result is", result);
                     storeAllpostsUserWise.unshift(result);
                 })
 
@@ -241,9 +242,11 @@ exports.getPostsbyUseId = async (req, res, next) => {
 
                     finalResponse.push(response)
 
+                    console.log("finalResponse", finalResponse);
+
                 }
                 res.status(status.OK).json(
-                    new APIResponse("Get Post user Wise!", "true", 201, "1", finalResponse)
+                    new APIResponse("Get Post user Wise!", "true", 201, "1", finalResponse.slice(req.query.skip, req.query.limit))
                 )
 
             } else {
@@ -529,12 +532,15 @@ exports.userAllFriendPost = async (req, res, next) => {
                                             commentData
                                         }
                                         finalResponse.push(response);
+
+                                        console.log("finalResponse", finalResponse);
+
                                     }
                                 }
 
                                 var status1 = {
                                     email: requestEmail.requestedEmail,
-                                    posts: finalResponse
+                                    posts: finalResponse.slice(req.query.skip, req.query.limit)
                                 }
                                 statusByEmail.push(status1)
                             } else {
