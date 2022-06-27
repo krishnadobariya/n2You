@@ -69,6 +69,7 @@ exports.userRegister = async (req, res, next) => {
                             parseFloat(req.body.latitude),
                         ],
                     },
+                    fcm_token: req.body.fcm_token,
                     hopingToFind: req.body.hopingToFind,
                     jobTitle: req.body.jobTitle,
                     wantChildren: req.body.wantChildren,

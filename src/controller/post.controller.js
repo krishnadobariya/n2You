@@ -271,7 +271,7 @@ exports.getPostsbyUseId = async (req, res, next) => {
 // exports.showPostsOnalyAcceptedPerson = async (req, res, next) => {
 //     try {
 //         const getAllUserFinalPost = [];
-//         const getAllUserPost = await postModal.find({});
+//         const getAllUserPost = await postModal.find({}); 
 //         getAllUserPost.map((result, index) => {
 //             const data = result.posts;
 //             data.map((result, index) => {
