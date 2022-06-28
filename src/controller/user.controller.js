@@ -100,6 +100,104 @@ exports.userRegister = async (req, res, next) => {
 }
 
 
+exports.userUpdate = async (req, res, next) => {
+    try {
+
+        const userFind = await userModel.findOne({
+            _id: req.params.user_id
+        })
+
+        const cloudinaryImageUploadMethod = async file => {
+            return new Promise(resolve => {
+                cloudinary.uploader.upload(file, (err, res) => {
+                    if (err) return res.status(500).send("upload image error")
+                    resolve({
+                        res: res.secure_url
+                    })
+                }
+                )
+            })
+        }
+
+
+        const urls = []
+        const files = req.files
+
+        for (const file of files) {
+            const { path } = file
+
+            const newPath = await cloudinaryImageUploadMethod(path)
+            urls.push(newPath)
+        }
+
+
+        if (userFind == null) {
+            res.status(status.NOT_FOUND).json(
+                new APIResponse("User not Found", "false", 404, "0")
+            )
+        } else {
+
+
+            const phoneNum = req.body.phone_num;
+
+            const countryCode = req.body.country_code;
+
+
+            const updateUser = await userModel.updateOne({
+                _id: req.params.user_id
+            }, {
+                $set: {
+                    polyDating: req.body.poly_dating,
+                    HowDoYouPoly: req.body.how_do_you_poly,
+                    loveToGive: req.body.love_to_give,
+                    polyRelationship: req.body.poly_relationship,
+                    email: req.body.email,
+                    firstName: req.body.first_name,
+                    birthDate: req.body.birth_date,
+                    identity: req.body.identity,
+                    relationshipSatus: req.body.relationship_satus,
+                    IntrestedIn: req.body.intrested_in,
+                    Bio: req.body.bio,
+                    photo: urls,
+                    location: {
+                        type: "Point",
+                        coordinates: [
+                            parseFloat(req.body.longitude),
+                            parseFloat(req.body.latitude),
+                        ],
+                    },
+                    fcm_token: req.body.fcm_token,
+                    hopingToFind: req.body.hoping_to_find,
+                    jobTitle: req.body.job_title,
+                    wantChildren: req.body.want_children,
+                    extraAtrribute: {
+                        bodyType: req.body.body_type,
+                        height: req.body.height,
+                        smoking: req.body.smoking,
+                        drinking: req.body.drinking,
+                        hobbies: req.body.hobbies
+                    },
+                    phoneNumber: `${countryCode}${phoneNum}`
+                }
+            }).then((() => {
+                res.status(status.OK).json(
+                    new APIResponse("User Successfully updated!", "true", 200, "1")
+                )
+            })).catch((error) => {
+                res.status(status.NOT_MODIFIED).json(
+                    new APIResponse("User not updated!", "false", 304, "0")
+                )
+            })
+        }
+
+    } catch (error) {
+        console.log("Error:", error);
+        res.status(status.INTERNAL_SERVER_ERROR).json(
+            new APIResponse("Something Went Wrong", "false", 500, "0", error.message)
+        )
+    }
+}
+
 // Search Friend
 
 exports.searchFriend = async (req, res, next) => {

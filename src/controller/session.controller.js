@@ -254,7 +254,7 @@ exports.invitedInSession = async (req, res, next) => {
     }
 }
 
-
+    
 exports.mySession = async (req, res, next) => {
     try {
 
@@ -265,7 +265,7 @@ exports.mySession = async (req, res, next) => {
 
 
         for (const findMySession of findUserInsession) {
-  
+
             const findUserDeatil = await userModel.findOne({
                 _id: findMySession.cretedSessionUser
             })
@@ -333,3 +333,4 @@ exports.mySession = async (req, res, next) => {
         )
     }
 }
+
