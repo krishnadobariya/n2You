@@ -5,6 +5,7 @@ const cloudinary = require("../utils/cloudinary.utils");
 const requestsModel = require("../model/requests.model");
 const { default: mongoose } = require("mongoose");
 const commentModel = require("../model/comment.model");
+const { updateOne } = require("../model/user.model");
 
 exports.userRegister = async (req, res, next) => {
     try {
@@ -99,7 +100,7 @@ exports.userRegister = async (req, res, next) => {
     }
 }
 
-
+// user profile update
 exports.userUpdate = async (req, res, next) => {
     try {
 
@@ -239,8 +240,46 @@ exports.userUpdate = async (req, res, next) => {
                     )
                 })
             }
+        }
+
+    } catch (error) {
+        console.log("Error:", error);
+        res.status(status.INTERNAL_SERVER_ERROR).json(
+            new APIResponse("Something Went Wrong", "false", 500, "0", error.message)
+        )
+    }
+}
 
 
+// token update
+
+exports.tokenUpdate = async (req, res, next) => {
+    try {
+
+        const findUser = await userModel.findOne({
+            _id: req.params.user_id
+        })
+
+        if (findUser == null) {
+            res.status(status.NOT_FOUND).json(
+                new APIResponse("User not Found", "false", 404, "0")
+            )
+        } else {
+            const updateToken = await userModel.updateOne({
+                _id: req.params.user_id
+            }, {
+                $set: {
+                    fcm_token: req.body.fcm_token
+                }
+            }).then(() => {
+                res.status(status.OK).json(
+                    new APIResponse("Token Successfully updated!", "true", 200, "1")
+                )
+            }).catch((error) => {
+                res.status(status.NOT_MODIFIED).json(
+                    new APIResponse("Toekn not updated!", "false", 304, "0")
+                )
+            })
         }
 
     } catch (error) {
