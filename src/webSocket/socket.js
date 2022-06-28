@@ -311,7 +311,7 @@ function socket(io) {
             const findRoom = await chatModels.findOne({
                 chatRoomId: arg.chat_room
             })
-
+            console.log();
             if (findRoom == null) {
                 io.emit("chatReceive", "chat room not found");
             } else {
