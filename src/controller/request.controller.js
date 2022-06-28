@@ -82,7 +82,6 @@ exports.sendRequest = async (req, res, next) => {
     }
 }
 
-
 exports.getRequestUserWise = async (req, res, next) => {
     try {
         const allNotAcceptedRequestes = [];
@@ -219,8 +218,3 @@ exports.showPostsOnalyAcceptedPerson = async (req, res, next) => {
         )
     }
 }
-
-
-
-
-
