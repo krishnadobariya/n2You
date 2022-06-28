@@ -321,14 +321,63 @@ exports.searchFriend = async (req, res, next) => {
             )
 
 
-            if (RequestedEmailExiestInUser == null) {
-                res.status(status.NOT_FOUND).json(
-                    new APIResponse("Requested Email Not Exiest In User or User not Found", "false", 404, "0")
+            if (reaquestedAllEmail && RequestedEmailExiestInUser == null) {
+                const finalData = [];
+                const responseData = [];
+                for (const allrequestedDataNotAcceptedRequestAndNotFriend of reaquestedAllEmail) {
+                
+                    const userDetail = await userModel.findOne({ email: allrequestedDataNotAcceptedRequestAndNotFriend });
+
+                    const FindLocation = await userModel.aggregate([
+                        {
+                            $geoNear: {
+                                near: {
+                                    type: "Point",
+                                    coordinates: [
+                                        parseFloat(req.query.long),
+                                        parseFloat(req.query.lat)
+
+                                    ],
+                                },
+                                distanceField: "distanceFrom",
+                                maxDistance: 10000,
+                                minDistance: 0,
+                                uniqueDoc: true,
+                                spherical: true
+                            },
+                        }]);
+
+
+                    console.log(FindLocation);
+
+                    for (const uniqueDistance of FindLocation) {
+
+                        if (uniqueDistance.email == allrequestedDataNotAcceptedRequestAndNotFriend) {
+                            finalData.push(uniqueDistance)
+                        }
+                    }
+                }
+
+                for (const getOriginalData of finalData) {
+                    const response = {
+                        _id: getOriginalData._id,
+                        email: getOriginalData.email,
+                        firstName: getOriginalData.firstName,
+                        status: 3
+                    }
+
+                    responseData.push(response);
+                }
+
+                res.status(status.OK).json(
+                    new APIResponse("show all record searchwise", true, 201, 1, responseData)
                 )
+
+
             } else {
 
                 const emailGet = [];
-
+                const finalData = [];
                 for (const getEmail of RequestedEmailExiestInUser.RequestedEmails) {
                     emailGet.push(getEmail.requestedEmail)
                 }
@@ -340,190 +389,210 @@ exports.searchFriend = async (req, res, next) => {
                 for (const uniqueEmail of difference) {
                     const userDetail = await userModel.findOne({ email: uniqueEmail });
 
+                    const FindLocation = await userModel.aggregate([
+                        {
+                            $geoNear: {
+                                near: {
+                                    type: "Point",
+                                    coordinates: [
+                                        parseFloat(req.query.long),
+                                        parseFloat(req.query.lat)
+
+                                    ],
+                                },
+                                distanceField: "distanceFrom",
+                                maxDistance: 10000,
+                                minDistance: 0,
+                                uniqueDoc: true,
+                                spherical: true
+                            },
+                        }]);
+
+
+
+                    for (const uniqueDistance of FindLocation) {
+
+                        if (uniqueDistance.email == uniqueEmail) {
+                            finalData.push(uniqueDistance)
+                        }
+                    }
+
+                }
+
+
+
+                for (const getOriginalData of finalData) {
                     const response = {
-                        _id: userDetail._id,
-                        email: uniqueEmail,
-                        firstName: userDetail.firstName,
+                        _id: getOriginalData._id,
+                        email: getOriginalData.email,
+                        firstName: getOriginalData.firstName,
                         status: 3
                     }
 
                     UniqueEmail.push(response);
                 }
 
+                console.log(UniqueEmail);
 
 
-                if (RequestedEmailExiestInUser == null) {
-                    const responseData = [];
-                    for (const allrequestedDataNotAcceptedRequestAndNotFriend of reaquestedAllEmail) {
-                        const userDetail = await userModel.findOne({ email: allrequestedDataNotAcceptedRequestAndNotFriend });
-                        const response = {
-                            _id: userDetail._id,
-                            email: allrequestedDataNotAcceptedRequestAndNotFriend,
-                            firstName: userDetail.firstName,
-                            status: 3
+                const statusByEmail = [];
+                const allRequestedEmail = RequestedEmailExiestInUser.RequestedEmails
+                const requestedEmailWitchIsInuserRequeted = [];
+                allRequestedEmail.map((result, next) => {
+                    const resultEmail = result.requestedEmail
+                    requestedEmailWitchIsInuserRequeted.push(resultEmail);
+                })
+
+                const meageAllTable = await userModel.aggregate([{
+                    $match: {
+                        email: {
+                            $in: requestedEmailWitchIsInuserRequeted
                         }
-
-                        responseData.push(response);
                     }
-                } else {
+                },
+                {
+                    $lookup: {
+                        from: 'posts',
+                        localField: 'email',
+                        foreignField: 'email',
+                        as: 'req_data'
+                    }
+                },
+                {
+                    $lookup: {
+                        from: 'requests',
+                        let: {
 
-
-                    const statusByEmail = [];
-                    const allRequestedEmail = RequestedEmailExiestInUser.RequestedEmails
-                    const requestedEmailWitchIsInuserRequeted = [];
-                    allRequestedEmail.map((result, next) => {
-                        const resultEmail = result.requestedEmail
-                        requestedEmailWitchIsInuserRequeted.push(resultEmail);
-                    })
-
-                    const meageAllTable = await userModel.aggregate([{
-                        $match: {
-                            email: {
-                                $in: requestedEmailWitchIsInuserRequeted
-                            }
-                        }
-                    },
-                    {
-                        $lookup: {
-                            from: 'posts',
-                            localField: 'email',
-                            foreignField: 'email',
-                            as: 'req_data'
-                        }
-                    },
-                    {
-                        $lookup: {
-                            from: 'requests',
-                            let: {
-
-                                userEmail: req.params.user_email,
-                                email: "$email"
-                            },
-                            pipeline: [
-                                {
-                                    $match: {
-                                        $expr: {
-                                            $and: [
-                                                {
-                                                    $eq: [
-                                                        "$userEmail", "$$userEmail"
+                            userEmail: req.params.user_email,
+                            email: "$email"
+                        },
+                        pipeline: [
+                            {
+                                $match: {
+                                    $expr: {
+                                        $and: [
+                                            {
+                                                $eq: [
+                                                    "$userEmail", "$$userEmail"
+                                                ]
+                                            },
+                                            {
+                                                $in:
+                                                    [
+                                                        "$$email", "$RequestedEmails.requestedEmail"
                                                     ]
-                                                },
-                                                {
-                                                    $in:
-                                                        [
-                                                            "$$email", "$RequestedEmails.requestedEmail"
-                                                        ]
-                                                }
-                                            ]
-                                        }
+                                            }
+                                        ]
                                     }
-                                },
-                            ],
-                            as: 'form_data'
-                        }
-                    },
-                    {
-                        $project: {
-                            polyDating: "$polyDating",
-                            HowDoYouPoly: "$HowDoYouPoly",
-                            loveToGive: "$loveToGive",
-                            polyRelationship: "$polyRelationship",
-                            firstName: "$firstName",
-                            email: "$email",
-                            firstName: "$firstName",
-                            relationshipSatus: "$relationshipSatus",
-                            Bio: "$Bio",
-                            hopingToFind: "$hopingToFind",
-                            jobTitle: "$jobTitle",
-                            wantChildren: "$wantChildren",
-                            posts: "$req_data",
-                            result: "$form_data.RequestedEmails",
-                        }
-                    }])
+                                }
+                            },
+                        ],
+                        as: 'form_data'
+                    }
+                },
+                {
+                    $project: {
+                        polyDating: "$polyDating",
+                        HowDoYouPoly: "$HowDoYouPoly",
+                        loveToGive: "$loveToGive",
+                        polyRelationship: "$polyRelationship",
+                        firstName: "$firstName",
+                        email: "$email",
+                        firstName: "$firstName",
+                        relationshipSatus: "$relationshipSatus",
+                        Bio: "$Bio",
+                        hopingToFind: "$hopingToFind",
+                        jobTitle: "$jobTitle",
+                        wantChildren: "$wantChildren",
+                        posts: "$req_data",
+                        result: "$form_data.RequestedEmails",
+                    }
+                }])
 
 
 
-                    const finalExistUser = [];
+                const finalExistUser = [];
 
-                    console.log(finalExistUser);
 
-                    const emailDataDetail = meageAllTable;
-                    for (const DataDetail of emailDataDetail) {
-                        for (const reqEmail of reaquestedAllEmail) {
-                            if (DataDetail.email == reqEmail) {
-                                finalExistUser.push(DataDetail)
-                            }
+
+                const emailDataDetail = meageAllTable;
+                for (const DataDetail of emailDataDetail) {
+
+                    for (const reqEmail of reaquestedAllEmail) {
+                        if (DataDetail.email == reqEmail) {
+                            finalExistUser.push(DataDetail)
                         }
                     }
-
-                    for (const emailData of finalExistUser[0].result) {
-
-                        for (const requestEmail of emailData) {
-
-                            for (const meageAllTableEmail of finalExistUser) {
-
-                                if (requestEmail.requestedEmail == meageAllTableEmail.email) {
+                }
 
 
-                                    if (requestEmail.accepted == 1) {
-                                        var status1 = {
-                                            status: 1,
-                                            email: requestEmail.requestedEmail
-                                        }
-                                        statusByEmail.push(status1)
-                                    } else {
-                                        var status2 = {
-                                            status: 2,
-                                            email: requestEmail.requestedEmail
-                                        }
-                                        statusByEmail.push(status2)
+
+                for (const emailData of finalExistUser[0].result) {
+
+                    for (const requestEmail of emailData) {
+
+                        for (const meageAllTableEmail of finalExistUser) {
+
+                            if (requestEmail.requestedEmail == meageAllTableEmail.email) {
+
+
+                                if (requestEmail.accepted == 1) {
+                                    var status1 = {
+                                        status: 1,
+                                        email: requestEmail.requestedEmail
                                     }
+                                    statusByEmail.push(status1)
+                                } else {
+                                    var status2 = {
+                                        status: 2,
+                                        email: requestEmail.requestedEmail
+                                    }
+                                    statusByEmail.push(status2)
                                 }
                             }
                         }
                     }
-
-                    const final_data = [];
-
-                    const finalStatus = []
-                    for (const [key, finalData] of meageAllTable.entries()) {
-                        for (const [key, final1Data] of statusByEmail.entries())
-                            if (finalData.email === final1Data.email) {
-                                finalStatus.push(final1Data.status)
-                            }
-                    }
-                    for (const [key, finalData] of finalExistUser.entries()) {
-
-                        const response = {
-                            _id: finalData._id,
-                            polyDating: finalData.polyDating,
-                            HowDoYouPoly: finalData.HowDoYouPoly,
-                            loveToGive: finalData.loveToGive,
-                            polyRelationship: finalData.polyRelationship,
-                            firstName: finalData.firstName,
-                            email: finalData.email,
-                            relationshipSatus: finalData.relationshipSatus,
-                            Bio: finalData.Bio,
-                            hopingToFind: finalData.hopingToFind,
-                            jobTitle: finalData.jobTitle,
-                            wantChildren: finalData.wantChildren,
-                            posts: finalData.posts,
-                            status: finalStatus[key]
-                        }
-                        final_data.push(response);
-                    }
-
-
-
-                    const final_response = [...final_data, ...UniqueEmail]
-
-                    // let uniqueObjArray = [...new Map(final_data.map((item) => [item["details"], item])).values()];
-
-                    res.status(status.OK).json(
-                        new APIResponse("show all record searchwise", true, 201, 1, final_response)
-                    )
                 }
+
+                const final_data = [];
+
+                const finalStatus = []
+                for (const [key, finalData] of meageAllTable.entries()) {
+                    for (const [key, final1Data] of statusByEmail.entries())
+                        if (finalData.email === final1Data.email) {
+                            finalStatus.push(final1Data.status)
+                        }
+                }
+                for (const [key, finalData] of finalExistUser.entries()) {
+
+                    const response = {
+                        _id: finalData._id,
+                        polyDating: finalData.polyDating,
+                        HowDoYouPoly: finalData.HowDoYouPoly,
+                        loveToGive: finalData.loveToGive,
+                        polyRelationship: finalData.polyRelationship,
+                        firstName: finalData.firstName,
+                        email: finalData.email,
+                        relationshipSatus: finalData.relationshipSatus,
+                        Bio: finalData.Bio,
+                        hopingToFind: finalData.hopingToFind,
+                        jobTitle: finalData.jobTitle,
+                        wantChildren: finalData.wantChildren,
+                        posts: finalData.posts,
+                        status: finalStatus[key]
+                    }
+                    final_data.push(response);
+                }
+
+
+
+                const final_response = [...final_data, ...UniqueEmail]
+
+                // let uniqueObjArray = [...new Map(final_data.map((item) => [item["details"], item])).values()];
+
+                res.status(status.OK).json(
+                    new APIResponse("show all record searchwise", true, 201, 1, final_response)
+                )
             }
         }
 

@@ -22,11 +22,11 @@ function socket(io) {
             if (arg.sender_id == arg.user_1) {
                 const userFind = await userModel.findOne({ _id: arg.user_2 })
                 fcm_token.push(userFind.fcm_token)
-             
+
             } else {
                 const userFind = await userModel.findOne({ _id: arg.user_1 })
                 fcm_token.push(userFind.fcm_token)
-            
+
             }
 
             const addInChatRoom = await chatRoomModel.findOne({
@@ -317,6 +317,34 @@ function socket(io) {
             } else {
                 await chatModels.updateMany({ chatRoomId: arg.chat_room }, { $set: { "chat.$[].read": 0 } });
                 io.emit("chatReceive", "read All chat");
+            }
+        })
+
+        socket.on("updateLatLong", async (arg) => {
+            const findUser = await userModel.findOne({
+                _id: arg.user_id
+            })
+
+            if (findUser == null) {
+                io.emit("checkUpdate", "User Not Found!");
+            } else {
+                const updateLatLong = await userModel.updateOne({
+                    _id: arg.user_id
+                }, {
+                    $set: {
+                        location: {
+                            type: "Point",
+                            coordinates: [
+                                parseFloat(arg.longitude),
+                                parseFloat(arg.latitude),
+                            ],
+                        },
+                    }
+                }).then(() => {
+                    io.emit("checkUpdate", "User Location Updated!");
+                }).catch((error) => {
+                    io.emit("checkUpdate", error);
+                })
             }
         })
 
