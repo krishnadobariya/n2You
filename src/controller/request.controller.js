@@ -102,6 +102,7 @@ exports.getRequestUserWise = async (req, res, next) => {
                 Requests.push(finalResponse)
             }
 
+            console.log(Requests);
 
             for (const notAcceptedRequest of Requests) {
                 if (notAcceptedRequest.accepted == 0) {
@@ -111,7 +112,7 @@ exports.getRequestUserWise = async (req, res, next) => {
 
             if (allNotAcceptedRequestes[0] == undefined) {
                 res.status(status.NOT_FOUND).json(
-                    new APIResponse("Request accpted by the User!", "false", 404, "0")
+                    new APIResponse("Not Have any requested User!", "false", 404, "0")
                 )
             } else {
                 res.status(status.NOT_FOUND).json(
