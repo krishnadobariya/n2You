@@ -142,52 +142,105 @@ exports.userUpdate = async (req, res, next) => {
 
             const countryCode = req.body.country_code;
 
-
-            const updateUser = await userModel.updateOne({
-                _id: req.params.user_id
-            }, {
-                $set: {
-                    polyDating: req.body.poly_dating,
-                    HowDoYouPoly: req.body.how_do_you_poly,
-                    loveToGive: req.body.love_to_give,
-                    polyRelationship: req.body.poly_relationship,
-                    email: req.body.email,
-                    firstName: req.body.first_name,
-                    birthDate: req.body.birth_date,
-                    identity: req.body.identity,
-                    relationshipSatus: req.body.relationship_satus,
-                    IntrestedIn: req.body.intrested_in,
-                    Bio: req.body.bio,
-                    photo: urls,
-                    location: {
-                        type: "Point",
-                        coordinates: [
-                            parseFloat(req.body.longitude),
-                            parseFloat(req.body.latitude),
-                        ],
-                    },
-                    fcm_token: req.body.fcm_token,
-                    hopingToFind: req.body.hoping_to_find,
-                    jobTitle: req.body.job_title,
-                    wantChildren: req.body.want_children,
-                    extraAtrribute: {
-                        bodyType: req.body.body_type,
-                        height: req.body.height,
-                        smoking: req.body.smoking,
-                        drinking: req.body.drinking,
-                        hobbies: req.body.hobbies
-                    },
-                    phoneNumber: `${countryCode}${phoneNum}`
+            const findNumber = await userModel.find(
+                {
+                    _id:
+                    {
+                        $ne: req.params.user_id
+                    }
                 }
-            }).then((() => {
-                res.status(status.OK).json(
-                    new APIResponse("User Successfully updated!", "true", 200, "1")
+            );
+            const findNumberUnique = [];
+            for (const findvalidNumber of findNumber) {
+
+                if (findvalidNumber.phoneNumber == `${countryCode}${phoneNum}`) {
+                    findNumberUnique.push("yes")
+                } else {
+                    findNumberUnique.push("no")
+                }
+            }
+
+
+            const findEmailUnique = [];
+            const findEmail = await userModel.find(
+                {
+                    _id:
+                    {
+                        $ne: req.params.user_id
+                    }
+                }
+            );
+
+
+            for (const findvalidEmail of findEmail) {
+
+                if (findvalidEmail.email == req.body.email) {
+                    findEmailUnique.push("yes")
+                } else {
+                    findEmailUnique.push("no")
+                }
+            }
+
+            const resultForNumber = findNumberUnique.includes("yes");
+            const resultForEmail = findEmailUnique.includes("yes")
+
+            if (resultForNumber) {
+                res.status(status.NOT_ACCEPTABLE).json(
+                    new APIResponse("Number Already Exist, It must be Unique", "false", 406, "0")
                 )
-            })).catch((error) => {
-                res.status(status.NOT_MODIFIED).json(
-                    new APIResponse("User not updated!", "false", 304, "0")
+            } else if (resultForEmail) {
+                res.status(status.NOT_ACCEPTABLE).json(
+                    new APIResponse("Not Allowed, Email Already Exist", "false", 406, "0")
                 )
-            })
+            } else {
+                const updateUser = await userModel.updateOne({
+                    _id: req.params.user_id
+                }, {
+                    $set: {
+                        polyDating: req.body.poly_dating,
+                        HowDoYouPoly: req.body.how_do_you_poly,
+                        loveToGive: req.body.love_to_give,
+                        polyRelationship: req.body.poly_relationship,
+                        email: req.body.email,
+                        firstName: req.body.first_name,
+                        birthDate: req.body.birth_date,
+                        identity: req.body.identity,
+                        relationshipSatus: req.body.relationship_satus,
+                        IntrestedIn: req.body.intrested_in,
+                        Bio: req.body.bio,
+                        photo: urls,
+                        location: {
+                            type: "Point",
+                            coordinates: [
+                                parseFloat(req.body.longitude),
+                                parseFloat(req.body.latitude),
+                            ],
+                        },
+                        fcm_token: req.body.fcm_token,
+                        hopingToFind: req.body.hoping_to_find,
+                        jobTitle: req.body.job_title,
+                        wantChildren: req.body.want_children,
+                        extraAtrribute: {
+                            bodyType: req.body.body_type,
+                            height: req.body.height,
+                            smoking: req.body.smoking,
+                            drinking: req.body.drinking,
+                            hobbies: req.body.hobbies
+                        },
+                        phoneNumber: `${countryCode}${phoneNum}`
+                    }
+                }).then((() => {
+                    res.status(status.OK).json(
+                        new APIResponse("User Successfully updated!", "true", 200, "1")
+                    )
+                })).catch((error) => {
+                    res.status(status.NOT_MODIFIED).json(
+                        new APIResponse("User not updated!", "false", 304, "0")
+                    )
+                })
+            }
+
+
         }
 
     } catch (error) {
