@@ -20,6 +20,7 @@ const commentRoutes = require("./src/routes/comment.routes");
 const blockUnblockUserRoutes = require("./src/routes/blockuser.routes");
 const chatRoutes = require("./src/routes/chat.routes");
 const sessionRoutes = require('./src/routes/session.routes');
+const thumbManageRoutes = require("./src/routes/thumbManage.routes");
 
 app.use('/user', userRoutes);
 app.use('/posts', postRoutes);
@@ -29,6 +30,7 @@ app.use('/comment', commentRoutes);
 app.use('/blockUnblockUser', blockUnblockUserRoutes);
 app.use('/chat', chatRoutes);
 app.use('/session', sessionRoutes);
+app.use('/thumb', thumbManageRoutes);
 
 
 module.exports = app;

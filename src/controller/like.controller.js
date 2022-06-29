@@ -17,7 +17,15 @@ exports.LikeOrDislikeInUserPost = async (req, res, next) => {
             if (postFindInPostModel) {
 
                 if (req.params.value == 1) {
-                    const data = await postModel.updateOne({ "posts._id": req.params.post_id }, { $inc: { "posts.$.like": 1 } });
+                    const data = await postModel.updateOne({ "posts._id": req.params.post_id }, { $inc: { "posts.$.like": 1 } }).then(() => {
+                        res.status(status.CREATED).json(
+                            new APIResponse("Like Added", "true", 201, "1")
+                        );
+                    }).catch((e) => {
+                        res.status(status.INTERNAL_SERVER_ERROR).json(
+                            new APIResponse("somthing went erong", "true", 500, "0", e)
+                        );
+                    })
 
                     const checkUserInLike = await likeModel.findOne({ reqUserId: req.params.req_user_id, postId: req.params.post_id });
 
@@ -43,7 +51,7 @@ exports.LikeOrDislikeInUserPost = async (req, res, next) => {
                     await postModel.updateOne({ "posts._id": req.params.post_id }, { $inc: { "posts.$.like": -1 } });
 
                     const checkUserInLike = await likeModel.findOne({ reqUserId: req.params.req_user_id });
-    
+
                     if (checkUserInLike) {
 
                         await likeModel.deleteOne({ reqUserId: req.params.req_user_id });
@@ -120,7 +128,7 @@ exports.showAllUserWhichIsLikePost = async (req, res, next) => {
             } else {
                 const emailGet = [];
 
-             
+
                 for (const getEmail of RequestedEmailExiestInUser.RequestedEmails) {
                     emailGet.push((getEmail.userId).toString())
                 }
