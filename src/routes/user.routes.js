@@ -10,7 +10,7 @@ router.put('/update/:user_id', upload.array('photo'), userController.userUpdate)
 router.put('/update/token/:user_id', userController.tokenUpdate);
 router.get('/search/:user_email', userController.searchFriend);
 router.get('/view/:user_id', userController.getDataUserWise);
-router.get('/nearestMe/:user_id', userController.userNearestMe);
-router.get('/yesBasket', userController.yesBasket);
-router.get('/noBasket', userController.noBasket);
+router.get('/storeBasketValue/:user_id', userController.storeBasketValue);
+router.get('/yesBasket/:user_id', userController.yesBasket);
+router.get('/noBasket/:user_id', userController.noBasket);
 module.exports = router; 

@@ -325,7 +325,7 @@ exports.searchFriend = async (req, res, next) => {
                 const finalData = [];
                 const responseData = [];
                 for (const allrequestedDataNotAcceptedRequestAndNotFriend of reaquestedAllEmail) {
-                
+
                     const userDetail = await userModel.findOne({ email: allrequestedDataNotAcceptedRequestAndNotFriend });
 
                     const FindLocation = await userModel.aggregate([
@@ -746,7 +746,7 @@ exports.getDataUserWise = async (req, res, next) => {
 }
 
 
-exports.userNearestMe = async (req, res, next) => {
+exports.storeBasketValue = async (req, res, next) => {
     try {
 
         const allUserWithProfileMatch = [];
@@ -761,74 +761,45 @@ exports.userNearestMe = async (req, res, next) => {
             )
         } else {
 
-            var matchCordinates = await userModel.aggregate(
-                [
-                    {
-                        $geoNear: {
-                            near: {
-                                type: "Point",
-                                coordinates: [
-                                    parseFloat(findUser.location.coordinates[0]),
-                                    parseFloat(findUser.location.coordinates[1])
+            // var matchCordinates = await userModel.aggregate(
+            //     [
+            //         {
+            //             $geoNear: {
+            //                 near: {
+            //                     type: "Point",
+            //                     coordinates: [
+            //                         parseFloat(findUser.location.coordinates[0]),
+            //                         parseFloat(findUser.location.coordinates[1])
 
-                                ],
-                            },
-                            distanceField: "distanceFrom",
-                            maxDistance: 10000,
-                            minDistance: 0,
-                            uniqueDoc: true,
-                            spherical: true
-                        },
-                    },
-                ]
-            );
-
-
-
-            matchCordinates = matchCordinates.filter(function (item) {
-                // return true for salary greater than equals to 25000
-                return item._id != req.params.user_id;
-            });
+            //                     ],
+            //                 },
+            //                 distanceField: "distanceFrom",
+            //                 maxDistance: 10000,
+            //                 minDistance: 0,
+            //                 uniqueDoc: true,
+            //                 spherical: true
+            //             },
+            //         },
+            //     ]
+            // );
 
 
-            const polyDating = findUser.polyDating
-            const HowDoYouPoly = findUser.HowDoYouPoly
-            const loveToGive = findUser.loveToGive
-            const polyRelationship = findUser.polyRelationship
+            var matchUser = await userModel.find({
+                _id: {
+                    $ne: req.params.user_id
+                }
+            })
+
             const identity = findUser.identity
             const relationshipSatus = findUser.relationshipSatus
             const IntrestedIn = findUser.IntrestedIn
             const hopingToFind = findUser.hopingToFind
             const wantChildren = findUser.wantChildren
 
-            for (const chechUser of matchCordinates) {
+
+            for (const chechUser of matchUser) {
+
                 var local = 0;
-
-                if (chechUser.polyDating == polyDating) {
-                    var local = local + 1
-                } else {
-                    var local = local + 0
-                }
-
-
-                if (chechUser.HowDoYouPoly == HowDoYouPoly) {
-                    var local = local + 1
-                } else {
-                    var local = local + 0
-                }
-
-
-                if (chechUser.loveToGive == loveToGive) {
-                    var local = local + 1
-                } else {
-                    var local = local + 0
-                }
-
-                if (chechUser.polyRelationship == polyRelationship) {
-                    var local = local + 1
-                } else {
-                    var local = local + 0
-                }
 
                 if (chechUser.identity == identity) {
                     var local = local + 1
@@ -862,33 +833,47 @@ exports.userNearestMe = async (req, res, next) => {
                 }
 
 
-                const matchProfile = local / 9 * 100;
+                const matchProfile = local / 5 * 100;
 
-                profileMatch = `${parseInt(matchProfile)}`
+                const profileMatch = `${parseInt(matchProfile)}`
 
-                const addInUser = await userModel.updateOne({
-                    _id: chechUser._id
-                }, {
-                    basket: profileMatch
+                const findUser = await userModel.findOne({
+                    _id: req.params.user_id,
+                    "basket.userId": chechUser._id
                 })
+
+                if (findUser == null) {
+                    const addInUser = await userModel.updateOne({
+                        _id: req.params.user_id
+                    }, {
+                        $push: {
+                            basket: {
+                                match: profileMatch,
+                                userId: chechUser._id
+                            }
+                        }
+                    })
+                } else {
+                    const updateUser = await userModel.updateOne({
+                        _id: req.params.user_id,
+                        "basket.userId": chechUser._id
+                    }, {
+                        basket: {
+                            match: profileMatch,
+                        }
+                    })
+                }
 
                 const response = {
                     chechUser,
                     profileMatch
                 }
-
                 allUserWithProfileMatch.push(response)
-
-
             }
-
             res.status(status.OK).json(
                 new APIResponse("show User With ProfileMatch", "true", 201, "1", allUserWithProfileMatch)
             )
-
         }
-
-
 
     } catch (error) {
         console.log("error", error);
@@ -901,13 +886,290 @@ exports.userNearestMe = async (req, res, next) => {
 exports.yesBasket = async (req, res, next) => {
     try {
 
-        const findYesBasket = await userModel.find({
-            basket: { $lt: 100 }, basket: { $gt: 50 }
+        // const findYesBasket = await userModel.find({
+        //     basket: { $lt: 100 }, basket: { $gt: 50 }
+        // })
+
+
+        const findUser = await userModel.findOne({
+            _id: req.params.user_id
         })
 
-        res.status(status.OK).json(
-            new APIResponse("show User which are basket in 50 - 100", "true", 201, "1", findYesBasket)
-        )
+        if (findUser == null) {
+            res.status(status.NOT_FOUND).json(
+                new APIResponse("user not Found", "false", 404, "0")
+            )
+        } else {
+            const reaquestedAllEmail = [];
+            const allMeargeData = [];
+            const YesBasketData = [];
+            for (const allBakest of findUser.basket) {
+
+                if (allBakest.match > 50) {
+                    YesBasketData.push(allBakest.userId)
+                    console.log("allBakest.userId", allBakest.userId);
+                }
+
+            }
+
+            for (const allYesBasketData of YesBasketData) {
+
+                console.log("allYesBasketData", allYesBasketData);
+                const meargeData = await userModel.findOne({
+                    _id: allYesBasketData,
+                })
+
+
+                reaquestedAllEmail.push(meargeData.email)
+            }
+
+            console.log("reaquestedAllEmail", reaquestedAllEmail);
+
+
+            if (reaquestedAllEmail[0] == undefined) {
+                res.status(status.NOT_FOUND).json(
+                    new APIResponse("No User Found", 'false', 404, '0')
+                )
+            } else {
+
+                const RequestedEmailExiestInUser = await requestsModel.findOne(
+                    {
+                        userId: req.params.user_id,
+                        RequestedEmails: {
+                            $elemMatch: {
+                                requestedEmail: {
+                                    $in: reaquestedAllEmail
+                                }
+                            }
+                        }
+                    }
+                )
+
+
+                if (reaquestedAllEmail && RequestedEmailExiestInUser == null) {
+                    const finalData = [];
+                    const responseData = [];
+                    for (const allrequestedDataNotAcceptedRequestAndNotFriend of reaquestedAllEmail) {
+                        const userDetail = await userModel.findOne({ email: allrequestedDataNotAcceptedRequestAndNotFriend });
+                        finalData.push(userDetail)
+                    }
+
+                    console.log("finalData", finalData);
+
+                    for (const getOriginalData of finalData) {
+                        const response = {
+                            _id: getOriginalData._id,
+                            email: getOriginalData.email,
+                            firstName: getOriginalData.firstName,
+                            status: 3
+                        }
+
+                        responseData.push(response);
+                    }
+
+                    res.status(status.OK).json(
+                        new APIResponse("show all record searchwise", true, 201, 1, responseData)
+                    )
+
+                } else {
+
+                    const emailGet = [];
+                    const finalData = [];
+                    for (const getEmail of RequestedEmailExiestInUser.RequestedEmails) {
+                        emailGet.push(getEmail.requestedEmail)
+                    }
+
+
+                    var difference = reaquestedAllEmail.filter(x => emailGet.indexOf(x) === -1);
+
+
+
+                    const UniqueEmail = [];
+
+
+                    for (const uniqueEmail of difference) {
+                        const userDetail = await userModel.findOne({ email: uniqueEmail });
+                        finalData.push(userDetail)
+                    }
+
+
+                    for (const getOriginalData of finalData) {
+                        const response = {
+                            _id: getOriginalData._id,
+                            email: getOriginalData.email,
+                            firstName: getOriginalData.firstName,
+                            status: 3
+                        }
+
+                        UniqueEmail.push(response);
+                    }
+
+
+
+                    const statusByEmail = [];
+                    const allRequestedEmail = RequestedEmailExiestInUser.RequestedEmails
+                    const requestedEmailWitchIsInuserRequeted = [];
+                    allRequestedEmail.map((result, next) => {
+                        const resultEmail = result.requestedEmail
+                        requestedEmailWitchIsInuserRequeted.push(resultEmail);
+                    })
+
+                    const meageAllTable = await userModel.aggregate([{
+                        $match: {
+                            email: {
+                                $in: requestedEmailWitchIsInuserRequeted
+                            }
+                        }
+                    },
+                    {
+                        $lookup: {
+                            from: 'posts',
+                            localField: 'email',
+                            foreignField: 'email',
+                            as: 'req_data'
+                        }
+                    },
+                    {
+                        $lookup: {
+                            from: 'requests',
+                            let: {
+
+                                userId: mongoose.Types.ObjectId(req.params.user_id),
+                                email: "$email"
+                            },
+                            pipeline: [
+                                {
+                                    $match: {
+                                        $expr: {
+                                            $and: [
+                                                {
+                                                    $eq: [
+                                                        "$userId", "$$userId"
+                                                    ]
+                                                },
+                                                {
+                                                    $in:
+                                                        [
+                                                            "$$email", "$RequestedEmails.requestedEmail"
+                                                        ]
+                                                }
+                                            ]
+                                        }
+                                    }
+                                },
+                            ],
+                            as: 'form_data'
+                        }
+                    },
+                    {
+                        $project: {
+                            polyDating: "$polyDating",
+                            HowDoYouPoly: "$HowDoYouPoly",
+                            loveToGive: "$loveToGive",
+                            polyRelationship: "$polyRelationship",
+                            firstName: "$firstName",
+                            email: "$email",
+                            firstName: "$firstName",
+                            relationshipSatus: "$relationshipSatus",
+                            Bio: "$Bio",
+                            hopingToFind: "$hopingToFind",
+                            jobTitle: "$jobTitle",
+                            wantChildren: "$wantChildren",
+                            posts: "$req_data",
+                            result: "$form_data.RequestedEmails",
+                        }
+                    }])
+
+
+
+                    const finalExistUser = [];
+
+
+
+                    const emailDataDetail = meageAllTable;
+                    for (const DataDetail of emailDataDetail) {
+
+                        for (const reqEmail of reaquestedAllEmail) {
+                            if (DataDetail.email == reqEmail) {
+                                finalExistUser.push(DataDetail)
+                            }
+                        }
+                    }
+
+
+
+
+
+                    for (const emailData of finalExistUser[0].result) {
+
+
+
+                        for (const requestEmail of emailData) {
+
+                            for (const meageAllTableEmail of finalExistUser) {
+
+                                if (requestEmail.requestedEmail == meageAllTableEmail.email) {
+                                    if (requestEmail.accepted == 1) {
+                                        var status1 = {
+                                            status: 1,
+                                            email: requestEmail.requestedEmail
+                                        }
+                                        statusByEmail.push(status1)
+                                    } else {
+                                        var status2 = {
+                                            status: 2,
+                                            email: requestEmail.requestedEmail
+                                        }
+                                        statusByEmail.push(status2)
+                                    }
+                                }
+                            }
+                        }
+                    }
+
+                    const final_data = [];
+
+                    const finalStatus = []
+                    for (const [key, finalData] of meageAllTable.entries()) {
+                        for (const [key, final1Data] of statusByEmail.entries())
+                            if (finalData.email === final1Data.email) {
+                                finalStatus.push(final1Data.status)
+                            }
+                    }
+                    for (const [key, finalData] of finalExistUser.entries()) {
+
+                        const response = {
+                            _id: finalData._id,
+                            polyDating: finalData.polyDating,
+                            HowDoYouPoly: finalData.HowDoYouPoly,
+                            loveToGive: finalData.loveToGive,
+                            polyRelationship: finalData.polyRelationship,
+                            firstName: finalData.firstName,
+                            email: finalData.email,
+                            relationshipSatus: finalData.relationshipSatus,
+                            Bio: finalData.Bio,
+                            hopingToFind: finalData.hopingToFind,
+                            jobTitle: finalData.jobTitle,
+                            wantChildren: finalData.wantChildren,
+                            posts: finalData.posts,
+                            status: finalStatus[key]
+                        }
+                        final_data.push(response);
+                    }
+
+
+
+                    const final_response = [...final_data, ...UniqueEmail]
+
+                    // let uniqueObjArray = [...new Map(final_data.map((item) => [item["details"], item])).values()];
+
+                    res.status(status.OK).json(
+                        new APIResponse("show all record searchwise", true, 201, 1, final_response)
+                    )
+                }
+            }
+
+        }
 
     } catch (error) {
         console.log("error", error);
@@ -921,17 +1183,290 @@ exports.yesBasket = async (req, res, next) => {
 exports.noBasket = async (req, res, next) => {
     try {
 
-        const findNoBasket = await userModel.find({
-            basket:
-            {
-                $gte: 0,
-                $lt: 50
-            }
+        // const findYesBasket = await userModel.find({
+        //     basket: { $lt: 100 }, basket: { $gt: 50 }
+        // })
+
+
+        const findUser = await userModel.findOne({
+            _id: req.params.user_id
         })
 
-        res.status(status.OK).json(
-            new APIResponse("show User which are basket in 0 - 50", "true", 201, "1", findNoBasket)
-        )
+        if (findUser == null) {
+            res.status(status.NOT_FOUND).json(
+                new APIResponse("user not Found", "false", 404, "0")
+            )
+        } else {
+            const reaquestedAllEmail = [];
+            const allMeargeData = [];
+            const YesBasketData = [];
+            for (const allBakest of findUser.basket) {
+
+                if (allBakest.match < 50 || allBakest.match > 100) {
+                    YesBasketData.push(allBakest.userId)
+                    console.log("allBakest.userId", allBakest.userId);
+                }
+
+            }
+
+            for (const allYesBasketData of YesBasketData) {
+
+                console.log("allYesBasketData", allYesBasketData);
+                const meargeData = await userModel.findOne({
+                    _id: allYesBasketData,
+                })
+
+
+                reaquestedAllEmail.push(meargeData.email)
+            }
+
+            console.log("reaquestedAllEmail", reaquestedAllEmail);
+
+
+            if (reaquestedAllEmail[0] == undefined) {
+                res.status(status.NOT_FOUND).json(
+                    new APIResponse("No User Found", 'false', 404, '0')
+                )
+            } else {
+
+                const RequestedEmailExiestInUser = await requestsModel.findOne(
+                    {
+                        userId: req.params.user_id,
+                        RequestedEmails: {
+                            $elemMatch: {
+                                requestedEmail: {
+                                    $in: reaquestedAllEmail
+                                }
+                            }
+                        }
+                    }
+                )
+
+
+                if (reaquestedAllEmail && RequestedEmailExiestInUser == null) {
+                    const finalData = [];
+                    const responseData = [];
+                    for (const allrequestedDataNotAcceptedRequestAndNotFriend of reaquestedAllEmail) {
+                        const userDetail = await userModel.findOne({ email: allrequestedDataNotAcceptedRequestAndNotFriend });
+                        finalData.push(userDetail)
+                    }
+
+                    console.log("finalData", finalData);
+
+                    for (const getOriginalData of finalData) {
+                        const response = {
+                            _id: getOriginalData._id,
+                            email: getOriginalData.email,
+                            firstName: getOriginalData.firstName,
+                            status: 3
+                        }
+
+                        responseData.push(response);
+                    }
+
+                    res.status(status.OK).json(
+                        new APIResponse("show all record searchwise", true, 201, 1, responseData)
+                    )
+
+                } else {
+
+                    const emailGet = [];
+                    const finalData = [];
+                    for (const getEmail of RequestedEmailExiestInUser.RequestedEmails) {
+                        emailGet.push(getEmail.requestedEmail)
+                    }
+
+
+                    var difference = reaquestedAllEmail.filter(x => emailGet.indexOf(x) === -1);
+
+
+
+                    const UniqueEmail = [];
+
+
+                    for (const uniqueEmail of difference) {
+                        const userDetail = await userModel.findOne({ email: uniqueEmail });
+                        finalData.push(userDetail)
+                    }
+
+
+                    for (const getOriginalData of finalData) {
+                        const response = {
+                            _id: getOriginalData._id,
+                            email: getOriginalData.email,
+                            firstName: getOriginalData.firstName,
+                            status: 3
+                        }
+
+                        UniqueEmail.push(response);
+                    }
+
+
+
+                    const statusByEmail = [];
+                    const allRequestedEmail = RequestedEmailExiestInUser.RequestedEmails
+                    const requestedEmailWitchIsInuserRequeted = [];
+                    allRequestedEmail.map((result, next) => {
+                        const resultEmail = result.requestedEmail
+                        requestedEmailWitchIsInuserRequeted.push(resultEmail);
+                    })
+
+                    const meageAllTable = await userModel.aggregate([{
+                        $match: {
+                            email: {
+                                $in: requestedEmailWitchIsInuserRequeted
+                            }
+                        }
+                    },
+                    {
+                        $lookup: {
+                            from: 'posts',
+                            localField: 'email',
+                            foreignField: 'email',
+                            as: 'req_data'
+                        }
+                    },
+                    {
+                        $lookup: {
+                            from: 'requests',
+                            let: {
+
+                                userId: mongoose.Types.ObjectId(req.params.user_id),
+                                email: "$email"
+                            },
+                            pipeline: [
+                                {
+                                    $match: {
+                                        $expr: {
+                                            $and: [
+                                                {
+                                                    $eq: [
+                                                        "$userId", "$$userId"
+                                                    ]
+                                                },
+                                                {
+                                                    $in:
+                                                        [
+                                                            "$$email", "$RequestedEmails.requestedEmail"
+                                                        ]
+                                                }
+                                            ]
+                                        }
+                                    }
+                                },
+                            ],
+                            as: 'form_data'
+                        }
+                    },
+                    {
+                        $project: {
+                            polyDating: "$polyDating",
+                            HowDoYouPoly: "$HowDoYouPoly",
+                            loveToGive: "$loveToGive",
+                            polyRelationship: "$polyRelationship",
+                            firstName: "$firstName",
+                            email: "$email",
+                            firstName: "$firstName",
+                            relationshipSatus: "$relationshipSatus",
+                            Bio: "$Bio",
+                            hopingToFind: "$hopingToFind",
+                            jobTitle: "$jobTitle",
+                            wantChildren: "$wantChildren",
+                            posts: "$req_data",
+                            result: "$form_data.RequestedEmails",
+                        }
+                    }])
+
+
+
+                    const finalExistUser = [];
+
+
+
+                    const emailDataDetail = meageAllTable;
+                    for (const DataDetail of emailDataDetail) {
+
+                        for (const reqEmail of reaquestedAllEmail) {
+                            if (DataDetail.email == reqEmail) {
+                                finalExistUser.push(DataDetail)
+                            }
+                        }
+                    }
+
+
+
+
+
+                    for (const emailData of finalExistUser[0].result) {
+
+
+
+                        for (const requestEmail of emailData) {
+
+                            for (const meageAllTableEmail of finalExistUser) {
+
+                                if (requestEmail.requestedEmail == meageAllTableEmail.email) {
+                                    if (requestEmail.accepted == 1) {
+                                        var status1 = {
+                                            status: 1,
+                                            email: requestEmail.requestedEmail
+                                        }
+                                        statusByEmail.push(status1)
+                                    } else {
+                                        var status2 = {
+                                            status: 2,
+                                            email: requestEmail.requestedEmail
+                                        }
+                                        statusByEmail.push(status2)
+                                    }
+                                }
+                            }
+                        }
+                    }
+
+                    const final_data = [];
+
+                    const finalStatus = []
+                    for (const [key, finalData] of meageAllTable.entries()) {
+                        for (const [key, final1Data] of statusByEmail.entries())
+                            if (finalData.email === final1Data.email) {
+                                finalStatus.push(final1Data.status)
+                            }
+                    }
+                    for (const [key, finalData] of finalExistUser.entries()) {
+
+                        const response = {
+                            _id: finalData._id,
+                            polyDating: finalData.polyDating,
+                            HowDoYouPoly: finalData.HowDoYouPoly,
+                            loveToGive: finalData.loveToGive,
+                            polyRelationship: finalData.polyRelationship,
+                            firstName: finalData.firstName,
+                            email: finalData.email,
+                            relationshipSatus: finalData.relationshipSatus,
+                            Bio: finalData.Bio,
+                            hopingToFind: finalData.hopingToFind,
+                            jobTitle: finalData.jobTitle,
+                            wantChildren: finalData.wantChildren,
+                            posts: finalData.posts,
+                            status: finalStatus[key]
+                        }
+                        final_data.push(response);
+                    }
+
+
+
+                    const final_response = [...final_data, ...UniqueEmail]
+
+                    // let uniqueObjArray = [...new Map(final_data.map((item) => [item["details"], item])).values()];
+
+                    res.status(status.OK).json(
+                        new APIResponse("show all record searchwise", true, 201, 1, final_response)
+                    )
+                }
+            }
+
+        }
 
     } catch (error) {
         console.log("error", error);
@@ -940,4 +1475,5 @@ exports.noBasket = async (req, res, next) => {
         )
     }
 }
+
 

@@ -76,9 +76,24 @@ const userSchema = mongoose.Schema({
     fcm_token: {
         type: String
     },
-    basket: {
-        type: Number
-    },
+    basket: [
+        {
+            match: {
+                type: Number
+            },
+            userId: {
+                type: mongoose.Schema.Types.ObjectId
+            },
+            thumbUp: {
+                type: Number,
+                default: 0
+            },
+            thumbDown: {
+                type: Number,
+                default: 0
+            }
+        }
+    ],
     location: {
         type: Object,
         default: {
