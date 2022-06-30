@@ -883,6 +883,7 @@ exports.storeBasketValue = async (req, res, next) => {
     }
 }
 
+
 exports.yesBasket = async (req, res, next) => {
     try {
 
@@ -956,23 +957,35 @@ exports.yesBasket = async (req, res, next) => {
                             finalData.push(userDetail)
                         }
 
-                        console.log("finalData", finalData);
+                        const findThumbUp = await userModel.findOne({
+                            _id: req.params.request_user_id
+                        })
 
                         for (const getOriginalData of finalData) {
 
-                            console.log("getOriginalData", getOriginalData);
-                            const response = {
-                                _id: getOriginalData._id,
-                                email: getOriginalData.email,
-                                firstName: getOriginalData.firstName,
-                                status: 3
-                            }
+                            for (const findThumb of findThumbUp.basket) {
+                                const findThumbData = findThumb.userId
+                                const orginalData = getOriginalData._id
 
-                            responseData.push(response);
+                                if (orginalData.toString() == findThumbData.toString()) {
+
+                                    const response = {
+                                        _id: getOriginalData._id,
+                                        email: getOriginalData.email,
+                                        firstName: getOriginalData.firstName,
+                                        status: 3,
+                                        thumbUp: findThumb.thumbUp,
+                                        thumbDown: findThumb.thumbDown
+                                    }
+
+                                    responseData.push(response);
+                                }
+
+                            }
                         }
 
                         res.status(status.OK).json(
-                            new APIResponse("show all record searchwise", true, 201, 1, responseData)
+                            new APIResponse("show all yes basket Record", true, 201, 1, responseData)
                         )
 
                     } else {
@@ -996,20 +1009,31 @@ exports.yesBasket = async (req, res, next) => {
                             finalData.push(userDetail)
                         }
 
+                        const findThumbUp = await userModel.findOne({
+                            _id: req.params.request_user_id
+                        })
 
                         for (const getOriginalData of finalData) {
 
-                            console.log("getOriginalData", getOriginalData);
-                            const response = {
-                                _id: getOriginalData._id,
-                                email: getOriginalData.email,
-                                firstName: getOriginalData.firstName,
-                                status: 3
+                            for (const findThumb of findThumbUp.basket) {
+                                const findThumbData = findThumb.userId
+                                const orginalData = getOriginalData._id
+
+                                if (orginalData.toString() == findThumbData.toString()) {
+                                    const response = {
+                                        _id: getOriginalData._id,
+                                        email: getOriginalData.email,
+                                        firstName: getOriginalData.firstName,
+                                        status: 3,
+                                        thumbUp: findThumb.thumbUp,
+                                        thumbDown: findThumb.thumbDown
+                                    }
+
+                                    UniqueEmail.push(response);
+                                }
+
                             }
-
-                            UniqueEmail.push(response);
                         }
-
 
 
                         const statusByEmail = [];
@@ -1102,10 +1126,6 @@ exports.yesBasket = async (req, res, next) => {
                             }
                         }
 
-
-
-
-
                         for (const emailData of finalExistUser[0].result) {
 
 
@@ -1115,19 +1135,38 @@ exports.yesBasket = async (req, res, next) => {
                                 for (const meageAllTableEmail of finalExistUser) {
 
                                     if (requestEmail.requestedEmail == meageAllTableEmail.email) {
-                                        if (requestEmail.accepted == 1) {
-                                            var status1 = {
-                                                status: 1,
-                                                email: requestEmail.requestedEmail
+
+                                        const findThumbUp = await userModel.findOne({
+                                            _id: req.params.request_user_id
+                                        })
+
+                                        for (const findThumb of findThumbUp.basket) {
+
+                                            const findThumbData = findThumb.userId
+                                            const originalData = requestEmail.userId
+
+                                            if (originalData.toString() == findThumbData.toString()) {
+                                                if (requestEmail.accepted == 1) {
+                                                    var status1 = {
+                                                        status: 1,
+                                                        email: requestEmail.requestedEmail,
+                                                        thumbUp: findThumb.thumbUp,
+                                                        thumbDown: findThumb.thumbDown
+                                                    }
+                                                    statusByEmail.push(status1)
+                                                } else {
+                                                    var status2 = {
+                                                        status: 2,
+                                                        email: requestEmail.requestedEmail,
+                                                        thumbUp: findThumb.thumbUp,
+                                                        thumbDown: findThumb.thumbDown
+                                                    }
+                                                    statusByEmail.push(status2)
+                                                }
                                             }
-                                            statusByEmail.push(status1)
-                                        } else {
-                                            var status2 = {
-                                                status: 2,
-                                                email: requestEmail.requestedEmail
-                                            }
-                                            statusByEmail.push(status2)
+
                                         }
+
                                     }
                                 }
                             }
@@ -1139,7 +1178,12 @@ exports.yesBasket = async (req, res, next) => {
                         for (const [key, finalData] of meageAllTable.entries()) {
                             for (const [key, final1Data] of statusByEmail.entries())
                                 if (finalData.email === final1Data.email) {
-                                    finalStatus.push(final1Data.status)
+                                    const response = {
+                                        status: final1Data.status,
+                                        thumbUp: final1Data.thumbUp,
+                                        thumbDown: final1Data.thumbDown
+                                    }
+                                    finalStatus.push(response)
                                 }
                         }
                         for (const [key, finalData] of finalExistUser.entries()) {
@@ -1158,7 +1202,7 @@ exports.yesBasket = async (req, res, next) => {
                                 jobTitle: finalData.jobTitle,
                                 wantChildren: finalData.wantChildren,
                                 posts: finalData.posts,
-                                status: finalStatus[key]
+                                statusAndTumbCount: finalStatus[key]
                             }
                             final_data.push(response);
                         }
@@ -1170,7 +1214,7 @@ exports.yesBasket = async (req, res, next) => {
                         // let uniqueObjArray = [...new Map(final_data.map((item) => [item["details"], item])).values()];
 
                         res.status(status.OK).json(
-                            new APIResponse("show all record searchwise", true, 201, 1, final_response)
+                            new APIResponse("show all yes basket record", true, 201, 1, final_response)
                         )
                     }
                 }
@@ -1194,17 +1238,17 @@ exports.yesBasket = async (req, res, next) => {
                 const reaquestedAllEmail = [];
                 const allMeargeData = [];
                 const YesBasketData = [];
+
                 for (const allBakest of findUser.basket) {
 
                     if (allBakest.match > 50) {
                         YesBasketData.push(allBakest.userId)
-                        console.log("YesBasketData", YesBasketData);
                     }
                 }
 
                 for (const allYesBasketData of YesBasketData) {
 
-                    console.log("allYesBasketData",);
+
                     const meargeData = await userModel.findOne({
                         _id: allYesBasketData,
                     })
@@ -1233,7 +1277,6 @@ exports.yesBasket = async (req, res, next) => {
                     )
 
 
-
                     if (reaquestedAllEmail && RequestedEmailExiestInUser == null) {
                         const finalData = [];
                         const responseData = [];
@@ -1242,24 +1285,33 @@ exports.yesBasket = async (req, res, next) => {
                             finalData.push(userDetail)
                         }
 
-                        console.log("finalData", finalData);
+
+                        const findThumbUp = await userModel.findOne({
+                            _id: req.params.request_user_id
+                        })
 
                         for (const getOriginalData of finalData) {
 
-                            console.log("getOriginalData", getOriginalData);
-                            const response = {
+                            for (const findThumb of findThumbUp.basket) {
+                                const findThumbData = findThumb.userId
+                                const orginalData = getOriginalData._id
 
-                                _id: getOriginalData._id,
-                                email: getOriginalData.email,
-                                firstName: getOriginalData.firstName,
-                                status: 3
+                                if (orginalData.toString() == findThumbData.toString()) {
+                                    const response = {
+
+                                        _id: getOriginalData._id,
+                                        email: getOriginalData.email,
+                                        firstName: getOriginalData.firstName,
+                                        status: 3,
+                                        thumbUp: findThumb.thumbUp
+                                    }
+
+                                    responseData.push(response);
+                                }
                             }
-
-                            responseData.push(response);
                         }
-
                         res.status(status.OK).json(
-                            new APIResponse("show all record searchwise", true, 201, 1, responseData)
+                            new APIResponse("show all yes basket record", true, 201, 1, responseData)
                         )
 
                     } else {
@@ -1288,7 +1340,6 @@ exports.yesBasket = async (req, res, next) => {
                         })
 
 
-                        const finalAllData = [];
 
                         for (const getOriginalData of finalData) {
 
@@ -1307,14 +1358,9 @@ exports.yesBasket = async (req, res, next) => {
 
                                     UniqueEmail.push(response);
                                 }
-
                             }
 
-
                         }
-
-
-
 
                         const statusByEmail = [];
                         const allRequestedEmail = RequestedEmailExiestInUser.RequestedEmails
@@ -1323,6 +1369,8 @@ exports.yesBasket = async (req, res, next) => {
                             const resultEmail = result.requestedEmail
                             requestedEmailWitchIsInuserRequeted.push(resultEmail);
                         })
+
+
 
                         const meageAllTable = await userModel.aggregate([{
                             $match: {
@@ -1344,7 +1392,7 @@ exports.yesBasket = async (req, res, next) => {
                                 from: 'requests',
                                 let: {
 
-                                    userId: mongoose.Types.ObjectId(req.params.request_user_id),
+                                    userId: mongoose.Types.ObjectId(req.params.user_id),
                                     email: "$email"
                                 },
                                 pipeline: [
@@ -1392,8 +1440,6 @@ exports.yesBasket = async (req, res, next) => {
 
 
 
-
-
                         const finalExistUser = [];
 
 
@@ -1409,30 +1455,44 @@ exports.yesBasket = async (req, res, next) => {
                         }
 
 
-
-
-
                         for (const emailData of finalExistUser[0].result) {
-
-
 
                             for (const requestEmail of emailData) {
 
                                 for (const meageAllTableEmail of finalExistUser) {
 
                                     if (requestEmail.requestedEmail == meageAllTableEmail.email) {
-                                        if (requestEmail.accepted == 1) {
-                                            var status1 = {
-                                                status: 1,
-                                                email: requestEmail.requestedEmail
+
+                                        const findThumbUp = await userModel.findOne({
+                                            _id: req.params.request_user_id
+                                        })
+
+
+                                        for (const findThumb of findThumbUp.basket) {
+                                            const findThumbData = findThumb.userId
+                                            const originalData = requestEmail.userId
+
+                                            if (originalData.toString() == findThumbData.toString()) {
+
+                                                if (requestEmail.accepted == 1) {
+
+                                                    var status1 = {
+                                                        status: 1,
+                                                        email: requestEmail.requestedEmail,
+                                                        thumbUp: findThumb.thumbUp
+                                                    }
+                                                    statusByEmail.push(status1)
+
+                                                } else {
+
+                                                    var status2 = {
+                                                        status: 2,
+                                                        email: requestEmail.requestedEmail,
+                                                        thumbUp: findThumb.thumbUp
+                                                    }
+                                                    statusByEmail.push(status2)
+                                                }
                                             }
-                                            statusByEmail.push(status1)
-                                        } else {
-                                            var status2 = {
-                                                status: 2,
-                                                email: requestEmail.requestedEmail
-                                            }
-                                            statusByEmail.push(status2)
                                         }
                                     }
                                 }
@@ -1445,7 +1505,11 @@ exports.yesBasket = async (req, res, next) => {
                         for (const [key, finalData] of meageAllTable.entries()) {
                             for (const [key, final1Data] of statusByEmail.entries())
                                 if (finalData.email === final1Data.email) {
-                                    finalStatus.push(final1Data.status)
+                                    const response = {
+                                        status: final1Data.status,
+                                        thumbUp: final1Data.thumbUp
+                                    }
+                                    finalStatus.push(response)
                                 }
                         }
                         for (const [key, finalData] of finalExistUser.entries()) {
@@ -1464,7 +1528,7 @@ exports.yesBasket = async (req, res, next) => {
                                 jobTitle: finalData.jobTitle,
                                 wantChildren: finalData.wantChildren,
                                 posts: finalData.posts,
-                                status: finalStatus[key]
+                                statusAndTumbCount: finalStatus[key]
                             }
                             final_data.push(response);
                         }
@@ -1476,7 +1540,7 @@ exports.yesBasket = async (req, res, next) => {
                         // let uniqueObjArray = [...new Map(final_data.map((item) => [item["details"], item])).values()];
 
                         res.status(status.OK).json(
-                            new APIResponse("show all record searchwise", true, 201, 1, final_response)
+                            new APIResponse("show all yes basket record", true, 201, 1, final_response)
                         )
                     }
                 }
@@ -1494,6 +1558,7 @@ exports.yesBasket = async (req, res, next) => {
         )
     }
 }
+
 
 
 exports.noBasket = async (req, res, next) => {
@@ -1519,19 +1584,19 @@ exports.noBasket = async (req, res, next) => {
             } else {
                 const reaquestedAllEmail = [];
                 const allMeargeData = [];
-                const YesBasketData = [];
+                const NoBasketData = [];
                 for (const allBakest of findUser.basket) {
 
                     if (allBakest.match < 50 || allBakest.match > 100) {
-                        YesBasketData.push(allBakest.userId)
+                        NoBasketData.push(allBakest.userId)
 
                     }
                 }
 
-                for (const allYesBasketData of YesBasketData) {
+                for (const allNoBasketData of NoBasketData) {
 
                     const meargeData = await userModel.findOne({
-                        _id: allYesBasketData,
+                        _id: allNoBasketData,
                     })
 
                     reaquestedAllEmail.push(meargeData.email)
@@ -1568,21 +1633,35 @@ exports.noBasket = async (req, res, next) => {
                             finalData.push(userDetail)
                         }
 
-                        console.log("finalData", finalData);
+                        const findThumbUp = await userModel.findOne({
+                            _id: req.params.request_user_id
+                        })
+
 
                         for (const getOriginalData of finalData) {
-                            const response = {
-                                _id: getOriginalData._id,
-                                email: getOriginalData.email,
-                                firstName: getOriginalData.firstName,
-                                status: 3
+
+                            for (const findThumb of findThumbUp.basket) {
+                                const findThumbData = findThumb.userId
+                                const orginalData = getOriginalData._id
+
+                                if (orginalData.toString() == findThumbData.toString()) {
+                                    const response = {
+                                        _id: getOriginalData._id,
+                                        email: getOriginalData.email,
+                                        firstName: getOriginalData.firstName,
+                                        status: 3,
+                                        thumbUp: findThumb.thumbUp,
+                                        thumbDown: findThumb.thumbDown
+                                    }
+
+                                    responseData.push(response);
+                                }
                             }
 
-                            responseData.push(response);
                         }
 
                         res.status(status.OK).json(
-                            new APIResponse("show all record searchwise", true, 201, 1, responseData)
+                            new APIResponse("show all no basket record", true, 201, 1, responseData)
                         )
 
                     } else {
@@ -1607,16 +1686,31 @@ exports.noBasket = async (req, res, next) => {
                         }
 
 
+                        const findThumbUp = await userModel.findOne({
+                            _id: req.params.request_user_id
+                        })
+
                         for (const getOriginalData of finalData) {
 
-                            const response = {
-                                _id: getOriginalData._id,
-                                email: getOriginalData.email,
-                                firstName: getOriginalData.firstName,
-                                status: 3
+                            for (const findThumb of findThumbUp.basket) {
+                                const findThumbData = findThumb.userId
+                                const orginalData = getOriginalData._id
+
+                                if (orginalData.toString() == findThumbData.toString()) {
+                                    const response = {
+                                        _id: getOriginalData._id,
+                                        email: getOriginalData.email,
+                                        firstName: getOriginalData.firstName,
+                                        status: 3,
+                                        thumbUp: findThumb.thumbUp,
+                                        thumbDown: findThumb.thumbDown
+                                    }
+
+                                    UniqueEmail.push(response);
+                                }
                             }
 
-                            UniqueEmail.push(response);
+
                         }
 
 
@@ -1724,19 +1818,38 @@ exports.noBasket = async (req, res, next) => {
                                 for (const meageAllTableEmail of finalExistUser) {
 
                                     if (requestEmail.requestedEmail == meageAllTableEmail.email) {
-                                        if (requestEmail.accepted == 1) {
-                                            var status1 = {
-                                                status: 1,
-                                                email: requestEmail.requestedEmail
+
+                                        const findThumbUp = await userModel.findOne({
+                                            _id: req.params.request_user_id
+                                        })
+
+
+                                        for (const findThumb of findThumbUp.basket) {
+
+                                            const findThumbData = findThumb.userId
+                                            const originalData = requestEmail.userId
+
+                                            if (originalData.toString() == findThumbData.toString()) {
+                                                if (requestEmail.accepted == 1) {
+                                                    var status1 = {
+                                                        status: 1,
+                                                        email: requestEmail.requestedEmail,
+                                                        thumbUp: findThumb.thumbUp,
+                                                        thumbDown: findThumb.thumbDown
+                                                    }
+                                                    statusByEmail.push(status1)
+                                                } else {
+                                                    var status2 = {
+                                                        status: 2,
+                                                        email: requestEmail.requestedEmail,
+                                                        thumbUp: findThumb.thumbUp,
+                                                        thumbDown: findThumb.thumbDown
+                                                    }
+                                                    statusByEmail.push(status2)
+                                                }
                                             }
-                                            statusByEmail.push(status1)
-                                        } else {
-                                            var status2 = {
-                                                status: 2,
-                                                email: requestEmail.requestedEmail
-                                            }
-                                            statusByEmail.push(status2)
                                         }
+
                                     }
                                 }
                             }
@@ -1748,7 +1861,12 @@ exports.noBasket = async (req, res, next) => {
                         for (const [key, finalData] of meageAllTable.entries()) {
                             for (const [key, final1Data] of statusByEmail.entries())
                                 if (finalData.email === final1Data.email) {
-                                    finalStatus.push(final1Data.status)
+                                    const response = {
+                                        status: final1Data.status,
+                                        thumbUp: final1Data.thumbUp,
+                                        thumbDown: final1Data.thumbDown
+                                    }
+                                    finalStatus.push(response)
                                 }
                         }
                         for (const [key, finalData] of finalExistUser.entries()) {
@@ -1767,7 +1885,7 @@ exports.noBasket = async (req, res, next) => {
                                 jobTitle: finalData.jobTitle,
                                 wantChildren: finalData.wantChildren,
                                 posts: finalData.posts,
-                                status: finalStatus[key]
+                                statusAndTumbCount: finalStatus[key]
                             }
                             final_data.push(response);
                         }
@@ -1779,7 +1897,7 @@ exports.noBasket = async (req, res, next) => {
                         // let uniqueObjArray = [...new Map(final_data.map((item) => [item["details"], item])).values()];
 
                         res.status(status.OK).json(
-                            new APIResponse("show all record searchwise", true, 201, 1, final_response)
+                            new APIResponse("show all no basket record", true, 201, 1, final_response)
                         )
                     }
                 }
@@ -1799,19 +1917,19 @@ exports.noBasket = async (req, res, next) => {
             } else {
                 const reaquestedAllEmail = [];
                 const allMeargeData = [];
-                const YesBasketData = [];
+                const NoBasketData = [];
                 for (const allBakest of findUser.basket) {
 
                     if (allBakest.match < 50 || allBakest.match > 100) {
-                        YesBasketData.push(allBakest.userId)
+                        NoBasketData.push(allBakest.userId)
 
                     }
 
                 }
 
-                for (const allYesBasketData of YesBasketData) {
+                for (const allNoBasketData of NoBasketData) {
                     const meargeData = await userModel.findOne({
-                        _id: allYesBasketData,
+                        _id: allNoBasketData,
                     })
 
 
@@ -1849,21 +1967,34 @@ exports.noBasket = async (req, res, next) => {
                             finalData.push(userDetail)
                         }
 
-                        console.log("finalData", finalData);
+
+                        const findThumbUp = await userModel.findOne({
+                            _id: req.params.request_user_id
+                        })
 
                         for (const getOriginalData of finalData) {
-                            const response = {
-                                _id: getOriginalData._id,
-                                email: getOriginalData.email,
-                                firstName: getOriginalData.firstName,
-                                status: 3
+
+                            for (const findThumb of findThumbUp.basket) {
+                                const findThumbData = findThumb.userId
+                                const orginalData = getOriginalData._id
+
+                                if (orginalData.toString() == findThumbData.toString()) {
+                                    const response = {
+                                        _id: getOriginalData._id,
+                                        email: getOriginalData.email,
+                                        firstName: getOriginalData.firstName,
+                                        status: 3,
+                                        thumbUp: findThumb.thumbUp
+                                    }
+
+                                    responseData.push(response);
+                                }
                             }
 
-                            responseData.push(response);
                         }
 
                         res.status(status.OK).json(
-                            new APIResponse("show all record searchwise", true, 201, 1, responseData)
+                            new APIResponse("show all No Basket Record", true, 201, 1, responseData)
                         )
 
                     } else {
@@ -1887,16 +2018,29 @@ exports.noBasket = async (req, res, next) => {
                             finalData.push(userDetail)
                         }
 
+                        const findThumbUp = await userModel.findOne({
+                            _id: req.params.request_user_id
+                        })
 
                         for (const getOriginalData of finalData) {
-                            const response = {
-                                _id: getOriginalData._id,
-                                email: getOriginalData.email,
-                                firstName: getOriginalData.firstName,
-                                status: 3
+
+                            for (const findThumb of findThumbUp.basket) {
+                                const findThumbData = findThumb.userId
+                                const orginalData = getOriginalData._id
+
+                                if (orginalData.toString() == findThumbData.toString()) {
+                                    const response = {
+                                        _id: getOriginalData._id,
+                                        email: getOriginalData.email,
+                                        firstName: getOriginalData.firstName,
+                                        status: 3,
+                                        thumbUp: findThumb.thumbUp
+                                    }
+
+                                    UniqueEmail.push(response);
+                                }
                             }
 
-                            UniqueEmail.push(response);
                         }
 
 
@@ -1929,7 +2073,7 @@ exports.noBasket = async (req, res, next) => {
                                 from: 'requests',
                                 let: {
 
-                                    userId: mongoose.Types.ObjectId(req.params.request_user_id),
+                                    userId: mongoose.Types.ObjectId(req.params.user_id),
                                     email: "$email"
                                 },
                                 pipeline: [
@@ -1977,6 +2121,7 @@ exports.noBasket = async (req, res, next) => {
 
 
 
+
                         const finalExistUser = [];
 
 
@@ -1993,30 +2138,41 @@ exports.noBasket = async (req, res, next) => {
 
 
 
-
-
                         for (const emailData of finalExistUser[0].result) {
-
-
 
                             for (const requestEmail of emailData) {
 
                                 for (const meageAllTableEmail of finalExistUser) {
 
                                     if (requestEmail.requestedEmail == meageAllTableEmail.email) {
-                                        if (requestEmail.accepted == 1) {
-                                            var status1 = {
-                                                status: 1,
-                                                email: requestEmail.requestedEmail
+                                        const findThumbUp = await userModel.findOne({
+                                            _id: req.params.request_user_id
+                                        })
+
+                                        for (const findThumb of findThumbUp.basket) {
+                                            const findThumbData = findThumb.userId
+                                            const originalData = requestEmail.userId
+
+                                            if (originalData.toString() == findThumbData.toString()) {
+                                                if (requestEmail.accepted == 1) {
+                                                    var status1 = {
+                                                        status: 1,
+                                                        email: requestEmail.requestedEmail,
+                                                        thumbUp: findThumb.thumbUp
+                                                    }
+                                                    statusByEmail.push(status1)
+                                                } else {
+                                                    var status2 = {
+                                                        status: 2,
+                                                        email: requestEmail.requestedEmail,
+                                                        thumbUp: findThumb.thumbUp
+                                                    }
+                                                    statusByEmail.push(status2)
+                                                }
                                             }
-                                            statusByEmail.push(status1)
-                                        } else {
-                                            var status2 = {
-                                                status: 2,
-                                                email: requestEmail.requestedEmail
-                                            }
-                                            statusByEmail.push(status2)
                                         }
+
+
                                     }
                                 }
                             }
@@ -2028,7 +2184,11 @@ exports.noBasket = async (req, res, next) => {
                         for (const [key, finalData] of meageAllTable.entries()) {
                             for (const [key, final1Data] of statusByEmail.entries())
                                 if (finalData.email === final1Data.email) {
-                                    finalStatus.push(final1Data.status)
+                                    const response = {
+                                        status: final1Data.status,
+                                        thumbUp: final1Data.thumbUp
+                                    }
+                                    finalStatus.push(response)
                                 }
                         }
                         for (const [key, finalData] of finalExistUser.entries()) {
@@ -2047,7 +2207,7 @@ exports.noBasket = async (req, res, next) => {
                                 jobTitle: finalData.jobTitle,
                                 wantChildren: finalData.wantChildren,
                                 posts: finalData.posts,
-                                status: finalStatus[key]
+                                statusAndTumbCount: finalStatus[key]
                             }
                             final_data.push(response);
                         }
@@ -2059,7 +2219,7 @@ exports.noBasket = async (req, res, next) => {
                         // let uniqueObjArray = [...new Map(final_data.map((item) => [item["details"], item])).values()];
 
                         res.status(status.OK).json(
-                            new APIResponse("show all record searchwise", true, 201, 1, final_response)
+                            new APIResponse("show all No Basket Record", true, 201, 1, final_response)
                         )
                     }
                 }
