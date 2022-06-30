@@ -10,5 +10,7 @@ router.put('/update/:user_id/:post_id', postController.EditPosts);
 router.delete('/delete/:user_id/:post_id', postController.deletePost);
 router.get('/show/friend/:user_email', postController.userAllFriendPost);
 router.put('/reportAdd/:user_id/:post_id', postController.reportAdd);
+router.get('/videos/:id', postController.getPostsVideobyUseId);
+router.get('/images/:id', postController.getPostsImagesbyUseId);
 
 module.exports = router;

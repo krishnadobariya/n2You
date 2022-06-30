@@ -6,7 +6,8 @@ const userModal = require("../model/user.model");
 const { default: mongoose } = require("mongoose");
 const requestsModel = require("../model/requests.model");
 const commentModel = require("../model/comment.model");
-
+const path = require('path');
+const { log } = require("console");
 
 // Mutiple Videos Upload
 
@@ -183,7 +184,7 @@ exports.getPostsbyUseId = async (req, res, next) => {
                 const storeAllpostsUserWise = [];
                 const getAllPostsUserWise = userWisePosts.posts;
                 getAllPostsUserWise.map((result, index) => {
-              
+
                     storeAllpostsUserWise.unshift(result);
                 })
 
@@ -204,10 +205,8 @@ exports.getPostsbyUseId = async (req, res, next) => {
                     if (minutes < 10) { minutes = "0" + minutes; }
                     if (seconds < 10) { seconds = "0" + seconds; }
 
-
                     const finalPostedTime = [];
                     const commentData = [];
-
 
                     if (days > 30) {
                         const getComment = await commentModel.findOne({ postId: createResponse._id });
@@ -242,7 +241,6 @@ exports.getPostsbyUseId = async (req, res, next) => {
 
                     finalResponse.push(response)
 
-
                 }
                 res.status(status.OK).json(
                     new APIResponse("Get Post user Wise!", "true", 201, "1", finalResponse.slice(req.query.skip, req.query.limit))
@@ -267,8 +265,233 @@ exports.getPostsbyUseId = async (req, res, next) => {
     }
 }
 
-// Show all Posts
 
+//get Onlay Images User Id Wise
+
+
+exports.getPostsVideobyUseId = async (req, res, next) => {
+
+    try {
+
+        const id = req.params.id;
+        const finalResponse = [];
+        const userFindInPosts = await postModal.findOne({ userId: id });
+
+        if (userFindInPosts) {
+
+            const userWisePosts = await postModal.findOne({ userId: id });
+            if (userWisePosts.posts) {
+                const storeAllpostsUserWise = [];
+                const getAllPostsUserWise = userWisePosts.posts;
+
+                getAllPostsUserWise.map((result, index) => {
+
+                    storeAllpostsUserWise.unshift(result);
+                })
+
+                for (const createResponse of storeAllpostsUserWise) {
+
+
+                    const getExtName = path.extname(createResponse.post[0].res);
+                    if (getExtName == ".mp4") {
+                        datetime = createResponse.createdAt;
+
+                        var userPostedDate = new Date(datetime);
+                        now = new Date();
+                        var sec_num = (now - userPostedDate) / 1000;
+                        var days = Math.floor(sec_num / (3600 * 24));
+                        var hours = Math.floor((sec_num - (days * (3600 * 24))) / 3600);
+                        var minutes = Math.floor((sec_num - (days * (3600 * 24)) - (hours * 3600)) / 60);
+                        var seconds = Math.floor(sec_num - (days * (3600 * 24)) - (hours * 3600) - (minutes * 60));
+
+                        if (hours < 10) { hours = "0" + hours; }
+                        if (minutes < 10) { minutes = "0" + minutes; }
+                        if (seconds < 10) { seconds = "0" + seconds; }
+
+                        const finalPostedTime = [];
+                        const commentData = [];
+
+                        if (days > 30) {
+                            const getComment = await commentModel.findOne({ postId: createResponse._id });
+                            let whenUserPosted = userPostedDate;
+                            const fullDate = new Date(whenUserPosted).toDateString()
+                            finalPostedTime.push(`${fullDate}`);
+                            commentData.push(getComment)
+                        }
+                        if (days > 0 && days < 30) {
+                            const getComment = await commentModel.findOne({ postId: createResponse._id });
+                            finalPostedTime.push(`${days} days`);
+                            commentData.push(getComment)
+                        } else if (hours > 0 && days == 0) {
+                            const getComment = await commentModel.findOne({ postId: createResponse._id });
+                            finalPostedTime.push(`${hours} hours`);
+                            commentData.push(getComment)
+                        } else if (minutes > 0 && hours == 0) {
+                            const getComment = await commentModel.findOne({ postId: createResponse._id });
+                            finalPostedTime.push(`${minutes} minute`);
+                            commentData.push(getComment)
+                        } else if (seconds > 0 && minutes == 0 && hours == 0 && days === 0) {
+                            const getComment = await commentModel.findOne({ postId: createResponse._id });
+                            finalPostedTime.push(`${seconds} second`);
+                            commentData.push(getComment)
+                        }
+
+                        const response = {
+                            createResponse,
+                            finalPostedTime,
+                            commentData
+                        }
+
+                        finalResponse.push(response)
+
+
+                    } else {
+                        finalResponse.push()
+                    }
+                }
+
+                if (finalResponse[0] == undefined) {
+                    res.status(status.OK).json(
+                        new APIResponse("Not have any Video Posted!", "true", 200, "1")
+                    )
+                } else {
+                    res.status(status.OK).json(
+                        new APIResponse("all video!", "true", 200, "1", finalResponse)
+                    )
+                }
+
+            } else {
+                res.status(status.NOT_FOUND).json(
+                    new APIResponse("Not Posted!", "false", 404, "0")
+                )
+            }
+        } else {
+            res.status(status.NOT_FOUND).json(
+                new APIResponse("User Not Found!", "false", 404, "0")
+            )
+        }
+
+    } catch (error) {
+        console.log("Error:", error);
+        res.status(status.INTERNAL_SERVER_ERROR).json(
+            new APIResponse("Something Went Wrong", "false", 500, "0", error.message)
+        )
+    }
+}
+
+
+exports.getPostsImagesbyUseId = async (req, res, next) => {
+    try {
+
+
+        const id = req.params.id;
+        const finalResponse = [];
+        const userFindInPosts = await postModal.findOne({ userId: id });
+
+        if (userFindInPosts) {
+
+            const userWisePosts = await postModal.findOne({ userId: id });
+            if (userWisePosts.posts) {
+                const storeAllpostsUserWise = [];
+                const getAllPostsUserWise = userWisePosts.posts;
+
+                getAllPostsUserWise.map((result, index) => {
+
+                    storeAllpostsUserWise.unshift(result);
+                })
+
+                for (const createResponse of storeAllpostsUserWise) {
+
+
+                    const getExtName = path.extname(createResponse.post[0].res);
+                    if (getExtName != ".mp4") {
+                        datetime = createResponse.createdAt;
+
+                        var userPostedDate = new Date(datetime);
+                        now = new Date();
+                        var sec_num = (now - userPostedDate) / 1000;
+                        var days = Math.floor(sec_num / (3600 * 24));
+                        var hours = Math.floor((sec_num - (days * (3600 * 24))) / 3600);
+                        var minutes = Math.floor((sec_num - (days * (3600 * 24)) - (hours * 3600)) / 60);
+                        var seconds = Math.floor(sec_num - (days * (3600 * 24)) - (hours * 3600) - (minutes * 60));
+
+                        if (hours < 10) { hours = "0" + hours; }
+                        if (minutes < 10) { minutes = "0" + minutes; }
+                        if (seconds < 10) { seconds = "0" + seconds; }
+
+                        const finalPostedTime = [];
+                        const commentData = [];
+
+                        if (days > 30) {
+                            const getComment = await commentModel.findOne({ postId: createResponse._id });
+                            let whenUserPosted = userPostedDate;
+                            const fullDate = new Date(whenUserPosted).toDateString()
+                            finalPostedTime.push(`${fullDate}`);
+                            commentData.push(getComment)
+                        }
+                        if (days > 0 && days < 30) {
+                            const getComment = await commentModel.findOne({ postId: createResponse._id });
+                            finalPostedTime.push(`${days} days`);
+                            commentData.push(getComment)
+                        } else if (hours > 0 && days == 0) {
+                            const getComment = await commentModel.findOne({ postId: createResponse._id });
+                            finalPostedTime.push(`${hours} hours`);
+                            commentData.push(getComment)
+                        } else if (minutes > 0 && hours == 0) {
+                            const getComment = await commentModel.findOne({ postId: createResponse._id });
+                            finalPostedTime.push(`${minutes} minute`);
+                            commentData.push(getComment)
+                        } else if (seconds > 0 && minutes == 0 && hours == 0 && days === 0) {
+                            const getComment = await commentModel.findOne({ postId: createResponse._id });
+                            finalPostedTime.push(`${seconds} second`);
+                            commentData.push(getComment)
+                        }
+
+                        const response = {
+                            createResponse,
+                            finalPostedTime,
+                            commentData
+                        }
+
+                        finalResponse.push(response)
+
+
+                    } else {
+                        finalResponse.push()
+                    }
+                }
+
+                if (finalResponse[0] == undefined) {
+                    res.status(status.OK).json(
+                        new APIResponse("Not have any Images Posted!", "true", 200, "1")
+                    )
+                } else {
+                    res.status(status.OK).json(
+                        new APIResponse("all video!", "true", 200, "1", finalResponse)
+                    )
+                }
+
+            } else {
+                res.status(status.NOT_FOUND).json(
+                    new APIResponse("Not Posted!", "false", 404, "0")
+                )
+            }
+        } else {
+            res.status(status.NOT_FOUND).json(
+                new APIResponse("User Not Found!", "false", 404, "0")
+            )
+        }
+
+    } catch (error) {
+        console.log("Error:", error);
+        res.status(status.INTERNAL_SERVER_ERROR).json(
+            new APIResponse("Something Went Wrong", "false", 500, "0", error.message)
+        )
+    }
+}
+
+
+// Show all Posts
 
 // exports.showPostsOnalyAcceptedPerson = async (req, res, next) => {
 //     try {
@@ -295,6 +518,7 @@ exports.getPostsbyUseId = async (req, res, next) => {
 
 
 // Edit Post
+
 
 exports.EditPosts = async (req, res, next) => {
     try {
@@ -393,8 +617,9 @@ exports.userAllFriendPost = async (req, res, next) => {
 
         const statusByEmail = [];
         const data = await requestsModel.findOne({ userEmail: req.params.user_email });
+        console.log("DATA", data);
 
-        if (data !== null) {
+        if (data != null) {
             const allRequestedEmail = data.RequestedEmails
             const requestedEmailWitchIsInuserRequeted = [];
 
@@ -403,6 +628,8 @@ exports.userAllFriendPost = async (req, res, next) => {
                 requestedEmailWitchIsInuserRequeted.push(resultEmail);
             });
 
+
+            console.log("requestedEmailWitchIsInuserRequeted", requestedEmailWitchIsInuserRequeted);
 
             const meargAllTable = await userModal.aggregate([{
                 $match: {
@@ -459,7 +686,6 @@ exports.userAllFriendPost = async (req, res, next) => {
                     result: "$form_data.RequestedEmails",
                 }
             }])
-
 
             const emailDataDetail = meargAllTable[0].result;
 
@@ -622,3 +848,5 @@ exports.reportAdd = async (req, res, next) => {
         )
     }
 }
+
+
