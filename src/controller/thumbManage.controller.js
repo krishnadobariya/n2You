@@ -338,7 +338,7 @@ exports.thumbCount = async (req, res, next) => {
                                     })
 
                                 res.status(status.OK).json(
-                                    new APIResponse("thumUp Added successfully", "true", 200, "1")
+                                    new APIResponse("thumDown Added successfully", "true", 200, "1")
                                 );
                             }
 
