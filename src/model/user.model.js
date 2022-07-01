@@ -8,15 +8,12 @@ const userSchema = mongoose.Schema({
     },
     HowDoYouPoly: {
         type: String,
-        require: true
     },
     loveToGive: {
         type: String,
-        require: true
     },
     polyRelationship: {
         type: String,
-        require: true
     },
     email: {
         type: String,

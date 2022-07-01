@@ -403,8 +403,6 @@ exports.thumbCount = async (req, res, next) => {
                             );
                         }
                     }
-
-
                 }
             }
         }

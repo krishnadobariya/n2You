@@ -40,3 +40,19 @@ updateLatLong
 }
 
 checkUpdate
+
+===============================================
+
+--> LikeOrDislikeUserForDating
+
+===============================================
+
+LikeOrDislikeUserForDating
+
+{
+    "user_id": "62bbf7a97f82978b8bfa9707",
+    "like":1,
+    "like_user_id": "62bbf8027f82978b8bfa970f"
+}
+
+likeDislikeUser
