@@ -22,6 +22,7 @@ const chatRoutes = require("./src/routes/chat.routes");
 const sessionRoutes = require('./src/routes/session.routes');
 const thumbManageRoutes = require("./src/routes/thumbManage.routes");
 const basketRoutes = require("./src/routes/basket.routes");
+const datingRoutes = require("./src/routes/polyamorous/dating.routes");
 
 app.use('/user', userRoutes);
 app.use('/posts', postRoutes);
@@ -33,5 +34,6 @@ app.use('/chat', chatRoutes);
 app.use('/session', sessionRoutes);
 app.use('/thumb', thumbManageRoutes);
 app.use('/basket', basketRoutes);
+app.use('/dating', datingRoutes);
 
 module.exports = app;
