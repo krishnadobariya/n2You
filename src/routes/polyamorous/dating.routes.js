@@ -5,5 +5,6 @@ const datingController = require('../../controller/polyamorous/dating.controller
 
 router.get('/getuser/:user_id', datingController.getUserWhichNotChoiceForLikeOrDislike);
 router.get('/matchUser/:user_id', datingController.matchTable);
+router.get('/polyamorousUser/:user_id', datingController.getPolyamorousUser);
 
 module.exports = router;
