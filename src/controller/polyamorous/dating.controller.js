@@ -3,6 +3,7 @@ const status = require("http-status");
 const userModel = require("../../model/user.model");
 const datingLikeDislikeUserModel = require("../../model/polyamorous/datingLikeDislikeUser.model");
 const matchUserModel = require("../../model/polyamorous/matchUser.model");
+const invitedFriendModel = require("../../model/polyamorous/invitedFriend.model");
 
 exports.getUserWhichNotChoiceForLikeOrDislike = async (req, res, next) => {
     try {
@@ -200,7 +201,7 @@ exports.getPolyamorousUser = async (req, res, next) => {
 
             if (findPolyamorousUser == null) {
                 res.status(status.NOT_FOUND).json(
-                    new APIResponse("no User Found Which is a Polyamorous ", "false", 404, "0")
+                    new APIResponse("no User Found Which is not a Polyamorous ", "false", 404, "0")
                 );
             } else {
 
@@ -279,7 +280,6 @@ exports.listLinkProfile = async (req, res, next) => {
             res.status(status.OK).json(
                 new APIResponse("link Profile List...", "true", 200, "1", allRequestList)
             );
-
         }
 
 
@@ -290,3 +290,93 @@ exports.listLinkProfile = async (req, res, next) => {
         );
     }
 }
+
+exports.inviteFriends = async (req, res, next) => {
+    try {
+
+        const findUser = await userModel.findOne({
+            _id: req.params.user_id,
+            polyDating: "polyamorous"
+
+        })
+
+        if (findUser == null) {
+            res.status(status.NOT_FOUND).json(
+                new APIResponse("User Not Found or user Not polyamorous...!", "false", 404, "0")
+            );
+        } else {
+            const findValidUser = await userModel.findOne({
+                _id: req.params.request_id,
+                polyDating: "polyamorous"
+            })
+
+            if (findValidUser == null) {
+                res.status(status.NOT_FOUND).json(
+                    new APIResponse("User Not Found or user Not polyamorous...!", "false", 404, "0")
+                );
+            } else {
+
+                const findInInvitedFriendModel = await invitedFriendModel.findOne({
+                    userId: req.params.request_id
+                })
+
+                if (findInInvitedFriendModel == null) {
+                    const insertInInvitedFriends = invitedFriendModel({
+                        userId: req.params.request_id,
+                        invitedFriends: {
+                            userId: req.params.user_id
+                        }
+                    })
+
+                    await insertInInvitedFriends.save();
+
+                    res.status(status.OK).json(
+                        new APIResponse("Inserted Invited Friends!", "true", 200, "1", insertInInvitedFriends)
+                    );
+
+                } else {
+
+                    const findAlreadyExistFriend = await invitedFriendModel.findOne({
+                        userId: req.params.request_id,
+                        "invitedFriends.userId": req.params.user_id
+                    })
+
+                    if (findAlreadyExistFriend == null) {
+
+                        await invitedFriendModel.updateOne({
+                            userId: req.params.request_id,
+                        }, {
+                            $push: {
+                                invitedFriends: {
+                                    userId: req.params.user_id
+                                }
+                            }
+                        })
+
+                        const insertInInvitedFriends = {
+                            userId: req.params.request_id,
+                            invitedFriends: req.params.user_id
+                        }
+
+                        res.status(status.OK).json(
+                            new APIResponse("Inserted Invited Friends!", "true", 200, "1", insertInInvitedFriends)
+                        );
+
+                    } else {
+                        res.status(status.ALREADY_REPORTED).json(
+                            new APIResponse("aleardy Invited!", "false", 208, "0")
+                        );
+                    }
+
+                }
+            }
+        }
+
+    } catch (error) {
+        console.log("Error:", error);
+        res.status(status.INTERNAL_SERVER_ERROR).json(
+            new APIResponse("Something Went Wrong", false, 500, "0", error.message)
+        );
+    }
+}
+

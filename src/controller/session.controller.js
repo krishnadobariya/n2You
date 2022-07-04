@@ -72,9 +72,7 @@ exports.publicSession = async (req, res, next) => {
                     sessionDetail,
                     userDetail
                 }
-
                 publicSession.push(response)
-
             }
 
             res.status(status.OK).json(
@@ -337,4 +335,6 @@ exports.mySession = async (req, res, next) => {
         )
     }
 }
+
+
 
