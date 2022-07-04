@@ -91,6 +91,13 @@ const userSchema = mongoose.Schema({
             }
         }
     ],
+    linkProfile: [
+        {
+            userId: {
+                type: mongoose.Schema.Types.ObjectId
+            },
+        }
+    ],
     location: {
         type: Object,
         default: {
