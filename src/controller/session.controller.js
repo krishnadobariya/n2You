@@ -98,12 +98,16 @@ exports.invitedInSession = async (req, res, next) => {
         const allInvited = [];
         const findMyIdInSession = await sessionModel.find({})
 
+
         for (const findInvited of findMyIdInSession) {
 
+
             if (findInvited.participants[0].participants_1 == req.params.user_id) {
+
                 const createdSessionUser = await userModel.findOne({
                     _id: findInvited.cretedSessionUser
                 })
+
                 const participants_2 = await userModel.findOne({
                     _id: findInvited.participants[0].participants_2
                 })
@@ -254,7 +258,7 @@ exports.invitedInSession = async (req, res, next) => {
     }
 }
 
-    
+
 exports.mySession = async (req, res, next) => {
     try {
 

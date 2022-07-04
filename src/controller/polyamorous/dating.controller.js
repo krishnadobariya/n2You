@@ -92,7 +92,6 @@ exports.getUserWhichNotChoiceForLikeOrDislike = async (req, res, next) => {
     }
 }
 
-
 exports.matchTable = async (req, res, next) => {
     try {
 
@@ -181,7 +180,6 @@ exports.matchTable = async (req, res, next) => {
     }
 }
 
-
 exports.getPolyamorousUser = async (req, res, next) => {
     try {
 
@@ -238,6 +236,52 @@ exports.getPolyamorousUser = async (req, res, next) => {
 
             }
         }
+
+    } catch (error) {
+        console.log("Error:", error);
+        res.status(status.INTERNAL_SERVER_ERROR).json(
+            new APIResponse("Something Went Wrong", false, 500, "0", error.message)
+        );
+    }
+}
+
+
+exports.listLinkProfile = async (req, res, next) => {
+    try {
+
+        const findUser = await userModel.findOne({
+            _id: req.params.user_id
+        })
+
+        if (findUser == null) {
+            res.status(status.NOT_FOUND).json(
+                new APIResponse("User Not Found", "false", 404, "0")
+            );
+        } else {
+
+            const allRequestList = [];
+
+            for (const allUserInRequest of findUser.linkProfile) {
+
+                const findInUserModel = await userModel.findOne({
+                    _id: allUserInRequest.userId
+                })
+
+                const response = {
+                    id: findInUserModel._id,
+                    photo: findInUserModel.photo,
+                    name: findInUserModel.firstName
+                }
+
+                allRequestList.push(response)
+            }
+
+            res.status(status.OK).json(
+                new APIResponse("link Profile List...", "true", 200, "1", allRequestList)
+            );
+
+        }
+
 
     } catch (error) {
         console.log("Error:", error);
