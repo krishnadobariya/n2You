@@ -16,17 +16,17 @@ function socket(io) {
         })
 
         socket.on("chat", async (arg) => {
-            const userRoom = `${arg.user_1}`
-            console.log("userRoom:::", userRoom);
+            const userRoom = `${arg.sender_id}`
+            socket.join(userRoom)
 
             const fcm_token = [];
             if (arg.sender_id == arg.user_1) {
                 const userFind = await userModel.findOne({ _id: arg.user_2 })
-                fcm_token.push(userFind.fcm_token)
+                // fcm_token.push(userFind.fcm_token)
 
             } else {
                 const userFind = await userModel.findOne({ _id: arg.user_1 })
-                fcm_token.push(userFind.fcm_token)
+                // fcm_token.push(userFind.fcm_token)
 
             }
 
@@ -60,7 +60,7 @@ function socket(io) {
                 })
 
                 if (getChatRoom == null && alterNateChatRoom == null) {
-                    io.emit("chatReceive", "chat room not found");
+                    io.to(userRoom).emit("chatReceive", "chat room not found");
                 } else {
 
                     if (getChatRoom) {
@@ -76,7 +76,7 @@ function socket(io) {
 
                             await data.save();
 
-                            io.emit("chatReceive", arg.text);
+                            io.to(userRoom).emit("chatReceive", arg.text);
 
                             const title = "n2you Notification";
                             const body = `${arg.sender_id} send request to `;
@@ -111,7 +111,7 @@ function socket(io) {
                             })
 
                             await data.save();
-                            io.emit("chatReceive", arg.text)
+                            io.to(userRoom).emit("chatReceive", arg.text);
                             const title = "n2you Notification";
                             const body = `${arg.sender_id} send request to `;
 
@@ -167,7 +167,7 @@ function socket(io) {
 
                                 await data.save();
 
-                                io.emit("chatReceive", arg.text)
+                                io.to(userRoom).emit("chatReceive", arg.text);
                                 const title = "n2you Notification";
                                 const body = `${arg.sender_id} send request to `;
 
@@ -204,7 +204,7 @@ function socket(io) {
                                     }
                                 })
 
-                                io.emit("chatReceive", finalData.text)
+                                io.to(userRoom).emit("chatReceive", finalData.text);
                                 const title = "n2you Notification";
                                 const body = `${arg.sender_id} send request to `;
 
@@ -242,7 +242,7 @@ function socket(io) {
                                 })
 
                                 await data.save();
-                                io.emit("chatReceive", arg.text)
+                                io.to(userRoom).emit("chatReceive", arg.text);
                                 const title = "n2you Notification";
                                 const body = `${arg.sender_id} send request to `;
 
@@ -278,7 +278,7 @@ function socket(io) {
                                     }
                                 })
 
-                                io.emit("chatReceive", finalData.text)
+                                io.to(userRoom).emit("chatReceive", finalData.text);
                                 const title = "n2you Notification";
                                 const body = `${arg.sender_id} send request to `;
 
@@ -301,11 +301,18 @@ function socket(io) {
                             }
                         }
 
-
                     }
                 }
 
             }
+        })
+
+        socket.on("groupChat", async (arg) => {
+
+
+            
+
+
         })
 
         socket.on("readUnread", async (arg) => {
@@ -476,11 +483,12 @@ function socket(io) {
         socket.on('sendRequest', async (arg) => {
 
             const findUser = await userModel.findOne({
-                _id: arg.user_id
+                _id: arg.user_id,
+                polyDating: "polyamorous"
             })
 
             if (findUser == null) {
-                io.emit("sendRequestUser", "User Not Found...!");
+                io.emit("sendRequestUser", "User Not Found or user Not polyamorous...!");
             } else {
 
                 const getAllUserWhichLoginAsPolyamorous = await userModel.find({ "polyDating": "polyamorous" });
@@ -561,9 +569,6 @@ function socket(io) {
                     } else {
                         io.emit("sendRequestUser", "This User Not polyamorous!");
                     }
-
-
-
 
                 }
             }

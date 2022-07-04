@@ -406,9 +406,9 @@ exports.thumbCount = async (req, res, next) => {
                 }
             }
         }
-
     } catch (error) {
         console.log("error", error);
+
         res.status(status.INTERNAL_SERVER_ERROR).json(
             new APIResponse("Something Went Wrong", "false", 500, "0", error.message)
         )

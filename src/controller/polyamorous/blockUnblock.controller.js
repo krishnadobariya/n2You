@@ -1,18 +1,17 @@
-const APIResponse = require("../helper/APIResponse");
+const APIResponse = require("../../helper/APIResponse");
 const status = require("http-status");
-const userModel = require("../model/user.model");
-const blockUnblockUserModel = require("../model/blockuser.model");
-
+const userModel = require("../../model/user.model");
+const blockUnblockModel = require("../../model/polyamorous/blockUnblock.model");
 exports.blockUser = async (req, res, next) => {
     try {
 
-        const userFind = await userModel.findOne({ _id: req.params.user_id });
+        const userFind = await userModel.findOne({ _id: req.params.user_id, polyDating: "polyamorous" });
         if (userFind == null) {
             res.status(status.NOT_FOUND).json(
-                new APIResponse("User Not Found", false, 404)
+                new APIResponse("no User Found Which is not a Polyamorous ", false, 404)
             );
         } else {
-            const blockUserFound = await userModel.findOne({ _id: req.params.block_user_id })
+            const blockUserFound = await userModel.findOne({ _id: req.params.block_user_id, polyDating: "polyamorous" })
 
             if (blockUserFound == null) {
                 res.status(status.NOT_FOUND).json(
@@ -21,9 +20,9 @@ exports.blockUser = async (req, res, next) => {
 
             } else {
                 if (req.params.block_unblock == 1) {
-                    const finduserIdInBlockModel = await blockUnblockUserModel.findOne({ userId: req.params.user_id })
+                    const finduserIdInBlockModel = await blockUnblockModel.findOne({ userId: req.params.user_id, polyDating: "polyamorous" })
                     if (finduserIdInBlockModel == null) {
-                        const blockUser = blockUnblockUserModel({
+                        const blockUser = blockUnblockModel({
                             userId: req.params.user_id,
                             blockUnblockUser: {
                                 blockUserId: req.params.block_user_id,
@@ -41,7 +40,7 @@ exports.blockUser = async (req, res, next) => {
                             blockUnblock: req.params.block_unblock
                         }
 
-                        await blockUnblockUserModel.updateOne({ userId: req.params.user_id }, { $push: { blockUnblockUser: finalData } });
+                        await blockUnblockModel.updateOne({ userId: req.params.user_id }, { $push: { blockUnblockUser: finalData } });
 
                         res.status(status.OK).json(
                             new APIResponse("block added successfully!", true, 201, finalData)
@@ -68,7 +67,7 @@ exports.blockUser = async (req, res, next) => {
 exports.blockUserList = async (req, res, next) => {
     try {
 
-        const userFound = await blockUnblockUserModel.findOne({ userId: req.params.user_id })
+        const userFound = await blockUnblockModel.findOne({ userId: req.params.user_id })
         if (userFound == null) {
             res.status(status.NOT_FOUND).json(
                 new APIResponse("User Not Found", "false", 404, "0")
@@ -77,6 +76,7 @@ exports.blockUserList = async (req, res, next) => {
             const finalListOfBlockUser = [];
 
             for (const finalData of userFound.blockUnblockUser) {
+
                 const findUser = await userModel.findOne({
                     _id: finalData.blockUserId
                 })
@@ -105,26 +105,26 @@ exports.blockUserList = async (req, res, next) => {
 
 exports.unBlockUser = async (req, res, next) => {
     try {
-        const userFound = await blockUnblockUserModel.findOne({ userId: req.params.user_id })
+        const userFound = await blockUnblockModel.findOne({ userId: req.params.user_id })
         if (userFound == null) {
             res.status(status.NOT_FOUND).json(
                 new APIResponse("User Not Found", "false", 404, "0")
             );
         } else {
-            const blockUserFound = await blockUnblockUserModel.findOne({ "blockUnblockUser.blockUserId": req.params.block_user_id })
+            const blockUserFound = await blockUnblockModel.findOne({ "blockUnblockUser.blockUserId": req.params.block_user_id })
             if (blockUserFound == null) {
                 res.status(status.NOT_FOUND).json(
                     new APIResponse("blockUser Not Found", "false", 404, "0")
                 );
             } else {
-                const checkBlockUserExistInUser = await blockUnblockUserModel.findOne({ userId: req.params.user_id, "blockUnblockUser.blockUserId": req.params.block_user_id })
+                const checkBlockUserExistInUser = await blockUnblockModel.findOne({ userId: req.params.user_id, "blockUnblockUser.blockUserId": req.params.block_user_id })
                 if (checkBlockUserExistInUser == null) {
                     res.status(status.NOT_FOUND).json(
                         new APIResponse("Not Found", "false", 404, "0")
                     );
                 } else {
                     if (req.params.block_unblock == 0) {
-                        const unBlockUser = await blockUnblockUserModel.updateOne(
+                        const unBlockUser = await blockUnblockModel.updateOne(
                             {
                                 userId: req.params.user_id,
                             },
