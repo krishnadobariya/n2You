@@ -4,6 +4,8 @@ const chatRoomModel = require("./models/chatRoom.model");
 const Notification = require("../helper/firebaseHelper");
 const userModel = require("../model/user.model");
 const datingLikeDislikeUserModel = require("../model/polyamorous/datingLikeDislikeUser.model");
+const groupChatRoomModels = require("./models/groupChatRoom.models");
+const groupChatModel = require("./models/groupChat.model");
 function socket(io) {
 
     console.log("socket connected...");
@@ -16,17 +18,23 @@ function socket(io) {
         })
 
         socket.on("chat", async (arg) => {
-            const userRoom = `${arg.sender_id}`
-            socket.join(userRoom)
+
+            if (arg.sender_id == user_1) {
+                const userRoom = `${arg.user_2}`
+                socket.join(userRoom)
+            } else {
+                const userRoom = `${arg.user_1}`
+                socket.join(userRoom)
+            }
 
             const fcm_token = [];
             if (arg.sender_id == arg.user_1) {
                 const userFind = await userModel.findOne({ _id: arg.user_2 })
-                // fcm_token.push(userFind.fcm_token)
+                fcm_token.push(userFind.fcm_token)
 
             } else {
                 const userFind = await userModel.findOne({ _id: arg.user_1 })
-                // fcm_token.push(userFind.fcm_token)
+                fcm_token.push(userFind.fcm_token)
 
             }
 
@@ -60,7 +68,7 @@ function socket(io) {
                 })
 
                 if (getChatRoom == null && alterNateChatRoom == null) {
-                    io.to(userRoom).emit("chatReceive", "chat room not found");
+                    io.emit("chatReceive", "chat room not found");
                 } else {
 
                     if (getChatRoom) {
@@ -307,11 +315,177 @@ function socket(io) {
             }
         })
 
-        socket.on("groupChat", async (arg) => {
+        socket.on("createGroupRoom", async (arg) => {
+
+            const userRoom = arg.user1 || arg.user2 || arg.user3 || arg.user4 || arg.user5 || arg.user6 || arg.user7 || arg.user8
+
+            socket.join(userRoom);
+
+            const createGroupRoom = groupChatRoomModels({
+                user1: arg.user1,
+                user2: arg.user2,
+                user3: arg.user3,
+                user4: arg.user4,
+                user5: arg.user5,
+                user6: arg.user6,
+                user7: arg.user7,
+                user8: arg.user8
+            })
+
+            await createGroupRoom.save()
+            io.to(userRoom).emit("RoomCreated", "Chat Room Created....");
 
 
-            
+            const title = "n2you Notification";
+            const body = 'room Created';
 
+            const text = 'room Created';
+            const sendBy = arg.user_1;
+            const registrationToken = fcm_token[0]
+
+            Notification.sendPushNotificationFCM(
+                registrationToken,
+                title,
+                body,
+                text,
+                sendBy,
+                true
+            );
+        })
+
+        socket.on("chatByGroup", async (arg) => {
+            const userRoom = arg.chat_room_id
+            socket.join(userRoom);
+
+            const validGroupInGroupRoom = await groupChatRoomModels.findOne({
+                _id: arg.chat_room_id
+            })
+
+            if (validGroupInGroupRoom == null) {
+                io.emit("chatReceive", "chatRoom Not Found...");
+            } else {
+
+                const fcm_token = [];
+
+
+                const validGroup = await groupChatModel.findOne({
+                    chatRoomId: arg.chat_room_id
+                })
+
+                const allGroupUser = [];
+
+                const user1 = (validGroupInGroupRoom.user2).toString()
+
+                console.log(user1);
+                allGroupUser.push(validGroupInGroupRoom.user1 == undefined ? null : (validGroupInGroupRoom.user1).toString())
+                allGroupUser.push(validGroupInGroupRoom.user2 == undefined ? null : (validGroupInGroupRoom.user2).toString())
+                allGroupUser.push(validGroupInGroupRoom.user3 == undefined ? null : (validGroupInGroupRoom.user3).toString())
+                allGroupUser.push(validGroupInGroupRoom.user4 == undefined ? null : (validGroupInGroupRoom.user4).toString())
+                allGroupUser.push(validGroupInGroupRoom.user5 == undefined ? null : (validGroupInGroupRoom.user5).toString())
+                allGroupUser.push(validGroupInGroupRoom.user6 == undefined ? null : (validGroupInGroupRoom.user6).toString())
+                allGroupUser.push(validGroupInGroupRoom.user7 == undefined ? null : (validGroupInGroupRoom.user7).toString())
+                allGroupUser.push(validGroupInGroupRoom.user8 == undefined ? null : (validGroupInGroupRoom.user8).toString())
+
+                const exiestUser = allGroupUser.includes((arg.sender_id).toString())
+
+                console.log(allGroupUser);
+
+                if (exiestUser) {
+                    if (validGroup == null) {
+                        const data = groupChatModel({
+                            chatRoomId: arg.chat_room_id,
+                            chat: {
+                                sender: arg.sender_id,
+                                text: arg.text
+                            }
+                        })
+
+                        await data.save()
+
+                        io.to(userRoom).emit("chatReceive", arg.text);
+
+
+                        var newArray = allGroupUser.filter(function (f) { return f !== (arg.sender_id).toString() })
+                        console.log(newArray);
+
+                        const findAllUser = await userModel.find({
+                            _id: {
+                                $in: newArray
+                            }
+                        })
+
+                        for (const fcm_token of findAllUser) {
+                            const title = "n2you Notification";
+                            const body = `${arg.sender_id} send request to `;
+
+                            const text = arg.text;
+                            const sendBy = arg.sender_id;
+                            const registrationToken = fcm_token.fcm_token[0]
+
+                            Notification.sendPushNotificationFCM(
+                                registrationToken,
+                                title,
+                                body,
+                                text,
+                                sendBy,
+                                true
+                            );
+                        }
+
+
+                    } else {
+
+                        const finalData = {
+                            sender: arg.sender_id,
+                            text: arg.text
+                        }
+
+                        await groupChatModel.updateOne({
+                            chatRoomId: arg.chat_room_id,
+                        }, {
+                            $push: {
+                                chat: finalData
+                            }
+                        })
+
+                        io.to(userRoom).emit("chatReceive", arg.text);
+
+
+                        var newArray = allGroupUser.filter(function (f) { return f !== (arg.sender_id).toString() })
+                        console.log(newArray);
+
+                        const findAllUser = await userModel.find({
+                            _id: {
+                                $in: newArray
+                            }
+                        })
+
+                        for (const fcm_token of findAllUser) {
+                            const title = "n2you Notification";
+                            const body = `${arg.sender_id} send request to `;
+
+                            const text = arg.text;
+                            const sendBy = arg.sender_id;
+                            const registrationToken = fcm_token.fcm_token[0]
+
+                            Notification.sendPushNotificationFCM(
+                                registrationToken,
+                                title,
+                                body,
+                                text,
+                                sendBy,
+                                true
+                            );
+                        }
+
+
+
+                    }
+                } else {
+                    io.to(userRoom).emit("chatReceive", "sender Not Found....");
+                }
+
+            }
 
         })
 
