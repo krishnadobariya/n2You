@@ -1,6 +1,9 @@
 const mongoose = require("mongoose");
 
 const groupChatRoomSchema = mongoose.Schema({
+    groupName: {
+        type: String
+    },
     user1: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'User'

@@ -322,8 +322,12 @@ function socket(io) {
             const userRoom = arg.user1 || arg.user2 || arg.user3 || arg.user4 || arg.user5 || arg.user6 || arg.user7 || arg.user8
 
             socket.join(userRoom);
+            const findUser = await userModel.findOne({
+                _id: arg.user1
+            })
 
             const createGroupRoom = groupChatRoomModels({
+                groupName: arg.group_name,
                 user1: arg.user1,
                 user2: arg.user2,
                 user3: arg.user3,
@@ -343,16 +347,16 @@ function socket(io) {
 
             const text = 'room Created';
             const sendBy = arg.user_1;
-            const registrationToken = fcm_token[0]
+            // const registrationToken = fcm_token[0]
 
-            Notification.sendPushNotificationFCM(
-                registrationToken,
-                title,
-                body,
-                text,
-                sendBy,
-                true
-            );
+            // Notification.sendPushNotificationFCM(
+            //     registrationToken,
+            //     title,
+            //     body,
+            //     text,
+            //     sendBy,
+            //     true
+            // );
         })
 
         socket.on("chatByGroup", async (arg) => {
@@ -404,19 +408,25 @@ function socket(io) {
                             }
                         })
 
+
                         const read = [];
                         for (const user of newArray) {
-                            console.log(user);
+                            console.log("user", user);
+                            if (user == null) {
 
-                            const response = {
-                                userId: mongoose.Types.ObjectId(user),
-                                read: 1
+                            } else {
+                                const response = {
+                                    userId: mongoose.Types.ObjectId(user),
+                                    read: 1
+                                }
+                                read.push(response)
                             }
 
-                            read.push(response)
+
+
                         }
 
-
+                        console.log("read", read);
                         const data = groupChatModel({
                             chatRoomId: arg.chat_room_id,
                             chat: {
@@ -459,14 +469,16 @@ function socket(io) {
 
                         const read = [];
                         for (const user of newArray) {
-                            console.log(user);
+                            console.log("user", user);
+                            if (user == null) {
 
-                            const response = {
-                                userId: mongoose.Types.ObjectId(user),
-                                read: 1
+                            } else {
+                                const response = {
+                                    userId: mongoose.Types.ObjectId(user),
+                                    read: 1
+                                }
+                                read.push(response)
                             }
-
-                            read.push(response)
                         }
 
                         const finalData = {
