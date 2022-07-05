@@ -27,6 +27,7 @@ exports.getGroupChat = async (req, res, next) => {
             var count = 0;
             unReadMessage = [];
             const lastMessage = [];
+
             for (const getChat of chat) {
 
                 const findUser = await userModel.findOne({
@@ -84,7 +85,7 @@ exports.getGroupChat = async (req, res, next) => {
             const finalresponse = [lastUnreadMessage, ...allChat]
 
             res.status(status.OK).json(
-                new APIResponse("get all Chat", true, 200, "1", finalresponse)
+                new APIResponse("get all Chat", true, 200, "1", lastUnreadMessage)
             );
         }
     } catch (error) {
