@@ -77,7 +77,7 @@ exports.getGroupChat = async (req, res, next) => {
                     photo: findUser.photo,
                     name: findUser.firstName
                 }
-                allChat.push(response)
+                // allChat.push(response)
             }
 
             const lastUnreadMessage = unReadMessage[unReadMessage.length - 1];
