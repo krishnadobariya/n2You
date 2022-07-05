@@ -18,10 +18,15 @@ const groupChatSchema = mongoose.Schema({
                 type: Date,
                 default: Date.now()
             },
-            read: {
-                type: Number,
-                default: 1
-            }
+            read: [{
+                userId: {
+                    type: mongoose.Schema.Types.ObjectId,
+                },
+                read: {
+                    type: Number,
+                    default: 1
+                }
+            }]
         }
     ]
 

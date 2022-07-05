@@ -6,6 +6,7 @@ const userModel = require("../model/user.model");
 const datingLikeDislikeUserModel = require("../model/polyamorous/datingLikeDislikeUser.model");
 const groupChatRoomModels = require("./models/groupChatRoom.models");
 const groupChatModel = require("./models/groupChat.model");
+const { default: mongoose } = require("mongoose");
 function socket(io) {
 
     console.log("socket connected...");
@@ -290,6 +291,7 @@ function socket(io) {
                                 const title = "n2you Notification";
                                 const body = `${arg.sender_id} send request to `;
 
+
                                 const text = arg.text;
                                 const sendBy = arg.sender_id;
 
@@ -392,18 +394,6 @@ function socket(io) {
 
                 if (exiestUser) {
                     if (validGroup == null) {
-                        const data = groupChatModel({
-                            chatRoomId: arg.chat_room_id,
-                            chat: {
-                                sender: arg.sender_id,
-                                text: arg.text
-                            }
-                        })
-
-                        await data.save()
-
-                        io.to(userRoom).emit("chatReceive", arg.text);
-
 
                         var newArray = allGroupUser.filter(function (f) { return f !== (arg.sender_id).toString() })
                         console.log(newArray);
@@ -413,6 +403,35 @@ function socket(io) {
                                 $in: newArray
                             }
                         })
+
+                        const read = [];
+                        for (const user of newArray) {
+                            console.log(user);
+
+                            const response = {
+                                userId: mongoose.Types.ObjectId(user),
+                                read: 1
+                            }
+
+                            read.push(response)
+                        }
+
+
+                        const data = groupChatModel({
+                            chatRoomId: arg.chat_room_id,
+                            chat: {
+                                sender: arg.sender_id,
+                                text: arg.text,
+                                read: read
+                            }
+                        })
+
+                        await data.save()
+
+                        io.to(userRoom).emit("chatReceive", arg.text);
+
+
+
 
                         for (const fcm_token of findAllUser) {
                             const title = "n2you Notification";
@@ -435,21 +454,36 @@ function socket(io) {
 
                     } else {
 
+                        var newArray = allGroupUser.filter(function (f) { return f !== (arg.sender_id).toString() })
+                        console.log(newArray);
+
+                        const read = [];
+                        for (const user of newArray) {
+                            console.log(user);
+
+                            const response = {
+                                userId: mongoose.Types.ObjectId(user),
+                                read: 1
+                            }
+
+                            read.push(response)
+                        }
+
                         const finalData = {
                             sender: arg.sender_id,
-                            text: arg.text
+                            text: arg.text,
+                            read: read
                         }
 
                         await groupChatModel.updateOne({
                             chatRoomId: arg.chat_room_id,
                         }, {
                             $push: {
-                                chat: finalData
+                                chat: finalData,
                             }
                         })
 
                         io.to(userRoom).emit("chatReceive", arg.text);
-
 
                         var newArray = allGroupUser.filter(function (f) { return f !== (arg.sender_id).toString() })
                         console.log(newArray);
@@ -477,15 +511,39 @@ function socket(io) {
                                 true
                             );
                         }
-
-
-
                     }
                 } else {
                     io.to(userRoom).emit("chatReceive", "sender Not Found....");
                 }
 
             }
+
+        })
+
+        socket.on("readUnreadInGroup", async (arg) => {
+            const findRoom = await groupChatModel.findOne({
+                chatRoomId: arg.group_chat_room
+            })
+
+            if (findRoom == null) {
+                io.emit("chatRecive", "room not found")
+            } else {
+                const updateChatRead = await groupChatModel.updateMany(
+                    {
+                        chatRoomId: arg.group_chat_room,
+                        "chat.read.userId": mongoose.Types.ObjectId(arg.user_id)
+                    },
+                    {
+                        $set: {
+                            "chat.$[].read.$[read].read": 0
+                        }
+                    },
+                    { arrayFilters: [{ "read.userId": mongoose.Types.ObjectId(arg.user_id) }] }
+                )
+            }
+
+            console.log();
+            io.emit("chatReceive", "read All chat");
 
         })
 

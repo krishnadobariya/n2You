@@ -42,7 +42,6 @@ exports.settingBasket = async (req, res, next) => {
                         thumpsUpAndDown: req.body.thumpsUpAndDown
                     }
                 })
-
                 res.status(status.CREATED).json(
                     new APIResponse("basket setting updated", "true", 201, "1")
                 );

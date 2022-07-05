@@ -25,9 +25,11 @@ const basketRoutes = require("./src/routes/basket.routes");
 
 
 
+
 // polyamorous
 const datingRoutes = require("./src/routes/polyamorous/dating.routes");
 const blockUnblockRoutes = require('./src/routes/polyamorous/blockUnblock.routes');
+const groupChatRoutes = require("./src/routes/polyamorous/groupChat.routes");
 
 
 app.use('/user', userRoutes);
@@ -44,6 +46,6 @@ app.use('/basket', basketRoutes);
 // polyamorous
 app.use('/dating', datingRoutes);
 app.use('/blockUser', blockUnblockRoutes);
-
+app.use('/groupChat', groupChatRoutes);
 
 module.exports = app;
