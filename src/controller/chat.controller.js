@@ -9,7 +9,7 @@ const userModel = require("../model/user.model");
 exports.readChat = async (req, res, next) => {
     try {
 
-      
+
         const findChatId = await chatModels.findOne({ chatRoomId: mongoose.Types.ObjectId(req.params.chat_room_id) })
 
         if (findChatId == null) {
@@ -98,6 +98,7 @@ exports.getUserWithChat = async (req, res, next) => {
                 }
             ])
 
+            console.log("data", data);
 
             const getAllChat = [];
             const findData = data[0].result
@@ -208,7 +209,7 @@ exports.countReadUnreadMessage = async (req, res, next) => {
                 for (const getChat of getAllChat) {
 
                     if (getChat.sender == req.params.user_1) {
-                        
+
                         var defaltReadforUser1 = defaltReadforUser1 + getChat.read;
                         const response = [{
                             unreadMessage: defaltReadforUser1,
@@ -219,7 +220,7 @@ exports.countReadUnreadMessage = async (req, res, next) => {
 
                     } else if (getChat.sender == req.params.user_2) {
 
-                       
+
                         var defaltReadforUser2 = defaltReadforUser2 + getChat.read;
                         const response = [{
                             unreadMessage: defaltReadforUser2,
