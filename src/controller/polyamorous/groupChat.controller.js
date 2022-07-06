@@ -103,6 +103,7 @@ exports.groupList = async (req, res, next) => {
                         lastMessage.push(lastUnreadMessage);
                         const lastValue = lastMessage[lastMessage.length - 1];
                         const response = {
+                            _id: userProfile1._id,
                             countUnreadMessage: count,
                             lastMessage: lastValue.text,
                             createdAt: lastValue.createdAt,
