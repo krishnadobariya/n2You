@@ -7,6 +7,8 @@ const datingLikeDislikeUserModel = require("../model/polyamorous/datingLikeDisli
 const groupChatRoomModels = require("./models/groupChatRoom.models");
 const groupChatModel = require("./models/groupChat.model");
 const { default: mongoose } = require("mongoose");
+const linkProfileModel = require("../model/polyamorous/linkProfile.model");
+const { aggregate } = require("./models/chat.models");
 function socket(io) {
 
     console.log("socket connected...");
@@ -322,9 +324,6 @@ function socket(io) {
             const userRoom = arg.user1 || arg.user2 || arg.user3 || arg.user4 || arg.user5 || arg.user6 || arg.user7 || arg.user8
 
             socket.join(userRoom);
-            const findUser = await userModel.findOne({
-                _id: arg.user1
-            })
 
             const createGroupRoom = groupChatRoomModels({
                 groupName: arg.group_name,
@@ -339,24 +338,51 @@ function socket(io) {
             })
 
             await createGroupRoom.save()
+            const findRoom = await userModel.find({
+                $or: [
+                    {
+                        _id: arg.user2
+                    },
+                    {
+                        _id: arg.user3
+                    },
+                    {
+                        _id: arg.user4
+                    },
+                    {
+                        _id: arg.user5
+                    },
+                    {
+                        _id: arg.user6
+                    },
+                    {
+                        _id: arg.user7
+                    },
+                    {
+                        _id: arg.user8
+                    }
+                ]
+            })
+
             io.to(userRoom).emit("RoomCreated", "Chat Room Created....");
+            for (const fcm_token of findRoom) {
 
+                const title = "n2you Notification";
+                const body = 'room Created';
 
-            const title = "n2you Notification";
-            const body = 'room Created';
+                const text = 'room Created';
+                const sendBy = arg.user_1;
+                const registrationToken = fcm_token.fcm_token[0]
 
-            const text = 'room Created';
-            const sendBy = arg.user_1;
-            // const registrationToken = fcm_token[0]
-
-            // Notification.sendPushNotificationFCM(
-            //     registrationToken,
-            //     title,
-            //     body,
-            //     text,
-            //     sendBy,
-            //     true
-            // );
+                Notification.sendPushNotificationFCM(
+                    registrationToken,
+                    title,
+                    body,
+                    text,
+                    sendBy,
+                    true
+                );
+            }
         })
 
         socket.on("chatByGroup", async (arg) => {
@@ -372,7 +398,6 @@ function socket(io) {
             } else {
 
                 const fcm_token = [];
-
 
                 const validGroup = await groupChatModel.findOne({
                     chatRoomId: arg.chat_room_id
@@ -421,9 +446,6 @@ function socket(io) {
                                 }
                                 read.push(response)
                             }
-
-
-
                         }
 
                         console.log("read", read);
@@ -439,9 +461,6 @@ function socket(io) {
                         await data.save()
 
                         io.to(userRoom).emit("chatReceive", arg.text);
-
-
-
 
                         for (const fcm_token of findAllUser) {
                             const title = "n2you Notification";
@@ -460,8 +479,6 @@ function socket(io) {
                                 true
                             );
                         }
-
-
                     } else {
 
                         var newArray = allGroupUser.filter(function (f) { return f !== (arg.sender_id).toString() })
@@ -527,9 +544,7 @@ function socket(io) {
                 } else {
                     io.to(userRoom).emit("chatReceive", "sender Not Found....");
                 }
-
             }
-
         })
 
         socket.on("readUnreadInGroup", async (arg) => {
@@ -553,10 +568,8 @@ function socket(io) {
                     { arrayFilters: [{ "read.userId": mongoose.Types.ObjectId(arg.user_id) }] }
                 )
             }
-
             console.log();
             io.emit("chatReceive", "read All chat");
-
         })
 
         socket.on("readUnread", async (arg) => {
@@ -601,7 +614,7 @@ function socket(io) {
         })
 
         socket.on("LikeOrDislikeUserForDating", async (arg) => {
-            console.log("arg", arg);
+
             const findUser = await userModel.findOne({
                 _id: arg.user_id
             })
@@ -622,16 +635,19 @@ function socket(io) {
                         "disLikeUser.disLikeduserId": arg.like_user_id
                     })
 
+
                     if (existUserInLike == null && exisrUserIndisLike == null) {
                         const findInUserModel = await userModel.findOne({
                             _id: arg.like_user_id,
                             polyDating: "polyamorous"
                         });
 
-                        if (findInUserModel == null) {
-                            io.emit("likeDislikeUser", "User Not polyDating");
-                        } else {
+                        const findInLinkProfileModel = await linkProfileModel.findOne({
+                            _id: arg.like_user_id
+                        })
 
+
+                        if (findInUserModel || findInLinkProfileModel) {
                             const findUserInDating = await datingLikeDislikeUserModel.findOne({
                                 userId: arg.user_id
                             })
@@ -659,7 +675,8 @@ function socket(io) {
                                 })
                                 io.emit("likeDislikeUser", "User Like Dating");
                             }
-
+                        } else {
+                            io.emit("likeDislikeUser", "User Not polyDating...");
                         }
                     } else {
                         io.emit("likeDislikeUser", "Already Liked or Dislike For Dating");
@@ -722,8 +739,6 @@ function socket(io) {
             }
         })
 
-
-
         socket.on('sendRequest', async (arg) => {
 
             const findUser = await userModel.findOne({
@@ -744,70 +759,137 @@ function socket(io) {
                         "polyDating": "polyamorous"
                     })
 
-                    const response = [];
-
                     if (findAllUser) {
-                        for (const allUser of findAllUser) {
-                            const checkUserInLike = await datingLikeDislikeUserModel.findOne({
-                                userId: arg.user_id,
-                                "LikeUser.LikeduserId": allUser._id
-                            })
 
+                        const findValidUser = await userModel.findOne({
+                            _id: arg.request_id
+                        })
 
-                            const checkUserInDisLike = await datingLikeDislikeUserModel.findOne({
-                                userId: arg.user_id,
-                                "disLikeUser.disLikeduserId": allUser._id
-                            })
-
-                            if (checkUserInLike || checkUserInDisLike) {
-
-                            } else {
-
-                                let brithDate = new Date(allUser.birthDate);
-                                brithDate = brithDate.getFullYear();
-                                let currentDate = new Date(Date.now());
-                                currentDate = currentDate.getFullYear();
-
-                                const age = currentDate - brithDate
-
-                                const userDetail = {
-                                    _id: allUser._id,
-                                    name: allUser.firstName,
-                                    gender: allUser.identity,
-                                    age: age,
-                                    photo: allUser.photo[0]
-
-                                }
-                                response.push(userDetail)
-                            }
-                        }
-
-                        var findRequest = response.filter(obj => obj._id == arg.request_id);
-
-                        if (findRequest[0] == undefined) {
-                            io.emit("sendRequestUser", "aleardy tack desicion");
+                        if (findValidUser == null) {
+                            io.emit("sendRequestUser", "User Not Found!");
                         } else {
 
-                            const findValidUser = await userModel.findOne({
-                                _id: findRequest[0]._id
+                            const combineUser = await linkProfileModel.findOne({
+                                _id: arg.combine_id,
                             })
 
-                            if (findValidUser == null) {
-                                io.emit("sendRequestUser", "User Not Found!");
-                            } else {
-                                console.log(findValidUser.linkProfile);
-                                await userModel.updateOne({
-                                    _id: findRequest[0]._id
-                                }, {
-                                    $push: {
-                                        linkProfile: {
-                                            userId: arg.user_id
-                                        }
-                                    }
-                                })
+                            if (combineUser) {
 
-                                io.emit("sendRequestUser", "successfully send link profile");
+                                if (combineUser.user1 && combineUser.user2 && combineUser.user3 == undefined && combineUser.user4 == undefined) {
+
+                                    const findValidUser1 = await linkProfileModel.findOne({
+                                        _id: arg.combine_id
+                                    })
+
+                                    console.log("findValidUser", findValidUser);
+                                    if ((findValidUser1.user1).toString() == (arg.user_id).toString() || (findValidUser1.user2).toString() == (arg.user_id).toString()) {
+                                        io.emit("sendRequestUser", "already In link profile...");
+                                    } else {
+
+                                        await userModel.updateOne({
+                                            _id: combineUser.user1
+                                        }, {
+                                            $push: {
+                                                linkProfile: {
+                                                    userId: arg.user_id,
+                                                    combineId: arg.combine_id
+                                                }
+                                            }
+                                        })
+
+                                        await userModel.updateOne({
+                                            _id: combineUser.user2
+                                        }, {
+                                            $push: {
+                                                linkProfile: {
+                                                    userId: arg.user_id,
+                                                    combineId: arg.combine_id
+                                                }
+                                            }
+                                        })
+
+                                        io.emit("sendRequestUser", "successfully send link profile...");
+                                    }
+                                } else if (combineUser.user1 && combineUser.user2 && combineUser.user3 && combineUser.user4 == undefined) {
+                                    const findValidUser = await linkProfileModel.findOne({
+                                        _id: arg.combine_id
+                                    })
+
+                                    console.log(findValidUser);
+
+                                    if ((findValidUser.user1).toString() == (arg.user_id).toString() || (findValidUser.user2).toString() == (arg.user_id).toString() || (findValidUser.user3).toString() == (arg.user_id).toString()) {
+
+                                        io.emit("sendRequestUser", "already In link profile...");
+
+                                    } else {
+
+                                        await userModel.updateOne({
+                                            _id: combineUser.user1
+                                        }, {
+                                            $push: {
+                                                linkProfile: {
+                                                    userId: arg.user_id,
+                                                    combineId: arg.combine_id
+                                                }
+                                            }
+                                        })
+
+                                        await userModel.updateOne({
+                                            _id: combineUser.user2
+                                        }, {
+                                            $push: {
+                                                linkProfile: {
+                                                    userId: arg.user_id,
+                                                    combineId: arg.combine_id
+                                                }
+                                            }
+                                        })
+
+                                        await userModel.updateOne({
+                                            _id: combineUser.user3
+                                        }, {
+                                            $push: {
+                                                linkProfile: {
+                                                    userId: arg.user_id,
+                                                    combineId: arg.combine_id
+                                                }
+                                            }
+                                        })
+
+                                        io.emit("sendRequestUser", "successfully send link profile...");
+                                    }
+                                } else {
+                                    io.emit("sendRequestUser", "already have 4 users...");
+                                }
+
+
+                            } else {
+                                const findValidUser = await userModel.findOne({
+                                    _id: arg.request_id,
+                                    "linkProfile.userId": arg.user_id
+                                })
+                                if (findValidUser == null) {
+                                    await userModel.updateOne({
+                                        _id: arg.request_id
+                                    }, {
+                                        $push: {
+                                            linkProfile: {
+                                                userId: arg.user_id
+                                            }
+                                        }
+                                    })
+
+                                    io.emit("sendRequestUser", "successfully send link profile..");
+                                } else {
+
+                                    io.emit("sendRequestUser", "already create link profile..");
+                                }
                             }
+
+
+
+
+
                         }
 
                     } else {
@@ -819,7 +901,6 @@ function socket(io) {
 
         })
     })
-
 }
 
 module.exports = socket
