@@ -27,10 +27,21 @@ exports.getGroupChat = async (req, res, next) => {
                     _id: getChat.sender
                 })
 
+                const date = getChat.createdAt
+                let hours = date.getHours();
+                let minutes = date.getMinutes();
+                let ampm = hours >= 12 ? 'pm' : 'am';
+                hours = hours % 12;
+                hours = hours ? hours : 12;
+                minutes = minutes.toString().padStart(2, '0');
+                let strTime = hours + ':' + minutes + ' ' + ampm;
+
                 const response = {
+                    _id: findUser._id,
                     text: getChat.text,
-                    photo: findUser.photo,
-                    name: findUser.firstName
+                    photo: findUser.photo[0] ? findUser.photo[0].res : null,
+                    name: findUser.firstName,
+                    time: strTime
                 }
                 allChat.push(response)
             }
@@ -112,8 +123,13 @@ exports.groupList = async (req, res, next) => {
         let uniqueObjArray = [...new Map(unReadMessage.map((item) => [item["groupName"], item])).values()];
         finalData.push(uniqueObjArray)
 
+        const page = parseInt(req.query.page)
+        const limit = parseInt(req.query.limit)
+        const startIndex = (page - 1) * limit;
+        const endIndex = page * limit;
+
         res.status(status.OK).json(
-            new APIResponse("all group", true, 200, 1, finalData)
+            new APIResponse("all group", true, 200, 1, finalData[0].slice(startIndex, endIndex))
         );
 
     } catch (error) {

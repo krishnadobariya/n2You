@@ -45,7 +45,7 @@ app.use('/basket', basketRoutes);
 
 // polyamorous
 app.use('/dating', datingRoutes);
-app.use('/blockUser', blockUnblockRoutes);
+app.use('/blockUnblockUsers', blockUnblockRoutes);
 app.use('/groupChat', groupChatRoutes);
 
 module.exports = app;
