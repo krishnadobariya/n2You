@@ -85,14 +85,14 @@ exports.getUserWhichNotChoiceForLikeOrDislike = async (req, res, next) => {
                                         name: user1.firstName,
                                         gender: user1.identity,
                                         age: age1,
-                                        photo: user1.photo[0]
+                                        photo: user1.photo[0] ? user1.photo[0].res : null
                                     },
                                     user2: {
                                         _id: user2._id,
                                         name: user2.firstName,
                                         gender: user2.identity,
                                         age: age2,
-                                        photo: user2.photo[0]
+                                        photo: user2.photo[0] ? user2.photo[0].res : null
                                     }
                                 }
                                 response.push(userDetail)
@@ -136,21 +136,21 @@ exports.getUserWhichNotChoiceForLikeOrDislike = async (req, res, next) => {
                                         name: user1.firstName,
                                         gender: user1.identity,
                                         age: age1,
-                                        photo: user1.photo[0]
+                                        photo: user1.photo[0] ? user1.photo[0].res : null
                                     },
                                     user2: {
                                         _id: user2._id,
                                         name: user2.firstName,
                                         gender: user2.identity,
                                         age: age2,
-                                        photo: user2.photo[0]
+                                        photo: user2.photo[0] ? user2.photo[0].res : null
                                     },
                                     user3: {
                                         _id: user3._id,
                                         name: user3.firstName,
                                         gender: user3.identity,
                                         age: age3,
-                                        photo: user3.photo[0]
+                                        photo: user3.photo[0] ? user3.photo[0].res : null
                                     }
                                 }
                                 response.push(userDetail)
@@ -204,36 +204,34 @@ exports.getUserWhichNotChoiceForLikeOrDislike = async (req, res, next) => {
                                         name: user1.firstName,
                                         gender: user1.identity,
                                         age: age1,
-                                        photo: user1.photo[0]
+                                        photo: user1.photo[0] ? user1.photo[0].res : null
                                     },
                                     user2: {
                                         _id: user2._id,
                                         name: user2.firstName,
                                         gender: user2.identity,
                                         age: age2,
-                                        photo: user2.photo[0]
+                                        photo: user2.photo[0] ? user2.photo[0].res : null
                                     },
                                     user3: {
                                         _id: user3._id,
                                         name: user3.firstName,
                                         gender: user3.identity,
                                         age: age3,
-                                        photo: user3.photo[0]
+                                        photo: user3.photo[0] ? user3.photo[0].res : null
                                     },
                                     user4: {
                                         _id: user4._id,
                                         name: user4.firstName,
                                         gender: user4.identity,
                                         age: age4,
-                                        photo: user4.photo[0]
+                                        photo: user4.photo[0] ? user4.photo[0].res : null
                                     }
                                 }
 
                                 response.push(userDetail)
                             }
                         }
-
-
                     }
 
                     for (const allUser of findAllUser) {
@@ -262,15 +260,34 @@ exports.getUserWhichNotChoiceForLikeOrDislike = async (req, res, next) => {
                                 name: allUser.firstName,
                                 gender: allUser.identity,
                                 age: age,
-                                photo: allUser.photo[0]
+                                photo: allUser.photo[0] ? allUser.photo[0].res : null
 
                             }
                             response.push(userDetail)
                         }
                     }
 
+                    const page = parseInt(req.query.page)
+                    const limit = parseInt(req.query.limit)
+                    const startIndex = (page - 1) * limit;
+                    const endIndex = page * limit;
+
+                    // if (endIndex < response.length) {
+                    //     results.next = {
+                    //         page: page + 1,
+                    //         limit: limit
+                    //     };
+                    // }
+
+                    // if (startIndex > 0) {
+                    //     results.previous = {
+                    //         page: page - 1,
+                    //         limit: limit
+                    //     };
+                    // }
+
                     res.status(status.OK).json(
-                        new APIResponse("get user", "true", 200, "1", response.slice(req.query.skip, req.query.limit))
+                        new APIResponse("get user", "true", 200, "1", response.slice(startIndex, endIndex))
                     );
 
                 } else {
@@ -366,8 +383,30 @@ exports.matchTable = async (req, res, next) => {
                 userId: req.params.user_id
             })
 
+            const allMatchUsers = [];
+            for (const matchesUser of allMatchUser.allMatches) {
+                const data = await userModel.findOne({
+                    _id: matchesUser.matchId
+                })
+
+                let brithDate = new Date(data.birthDate);
+                brithDate = brithDate.getFullYear();
+                let currentDate = new Date(Date.now());
+                currentDate = currentDate.getFullYear();
+
+                const age = currentDate - brithDate
+
+                const response = {
+                    _id: data._id,
+                    name: data.firstName,
+                    profile: data.photo[0] ? data.photo[0].res : null,
+                    age: age
+                }
+
+                allMatchUsers.push(response)
+            }
             res.status(status.OK).json(
-                new APIResponse("all Matches users", "true", 200, "1", allMatchUser.allMatches)
+                new APIResponse("all Matches users", "true", 200, "1", allMatchUsers)
             );
 
         }
@@ -471,7 +510,7 @@ exports.listLinkProfile = async (req, res, next) => {
 
                 const response = {
                     id: findInUserModel._id,
-                    photo: findInUserModel.photo,
+                    photo: findInUserModel.photo[0] ? findInUserModel.photo[0].res : null,
                     name: findInUserModel.firstName
                 }
                 allRequestList.push(response)

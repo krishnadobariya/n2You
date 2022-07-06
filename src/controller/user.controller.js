@@ -5,7 +5,6 @@ const cloudinary = require("../utils/cloudinary.utils");
 const requestsModel = require("../model/requests.model");
 const { default: mongoose } = require("mongoose");
 const commentModel = require("../model/comment.model");
-const { updateOne } = require("../model/user.model");
 const basketModel = require("../model/basket.model");
 
 exports.userRegister = async (req, res, next) => {
@@ -1583,7 +1582,7 @@ exports.yesBasket = async (req, res, next) => {
 
 
 
-    
+
 }
 
 
@@ -2083,7 +2082,7 @@ exports.noBasket = async (req, res, next) => {
                                     }
 
                                 }
-                                
+
                                 const statusByEmail = [];
                                 const allRequestedEmail = RequestedEmailExiestInUser.RequestedEmails
                                 const requestedEmailWitchIsInuserRequeted = [];
