@@ -2083,9 +2083,7 @@ exports.noBasket = async (req, res, next) => {
                                     }
 
                                 }
-
-
-
+                                
                                 const statusByEmail = [];
                                 const allRequestedEmail = RequestedEmailExiestInUser.RequestedEmails
                                 const requestedEmailWitchIsInuserRequeted = [];

@@ -57,3 +57,71 @@ LikeOrDislikeUserForDating
 
 likeDislikeUser
 
+==================================================
+
+--> sendRequest
+
+==================================================
+
+sendRequest
+
+{
+    "user_id":"62bc18117f82978b8bfa9713",
+    "combine_id":"62c556e444d24d01bf213f1d",
+    "request_id":"62bbf7de7f82978b8bfa970b"
+}
+
+sendRequestUser
+
+===================================================
+
+--> createGroupRoom
+
+===================================================
+
+createGroupRoom
+
+   {
+    groupName: arg.group_name,
+    user1: arg.user1,
+    user2: arg.user2,
+    user3: arg.user3,
+    user4: arg.user4,
+    user5: arg.user5,
+    user6: arg.user6,
+    user7: arg.user7,
+    user8: arg.user8
+    }
+
+RoomCreated
+
+======================================================
+
+-->chatByGroup
+
+======================================================
+
+chatByGroup
+
+{
+    chat_room_id: chat_room_id,
+    sender_id: sender_id,
+    text: text
+}
+
+chatReceive
+
+======================================================
+
+--> readUnreadInGroup
+
+======================================================
+
+readUnreadInGroup
+
+{
+    group_chat_room: group_chat_room,
+    user_id: user_id
+}
+
+chatReceive

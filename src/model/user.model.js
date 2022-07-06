@@ -96,8 +96,14 @@ const userSchema = mongoose.Schema({
             userId: {
                 type: mongoose.Schema.Types.ObjectId
             },
-        }
-    ],
+            accepted: {
+                type: Number,
+                default: 0
+            },
+            combineId: {
+                type: mongoose.Schema.Types.ObjectId
+            }
+        },],
     location: {
         type: Object,
         default: {
