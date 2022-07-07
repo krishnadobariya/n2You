@@ -62,7 +62,6 @@ exports.groupList = async (req, res, next) => {
     try {
 
         const findRoom = await groupChatRoomModels.find({})
-
         unReadMessage = [];
         const finalData = [];
         for (const allRoom of findRoom) {

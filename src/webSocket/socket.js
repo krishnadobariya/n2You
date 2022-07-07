@@ -8,7 +8,6 @@ const groupChatRoomModels = require("./models/groupChatRoom.models");
 const groupChatModel = require("./models/groupChat.model");
 const { default: mongoose } = require("mongoose");
 const linkProfileModel = require("../model/polyamorous/linkProfile.model");
-
 function socket(io) {
 
     console.log("socket connected...");
@@ -458,7 +457,6 @@ function socket(io) {
                                 read.push(response)
                             }
                         }
-
 
                         const data = groupChatModel({
                             chatRoomId: arg.chat_room_id,

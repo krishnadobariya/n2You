@@ -43,7 +43,6 @@ exports.getUserWhichNotChoiceForLikeOrDislike = async (req, res, next) => {
                 if (findAllUser) {
                     const findLinkProfileUser = await linkProfileModel.find({})
 
-
                     for (const data of findLinkProfileUser) {
 
                         const chekLikeProfileInLike = await datingLikeDislikeUserModel.findOne({
@@ -60,7 +59,6 @@ exports.getUserWhichNotChoiceForLikeOrDislike = async (req, res, next) => {
 
                         } else {
                             if (data.user1 && data.user2 && data.user3 == undefined && data.user4 == undefined) {
-
                                 const user1 = await userModel.findOne({
                                     _id: data.user1
                                 })
@@ -414,7 +412,6 @@ exports.matchUsers = async (req, res, next) => {
                         })
 
                         if (findinMatchUserModel == null) {
-
                             const saveInMatchUserModel = matchUserModel({
                                 userId: req.params.user_id,
                                 allMatches: {
