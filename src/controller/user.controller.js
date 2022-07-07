@@ -297,7 +297,7 @@ exports.tokenUpdate = async (req, res, next) => {
 exports.searchFriend = async (req, res, next) => {
     try {
         const Regexname = new RegExp(req.body.search_key, 'i');
-        const searchName = await userModel.find({ firstName: Regexname });
+        const searchName = await userModel.find({ firstName: Regexname, polyDating: "Social Meida & Dating" });
         const reaquestedAllEmail = [];
         searchName.map((result, index) => {
             reaquestedAllEmail.push(result.email)
@@ -348,9 +348,6 @@ exports.searchFriend = async (req, res, next) => {
                                 spherical: true
                             },
                         }]);
-
-
-                    console.log(FindLocation);
 
                     for (const uniqueDistance of FindLocation) {
 
@@ -426,14 +423,12 @@ exports.searchFriend = async (req, res, next) => {
                         _id: getOriginalData._id,
                         email: getOriginalData.email,
                         firstName: getOriginalData.firstName,
+                        profile: getOriginalData.photo[0] ? getOriginalData.photo[0].res : null,
                         status: 3
                     }
 
                     UniqueEmail.push(response);
                 }
-
-                console.log(UniqueEmail);
-
 
                 const statusByEmail = [];
                 const allRequestedEmail = RequestedEmailExiestInUser.RequestedEmails
@@ -569,6 +564,7 @@ exports.searchFriend = async (req, res, next) => {
                         email: finalData.email,
                         relationshipSatus: finalData.relationshipSatus,
                         Bio: finalData.Bio,
+                        photo: finalData.photo,
                         hopingToFind: finalData.hopingToFind,
                         jobTitle: finalData.jobTitle,
                         wantChildren: finalData.wantChildren,
@@ -599,11 +595,11 @@ exports.searchFriend = async (req, res, next) => {
 exports.getDataUserWise = async (req, res, next) => {
     try {
 
-        const userFind = await userModel.findOne({ _id: req.params.user_id })
+        const userFind = await userModel.findOne({ _id: req.params.user_id, polyDating: "Social Meida & Dating" })
 
         if (userFind == null) {
             res.status(status.NOT_FOUND).json(
-                new APIResponse("user not Found", "false", 404, "0")
+                new APIResponse("user not Found and not Social Meida & Dating type user", "false", 404, "0")
             )
         } else {
 
@@ -741,12 +737,13 @@ exports.storeBasketValue = async (req, res, next) => {
 
         const allUserWithProfileMatch = [];
         const findUser = await userModel.findOne({
-            _id: req.params.user_id
+            _id: req.params.user_id,
+            polyDating: "Social Meida & Dating"
         })
 
         if (findUser == null) {
             res.status(status.NOT_FOUND).json(
-                new APIResponse("user not Found", "false", 404, "0")
+                new APIResponse("user not Found and not Social Meida & Dating type user", "false", 404, "0")
             )
         } else {
 
@@ -775,7 +772,8 @@ exports.storeBasketValue = async (req, res, next) => {
             var matchUser = await userModel.find({
                 _id: {
                     $ne: req.params.user_id
-                }
+                },
+                polyDating: "Social Meida & Dating"
             })
 
             const identity = findUser.identity
@@ -891,12 +889,13 @@ exports.yesBasket = async (req, res, next) => {
 
 
             const findUser = await userModel.findOne({
-                _id: req.params.user_id
+                _id: req.params.user_id,
+                polyDating: "Social Meida & Dating"
             })
 
             if (findUser == null) {
                 res.status(status.NOT_FOUND).json(
-                    new APIResponse("user not Found", "false", 404, "0")
+                    new APIResponse("user not Found and not Social Meida & Dating type user", "false", 404, "0")
                 )
             } else {
                 const reaquestedAllEmail = [];
@@ -1292,7 +1291,8 @@ exports.yesBasket = async (req, res, next) => {
 
 
                                 const findThumbUp = await userModel.findOne({
-                                    _id: req.params.request_user_id
+                                    _id: req.params.request_user_id,
+                                    polyDating: "Social Meida & Dating"
                                 })
 
                                 for (const getOriginalData of finalData) {
@@ -1341,7 +1341,8 @@ exports.yesBasket = async (req, res, next) => {
                                 }
 
                                 const findThumbUp = await userModel.findOne({
-                                    _id: req.params.request_user_id
+                                    _id: req.params.request_user_id,
+                                    polyDating: "Social Meida & Dating"
                                 })
 
 
@@ -1469,7 +1470,8 @@ exports.yesBasket = async (req, res, next) => {
                                             if (requestEmail.requestedEmail == meageAllTableEmail.email) {
 
                                                 const findThumbUp = await userModel.findOne({
-                                                    _id: req.params.request_user_id
+                                                    _id: req.params.request_user_id,
+                                                    polyDating: "Social Meida & Dating"
                                                 })
 
 
@@ -1600,12 +1602,13 @@ exports.noBasket = async (req, res, next) => {
         if (user_id.toString() == request_user_id.toString()) {
 
             const findUser = await userModel.findOne({
-                _id: req.params.user_id
+                _id: req.params.user_id,
+                polyDating: "Social Meida & Dating"
             })
 
             if (findUser == null) {
                 res.status(status.NOT_FOUND).json(
-                    new APIResponse("user not Found", "false", 404, "0")
+                    new APIResponse("user not Found and not Social Meida & Dating type user", "false", 404, "0")
                 )
             } else {
                 const reaquestedAllEmail = [];
@@ -1660,7 +1663,8 @@ exports.noBasket = async (req, res, next) => {
                         }
 
                         const findThumbUp = await userModel.findOne({
-                            _id: req.params.request_user_id
+                            _id: req.params.request_user_id,
+                            polyDating: "Social Meida & Dating"
                         })
 
 
@@ -1713,7 +1717,8 @@ exports.noBasket = async (req, res, next) => {
 
 
                         const findThumbUp = await userModel.findOne({
-                            _id: req.params.request_user_id
+                            _id: req.params.request_user_id,
+                            polyDating: "Social Meida & Dating"
                         })
 
                         for (const getOriginalData of finalData) {
@@ -1846,7 +1851,8 @@ exports.noBasket = async (req, res, next) => {
                                     if (requestEmail.requestedEmail == meageAllTableEmail.email) {
 
                                         const findThumbUp = await userModel.findOne({
-                                            _id: req.params.request_user_id
+                                            _id: req.params.request_user_id,
+                                            polyDating: "Social Meida & Dating"
                                         })
 
 
@@ -1947,7 +1953,8 @@ exports.noBasket = async (req, res, next) => {
 
                 if (accessBasket == true) {
                     const findUser = await userModel.findOne({
-                        _id: req.params.request_user_id
+                        _id: req.params.request_user_id,
+                        polyDating: "Social Meida & Dating"
                     })
 
                     if (findUser == null) {
@@ -2009,7 +2016,8 @@ exports.noBasket = async (req, res, next) => {
 
 
                                 const findThumbUp = await userModel.findOne({
-                                    _id: req.params.request_user_id
+                                    _id: req.params.request_user_id,
+                                    polyDating: "Social Meida & Dating"
                                 })
 
                                 for (const getOriginalData of finalData) {
@@ -2059,7 +2067,8 @@ exports.noBasket = async (req, res, next) => {
                                 }
 
                                 const findThumbUp = await userModel.findOne({
-                                    _id: req.params.request_user_id
+                                    _id: req.params.request_user_id,
+                                    polyDating: "Social Meida & Dating"
                                 })
 
                                 for (const getOriginalData of finalData) {
@@ -2184,7 +2193,8 @@ exports.noBasket = async (req, res, next) => {
 
                                             if (requestEmail.requestedEmail == meageAllTableEmail.email) {
                                                 const findThumbUp = await userModel.findOne({
-                                                    _id: req.params.request_user_id
+                                                    _id: req.params.request_user_id,
+                                                    polyDating: "Social Meida & Dating"
                                                 })
 
                                                 for (const findThumb of findThumbUp.basket) {

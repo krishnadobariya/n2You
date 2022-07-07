@@ -54,8 +54,43 @@ exports.publicSession = async (req, res, next) => {
             for (const publicSessionwithUserDetails of findPublicSession) {
 
                 const findUser = await userModel.findOne({
-                    _id: publicSessionwithUserDetails.cretedSessionUser
+                    _id: publicSessionwithUserDetails.cretedSessionUser,
+                    polyDating: "Social Meida & Dating"
                 })
+
+                const participants1Find = await userModel.findOne({
+                    _id: publicSessionwithUserDetails.participants[0].participants_1
+                })
+                const participants2Find = await userModel.findOne({
+                    _id: publicSessionwithUserDetails.participants[0].participants_2
+                })
+                const participants3Find = await userModel.findOne({
+                    _id: publicSessionwithUserDetails.participants[0].participants_3
+                })
+                const participants4Find = await userModel.findOne({
+                    _id: publicSessionwithUserDetails.participants[0].participants_4
+                })
+
+                const participants_1 = {
+                    _id: participants1Find ? participants1Find._id : null,
+                    name: participants1Find ? participants1Find.firstName : null,
+                    profile: participants1Find ? participants1Find.photo[0] ? participants1Find.photo[0].res : null : null,
+                }
+                const participants_2 = {
+                    _id: participants2Find ? participants2Find._id : null,
+                    name: participants2Find ? participants2Find.firstName : null,
+                    profile: participants2Find ? participants2Find.photo[0] ? participants2Find.photo[0].res : null : null,
+                }
+                const participants_3 = {
+                    _id: participants3Find ? participants3Find._id : null,
+                    name: participants3Find ? participants3Find.firstName : null,
+                    profile: participants3Find ? participants3Find.photo[0] ? participants3Find.photo[0].res : null : null,
+                }
+                const participants_4 = {
+                    _id: participants4Find ? participants4Find._id : null,
+                    name: participants4Find ? participants4Find.firstName : null,
+                    profile: participants4Find ? participants4Find.photo[0] ? participants4Find.photo[0].res : null : null,
+                }
 
                 const userDetail = findUser.firstName
 
@@ -63,10 +98,10 @@ exports.publicSession = async (req, res, next) => {
                     selectedDate: publicSessionwithUserDetails.selectedDate,
                     selectedTime: publicSessionwithUserDetails.selectedTime,
                     cretedSessionUser: publicSessionwithUserDetails.cretedSessionUser,
-                    participants_1: publicSessionwithUserDetails.participants[0].participants_1,
-                    participants_2: publicSessionwithUserDetails.participants[0].participants_2,
-                    participants_3: publicSessionwithUserDetails.participants[0].participants_3,
-                    participants_4: publicSessionwithUserDetails.participants[0].participants_4,
+                    participants_1: participants_1,
+                    participants_2: participants_2,
+                    participants_3: participants_3,
+                    participants_4: participants_4,
                 }
                 const response = {
                     sessionDetail,
@@ -103,19 +138,23 @@ exports.invitedInSession = async (req, res, next) => {
             if (findInvited.participants[0].participants_1 == req.params.user_id) {
 
                 const createdSessionUser = await userModel.findOne({
-                    _id: findInvited.cretedSessionUser
+                    _id: findInvited.cretedSessionUser,
+                    polyDating: "Social Meida & Dating"
                 })
 
                 const participants_2 = await userModel.findOne({
-                    _id: findInvited.participants[0].participants_2
+                    _id: findInvited.participants[0].participants_2,
+                    polyDating: "Social Meida & Dating"
                 })
                 const participants_3 = await userModel.findOne({
-                    _id: findInvited.participants[0].participants_3
+                    _id: findInvited.participants[0].participants_3,
+                    polyDating: "Social Meida & Dating"
                 })
 
 
                 const participants_4 = await userModel.findOne({
-                    _id: findInvited.participants[0].participants_4
+                    _id: findInvited.participants[0].participants_4,
+                    polyDating: "Social Meida & Dating"
                 })
 
                 const createdSessionUserDetail = {
@@ -125,7 +164,7 @@ exports.invitedInSession = async (req, res, next) => {
                     selectedDate: findInvited.selectedDate,
                     photo: createdSessionUser.photo,
                     participants: [{
-                        photo: participants_2 == null ? null : participants_2.photo,
+                        photo: participants_2 == null ? null : participants_2.photo[0] ? participants_2.photo[0].res : null,
                         name: participants_2 == null ? null : participants_2.firstName
                     }, {
                         photo: participants_3 == null ? null : participants_3.photo,
@@ -138,18 +177,22 @@ exports.invitedInSession = async (req, res, next) => {
                 allInvited.push(createdSessionUserDetail)
             } else if (findInvited.participants[0].participants_2 == req.params.user_id) {
                 const createdSessionUser = await userModel.findOne({
-                    _id: findInvited.cretedSessionUser
+                    _id: findInvited.cretedSessionUser,
+                    polyDating: "Social Meida & Dating"
                 })
                 const participants_1 = await userModel.findOne({
-                    _id: findInvited.participants[0].participants_1
+                    _id: findInvited.participants[0].participants_1,
+                    polyDating: "Social Meida & Dating"
                 })
                 const participants_3 = await userModel.findOne({
-                    _id: findInvited.participants[0].participants_3
+                    _id: findInvited.participants[0].participants_3,
+                    polyDating: "Social Meida & Dating"
                 })
 
 
                 const participants_4 = await userModel.findOne({
-                    _id: findInvited.participants[0].participants_4
+                    _id: findInvited.participants[0].participants_4,
+                    polyDating: "Social Meida & Dating"
                 })
 
                 const createdSessionUserDetail = {
@@ -172,16 +215,20 @@ exports.invitedInSession = async (req, res, next) => {
                 allInvited.push(createdSessionUserDetail)
             } else if (findInvited.participants[0].participants_3 == req.params.user_id) {
                 const createdSessionUser = await userModel.findOne({
-                    _id: findInvited.cretedSessionUser
+                    _id: findInvited.cretedSessionUser,
+                    polyDating: "Social Meida & Dating"
                 })
                 const participants_1 = await userModel.findOne({
-                    _id: findInvited.participants[0].participants_1
+                    _id: findInvited.participants[0].participants_1,
+                    polyDating: "Social Meida & Dating"
                 })
                 const participants_2 = await userModel.findOne({
-                    _id: findInvited.participants[0].participants_2
+                    _id: findInvited.participants[0].participants_2,
+                    polyDating: "Social Meida & Dating"
                 })
                 const participants_4 = await userModel.findOne({
-                    _id: findInvited.participants[0].participants_4
+                    _id: findInvited.participants[0].participants_4,
+                    polyDating: "Social Meida & Dating"
                 })
 
                 const createdSessionUserDetail = {
@@ -204,16 +251,20 @@ exports.invitedInSession = async (req, res, next) => {
                 allInvited.push(createdSessionUserDetail)
             } else if (findInvited.participants[0].participants_4 == req.params.user_id) {
                 const createdSessionUser = await userModel.findOne({
-                    _id: findInvited.cretedSessionUser
+                    _id: findInvited.cretedSessionUser,
+                    polyDating: "Social Meida & Dating"
                 })
                 const participants_1 = await userModel.findOne({
-                    _id: findInvited.participants[0].participants_1
+                    _id: findInvited.participants[0].participants_1,
+                    polyDating: "Social Meida & Dating"
                 })
                 const participants_2 = await userModel.findOne({
-                    _id: findInvited.participants[0].participants_2
+                    _id: findInvited.participants[0].participants_2,
+                    polyDating: "Social Meida & Dating"
                 })
                 const participants_3 = await userModel.findOne({
-                    _id: findInvited.participants[0].participants_3
+                    _id: findInvited.participants[0].participants_3,
+                    polyDating: "Social Meida & Dating"
                 })
 
                 const createdSessionUserDetail = {
@@ -221,7 +272,7 @@ exports.invitedInSession = async (req, res, next) => {
                     RoomType: findInvited.RoomType,
                     selectedTime: findInvited.selectedTime,
                     selectedDate: findInvited.selectedDate,
-                    photo: createdSessionUser.photo,
+                    photo: createdSessionUser.photo[0] ? createdSessionUser.photo[0].res : null,
                     participants: [{
                         photo: participants_1 == null ? null : participants_1.photo,
                         name: participants_1 == null ? null : participants_1.firstName
@@ -269,21 +320,26 @@ exports.mySession = async (req, res, next) => {
         for (const findMySession of findUserInsession) {
 
             const findUserDeatil = await userModel.findOne({
-                _id: findMySession.cretedSessionUser
+                _id: findMySession.cretedSessionUser,
+                polyDating: "Social Meida & Dating"
             })
 
             const findParticipantsiUserDeatil1 = await userModel.findOne({
-                _id: findMySession.participants[0].participants_1
+                _id: findMySession.participants[0].participants_1,
+                polyDating: "Social Meida & Dating"
             })
 
             const findParticipantsiUserDeatil2 = await userModel.findOne({
-                _id: findMySession.participants[0].participants_2
+                _id: findMySession.participants[0].participants_2,
+                polyDating: "Social Meida & Dating"
             })
             const findParticipantsiUserDeatil3 = await userModel.findOne({
-                _id: findMySession.participants[0].participants_3
+                _id: findMySession.participants[0].participants_3,
+                polyDating: "Social Meida & Dating"
             })
             const findParticipantsiUserDeatil4 = await userModel.findOne({
-                _id: findMySession.participants[0].participants_4
+                _id: findMySession.participants[0].participants_4,
+                polyDating: "Social Meida & Dating"
             })
 
 
@@ -292,23 +348,23 @@ exports.mySession = async (req, res, next) => {
                 selectedDate: findMySession.selectedDate,
                 RoomType: findMySession.RoomType,
                 cretedSessionUser: {
-                    photo: findUserDeatil.photo,
+                    photo: findUserDeatil.photo[0] ? findUserDeatil.photo[0].res : null,
                     name: findUserDeatil.firstName
                 },
                 participants_1: {
-                    photo: findParticipantsiUserDeatil1 == null ? null : findParticipantsiUserDeatil1.photo,
+                    photo: findParticipantsiUserDeatil1 == null ? null : findParticipantsiUserDeatil1.photo[0] ? findParticipantsiUserDeatil1.photo[0].res : null,
                     name: findParticipantsiUserDeatil1 == null ? null : findParticipantsiUserDeatil1.firstName
                 },
                 participants_2: {
-                    photo: findParticipantsiUserDeatil2 == null ? null : findParticipantsiUserDeatil2.photo,
+                    photo: findParticipantsiUserDeatil2 == null ? null : findParticipantsiUserDeatil2.photo[0] ? findParticipantsiUserDeatil2.photo[0].res : null,
                     name: findParticipantsiUserDeatil2 == null ? null : findParticipantsiUserDeatil2.firstName
                 },
                 participants_3: {
-                    photo: findParticipantsiUserDeatil3 == null ? null : findParticipantsiUserDeatil3.photo,
+                    photo: findParticipantsiUserDeatil3 == null ? null : findParticipantsiUserDeatil3.photo[0] ? findParticipantsiUserDeatil3.photo[0].res : null,
                     name: findParticipantsiUserDeatil3 == null ? null : findParticipantsiUserDeatil3.firstName
                 },
                 participants_4: {
-                    photo: findParticipantsiUserDeatil4 == null ? null : findParticipantsiUserDeatil4.photo,
+                    photo: findParticipantsiUserDeatil4 == null ? null : findParticipantsiUserDeatil4.photo[0] ? findParticipantsiUserDeatil4.photo[0].res : null,
                     name: findParticipantsiUserDeatil4 == null ? null : findParticipantsiUserDeatil4.firstName
                 }
             }

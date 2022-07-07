@@ -3,14 +3,15 @@ const requestModel = require("../model/requests.model");
 const status = require("http-status");
 const APIResponse = require("../helper/APIResponse");
 const postModel = require("../model/post.model");
+const { response } = require("express");
 
 exports.sendRequest = async (req, res, next) => {
     try {
 
-        const checkUserExist = await userModel.findOne({ email: req.params.user_email });
+        const checkUserExist = await userModel.findOne({ email: req.params.user_email, polyDating: "Social Meida & Dating" });
 
         if (checkUserExist) {
-            const checkRequestedEmail = await userModel.findOne({ email: req.params.requested_email });
+            const checkRequestedEmail = await userModel.findOne({ email: req.params.requested_email, polyDating: "Social Meida & Dating" });
 
             if (checkRequestedEmail) {
                 const emailExitInRequestedModel = await requestModel.findOne({ userEmail: req.params.user_email })
@@ -65,12 +66,12 @@ exports.sendRequest = async (req, res, next) => {
 
             } else {
                 res.status(status.NOT_FOUND).json(
-                    new APIResponse("User Not Found!", "false", 404, "0")
+                    new APIResponse("User Not Found and not Social Meida & Dating type user!", "false", 404, "0")
                 )
             }
         } else {
             res.status(status.NOT_FOUND).json(
-                new APIResponse("User Not Found!", "false", 404, "0")
+                new APIResponse("User Not Found and not Social Meida & Dating type user!", "false", 404, "0")
             )
         }
 
@@ -101,11 +102,19 @@ exports.getRequestUserWise = async (req, res, next) => {
                 Requests.push(finalResponse)
             }
 
-            console.log(Requests);
-
             for (const notAcceptedRequest of Requests) {
-                if (notAcceptedRequest.accepted == 0) {
-                    allNotAcceptedRequestes.push(notAcceptedRequest)
+                const userDeatil = await userModel.findOne({
+                    email: notAcceptedRequest.RequestEmail
+                });
+
+                if (notAcceptedRequest.accepted == 2) {
+                    const response = {
+                        id: userDeatil._id,
+                        requestUser: notAcceptedRequest.RequestEmail,
+                        name: userDeatil.firstName,
+                        profile: userDeatil.photo[0] ? userDeatil.photo[0].res : null
+                    }
+                    allNotAcceptedRequestes.push(response)
                 }
             }
 

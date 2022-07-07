@@ -1,26 +1,26 @@
 const APIResponse = require("../../helper/APIResponse");
 const status = require("http-status");
 const userModel = require("../../model/user.model");
-const blockUnblockModel = require("../../model/polyamorous/blockUnblock.model");
+const blockUnblockModel = require("../../model/Polyamorous/blockUnblock.model");
 exports.blockUnblockUser = async (req, res, next) => {
     try {
 
-        const userFind = await userModel.findOne({ _id: req.params.user_id, polyDating: "polyamorous" });
+        const userFind = await userModel.findOne({ _id: req.params.user_id, polyDating: "Polyamorous" });
         if (userFind == null) {
             res.status(status.NOT_FOUND).json(
-                new APIResponse("no User Found Which is not a Polyamorous ", false, 404)
+                new APIResponse("no User Found Which is not a Polyamorous ", "false", 404, "0")
             );
         } else {
-            const blockUserFound = await userModel.findOne({ _id: req.params.block_user_id, polyDating: "polyamorous" })
+            const blockUserFound = await userModel.findOne({ _id: req.params.block_user_id, polyDating: "Polyamorous" })
 
             if (blockUserFound == null) {
                 res.status(status.NOT_FOUND).json(
-                    new APIResponse("blockUser Not Found", false, 404)
+                    new APIResponse("blockUser Not Found", "false", 404, "0")
                 );
 
             } else {
-                if (req.params.block_unblock == 1) {
-                    const finduserIdInBlockModel = await blockUnblockModel.findOne({ userId: req.params.user_id, polyDating: "polyamorous" })
+                if (req.query.block_unblock == 1) {
+                    const finduserIdInBlockModel = await blockUnblockModel.findOne({ userId: req.params.user_id, polyDating: "Polyamorous" })
                     if (finduserIdInBlockModel == null) {
                         const blockUser = blockUnblockModel({
                             userId: req.params.user_id,
@@ -32,7 +32,7 @@ exports.blockUnblockUser = async (req, res, next) => {
 
                         const saveData = await blockUser.save();
                         res.status(status.CREATED).json(
-                            new APIResponse("block Added", true, 201, saveData)
+                            new APIResponse("block Added", "true", 201, "1")
                         )
                     } else {
                         const finalData = {
@@ -43,11 +43,11 @@ exports.blockUnblockUser = async (req, res, next) => {
                         await blockUnblockModel.updateOne({ userId: req.params.user_id }, { $push: { blockUnblockUser: finalData } });
 
                         res.status(status.OK).json(
-                            new APIResponse("block added successfully!", true, 201)
+                            new APIResponse("block added successfully!", "true", 200, "1")
                         )
                     }
 
-                } else {
+                } else if (req.query.block_unblock == 0) {
                     const unBlockUser = await blockUnblockModel.updateOne(
                         {
                             userId: req.params.user_id,
@@ -62,6 +62,10 @@ exports.blockUnblockUser = async (req, res, next) => {
 
                     res.status(status.OK).json(
                         new APIResponse("unblockUser successfully!", "true", 200, "1")
+                    )
+                } else {
+                    res.status(status.NOT_ACCEPTABLE).json(
+                        new APIResponse("Not Allowed!", "false", 406, "0")
                     )
                 }
 
@@ -90,7 +94,7 @@ exports.blockUserList = async (req, res, next) => {
             for (const finalData of userFound.blockUnblockUser) {
 
                 const findUser = await userModel.findOne({
-                    _id: finalData.blockUserId
+                    _id: finalData.blockUserId,
                 })
                 const blockUser = {
                     photo: findUser.photo[0] ? findUser.photo[0].res : null,

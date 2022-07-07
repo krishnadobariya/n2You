@@ -62,63 +62,69 @@ exports.groupList = async (req, res, next) => {
     try {
 
         const findRoom = await groupChatRoomModels.find({})
+
         unReadMessage = [];
         const finalData = [];
         for (const allRoom of findRoom) {
 
+       
             const findRoom = await groupChatModel.findOne({
                 chatRoomId: allRoom._id
             })
 
-            const userProfile1 = await userModel.findOne({
-                _id: allRoom.user1
-            })
+            if (findRoom) {
 
-            const userProfile2 = await userModel.findOne({
-                _id: allRoom.user2
-            })
-            var count = 0;
+                const userProfile1 = await userModel.findOne({
+                    _id: allRoom.user1
+                })
 
-            const lastMessage = [];
+                const userProfile2 = await userModel.findOne({
+                    _id: allRoom.user2
+                })
+                var count = 0;
 
-            for (const getChat of findRoom.chat) {
+                const lastMessage = [];
+                
+                for (const getChat of findRoom.chat) {
+                    for (const findReadOrUnread of getChat.read) {
+                        if ((findReadOrUnread.userId).toString() == (req.params.user_id).toString()) {
 
-                for (const findReadOrUnread of getChat.read) {
-                    if ((findReadOrUnread.userId).toString() == (req.params.user_id).toString()) {
+                            const date = getChat.createdAt
+                            let hours = date.getHours();
+                            let minutes = date.getMinutes();
+                            let ampm = hours >= 12 ? 'pm' : 'am';
+                            hours = hours % 12;
+                            hours = hours ? hours : 12;
+                            minutes = minutes.toString().padStart(2, '0');
+                            let strTime = hours + ':' + minutes + ' ' + ampm;
 
-                        const date = getChat.createdAt
-                        let hours = date.getHours();
-                        let minutes = date.getMinutes();
-                        let ampm = hours >= 12 ? 'pm' : 'am';
-                        hours = hours % 12;
-                        hours = hours ? hours : 12;
-                        minutes = minutes.toString().padStart(2, '0');
-                        let strTime = hours + ':' + minutes + ' ' + ampm;
-
-                        var count = count + findReadOrUnread.read;
-                        const lastUnreadMessage = {
-                            text: getChat.text,
-                            createdAt: strTime
-                        }
-                        lastMessage.push(lastUnreadMessage);
-                        const lastValue = lastMessage[lastMessage.length - 1];
-                        const response = {
-                            _id: userProfile1._id,
-                            countUnreadMessage: count,
-                            lastMessage: lastValue.text,
-                            createdAt: lastValue.createdAt,
-                            groupName: allRoom.groupName,
-                            profile: {
-                                user1: userProfile1.photo[0] == undefined ? null : userProfile1.photo[0].res,
-                                user2: userProfile2.photo[0] == undefined ? null : userProfile2.photo[0].res
+                            var count = count + findReadOrUnread.read;
+                            const lastUnreadMessage = {
+                                text: getChat.text,
+                                createdAt: strTime
                             }
+                            lastMessage.push(lastUnreadMessage);
+                            const lastValue = lastMessage[lastMessage.length - 1];
+                            const response = {
+                                _id: userProfile1._id,
+                                countUnreadMessage: count,
+                                lastMessage: lastValue.text,
+                                createdAt: lastValue.createdAt,
+                                groupName: allRoom.groupName,
+                                profile: {
+                                    user1: userProfile1.photo[0] == undefined ? null : userProfile1.photo[0].res,
+                                    user2: userProfile2.photo[0] == undefined ? null : userProfile2.photo[0].res
+                                }
+                            }
+
+                            unReadMessage.push(response);
+
                         }
-
-                        unReadMessage.push(response);
-
                     }
                 }
+
             }
+
         }
 
         let uniqueObjArray = [...new Map(unReadMessage.map((item) => [item["groupName"], item])).values()];

@@ -25,7 +25,7 @@ exports.addPostVideo = async (req, res, next) => {
         }
 
         const id = req.params.id;
-        const userFindForViedos = await userModal.findOne({ _id: id });
+        const userFindForViedos = await userModal.findOne({ _id: id, polyDating: "Social Meida & Dating" });
 
         if (userFindForViedos) {
             const checkInPost = await postModal.findOne({ userId: id });
@@ -78,7 +78,7 @@ exports.addPostVideo = async (req, res, next) => {
             }
         } else {
             res.status(status.NOT_FOUND).json(
-                new APIResponse("User not found", "false", 404, "0")
+                new APIResponse("User not found and not Social Meida & Dating type user", "false", 404, "0")
             )
         }
 
@@ -105,7 +105,7 @@ exports.addPostImages = async (req, res, next) => {
             })
         }
         const id = req.params.id;
-        const userFindForImages = await userModal.findOne({ _id: id });
+        const userFindForImages = await userModal.findOne({ _id: id, polyDating: "Social Meida & Dating" });
 
         if (userFindForImages) {
             const checkInPost = await postModal.findOne({ userId: id });
@@ -158,7 +158,7 @@ exports.addPostImages = async (req, res, next) => {
 
         } else {
             res.status(status.NOT_FOUND).json(
-                new APIResponse("User not found", "false", 404, "0")
+                new APIResponse("User not found and not Social Meida & Dating type user", "false", 404, "0")
             )
         }
 
@@ -241,9 +241,16 @@ exports.getPostsbyUseId = async (req, res, next) => {
 
                     finalResponse.push(response)
 
+
                 }
+
+                const page = parseInt(req.query.page)
+                const limit = parseInt(req.query.limit)
+                const startIndex = (page - 1) * limit;
+                const endIndex = page * limit;
+
                 res.status(status.OK).json(
-                    new APIResponse("Get Post user Wise!", "true", 201, "1", finalResponse.slice(req.query.skip, req.query.limit))
+                    new APIResponse("Get Post user Wise!", "true", 201, "1", finalResponse.slice(startIndex, endIndex))
                 )
 
             } else {
@@ -253,7 +260,7 @@ exports.getPostsbyUseId = async (req, res, next) => {
             }
         } else {
             res.status(status.NOT_FOUND).json(
-                new APIResponse("User Not Found!", "false", 404, "0")
+                new APIResponse("User Not Found and not Social Meida & Dating type user!", "false", 404, "0")
             )
         }
 
@@ -367,7 +374,7 @@ exports.getPostsVideobyUseId = async (req, res, next) => {
             }
         } else {
             res.status(status.NOT_FOUND).json(
-                new APIResponse("User Not Found!", "false", 404, "0")
+                new APIResponse("User Not Found and not Social Meida & Dating type user!", "false", 404, "0")
             )
         }
 
@@ -478,7 +485,7 @@ exports.getPostsImagesbyUseId = async (req, res, next) => {
             }
         } else {
             res.status(status.NOT_FOUND).json(
-                new APIResponse("User Not Found!", "false", 404, "0")
+                new APIResponse("User Not Found and not Social Meida & Dating type user!", "false", 404, "0")
             )
         }
 
@@ -627,9 +634,6 @@ exports.userAllFriendPost = async (req, res, next) => {
                 const resultEmail = result.requestedEmail;
                 requestedEmailWitchIsInuserRequeted.push(resultEmail);
             });
-
-
-            console.log("requestedEmailWitchIsInuserRequeted", requestedEmailWitchIsInuserRequeted);
 
             const meargAllTable = await userModal.aggregate([{
                 $match: {
@@ -796,6 +800,7 @@ exports.userAllFriendPost = async (req, res, next) => {
             }
 
 
+            
             res.status(status.OK).json(
                 new APIResponse("show all post When accept by the user", "true", 201, "1", final_data)
             )
@@ -821,7 +826,7 @@ exports.reportAdd = async (req, res, next) => {
 
         if (userFind == null) {
             res.status(status.NOT_FOUND).json(
-                new APIResponse("User Not Found!", "false", 404, "0")
+                new APIResponse("User Not Found and not Social Meida & Dating type user!", "false", 404, "0")
             )
         } else {
             const postFind = await postModal.findOne({

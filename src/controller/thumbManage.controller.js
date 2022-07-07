@@ -9,28 +9,31 @@ exports.thumbCount = async (req, res, next) => {
     try {
 
         const findUser = await userModel.findOne({
-            _id: req.params.admin_user_id
+            _id: req.params.admin_user_id,
+            polyDating: "Social Meida & Dating"
         })
         if (findUser == null) {
             res.status(status.NOT_FOUND).json(
-                new APIResponse("User not found", "false", 404, "0")
+                new APIResponse("User not found and not Social Meida & Dating type user", "false", 404, "0")
             )
         } else {
 
             const findExistUser = await userModel.findOne({
-                _id: req.params.user_id
+                _id: req.params.user_id,
+                polyDating: "Social Meida & Dating"
             })
 
 
             const findExistUserInUser = await userModel.findOne({
-                _id: req.params.req_user_id
+                _id: req.params.req_user_id,
+                polyDating: "Social Meida & Dating"
             })
 
             if (findExistUser == null && findExistUserInUser == null) {
 
 
                 res.status(status.NOT_FOUND).json(
-                    new APIResponse("User not found", "false", 404, "0")
+                    new APIResponse("User not found and not Social Meida & Dating type user", "false", 404, "0")
                 )
 
             } else {

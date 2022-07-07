@@ -8,7 +8,7 @@ const groupChatRoomModels = require("./models/groupChatRoom.models");
 const groupChatModel = require("./models/groupChat.model");
 const { default: mongoose } = require("mongoose");
 const linkProfileModel = require("../model/polyamorous/linkProfile.model");
-const { aggregate } = require("./models/chat.models");
+
 function socket(io) {
 
     console.log("socket connected...");
@@ -22,21 +22,24 @@ function socket(io) {
 
         socket.on("chat", async (arg) => {
 
-            if (arg.sender_id == user_1) {
-                const userRoom = `${arg.user_2}`
-                socket.join(userRoom)
+            const userRoom = []
+            if (arg.sender_id == arg.user_1) {
+                const userRooms = `${arg.user_2}`
+                userRoom.push(userRooms)
             } else {
-                const userRoom = `${arg.user_1}`
-                socket.join(userRoom)
+                const userRooms = `${arg.user_1}`
+                userRoom.push(userRooms)
             }
+
+            socket.join(userRoom[0])
 
             const fcm_token = [];
             if (arg.sender_id == arg.user_1) {
-                const userFind = await userModel.findOne({ _id: arg.user_2 })
+                const userFind = await userModel.findOne({ _id: arg.user_2, polyDating: "Social Meida & Dating" })
                 fcm_token.push(userFind.fcm_token)
 
             } else {
-                const userFind = await userModel.findOne({ _id: arg.user_1 })
+                const userFind = await userModel.findOne({ _id: arg.user_1, polyDating: "Social Meida & Dating" })
                 fcm_token.push(userFind.fcm_token)
 
             }
@@ -178,7 +181,7 @@ function socket(io) {
 
                                 await data.save();
 
-                                io.to(userRoom).emit("chatReceive", arg.text);
+                                io.to(userRoom[0]).emit("chatReceive", arg.text);
                                 const title = "n2you Notification";
                                 const body = `${arg.sender_id} send request to `;
 
@@ -215,7 +218,7 @@ function socket(io) {
                                     }
                                 })
 
-                                io.to(userRoom).emit("chatReceive", finalData.text);
+                                io.to(userRoom[0]).emit("chatReceive", finalData.text);
                                 const title = "n2you Notification";
                                 const body = `${arg.sender_id} send request to `;
 
@@ -253,7 +256,7 @@ function socket(io) {
                                 })
 
                                 await data.save();
-                                io.to(userRoom).emit("chatReceive", arg.text);
+                                io.to(userRoom[0]).emit("chatReceive", arg.text);
                                 const title = "n2you Notification";
                                 const body = `${arg.sender_id} send request to `;
 
@@ -289,7 +292,7 @@ function socket(io) {
                                     }
                                 })
 
-                                io.to(userRoom).emit("chatReceive", finalData.text);
+                                io.to(userRoom[0]).emit("chatReceive", finalData.text);
                                 const title = "n2you Notification";
                                 const body = `${arg.sender_id} send request to `;
 
@@ -321,45 +324,55 @@ function socket(io) {
 
         socket.on("createGroupRoom", async (arg) => {
 
-            const userRoom = arg.user1 || arg.user2 || arg.user3 || arg.user4 || arg.user5 || arg.user6 || arg.user7 || arg.user8
+
+
+            const user1 = await userModel.findOne({ _id: arg.user1, polyDating: "Polyamorous" });
+            const user2 = await userModel.findOne({ _id: arg.user2, polyDating: "Polyamorous" });
+            const user3 = await userModel.findOne({ _id: arg.user3, polyDating: "Polyamorous" });
+            const user4 = await userModel.findOne({ _id: arg.user4, polyDating: "Polyamorous" });
+            const user5 = await userModel.findOne({ _id: arg.user5, polyDating: "Polyamorous" });
+            const user6 = await userModel.findOne({ _id: arg.user6, polyDating: "Polyamorous" });
+            const user7 = await userModel.findOne({ _id: arg.user7, polyDating: "Polyamorous" });
+            const user8 = await userModel.findOne({ _id: arg.user8, polyDating: "Polyamorous" });
+
+            const userRoom = user1 ? user1._id : null || user2 ? user2._id : null || user3 ? user3._id : null || user4 ? user4._id : null || user5 ? user5._id : null || user6 ? user6._id : null || user7 ? user7._id : null || user8 ? user8._id : null
 
             socket.join(userRoom);
-
             const createGroupRoom = groupChatRoomModels({
                 groupName: arg.group_name,
-                user1: arg.user1,
-                user2: arg.user2,
-                user3: arg.user3,
-                user4: arg.user4,
-                user5: arg.user5,
-                user6: arg.user6,
-                user7: arg.user7,
-                user8: arg.user8
+                user1: user1 ? user1._id : null,
+                user2: user2 ? user2._id : null,
+                user3: user3 ? user3._id : null,
+                user4: user4 ? user4._id : null,
+                user5: user5 ? user5._id : null,
+                user6: user6 ? user6._id : null,
+                user7: user7 ? user7._id : null,
+                user8: user8 ? user8._id : null
             })
 
             await createGroupRoom.save()
             const findRoom = await userModel.find({
                 $or: [
                     {
-                        _id: arg.user2
+                        _id: user2 ? user2._id : null
                     },
                     {
-                        _id: arg.user3
+                        _id: user3 ? user3._id : null
                     },
                     {
-                        _id: arg.user4
+                        _id: user3 ? user3._id : null
                     },
                     {
-                        _id: arg.user5
+                        _id: user5 ? user5._id : null
                     },
                     {
-                        _id: arg.user6
+                        _id: user6 ? user6._id : null
                     },
                     {
-                        _id: arg.user7
+                        _id: user7 ? user7._id : null
                     },
                     {
-                        _id: arg.user8
+                        _id: user8 ? user8._id : null
                     }
                 ]
             })
@@ -407,7 +420,6 @@ function socket(io) {
 
                 const user1 = (validGroupInGroupRoom.user2).toString()
 
-                console.log(user1);
                 allGroupUser.push(validGroupInGroupRoom.user1 == undefined ? null : (validGroupInGroupRoom.user1).toString())
                 allGroupUser.push(validGroupInGroupRoom.user2 == undefined ? null : (validGroupInGroupRoom.user2).toString())
                 allGroupUser.push(validGroupInGroupRoom.user3 == undefined ? null : (validGroupInGroupRoom.user3).toString())
@@ -419,13 +431,12 @@ function socket(io) {
 
                 const exiestUser = allGroupUser.includes((arg.sender_id).toString())
 
-                console.log(allGroupUser);
+       
 
                 if (exiestUser) {
                     if (validGroup == null) {
 
                         var newArray = allGroupUser.filter(function (f) { return f !== (arg.sender_id).toString() })
-                        console.log(newArray);
 
                         const findAllUser = await userModel.find({
                             _id: {
@@ -436,7 +447,7 @@ function socket(io) {
 
                         const read = [];
                         for (const user of newArray) {
-                            console.log("user", user);
+                          
                             if (user == null) {
 
                             } else {
@@ -448,7 +459,7 @@ function socket(io) {
                             }
                         }
 
-                        console.log("read", read);
+
                         const data = groupChatModel({
                             chatRoomId: arg.chat_room_id,
                             chat: {
@@ -482,11 +493,11 @@ function socket(io) {
                     } else {
 
                         var newArray = allGroupUser.filter(function (f) { return f !== (arg.sender_id).toString() })
-                        console.log(newArray);
+                 
 
                         const read = [];
                         for (const user of newArray) {
-                            console.log("user", user);
+                  
                             if (user == null) {
 
                             } else {
@@ -515,8 +526,7 @@ function socket(io) {
                         io.to(userRoom).emit("chatReceive", arg.text);
 
                         var newArray = allGroupUser.filter(function (f) { return f !== (arg.sender_id).toString() })
-                        console.log(newArray);
-
+                
                         const findAllUser = await userModel.find({
                             _id: {
                                 $in: newArray
@@ -568,7 +578,7 @@ function socket(io) {
                     { arrayFilters: [{ "read.userId": mongoose.Types.ObjectId(arg.user_id) }] }
                 )
             }
-            console.log();
+     
             io.emit("chatReceive", "read All chat");
         })
 
@@ -576,7 +586,7 @@ function socket(io) {
             const findRoom = await chatModels.findOne({
                 chatRoomId: arg.chat_room
             })
-            console.log();
+      
             if (findRoom == null) {
                 io.emit("chatReceive", "chat room not found");
             } else {
@@ -616,7 +626,7 @@ function socket(io) {
         socket.on("LikeOrDislikeUserForDating", async (arg) => {
 
             const findUser = await userModel.findOne({
-                _id: arg.user_id
+                _id: arg.user_id,
             })
 
             if (findUser == null) {
@@ -639,7 +649,7 @@ function socket(io) {
                     if (existUserInLike == null && exisrUserIndisLike == null) {
                         const findInUserModel = await userModel.findOne({
                             _id: arg.like_user_id,
-                            polyDating: "polyamorous"
+                            polyDating: "Polyamorous"
                         });
 
                         const findInLinkProfileModel = await linkProfileModel.findOne({
@@ -696,7 +706,7 @@ function socket(io) {
                     if (existUserInLike == null && exisrUserIndisLike == null) {
                         const findInUserModel = await userModel.findOne({
                             _id: arg.like_user_id,
-                            polyDating: "polyamorous"
+                            polyDating: "Polyamorous"
                         });
 
                         if (findInUserModel == null) {
@@ -743,20 +753,20 @@ function socket(io) {
 
             const findUser = await userModel.findOne({
                 _id: arg.user_id,
-                polyDating: "polyamorous"
+                polyDating: "Polyamorous"
             })
 
             if (findUser == null) {
-                io.emit("sendRequestUser", "User Not Found or user Not polyamorous...!");
+                io.emit("sendRequestUser", "User Not Found or user Not Polyamorous...!");
             } else {
 
-                const getAllUserWhichLoginAsPolyamorous = await userModel.find({ "polyDating": "polyamorous" });
+                const getAllUserWhichLoginAsPolyamorous = await userModel.find({ "polyDating": "Polyamorous" });
                 if (getAllUserWhichLoginAsPolyamorous) {
                     const findAllUser = await userModel.find({
                         _id: {
                             $ne: arg.user_id
                         },
-                        "polyDating": "polyamorous"
+                        "polyDating": "Polyamorous"
                     })
 
                     if (findAllUser) {
@@ -781,7 +791,6 @@ function socket(io) {
                                         _id: arg.combine_id
                                     })
 
-                                    console.log("findValidUser", findValidUser);
                                     if ((findValidUser1.user1).toString() == (arg.user_id).toString() || (findValidUser1.user2).toString() == (arg.user_id).toString()) {
                                         io.emit("sendRequestUser", "already In link profile...");
                                     } else {
@@ -815,7 +824,6 @@ function socket(io) {
                                         _id: arg.combine_id
                                     })
 
-                                    console.log(findValidUser);
 
                                     if ((findValidUser.user1).toString() == (arg.user_id).toString() || (findValidUser.user2).toString() == (arg.user_id).toString() || (findValidUser.user3).toString() == (arg.user_id).toString()) {
 
@@ -893,7 +901,7 @@ function socket(io) {
                         }
 
                     } else {
-                        io.emit("sendRequestUser", "This User Not polyamorous!");
+                        io.emit("sendRequestUser", "This User Not Polyamorous!");
                     }
 
                 }

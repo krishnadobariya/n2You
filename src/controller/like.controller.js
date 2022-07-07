@@ -144,6 +144,7 @@ exports.showAllUserWhichIsLikePost = async (req, res, next) => {
                         _id: uniqueId,
                         email: userDetail.email,
                         firstName: userDetail.firstName,
+                        profile: userDetail.photo[0] ? userDetail.photo[0].res : null,
                         status: 3
                     }
 
@@ -159,6 +160,7 @@ exports.showAllUserWhichIsLikePost = async (req, res, next) => {
                             _id: allrequestedDataNotAcceptedRequestAndNotFriend,
                             email: userDetail.email,
                             firstName: userDetail.firstName,
+                            profile: userDetail.photo[0] ? userDetail.photo[0].res : null,
                             status: 3
                         }
 
@@ -236,6 +238,7 @@ exports.showAllUserWhichIsLikePost = async (req, res, next) => {
                             firstName: "$firstName",
                             relationshipSatus: "$relationshipSatus",
                             Bio: "$Bio",
+                            photo: "$photo",
                             hopingToFind: "$hopingToFind",
                             jobTitle: "$jobTitle",
                             wantChildren: "$wantChildren",
@@ -300,6 +303,7 @@ exports.showAllUserWhichIsLikePost = async (req, res, next) => {
                             // polyRelationship: finalData.polyRelationship,
                             firstName: finalData.firstName,
                             email: finalData.email,
+                            photo: finalData.photo[0] ? finalData.photo[0].res : null,
                             // relationshipSatus: finalData.relationshipSatus,
                             // Bio: finalData.Bio,
                             // hopingToFind: finalData.hopingToFind,
