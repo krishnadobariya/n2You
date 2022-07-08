@@ -1185,31 +1185,60 @@ exports.acceptedLinkProfile = async (req, res, next) => {
                             polyDating: "Polyamorous"
                         }, {
                             $set: {
-                                "linkProfile.$.accepted": 1
+                                "linkProfile.$.accepted": 2
                             }
                         })
 
+
                         const createRoom = await groupChatRoomModels.findOne({
-                            user1: req.params.user_id,
-                            user2: req.params.request_id
+                            $or: [
+                                {
+                                    user1: req.params.user_id
+                                },
+                                {
+                                    user2: req.params.user_id
+                                },
+                            ]
                         })
 
-                        console.log("createRoom", createRoom);
+
                         if (createRoom) {
-
-                            console.log(createRoom.user3);
-
-
-                        } else {
-                            const groupRoom = groupChatRoomModels({
-                                groupName: "siya",
-                                user1: req.params.user_id,
-                                user2: req.params.request_id,
-                            })
-
-                            await groupRoom.save()
-
+                            if (createRoom.user1 && createRoom.user2 && createRoom.user3 == undefined) {
+                                await groupChatRoomModels.updateOne({
+                                    $or: [
+                                        {
+                                            user1: req.params.user_id
+                                        },
+                                        {
+                                            user2: req.params.user_id
+                                        },
+                                    ]
+                                }, {
+                                    $set: {
+                                        user3: req.params.request_id
+                                    }
+                                })
+                            } else if (createRoom.user1 && createRoom.user2 && createRoom.user3) {
+                                await groupChatRoomModels.updateOne({
+                                    $or: [
+                                        {
+                                            user1: req.params.user_id
+                                        },
+                                        {
+                                            user2: req.params.user_id
+                                        },
+                                        {
+                                            user3: req.params.user_id
+                                        },
+                                    ]
+                                }, {
+                                    $set: {
+                                        user4: req.params.request_id
+                                    }
+                                })
+                            }
                         }
+
 
                         const user1 = findInLinkProfile1.user1
 
@@ -1218,24 +1247,29 @@ exports.acceptedLinkProfile = async (req, res, next) => {
                             linkProfile: {
                                 $elemMatch: {
                                     userId: mongoose.Types.ObjectId(req.params.request_id),
-                                    accepted: 1
+                                    accepted: 2 || 1
                                 }
                             },
                             polyDating: "Polyamorous"
                         })
 
+                        console.log(findUser1);
+
                         const user2 = findInLinkProfile1.user2
+                    
                         const findUser2 = await userModel.findOne({
                             _id: user2,
                             linkProfile: {
                                 $elemMatch: {
                                     userId: mongoose.Types.ObjectId(req.params.request_id),
-                                    accepted: 1
+                                    accepted: 2 || 1
                                 }
                             },
                             polyDating: "Polyamorous"
 
                         })
+
+                        console.log(findUser2);
 
                         if (findUser1 && findUser2) {
 
@@ -1253,18 +1287,86 @@ exports.acceptedLinkProfile = async (req, res, next) => {
                                     user3: req.params.request_id
                                 }
                             })
+
+                            const findUser = await notificationModel.findOne({
+                                userId: req.params.user_id
+                            })
+
+
+                            if (findUser == null) {
+
+                                const findUser = await userModel.findOne({
+                                    _id: req.params.request_id
+                                })
+
+                                console.log(findUser);
+
+                                const existUser = await notificationModel.findOne({
+                                    userId: req.params.user_id,
+                                    notifications: {
+                                        $elemMatch: {
+                                            notifications: `There is Conflict of interest with ${findUser.firstName}, Please discuss in group`
+                                        }
+                                    }
+                                })
+
+                                if (existUser) {
+
+                                } else {
+
+                                    const notificationData = notificationModel({
+                                        userId: req.params.user_id,
+                                        notifications: {
+                                            notifications: `There is Conflict of interest with ${findUser.firstName}, Please discuss in group`,
+                                            userId: findUser._id,
+                                            status: 3
+                                        }
+                                    })
+
+                                    await notificationData.save();
+                                }
+
+                            } else {
+
+                                const findUser = await userModel.findOne({
+                                    _id: req.params.request_id
+                                })
+
+                                const existUser = await notificationModel.findOne({
+                                    userId: req.params.user_id,
+                                    notifications: {
+                                        $elemMatch: {
+                                            notifications: `There is Conflict of interest with ${findUser.firstName}, Please discuss in group`
+                                        }
+                                    }
+                                })
+
+
+                                if (existUser) {
+
+                                } else {
+                                    await notificationModel.updateOne({
+                                        userId: req.params.user_id
+                                    }, {
+                                        $push: {
+                                            notifications: {
+                                                notifications: `There is Conflict of interest with ${findUser.firstName}, Please discuss in group`,
+                                                status: 3
+                                            }
+                                        }
+                                    })
+                                }
+                            }
                             res.status(status.OK).json(
                                 new APIResponse("updated link profile...!", "true", 200, "1")
                             );
                         } else {
-
-
                             const findUser1 = await userModel.findOne({
                                 _id: user1,
                                 linkProfile: {
                                     $elemMatch: {
                                         userId: mongoose.Types.ObjectId(req.params.request_id),
-                                        accepted: 1
+                                        accepted: 2
                                     }
                                 },
                                 polyDating: "Polyamorous"
@@ -1278,7 +1380,7 @@ exports.acceptedLinkProfile = async (req, res, next) => {
                                 linkProfile: {
                                     $elemMatch: {
                                         userId: mongoose.Types.ObjectId(req.params.request_id),
-                                        accepted: 1
+                                        accepted: 2
                                     }
                                 },
                                 polyDating: "Polyamorous"
@@ -1297,7 +1399,7 @@ exports.acceptedLinkProfile = async (req, res, next) => {
                             polyDating: "Polyamorous"
                         }, {
                             $set: {
-                                "linkProfile.$.accepted": 1
+                                "linkProfile.$.accepted": 2
                             }
                         })
 
@@ -1308,7 +1410,7 @@ exports.acceptedLinkProfile = async (req, res, next) => {
                             linkProfile: {
                                 $elemMatch: {
                                     userId: mongoose.Types.ObjectId(req.params.request_id),
-                                    accepted: 1
+                                    accepted: 2
                                 }
                             },
                             polyDating: "Polyamorous"
@@ -1321,7 +1423,7 @@ exports.acceptedLinkProfile = async (req, res, next) => {
                             linkProfile: {
                                 $elemMatch: {
                                     userId: mongoose.Types.ObjectId(req.params.request_id),
-                                    accepted: 1
+                                    accepted: 2
                                 }
                             },
                             polyDating: "Polyamorous"
@@ -1334,7 +1436,7 @@ exports.acceptedLinkProfile = async (req, res, next) => {
                             linkProfile: {
                                 $elemMatch: {
                                     userId: mongoose.Types.ObjectId(req.params.request_id),
-                                    accepted: 1
+                                    accepted: 2
                                 }
                             },
                             polyDating: "Polyamorous"
@@ -1377,7 +1479,7 @@ exports.acceptedLinkProfile = async (req, res, next) => {
                         polyDating: "Polyamorous"
                     }, {
                         $set: {
-                            "linkProfile.$.accepted": 1
+                            "linkProfile.$.accepted": 2
                         }
                     })
 

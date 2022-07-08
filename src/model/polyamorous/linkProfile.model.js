@@ -20,18 +20,7 @@ const linkProfileSchema = mongoose.Schema({
         type: mongoose.Schema.Types.ObjectId,
         ref: "User",
         require: true
-    },
-    active: [{
-        status1: {
-            type: Number,
-        },
-        status2: {
-            type: Number,
-        },
-        status3: {
-            type: Number,
-        }
-    }]
+    }
 }, {
     timestamps: true
 }, {
