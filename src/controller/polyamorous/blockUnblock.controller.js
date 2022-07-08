@@ -1,7 +1,7 @@
 const APIResponse = require("../../helper/APIResponse");
 const status = require("http-status");
 const userModel = require("../../model/user.model");
-const blockUnblockModel = require("../../model/Polyamorous/blockUnblock.model");
+const blockUnblockModel = require("../../model/polyamorous/blockUnblock.model");
 exports.blockUnblockUser = async (req, res, next) => {
     try {
 
