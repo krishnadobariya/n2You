@@ -4,11 +4,12 @@ const userModel = require("../../model/user.model");
 const datingLikeDislikeUserModel = require("../../model/polyamorous/datingLikeDislikeUser.model");
 const matchUserModel = require("../../model/polyamorous/matchUser.model");
 const invitedFriendModel = require("../../model/polyamorous/invitedFriend.model");
-const { default: mongoose } = require("mongoose");
+const { default: mongoose, model } = require("mongoose");
 const linkProfileModel = require("../../model/polyamorous/linkProfile.model");
 const notificationModel = require("../../model/polyamorous/notification.model");
 const groupChatRoomModels = require("../../webSocket/models/groupChatRoom.models");
 const { update, updateOne } = require("../../model/user.model");
+const conflictModel = require("../../model/polyamorous/conflict.model");
 
 
 exports.getUserWhichNotChoiceForLikeOrDislike = async (req, res, next) => {
@@ -58,6 +59,7 @@ exports.getUserWhichNotChoiceForLikeOrDislike = async (req, res, next) => {
                         if (chekLikeProfileInLike || chekLikeProfileInLike) {
 
                         } else {
+
                             if (data.user1 && data.user2 && data.user3 == undefined && data.user4 == undefined) {
                                 const user1 = await userModel.findOne({
                                     _id: data.user1
@@ -305,7 +307,6 @@ exports.getUserWhichNotChoiceForLikeOrDislike = async (req, res, next) => {
 
         }
     } catch (error) {
-
         console.log("Error:", error);
         res.status(status.INTERNAL_SERVER_ERROR).json(
             new APIResponse("Something Went Wrong", false, 500, error.message)
@@ -695,7 +696,8 @@ exports.acceptedLinkProfile = async (req, res, next) => {
 
         const findUser = await userModel.findOne({
             _id: req.params.user_id,
-            polyDating: "Polyamorous"
+            polyDating: "Polyamorous",
+            "linkProfile.userId": req.params.request_id
         })
 
         if (findUser == null) {
@@ -704,6 +706,7 @@ exports.acceptedLinkProfile = async (req, res, next) => {
             );
         } else {
             if (req.query.accepted == "true") {
+
 
                 const findInLinkProfile1 = await linkProfileModel.findOne({
                     $and: [
@@ -719,6 +722,9 @@ exports.acceptedLinkProfile = async (req, res, next) => {
                         },
                         {
                             user3: null
+                        },
+                        {
+                            groupId: req.query.group_room_id
                         }
                     ]
                 })
@@ -740,6 +746,9 @@ exports.acceptedLinkProfile = async (req, res, next) => {
                         },
                         {
                             user4: null
+                        },
+                        {
+                            groupId: req.query.group_room_id
                         }
                     ]
                 })
@@ -758,35 +767,23 @@ exports.acceptedLinkProfile = async (req, res, next) => {
                             }
                         })
 
-                        const createRoom = await groupChatRoomModels.findOne({
-                            $or: [
-                                {
-                                    user1: req.params.user_id
-                                },
-                                {
-                                    user2: req.params.user_id
-                                },
-                            ]
-                        })
+                        const createRoom = await groupChatRoomModels.findOne(
+                            {
+                                _id: req.query.group_room_id
+                            }
+                        )
+
+
 
                         if (createRoom) {
                             await groupChatRoomModels.updateOne({
-                                $or: [
-                                    {
-                                        user1: req.params.user_id
-                                    },
-                                    {
-                                        user2: req.params.user_id
-                                    },
-                                ]
+                                _id: req.query.group_room_id
                             }, {
                                 $set: {
                                     user3: req.params.request_id
                                 }
                             })
                         }
-
-
 
 
                         const user2Id = [];
@@ -863,7 +860,7 @@ exports.acceptedLinkProfile = async (req, res, next) => {
                                     $push: {
                                         notifications: {
                                             notifications: `You are added in polyamorous group with ${findUser.firstName}, ${user2Id[0]}`,
-                                            status: 2
+                                            status: 2,
                                         }
                                     }
                                 })
@@ -877,7 +874,9 @@ exports.acceptedLinkProfile = async (req, res, next) => {
                             linkProfile: {
                                 $elemMatch: {
                                     userId: mongoose.Types.ObjectId(req.params.request_id),
-                                    accepted: 1
+                                    accepted: {
+                                        $in: [1, 2]
+                                    }
                                 }
                             },
                             polyDating: "Polyamorous"
@@ -889,7 +888,9 @@ exports.acceptedLinkProfile = async (req, res, next) => {
                             linkProfile: {
                                 $elemMatch: {
                                     userId: mongoose.Types.ObjectId(req.params.request_id),
-                                    accepted: 1
+                                    accepted: {
+                                        $in: [1, 2]
+                                    }
                                 }
                             },
                             polyDating: "Polyamorous"
@@ -898,24 +899,381 @@ exports.acceptedLinkProfile = async (req, res, next) => {
 
                         if (findUser1 && findUser2) {
 
-                            await linkProfileModel.updateOne({
-                                $or: [
-                                    {
-                                        user1: mongoose.Types.ObjectId(req.params.user_id)
-                                    },
-                                    {
-                                        user2: mongoose.Types.ObjectId(req.params.user_id)
+
+                            const findUser1 = await userModel.findOne({
+                                _id: user1,
+                                linkProfile: {
+                                    $elemMatch: {
+                                        userId: mongoose.Types.ObjectId(req.params.request_id),
+                                        accepted: 1
                                     }
-                                ]
+                                },
+                                polyDating: "Polyamorous"
+                            })
+
+                            const user2 = findInLinkProfile1.user2
+                            const findUser2 = await userModel.findOne({
+                                _id: user2,
+                                linkProfile: {
+                                    $elemMatch: {
+                                        userId: mongoose.Types.ObjectId(req.params.request_id),
+                                        accepted: 1
+                                    }
+                                },
+                                polyDating: "Polyamorous"
+
+                            })
+
+                            if (findUser1 && findUser2) {
+
+                                await linkProfileModel.updateOne({
+                                    groupId: mongoose.Types.ObjectId(req.query.group_room_id)
+                                }, {
+                                    $set: {
+                                        user3: req.params.request_id
+                                    }
+                                })
+
+                                res.status(status.OK).json(
+                                    new APIResponse("accepted Both User!", "true", 200, "1")
+                                );
+
+                            } else {
+
+                                const findIdInLinkProfile = await linkProfileModel.findOne({
+                                    $and: [
+                                        {
+                                            $or: [
+                                                {
+                                                    user1: req.params.user_id
+                                                },
+                                                {
+                                                    user2: req.params.user_id
+                                                }
+                                            ]
+                                        },
+                                        {
+                                            user3: null
+                                        },
+                                        {
+                                            user4: null
+                                        }
+                                    ]
+                                })
+
+                                const notAcceptedUser = [];
+                                if (findIdInLinkProfile.user1 == req.params.user_id) {
+                                    notAcceptedUser.push(findIdInLinkProfile.user2)
+                                } else {
+                                    notAcceptedUser.push(findIdInLinkProfile.user1)
+                                }
+
+                                const finduserName = await userModel.findOne({
+                                    _id: notAcceptedUser[0]
+                                })
+
+                                const findGroupInConflickModel = await conflictModel.findOne({
+                                    groupId: createRoom._id,
+                                    conflictUserId: req.params.request_id
+                                })
+
+                                if (findGroupInConflickModel == null) {
+                                    const addInConflictModel = conflictModel({
+                                        groupId: createRoom._id,
+                                        conflictUserId: req.params.request_id,
+                                        acceptedUserId: {
+                                            userId: req.params.user_id
+                                        },
+                                        notAcceptedUserId: {
+                                            userId: notAcceptedUser[0]
+                                        }
+                                    })
+                                    await addInConflictModel.save();
+
+                                } else {
+
+                                    const findInconflict = await conflictModel.findOne({
+                                        groupId: createRoom._id,
+                                        conflictUserId: req.params.request_id,
+                                        "acceptedUserId.userId": req.params.user_id
+                                    })
+                                    if (findInconflict) {
+
+                                    } else {
+                                        await conflictModel.updateOne({
+                                            groupId: createRoom._id,
+                                        },
+                                            {
+                                                $push: {
+                                                    acceptedUserId: {
+                                                        userId: req.params.user_id
+                                                    },
+                                                    notAcceptedUserId: {
+                                                        userId: notAcceptedUser[0]
+                                                    }
+                                                }
+                                            })
+                                    }
+
+                                }
+
+
+                                const findAllUser = await linkProfileModel.findOne({
+                                    groupId: req.query.group_room_id
+                                })
+                                const allUser = [];
+                                allUser.push(findAllUser.user1, findAllUser.user2, findAllUser.user3)
+
+                                for (const user of allUser) {
+                                    const findUser = await notificationModel.findOne({
+                                        userId: user
+                                    })
+
+
+                                    if (findUser == null) {
+
+
+                                        const existUser = await notificationModel.findOne({
+                                            userId: req.params.user_id,
+                                            notifications: {
+                                                $elemMatch: {
+                                                    notifications: `There is Conflict of interest with ${finduserName.firstName}, Please discuss in group`
+                                                }
+                                            }
+                                        })
+
+                                        if (existUser) {
+
+                                        } else {
+
+                                            const notificationData = notificationModel({
+                                                userId: req.params.user_id,
+                                                notifications: {
+                                                    notifications: `There is Conflict of interest with ${finduserName.firstName}, Please discuss in group`,
+                                                    userId: finduserName._id,
+                                                    status: 3
+                                                }
+                                            })
+                                            await notificationData.save();
+                                        }
+
+                                    } else {
+
+                                        const existUser = await notificationModel.findOne({
+                                            userId: req.params.user_id,
+                                            notifications: {
+                                                $elemMatch: {
+                                                    notifications: `There is Conflict of interest with ${finduserName.firstName}, Please discuss in group`
+                                                }
+                                            }
+                                        })
+
+                                        if (existUser) {
+                                        } else {
+                                            await notificationModel.updateOne({
+                                                userId: req.params.user_id
+                                            }, {
+                                                $push: {
+                                                    notifications: {
+                                                        notifications: `There is Conflict of interest with ${finduserName.firstName}, Please discuss in group`,
+                                                        status: 3,
+                                                        userId: finduserName._id,
+                                                    }
+                                                }
+                                            })
+                                        }
+                                    }
+                                }
+
+
+
+
+                                res.status(status.OK).json(
+                                    new APIResponse("updated link profile...!", "true", 200, "1")
+                                );
+                            }
+
+                        } else {
+
+                            res.status(status.OK).json(
+                                new APIResponse("updated link profile....!", "true", 200, "1")
+                            );
+                        }
+                    } else if (findInLinkProfile5) {
+
+
+                        await userModel.updateOne({
+                            _id: mongoose.Types.ObjectId(req.params.user_id),
+                            "linkProfile.userId": mongoose.Types.ObjectId(req.params.request_id),
+                            polyDating: "Polyamorous"
+                        }, {
+                            $set: {
+                                "linkProfile.$.accepted": 1
+                            }
+                        })
+
+                        const createRoom = await groupChatRoomModels.findOne({
+                            _id: req.query.group_room_id
+
+                        })
+
+
+                        if (createRoom) {
+                            await groupChatRoomModels.updateOne({
+                                _id: req.query.group_room_id
                             }, {
                                 $set: {
-                                    user3: req.params.request_id
+                                    user4: req.params.request_id
                                 }
                             })
-                            res.status(status.OK).json(
-                                new APIResponse("updated link profile...!", "true", 200, "1")
-                            );
+                        }
+
+
+                        const user2Id = [];
+                        if (findInLinkProfile5.user1 == req.params.user_id) {
+                            const findUser2Deatil = await userModel.findOne({
+                                _id: findInLinkProfile5.user2
+                            })
+                            const findUser3Deatil = await userModel.findOne({
+                                _id: findInLinkProfile5.user3
+                            })
+                            user2Id.push(findUser2Deatil.firstName, findUser3Deatil.firstName)
+                        } else if (findInLinkProfile5.user2 == req.params.user_id) {
+                            const findUser1Deatil = await userModel.findOne({
+                                _id: findInLinkProfile5.user1
+                            })
+                            const findUser3Deatil = await userModel.findOne({
+                                _id: findInLinkProfile5.user3
+                            })
+
+                            user2Id.push(findUser1Deatil.firstName, findUser3Deatil.firstName)
+                        } else if (findInLinkProfile5.user3 == req.params.user_id) {
+                            const findUser1Deatil = await userModel.findOne({
+                                _id: findInLinkProfile5.user1
+                            })
+                            const findUser2Deatil = await userModel.findOne({
+                                _id: findInLinkProfile5.user2
+                            })
+
+                            user2Id.push(findUser1Deatil.firstName, findUser2Deatil.firstName)
+                        }
+
+
+
+                        const findUser = await notificationModel.findOne({
+                            userId: req.params.request_id
+                        })
+
+
+                        if (findUser == null) {
+
+                            const findUser = await userModel.findOne({
+                                _id: req.params.user_id
+                            })
+
+                            const existUser = await notificationModel.findOne({
+                                userId: req.params.request_id,
+                                notifications: {
+                                    $elemMatch: {
+                                        notifications: `You are added in polyamorous group with ${findUser.firstName}, ${user2Id[0]}, ${user2Id[1]}`
+                                    }
+                                }
+                            })
+
+                            if (existUser) {
+
+                            } else {
+
+                                const notificationData = notificationModel({
+                                    userId: req.params.request_id,
+                                    notifications: {
+                                        notifications: `You are added in polyamorous group with ${findUser.firstName}, ${user2Id[0]}, ${user2Id[1]}`,
+                                        status: 2
+                                    }
+                                })
+
+                                await notificationData.save();
+                            }
+
                         } else {
+
+                            const findUser = await userModel.findOne({
+                                _id: req.params.user_id
+                            })
+
+                            const existUser = await notificationModel.findOne({
+                                userId: req.params.request_id,
+                                notifications: {
+                                    $elemMatch: {
+                                        notifications: `You are added in polyamorous group with ${findUser.firstName}, ${user2Id[0]}, ${user2Id[1]}`
+                                    }
+                                }
+                            })
+
+                            if (existUser) {
+
+                            } else {
+                                await notificationModel.updateOne({
+                                    userId: req.params.request_id
+                                }, {
+                                    $push: {
+                                        notifications: {
+                                            notifications: `You are added in polyamorous group with ${findUser.firstName}, ${user2Id[0]}, ${user2Id[1]}`,
+                                            status: 2
+                                        }
+                                    }
+                                })
+                            }
+                        }
+
+                        const user1 = findInLinkProfile5.user1
+
+                        const findUser1 = await userModel.findOne({
+                            _id: user1,
+                            linkProfile: {
+                                $elemMatch: {
+                                    userId: mongoose.Types.ObjectId(req.params.request_id),
+                                    accepted: {
+                                        $in: [1, 2]
+                                    }
+                                }
+                            },
+                            polyDating: "Polyamorous"
+                        })
+
+
+                        const user2 = findInLinkProfile5.user2
+
+                        const findUser2 = await userModel.findOne({
+                            _id: user2,
+                            linkProfile: {
+                                $elemMatch: {
+                                    userId: mongoose.Types.ObjectId(req.params.request_id),
+                                    accepted: {
+                                        $in: [1, 2]
+                                    }
+                                }
+                            },
+                            polyDating: "Polyamorous"
+                        })
+
+                        const user3 = findInLinkProfile5.user3
+
+                        const findUser3 = await userModel.findOne({
+                            _id: user3,
+                            linkProfile: {
+                                $elemMatch: {
+                                    userId: mongoose.Types.ObjectId(req.params.request_id),
+                                    accepted: {
+                                        $in: [1, 2]
+                                    }
+                                }
+                            },
+                            polyDating: "Polyamorous"
+
+                        })
+
+                        if (findUser1 && findUser2 && findUser3) {
 
 
                             const findUser1 = await userModel.findOne({
@@ -930,8 +1288,8 @@ exports.acceptedLinkProfile = async (req, res, next) => {
                             })
 
 
+                            const user2 = findInLinkProfile5.user2
 
-                            const user2 = findInLinkProfile1.user2
                             const findUser2 = await userModel.findOne({
                                 _id: user2,
                                 linkProfile: {
@@ -943,84 +1301,457 @@ exports.acceptedLinkProfile = async (req, res, next) => {
                                 polyDating: "Polyamorous"
                             })
 
-                            res.status(status.OK).json(
-                                new APIResponse("updated link profile....!", "true", 200, "1")
-                            );
-                        }
-                    } else if (findInLinkProfile5) {
+                            const user3 = findInLinkProfile5.user3
 
-                        await userModel.updateOne({
-                            _id: mongoose.Types.ObjectId(req.params.user_id),
-                            "linkProfile.userId": mongoose.Types.ObjectId(req.params.request_id),
-                            polyDating: "Polyamorous"
-                        }, {
-                            $set: {
-                                "linkProfile.$.accepted": 1
-                            }
-                        })
-
-                        const user1 = findInLinkProfile5.user1
-
-                        const findUser1 = await userModel.findOne({
-                            _id: user1,
-                            linkProfile: {
-                                $elemMatch: {
-                                    userId: mongoose.Types.ObjectId(req.params.request_id),
-                                    accepted: 1
-                                }
-                            },
-                            polyDating: "Polyamorous"
-                        })
-
-
-                        const user2 = findInLinkProfile5.user2
-                        const findUser2 = await userModel.findOne({
-                            _id: user2,
-                            linkProfile: {
-                                $elemMatch: {
-                                    userId: mongoose.Types.ObjectId(req.params.request_id),
-                                    accepted: 1
-                                }
-                            },
-                            polyDating: "Polyamorous"
-
-                        })
-
-                        const user3 = findInLinkProfile5.user3
-                        const findUser3 = await userModel.findOne({
-                            _id: user3,
-                            linkProfile: {
-                                $elemMatch: {
-                                    userId: mongoose.Types.ObjectId(req.params.request_id),
-                                    accepted: 1
-                                }
-                            },
-                            polyDating: "Polyamorous"
-
-                        })
-
-                        if (findUser1 && findUser2 && findUser3) {
-
-                            await linkProfileModel.updateOne({
-                                $or: [
-                                    {
-                                        user1: mongoose.Types.ObjectId(req.params.user_id)
-                                    },
-                                    {
-                                        user2: mongoose.Types.ObjectId(req.params.user_id)
-                                    },
-                                    {
-                                        user3: mongoose.Types.ObjectId(req.params.user_id)
+                            const findUser3 = await userModel.findOne({
+                                _id: user3,
+                                linkProfile: {
+                                    $elemMatch: {
+                                        userId: mongoose.Types.ObjectId(req.params.request_id),
+                                        accepted: 1
                                     }
-                                ]
-                            }, {
-                                $set: {
-                                    user4: req.params.request_id
-                                }
+                                },
+                                polyDating: "Polyamorous"
+
                             })
-                            res.status(status.OK).json(
-                                new APIResponse("updated link profile!", "true", 200, "1")
-                            );
+
+
+                            if (findUser1 && findUser2 && findUser3) {
+                                await linkProfileModel.updateOne({
+                                    groupId: req.query.group_room_id
+                                }, {
+                                    $set: {
+                                        user4: req.params.request_id
+                                    }
+                                })
+                                res.status(status.OK).json(
+                                    new APIResponse("accepted all User!", "true", 200, "1")
+                                );
+                            } else {
+                                const findIdInLinkProfile = await linkProfileModel.findOne({
+                                    $and: [
+                                        {
+                                            $or: [
+                                                {
+                                                    user1: req.params.user_id
+                                                },
+                                                {
+                                                    user2: req.params.user_id
+                                                },
+                                                {
+                                                    user3: req.params.user_id
+                                                },
+                                            ]
+                                        },
+                                        {
+                                            user4: null
+                                        },
+                                        {
+                                            groupId: req.query.group_room_id
+                                        }
+                                    ]
+                                })
+
+
+                                console.log(findIdInLinkProfile);
+                                const notAcceptedUser = [];
+
+                                if (findIdInLinkProfile.user1 == req.params.user_id) {
+                                    notAcceptedUser.push(findIdInLinkProfile.user2, findIdInLinkProfile.user3)
+                                } else if (findIdInLinkProfile.user2 == req.params.user_id) {
+                                    notAcceptedUser.push(findIdInLinkProfile.user1, findIdInLinkProfile.user3)
+                                } else if (findIdInLinkProfile.user3 == req.params.user_id) {
+                                    notAcceptedUser.push(findIdInLinkProfile.user1, findIdInLinkProfile.user2)
+                                }
+
+                                console.log(notAcceptedUser);
+
+                                console.log();
+
+                                const findInUser1 = await userModel.findOne({
+                                    _id: notAcceptedUser[1],
+                                })
+
+
+                                const model1 = []
+                                for (const data of findInUser1.linkProfile) {
+                                    data.userId = req.params.request_id,
+                                        data.accepted = 2
+                                    if (data.userId == req.params.request_id && data.accepted == 2) {
+                                        model1.push(findInUser1)
+
+                                    }
+                                }
+
+                                const findInUser2 = await userModel.findOne({
+                                    _id: notAcceptedUser[0],
+                                })
+
+
+                                const model2 = []
+                                for (const data of findInUser2.linkProfile) {
+                                    data.userId = req.params.request_id,
+                                        data.accepted = 2
+                                    if (data.userId == req.params.request_id && data.accepted == 2) {
+                                        model1.push(findInUser2)
+                                    }
+                                }
+
+
+                                const findGroupInConflickModel = await conflictModel.findOne({
+                                    groupId: createRoom._id,
+                                    conflictUserId: req.params.request_id
+                                })
+
+
+                                if (findGroupInConflickModel == null) {
+                                    if (model1[0]) {
+                                        const addInConflictModel = conflictModel({
+                                            groupId: createRoom._id,
+                                            conflictUserId: req.params.request_id,
+                                            acceptedUserId: {
+                                                userId: req.params.user_id
+                                            },
+                                            notAcceptedUserId: {
+                                                userId: model1[0]._id
+                                            }
+                                        })
+                                        await addInConflictModel.save();
+                                    } else {
+                                        const addInConflictModel = conflictModel({
+                                            groupId: createRoom._id,
+                                            conflictUserId: req.params.request_id,
+                                            acceptedUserId: {
+                                                userId: req.params.user_id
+                                            }
+                                        })
+                                        await addInConflictModel.save();
+
+                                        await conflictModel.updateOne(
+                                            {
+                                                groupId: createRoom._id,
+                                            },
+                                            {
+                                                $push: {
+                                                    acceptedUserId: {
+                                                        userId: notAcceptedUser[1]
+                                                    }
+                                                }
+                                            })
+                                    }
+
+                                    if (model2[0]) {
+                                        await conflictModel.updateOne({
+                                            groupId: createRoom._id,
+                                        },
+                                            {
+                                                $push: {
+                                                    notAcceptedUserId: {
+                                                        userId: model2[0]._id
+                                                    }
+                                                }
+                                            })
+                                    } else {
+                                        await conflictModel.updateOne({
+                                            groupId: createRoom._id,
+                                        },
+                                            {
+                                                $push: {
+                                                    acceptedUserId: {
+                                                        userId: notAcceptedUser[0]
+                                                    }
+                                                }
+                                            })
+                                    }
+
+
+                                } else {
+
+                                    const findInconflict = await conflictModel.findOne({
+                                        groupId: createRoom._id,
+                                        conflictUserId: req.params.request_id,
+                                        "acceptedUserId.userId": req.params.user_id
+                                    })
+                                    if (findInconflict) {
+
+                                    } else {
+
+
+                                        if (model1[0]) {
+                                            await conflictModel.updateOne({
+                                                groupId: createRoom._id,
+                                            },
+                                                {
+                                                    $push: {
+                                                        acceptedUserId: {
+                                                            userId: req.params.user_id
+                                                        },
+                                                        notAcceptedUserId: {
+                                                            userId: model1[0]._id
+                                                        }
+                                                    }
+                                                })
+                                        } else {
+                                            await conflictModel.updateOne({
+                                                groupId: createRoom._id,
+                                            },
+                                                {
+                                                    $push: {
+                                                        acceptedUserId: {
+                                                            userId: req.params.user_id
+                                                        }
+                                                    }
+                                                })
+                                            await conflictModel.updateOne({
+                                                groupId: createRoom._id,
+                                            },
+                                                {
+                                                    $push: {
+                                                        acceptedUserId: {
+                                                            userId: notAcceptedUser[1]
+                                                        }
+                                                    }
+                                                })
+                                        }
+
+                                        if (model2[0]) {
+                                            await conflictModel.updateOne({
+                                                groupId: createRoom._id,
+                                            },
+                                                {
+                                                    $push: {
+                                                        notAcceptedUserId: {
+                                                            userId: model2[0]._id
+                                                        },
+                                                        acceptedUserId: {
+                                                            userId: req.params.user_id
+                                                        }
+                                                    }
+                                                })
+                                        } else {
+                                            await conflictModel.updateOne({
+                                                groupId: createRoom._id,
+                                            },
+                                                {
+                                                    $push: {
+                                                        acceptedUserId: {
+                                                            userId: req.params.user_id
+                                                        }
+                                                    }
+                                                })
+                                            await conflictModel.updateOne({
+                                                groupId: createRoom._id,
+                                            },
+                                                {
+                                                    $push: {
+                                                        acceptedUserId: {
+                                                            userId: notAcceptedUser[0]
+                                                        }
+                                                    }
+                                                })
+                                        }
+
+                                    }
+
+                                }
+
+                                const findAllUser = await linkProfileModel.findOne({
+                                    groupId: req.query.group_room_id
+                                })
+                                const allUser = [];
+                                allUser.push(findAllUser.user1, findAllUser.user2, findAllUser.user3)
+
+                                for (const user of allUser) {
+                                    if (model1[0] && model2[0] == null) {
+                                        const findUser = await notificationModel.findOne({
+                                            userId: user
+                                        })
+
+
+                                        if (findUser == null) {
+
+
+                                            const existUser = await notificationModel.findOne({
+                                                userId: user,
+                                                notifications: {
+                                                    $elemMatch: {
+                                                        notifications: `There is Conflict of interest with ${model1[0].firstName}, Please discuss in group`
+                                                    }
+                                                }
+                                            })
+
+                                            if (existUser) {
+
+                                            } else {
+
+                                                const notificationData = notificationModel({
+                                                    userId: user,
+                                                    notifications: {
+                                                        notifications: `There is Conflict of interest with ${model1[0].firstName}, Please discuss in group`,
+                                                        userId: model1[0]._id,
+                                                        status: 3
+                                                    }
+                                                })
+                                                await notificationData.save();
+                                            }
+
+                                        } else {
+
+                                            const existUser = await notificationModel.findOne({
+                                                userId: user,
+                                                notifications: {
+                                                    $elemMatch: {
+                                                        notifications: `There is Conflict of interest with ${model1[0].firstName}, Please discuss in group`
+                                                    }
+                                                }
+                                            })
+
+                                            if (existUser) {
+                                            } else {
+                                                await notificationModel.updateOne({
+                                                    userId: user
+                                                }, {
+                                                    $push: {
+                                                        notifications: {
+                                                            notifications: `There is Conflict of interest with ${model1[0].firstName}, Please discuss in group`,
+                                                            status: 3,
+                                                            userId: model1[0]._id
+                                                        }
+                                                    }
+                                                })
+                                            }
+                                        }
+                                    } else if (model1[0] == null && model2[0]) {
+                                        const findUser = await notificationModel.findOne({
+                                            userId: user
+                                        })
+
+
+                                        if (findUser == null) {
+
+
+                                            const existUser = await notificationModel.findOne({
+                                                userId: user,
+                                                notifications: {
+                                                    $elemMatch: {
+                                                        notifications: `There is Conflict of interest with ${model2[0].firstName}, Please discuss in group`
+                                                    }
+                                                }
+                                            })
+
+                                            if (existUser) {
+
+                                            } else {
+
+                                                const notificationData = notificationModel({
+                                                    userId: user,
+                                                    notifications: {
+                                                        notifications: `There is Conflict of interest with ${model2[0].firstName}, Please discuss in group`,
+                                                        userId: finduser1Name._id,
+                                                        status: 3
+                                                    }
+                                                })
+                                                await notificationData.save();
+                                            }
+
+                                        } else {
+
+                                            const existUser = await notificationModel.findOne({
+                                                userId: user,
+                                                notifications: {
+                                                    $elemMatch: {
+                                                        notifications: `There is Conflict of interest with ${model2[0].firstName}, Please discuss in group`
+                                                    }
+                                                }
+                                            })
+
+                                            if (existUser) {
+                                            } else {
+                                                await notificationModel.updateOne({
+                                                    userId: user
+                                                }, {
+                                                    $push: {
+                                                        notifications: {
+                                                            notifications: `There is Conflict of interest with ${model2[0].firstName}, Please discuss in group`,
+                                                            status: 3,
+                                                            userId: finduser1Name._id
+                                                        }
+                                                    }
+                                                })
+                                            }
+                                        }
+                                    } else if (model1[0] && model2[0]) {
+                                        const findUser = await notificationModel.findOne({
+                                            userId: user
+                                        })
+
+
+                                        if (findUser == null) {
+
+
+                                            const existUser = await notificationModel.findOne({
+                                                userId: user,
+                                                notifications: {
+                                                    $elemMatch: {
+                                                        notifications: `There is Conflict of interest with ${model2[0].firstName}, ${model1[0].firstName}, Please discuss in group`
+                                                    }
+                                                }
+                                            })
+
+                                            if (existUser) {
+
+                                            } else {
+
+                                                const notificationData = notificationModel({
+                                                    userId: user,
+                                                    notifications: {
+                                                        notifications: `There is Conflict of interest with ${model2[0].firstName}, ${model1[0].firstName}, Please discuss in group`,
+                                                        userId: finduser1Name._id,
+                                                        status: 3
+                                                    }
+                                                })
+                                                await notificationData.save();
+                                            }
+
+                                        } else {
+
+                                            const existUser = await notificationModel.findOne({
+                                                userId: user,
+                                                notifications: {
+                                                    $elemMatch: {
+                                                        notifications: `There is Conflict of interest with ${model2[0].firstName}, ${model1[0].firstName}, Please discuss in group`
+                                                    }
+                                                }
+                                            })
+
+                                            if (existUser) {
+                                            } else {
+                                                await notificationModel.updateOne({
+                                                    userId: user
+                                                }, {
+                                                    $push: {
+                                                        notifications: {
+                                                            notifications: `There is Conflict of interest with ${model2[0].firstName}, ${model1[0].firstName}, Please discuss in group`,
+                                                            status: 3,
+                                                            userId: finduser1Name._id
+                                                        }
+                                                    }
+                                                })
+                                            }
+                                        }
+                                    }
+
+
+                                }
+
+
+
+                                res.status(status.OK).json(
+                                    new APIResponse("updated link profile...!", "true", 200, "1")
+                                );
+
+                            }
+
                         } else {
                             res.status(status.OK).json(
                                 new APIResponse("updated link profile!", "true", 200, "1")
@@ -1029,6 +1760,8 @@ exports.acceptedLinkProfile = async (req, res, next) => {
                     }
 
                 } else {
+
+
                     await userModel.updateOne({
                         _id: mongoose.Types.ObjectId(req.params.user_id),
                         "linkProfile.userId": mongoose.Types.ObjectId(req.params.request_id),
@@ -1039,29 +1772,65 @@ exports.acceptedLinkProfile = async (req, res, next) => {
                         }
                     })
 
-                    const createRoom = await groupChatRoomModels.findOne({
-                        user1: req.params.user_id,
-                        user2: req.params.request_id
+                    const findInChatRoom1 = await groupChatRoomModels.findOne({
+                        $and: [
+
+                            {
+                                user1: req.params.user_id
+                            },
+                            {
+                                user2: req.params.request_id
+                            },
+                            {
+                                user3: null
+                            },
+                            {
+                                user4: null
+                            }
+                        ]
                     })
 
-                    console.log("createRoom", createRoom);
-                    if (createRoom) {
+                    const findInChatRoom2 = await groupChatRoomModels.findOne({
+                        $and: [
+
+                            {
+                                user1: req.params.request_id
+                            },
+                            {
+                                user2: req.params.user_id
+                            },
+                            {
+                                user3: null
+                            },
+                            {
+                                user4: null
+                            }
+                        ]
+                    })
+
+
+
+                    if (findInChatRoom1 || findInChatRoom2) {
+
                     } else {
                         const groupRoom = groupChatRoomModels({
                             groupName: "siya",
                             user1: req.params.user_id,
                             user2: req.params.request_id,
+                            user3: null,
+                            user4: null
                         })
 
                         await groupRoom.save()
-
                     }
+
+
+
 
                     const findUser = await notificationModel.findOne({
                         userId: req.params.request_id
                     })
 
-                    console.log(findUser);
 
                     if (findUser == null) {
 
@@ -1070,10 +1839,10 @@ exports.acceptedLinkProfile = async (req, res, next) => {
                         })
 
                         const existUser = await notificationModel.findOne({
-                            userId: req.params.user_id,
+                            userId: req.params.request_id,
                             notifications: {
                                 $elemMatch: {
-                                    userId: mongoose.Types.ObjectId(req.params.request_id),
+                                    userId: mongoose.Types.ObjectId(req.params.user_id),
                                     notifications: `You are added in polyamorous group with ${findUser.firstName}`,
                                 }
                             }
@@ -1098,6 +1867,11 @@ exports.acceptedLinkProfile = async (req, res, next) => {
                         }
 
                     } else {
+
+                        const findUser = await userModel.findOne({
+                            _id: req.params.user_id
+                        })
+
                         const existUser = await notificationModel.findOne({
                             userId: req.params.request_id,
                             notifications: {
@@ -1109,6 +1883,7 @@ exports.acceptedLinkProfile = async (req, res, next) => {
                         if (existUser) {
 
                         } else {
+
                             await notificationModel.updateOne({
                                 userId: req.params.request_id
                             }, {
@@ -1122,13 +1897,65 @@ exports.acceptedLinkProfile = async (req, res, next) => {
                         }
                     }
 
+                    const findChatRoom1 = await groupChatRoomModels.findOne({
+                        $and: [
 
-                    const saveLinkProfile = linkProfileModel({
-                        user1: req.params.user_id,
-                        user2: req.params.request_id
+                            {
+                                user1: req.params.user_id
+                            },
+                            {
+                                user2: req.params.request_id
+                            },
+                            {
+                                user3: null
+                            },
+                            {
+                                user4: null
+                            }
+                        ]
                     })
 
-                    await saveLinkProfile.save();
+                    const findChatRoom2 = await groupChatRoomModels.findOne({
+                        $and: [
+
+                            {
+                                user1: req.params.request_id
+                            },
+                            {
+                                user2: req.params.user_id
+                            },
+                            {
+                                user3: null
+                            },
+                            {
+                                user4: null
+                            }
+                        ]
+                    })
+
+                    if (findChatRoom1) {
+                        const saveLinkProfile = linkProfileModel({
+                            groupId: findChatRoom1._id,
+                            user1: req.params.user_id,
+                            user2: req.params.request_id,
+                            user3: null,
+                            user4: null
+                        })
+
+                        await saveLinkProfile.save();
+                    } else if (findChatRoom2) {
+                        const saveLinkProfile = linkProfileModel({
+                            groupId: findChatRoom2._id,
+                            user1: req.params.user_id,
+                            user2: req.params.request_id,
+                            user3: null,
+                            user4: null
+                        })
+
+                        await saveLinkProfile.save();
+                    }
+
+
                     res.status(status.OK).json(
                         new APIResponse("request Accepted!", "true", 200, "1")
                     );
@@ -1150,9 +1977,13 @@ exports.acceptedLinkProfile = async (req, res, next) => {
                         },
                         {
                             user3: null
+                        },
+                        {
+                            groupId: req.query.group_room_id
                         }
                     ]
                 })
+
 
                 const findInLinkProfile5 = await linkProfileModel.findOne({
                     $and: [
@@ -1171,6 +2002,9 @@ exports.acceptedLinkProfile = async (req, res, next) => {
                         },
                         {
                             user4: null
+                        },
+                        {
+                            groupId: req.query.group_room_id
                         }
                     ]
                 })
@@ -1191,54 +2025,20 @@ exports.acceptedLinkProfile = async (req, res, next) => {
 
 
                         const createRoom = await groupChatRoomModels.findOne({
-                            $or: [
-                                {
-                                    user1: req.params.user_id
-                                },
-                                {
-                                    user2: req.params.user_id
-                                },
-                            ]
+                            _id: req.query.group_room_id
                         })
 
 
                         if (createRoom) {
-                            if (createRoom.user1 && createRoom.user2 && createRoom.user3 == undefined) {
-                                await groupChatRoomModels.updateOne({
-                                    $or: [
-                                        {
-                                            user1: req.params.user_id
-                                        },
-                                        {
-                                            user2: req.params.user_id
-                                        },
-                                    ]
-                                }, {
-                                    $set: {
-                                        user3: req.params.request_id
-                                    }
-                                })
-                            } else if (createRoom.user1 && createRoom.user2 && createRoom.user3) {
-                                await groupChatRoomModels.updateOne({
-                                    $or: [
-                                        {
-                                            user1: req.params.user_id
-                                        },
-                                        {
-                                            user2: req.params.user_id
-                                        },
-                                        {
-                                            user3: req.params.user_id
-                                        },
-                                    ]
-                                }, {
-                                    $set: {
-                                        user4: req.params.request_id
-                                    }
-                                })
-                            }
-                        }
 
+                            await groupChatRoomModels.updateOne({
+                                _id: req.query.group_room_id
+                            }, {
+                                $set: {
+                                    user3: req.params.request_id
+                                }
+                            })
+                        }
 
                         const user1 = findInLinkProfile1.user1
 
@@ -1247,120 +2047,34 @@ exports.acceptedLinkProfile = async (req, res, next) => {
                             linkProfile: {
                                 $elemMatch: {
                                     userId: mongoose.Types.ObjectId(req.params.request_id),
-                                    accepted: 2 || 1
+                                    accepted: {
+                                        $in: [1, 2]
+                                    }
                                 }
                             },
                             polyDating: "Polyamorous"
                         })
 
-                        console.log(findUser1);
-
                         const user2 = findInLinkProfile1.user2
-                    
+
                         const findUser2 = await userModel.findOne({
                             _id: user2,
                             linkProfile: {
                                 $elemMatch: {
                                     userId: mongoose.Types.ObjectId(req.params.request_id),
-                                    accepted: 2 || 1
+                                    accepted: {
+                                        $in: [1, 2]
+                                    }
                                 }
                             },
                             polyDating: "Polyamorous"
 
                         })
 
-                        console.log(findUser2);
+
 
                         if (findUser1 && findUser2) {
 
-                            await linkProfileModel.updateOne({
-                                $or: [
-                                    {
-                                        user1: mongoose.Types.ObjectId(req.params.user_id)
-                                    },
-                                    {
-                                        user2: mongoose.Types.ObjectId(req.params.user_id)
-                                    }
-                                ]
-                            }, {
-                                $set: {
-                                    user3: req.params.request_id
-                                }
-                            })
-
-                            const findUser = await notificationModel.findOne({
-                                userId: req.params.user_id
-                            })
-
-
-                            if (findUser == null) {
-
-                                const findUser = await userModel.findOne({
-                                    _id: req.params.request_id
-                                })
-
-                                console.log(findUser);
-
-                                const existUser = await notificationModel.findOne({
-                                    userId: req.params.user_id,
-                                    notifications: {
-                                        $elemMatch: {
-                                            notifications: `There is Conflict of interest with ${findUser.firstName}, Please discuss in group`
-                                        }
-                                    }
-                                })
-
-                                if (existUser) {
-
-                                } else {
-
-                                    const notificationData = notificationModel({
-                                        userId: req.params.user_id,
-                                        notifications: {
-                                            notifications: `There is Conflict of interest with ${findUser.firstName}, Please discuss in group`,
-                                            userId: findUser._id,
-                                            status: 3
-                                        }
-                                    })
-
-                                    await notificationData.save();
-                                }
-
-                            } else {
-
-                                const findUser = await userModel.findOne({
-                                    _id: req.params.request_id
-                                })
-
-                                const existUser = await notificationModel.findOne({
-                                    userId: req.params.user_id,
-                                    notifications: {
-                                        $elemMatch: {
-                                            notifications: `There is Conflict of interest with ${findUser.firstName}, Please discuss in group`
-                                        }
-                                    }
-                                })
-
-
-                                if (existUser) {
-
-                                } else {
-                                    await notificationModel.updateOne({
-                                        userId: req.params.user_id
-                                    }, {
-                                        $push: {
-                                            notifications: {
-                                                notifications: `There is Conflict of interest with ${findUser.firstName}, Please discuss in group`,
-                                                status: 3
-                                            }
-                                        }
-                                    })
-                                }
-                            }
-                            res.status(status.OK).json(
-                                new APIResponse("updated link profile...!", "true", 200, "1")
-                            );
-                        } else {
                             const findUser1 = await userModel.findOne({
                                 _id: user1,
                                 linkProfile: {
@@ -1372,9 +2086,6 @@ exports.acceptedLinkProfile = async (req, res, next) => {
                                 polyDating: "Polyamorous"
                             })
 
-                            console.log("findUser1", findUser1);
-
-                            const user2 = findInLinkProfile1.user2
                             const findUser2 = await userModel.findOne({
                                 _id: user2,
                                 linkProfile: {
@@ -1384,14 +2095,193 @@ exports.acceptedLinkProfile = async (req, res, next) => {
                                     }
                                 },
                                 polyDating: "Polyamorous"
+
                             })
 
-                            console.log(user2);
-                            res.status(status.OK).json(
-                                new APIResponse("updated link profile!", "true", 200, "1")
+                            if (findUser1 && findUser2) {
+
+                                await groupChatRoomModels.updateOne({
+                                    groupId: req.query.group_room_id
+                                }, {
+                                    $set: {
+                                        user3: null
+                                    }
+                                })
+
+
+                                res.status(status.NOT_ACCEPTABLE).json(
+                                    new APIResponse("Rjected Both User", "false", 406, "0")
+                                );
+                            } else {
+
+
+                                const findAllUser = await linkProfileModel.findOne({
+                                    groupId: req.query.group_room_id
+                                })
+                                const allUser = [];
+                                allUser.push(findAllUser.user1, findAllUser.user2, findAllUser.user3)
+
+                                for (const user of allUser) {
+                                    const findUser = await notificationModel.findOne({
+                                        userId: user
+                                    })
+
+                                    if (findUser == null) {
+
+                                        const findUser = await userModel.findOne({
+                                            _id: req.params.request_id
+                                        })
+
+
+
+                                        const existUser = await notificationModel.findOne({
+                                            userId: user,
+                                            notifications: {
+                                                $elemMatch: {
+                                                    notifications: `There is Conflict of interest with ${findUser.firstName}, Please discuss in group`
+                                                }
+                                            }
+                                        })
+
+                                        if (existUser) {
+
+                                        } else {
+
+                                            const notificationData = notificationModel({
+                                                userId: user,
+                                                notifications: {
+                                                    notifications: `There is Conflict of interest with ${findUser.firstName}, Please discuss in group`,
+                                                    userId: findUser._id,
+                                                    status: 3
+                                                }
+                                            })
+
+                                            await notificationData.save();
+                                        }
+
+                                    } else {
+
+                                        const findUser = await userModel.findOne({
+                                            _id: req.params.request_id
+                                        })
+
+                                        const existUser = await notificationModel.findOne({
+                                            userId: user,
+                                            notifications: {
+                                                $elemMatch: {
+                                                    notifications: `There is Conflict of interest with ${findUser.firstName}, Please discuss in group`
+                                                }
+                                            }
+                                        })
+
+
+                                        if (existUser) {
+
+                                        } else {
+                                            await notificationModel.updateOne({
+                                                userId: user
+                                            }, {
+                                                $push: {
+                                                    notifications: {
+                                                        notifications: `There is Conflict of interest with ${findUser.firstName}, Please discuss in group`,
+                                                        status: 3,
+                                                        userId: findUser._id
+                                                    }
+                                                }
+                                            })
+                                        }
+                                    }
+                                }
+
+
+
+
+
+                                const findIdInLinkProfile = await linkProfileModel.findOne({
+                                    $and: [
+                                        {
+                                            $or: [
+                                                {
+                                                    user1: req.params.user_id
+                                                },
+                                                {
+                                                    user2: req.params.user_id
+                                                }
+                                            ]
+                                        },
+                                        {
+                                            user3: null
+                                        },
+                                        {
+                                            user4: null
+                                        }
+                                    ]
+                                })
+
+                                const acceptedUser = [];
+                                if (findIdInLinkProfile.user1 == req.params.user_id) {
+                                    acceptedUser.push(findIdInLinkProfile.user2)
+                                } else {
+                                    acceptedUser.push(findIdInLinkProfile.user1)
+                                }
+
+                                const findGroupInConflickModel = await conflictModel.findOne({
+                                    groupId: createRoom._id,
+                                    conflictUserId: req.params.request_id
+                                })
+
+
+
+                                if (findGroupInConflickModel == null) {
+                                    const addInConflictModel = conflictModel({
+                                        groupId: createRoom._id,
+                                        conflictUserId: req.params.request_id,
+                                        acceptedUserId: {
+                                            userId: acceptedUser[0]
+                                        },
+                                        notAcceptedUserId: {
+                                            userId: req.params.user_id
+                                        }
+
+                                    })
+                                    await addInConflictModel.save();
+                                } else {
+                                    const findInconflict = await conflictModel.findOne({
+                                        groupId: createRoom._id,
+                                        conflictUserId: req.params.request_id,
+                                        "notAcceptedUserId.userId": req.params.user_id
+                                    })
+                                    if (findInconflict) {
+
+                                    } else {
+                                        await conflictModel.updateOne({
+                                            groupId: createRoom._id,
+                                        },
+                                            {
+                                                $push: {
+                                                    acceptedUserId: {
+                                                        userId: acceptedUser[0]
+                                                    },
+                                                    notAcceptedUserId: {
+                                                        userId: req.params.user_id
+                                                    }
+                                                }
+                                            })
+                                    }
+
+                                }
+                                res.status(status.OK).json(
+                                    new APIResponse("updated link profile!", "true", 200, "1")
+                                );
+                            }
+
+                        } else {
+                            res.status(status.NOT_ACCEPTABLE).json(
+                                new APIResponse("Reject user", "false", 496, "0")
                             );
                         }
                     } else if (findInLinkProfile5) {
+
 
                         await userModel.updateOne({
                             _id: mongoose.Types.ObjectId(req.params.user_id),
@@ -1403,6 +2293,22 @@ exports.acceptedLinkProfile = async (req, res, next) => {
                             }
                         })
 
+                        const createRoom = await groupChatRoomModels.findOne({
+                            _id: req.query.group_room_id
+                        })
+
+                        if (createRoom) {
+
+                            await groupChatRoomModels.updateOne({
+                                _id: req.query.group_room_id
+                            }, {
+                                $set: {
+                                    user4: req.params.request_id
+                                }
+                            })
+                        }
+
+
                         const user1 = findInLinkProfile5.user1
 
                         const findUser1 = await userModel.findOne({
@@ -1410,7 +2316,9 @@ exports.acceptedLinkProfile = async (req, res, next) => {
                             linkProfile: {
                                 $elemMatch: {
                                     userId: mongoose.Types.ObjectId(req.params.request_id),
-                                    accepted: 2
+                                    accepted: {
+                                        $in: [1, 2]
+                                    }
                                 }
                             },
                             polyDating: "Polyamorous"
@@ -1423,7 +2331,9 @@ exports.acceptedLinkProfile = async (req, res, next) => {
                             linkProfile: {
                                 $elemMatch: {
                                     userId: mongoose.Types.ObjectId(req.params.request_id),
-                                    accepted: 2
+                                    accepted: {
+                                        $in: [1, 2]
+                                    }
                                 }
                             },
                             polyDating: "Polyamorous"
@@ -1436,7 +2346,9 @@ exports.acceptedLinkProfile = async (req, res, next) => {
                             linkProfile: {
                                 $elemMatch: {
                                     userId: mongoose.Types.ObjectId(req.params.request_id),
-                                    accepted: 2
+                                    accepted: {
+                                        $in: [1, 2]
+                                    }
                                 }
                             },
                             polyDating: "Polyamorous"
@@ -1445,34 +2357,531 @@ exports.acceptedLinkProfile = async (req, res, next) => {
 
                         if (findUser1 && findUser2 && findUser3) {
 
-                            await linkProfileModel.updateOne({
-                                $or: [
-                                    {
-                                        user1: mongoose.Types.ObjectId(req.params.user_id)
-                                    },
-                                    {
-                                        user2: mongoose.Types.ObjectId(req.params.user_id)
-                                    },
-                                    {
-                                        user3: mongoose.Types.ObjectId(req.params.user_id)
+
+                            const notAcceptedUser = [];
+
+                            if (findInLinkProfile5.user1 == req.params.user_id) {
+                                notAcceptedUser.push(findInLinkProfile5.user2, findInLinkProfile5.user3)
+                            } else if (findInLinkProfile5.user2 == req.params.user_id) {
+                                notAcceptedUser.push(findInLinkProfile5.user1, findInLinkProfile5.user3)
+                            } else if (findInLinkProfile5.user3 == req.params.user_id) {
+                                notAcceptedUser.push(findInLinkProfile5.user1, findInLinkProfile5.user2)
+                            }
+
+                            const findUser1 = await userModel.findOne({
+                                _id: user1,
+                                linkProfile: {
+                                    $elemMatch: {
+                                        userId: mongoose.Types.ObjectId(req.params.request_id),
+                                        accepted: 2
                                     }
-                                ]
-                            }, {
-                                $set: {
-                                    user4: req.params.request_id
-                                }
+                                },
+                                polyDating: "Polyamorous"
                             })
-                            res.status(status.OK).json(
-                                new APIResponse("updated link profile!", "true", 200, "1")
-                            );
+
+
+                            const user2 = findInLinkProfile5.user2
+                            const findUser2 = await userModel.findOne({
+                                _id: user2,
+                                linkProfile: {
+                                    $elemMatch: {
+                                        userId: mongoose.Types.ObjectId(req.params.request_id),
+                                        accepted: 2
+                                    }
+                                },
+                                polyDating: "Polyamorous"
+
+                            })
+
+                            const user3 = findInLinkProfile5.user3
+                            const findUser3 = await userModel.findOne({
+                                _id: user3,
+                                linkProfile: {
+                                    $elemMatch: {
+                                        userId: mongoose.Types.ObjectId(req.params.request_id),
+                                        accepted: 2
+                                    }
+                                },
+                                polyDating: "Polyamorous"
+
+                            })
+
+
+                            if (findUser1 && findUser2 && findUser3) {
+                                await linkProfileModel.updateOne({
+                                    groupId: req.query.group_room_id
+                                }, {
+                                    $set: {
+                                        user4: null
+                                    }
+                                })
+
+
+                                res.status(status.NOT_ACCEPTABLE).json(
+                                    new APIResponse("Rjected all User!", "false", 406, "0")
+                                );
+                            } else {
+
+                                const findIdInLinkProfiles = await linkProfileModel.findOne({
+                                    groupId: req.query.group_room_id
+                                })
+
+                                const acceptedUsers = [];
+
+                                if (findIdInLinkProfiles.user1 == req.params.user_id) {
+                                    acceptedUsers.push(findIdInLinkProfiles.user2, findIdInLinkProfiles.user3)
+                                } else if (findIdInLinkProfiles.user2 == req.params.user_id) {
+                                    acceptedUsers.push(findIdInLinkProfiles.user1, findIdInLinkProfiles.user3)
+                                } else if (findIdInLinkProfiles.user3 == req.params.user_id) {
+                                    acceptedUsers.push(findIdInLinkProfiles.user1, findIdInLinkProfiles.user2)
+                                }
+
+
+
+                                const findUserInUserModels1 = await userModel.findOne({
+                                    _id: acceptedUsers[1],
+                                    linkProfile: {
+                                        userId: req.params.request_id,
+                                        status: 2
+                                    }
+                                })
+
+                                const findUserInUserModels2 = await userModel.findOne({
+                                    _id: acceptedUsers[0],
+                                    linkProfile: {
+                                        userId: req.params.request_id,
+                                        status: 2
+                                    }
+                                })
+
+
+                                const findAllUser = await linkProfileModel.findOne({
+                                    groupId: req.query.group_room_id
+                                })
+                                const allUser = [];
+                                allUser.push(findAllUser.user1, findAllUser.user2, findAllUser.user3)
+
+                                for (const user of allUser) {
+                                    if (findUserInUserModels1 && findUserInUserModels2 == null) {
+
+
+
+                                        const findUser = await notificationModel.findOne({
+                                            userId: user
+                                        })
+
+                                        if (findUser == null) {
+
+                                            const existUser = await notificationModel.findOne({
+                                                userId: user,
+                                                notifications: {
+                                                    $elemMatch: {
+                                                        notifications: `There is Conflict of interest with ${findUserInUserModels1.firstName}, Please discuss in group`
+                                                    }
+                                                }
+                                            })
+
+                                            if (existUser) {
+
+                                            } else {
+
+                                                const notificationData = notificationModel({
+                                                    userId: user,
+                                                    notifications: {
+                                                        notifications: `There is Conflict of interest with ${findUserInUserModels1.firstName}, Please discuss in group`,
+                                                        userId: findUser._id,
+                                                        status: 3
+                                                    }
+                                                })
+
+                                                await notificationData.save();
+                                            }
+
+                                        } else {
+
+                                            const findUser = await userModel.findOne({
+                                                _id: req.params.request_id
+                                            })
+
+                                            const existUser = await notificationModel.findOne({
+                                                userId: user,
+                                                notifications: {
+                                                    $elemMatch: {
+                                                        notifications: `There is Conflict of interest with ${findUserInUserModels1.firstName}, Please discuss in group`
+                                                    }
+                                                }
+                                            })
+
+
+                                            if (existUser) {
+
+                                            } else {
+                                                await notificationModel.updateOne({
+                                                    userId: user
+                                                }, {
+                                                    $push: {
+                                                        notifications: {
+                                                            notifications: `There is Conflict of interest with ${findUserInUserModels1.firstName}, Please discuss in group`,
+                                                            status: 3,
+                                                            userId: findUser._id
+                                                        }
+                                                    }
+                                                })
+                                            }
+                                        }
+                                    } else if (findUserInUserModels1 == null && findUserInUserModels2) {
+
+
+
+                                        const findUser = await notificationModel.findOne({
+                                            userId: user
+                                        })
+
+
+                                        if (findUser == null) {
+
+                                            const existUser = await notificationModel.findOne({
+                                                userId: user,
+                                                notifications: {
+                                                    $elemMatch: {
+                                                        notifications: `There is Conflict of interest with ${findUserInUserModels2.firstName}, Please discuss in group`
+                                                    }
+                                                }
+                                            })
+
+                                            if (existUser) {
+
+                                            } else {
+
+                                                const notificationData = notificationModel({
+                                                    userId: user,
+                                                    notifications: {
+                                                        notifications: `There is Conflict of interest with ${findUserInUserModels2.firstName}, Please discuss in group`,
+                                                        userId: findUser._id,
+                                                        status: 3
+                                                    }
+                                                })
+
+                                                await notificationData.save();
+                                            }
+
+                                        } else {
+
+                                            const findUser = await userModel.findOne({
+                                                _id: req.params.request_id
+                                            })
+
+                                            const existUser = await notificationModel.findOne({
+                                                userId: user,
+                                                notifications: {
+                                                    $elemMatch: {
+                                                        notifications: `There is Conflict of interest with ${findUserInUserModels2.firstName}, Please discuss in group`
+                                                    }
+                                                }
+                                            })
+
+
+                                            if (existUser) {
+
+                                            } else {
+                                                await notificationModel.updateOne({
+                                                    userId: user
+                                                }, {
+                                                    $push: {
+                                                        notifications: {
+                                                            notifications: `There is Conflict of interest with ${findUserInUserModels2.firstName}, Please discuss in group`,
+                                                            status: 3,
+                                                            userId: findUser._id
+                                                        }
+                                                    }
+                                                })
+                                            }
+                                        }
+                                    } else if (findUserInUserModels1 && findUserInUserModels2) {
+                                        const findUser = await notificationModel.findOne({
+                                            userId: user
+                                        })
+
+
+                                        if (findUser == null) {
+
+                                            const existUser = await notificationModel.findOne({
+                                                userId: user,
+                                                notifications: {
+                                                    $elemMatch: {
+                                                        notifications: `There is Conflict of interest with ${findUserInUserModels1.firstName}, ${findUserInUserModels2.firstName}, Please discuss in group`
+                                                    }
+                                                }
+                                            })
+
+                                            if (existUser) {
+
+                                            } else {
+
+                                                const notificationData = notificationModel({
+                                                    userId: user,
+                                                    notifications: {
+                                                        notifications: `There is Conflict of interest with ${findUserInUserModels1.firstName}, ${findUserInUserModels2.firstName}, Please discuss in group`,
+                                                        userId: findUser._id,
+                                                        status: 3
+                                                    }
+                                                })
+
+                                                await notificationData.save();
+                                            }
+
+                                        } else {
+
+                                            const findUser = await userModel.findOne({
+                                                _id: req.params.request_id
+                                            })
+
+                                            const existUser = await notificationModel.findOne({
+                                                userId: user,
+                                                notifications: {
+                                                    $elemMatch: {
+                                                        notifications: `There is Conflict of interest with ${findUserInUserModels1.firstName}, ${findUserInUserModels2.firstName} Please discuss in group`
+                                                    }
+                                                }
+                                            })
+
+
+                                            if (existUser) {
+
+                                            } else {
+                                                await notificationModel.updateOne({
+                                                    userId: user
+                                                }, {
+                                                    $push: {
+                                                        notifications: {
+                                                            notifications: `There is Conflict of interest with ${findUserInUserModels1.firstName}, ${findUserInUserModels2.firstName} Please discuss in group`,
+                                                            status: 3,
+                                                            userId: findUser._id
+                                                        }
+                                                    }
+                                                })
+                                            }
+                                        }
+                                    }
+
+                                }
+
+
+                                const findIdInLinkProfile = await linkProfileModel.findOne({
+                                    groupId: req.query.group_room_id
+                                })
+
+                                const acceptedUser = [];
+
+                                if (findIdInLinkProfile.user1 == req.params.user_id) {
+                                    acceptedUser.push(findIdInLinkProfile.user2, findIdInLinkProfile.user3)
+                                } else if (findIdInLinkProfile.user2 == req.params.user_id) {
+                                    acceptedUser.push(findIdInLinkProfile.user1, findIdInLinkProfile.user3)
+                                } else if (findIdInLinkProfile.user3 == req.params.user_id) {
+                                    acceptedUser.push(findIdInLinkProfile.user1, findIdInLinkProfile.user2)
+                                }
+
+                                const findGroupInConflickModel = await conflictModel.findOne({
+                                    groupId: createRoom._id,
+                                    conflictUserId: req.params.request_id
+                                })
+
+                                const findInUser1 = await userModel.findOne({
+                                    _id: acceptedUser[1],
+                                })
+
+                                const model1 = []
+                                for (const data of findInUser1.linkProfile) {
+                                    data.userId = req.params.request_id,
+                                        data.accepted = 2
+                                    if (data.userId == req.params.request_id && data.accepted == 2) {
+                                        model1.push(model1[0])
+                                    }
+                                }
+
+                                const findInUser2 = await userModel.findOne({
+                                    _id: acceptedUser[0],
+                                })
+
+                                const model2 = []
+                                for (const data of findInUser2.linkProfile) {
+                                    data.userId = req.params.request_id,
+                                        data.accepted = 2
+                                    if (data.userId == req.params.request_id && data.accepted == 2) {
+                                        model1.push(model2[0])
+                                    }
+                                }
+
+                                if (findGroupInConflickModel == null) {
+
+                                    if (model1[0]) {
+                                        const addInConflictModel = conflictModel({
+                                            groupId: createRoom._id,
+                                            conflictUserId: req.params.request_id,
+                                            acceptedUserId: {
+                                                userId: acceptedUser[0]
+                                            },
+                                            notAcceptedUserId: {
+                                                userId: req.params.user_id
+                                            }
+
+                                        })
+                                        await addInConflictModel.save();
+                                    } else {
+                                        const addInConflictModel = conflictModel({
+                                            groupId: createRoom._id,
+                                            conflictUserId: req.params.request_id,
+                                            notAcceptedUserId: {
+                                                userId: req.params.user_id
+                                            }
+
+                                        })
+                                        await addInConflictModel.save();
+                                        await conflictModel.updateOne(
+                                            {
+                                                groupId: createRoom._id,
+                                            },
+                                            {
+                                                $push: {
+                                                    notAcceptedUserId: {
+                                                        userId: acceptedUser[0]
+                                                    }
+                                                }
+                                            })
+                                    }
+
+                                    if (model2[0]) {
+                                        await conflictModel.updateOne(
+                                            {
+                                                groupId: createRoom._id,
+                                            },
+                                            {
+                                                $push: {
+                                                    notAcceptedUserId: {
+                                                        userId: acceptedUser[1]
+                                                    }
+                                                }
+                                            })
+                                    } else {
+
+                                        await conflictModel.updateOne(
+                                            {
+                                                groupId: createRoom._id,
+                                            },
+                                            {
+                                                $push: {
+                                                    acceptedUserId: {
+                                                        userId: acceptedUser[1]
+                                                    }
+                                                }
+                                            })
+                                    }
+
+
+                                } else {
+                                    const findInconflict = await conflictModel.findOne({
+                                        groupId: createRoom._id,
+                                        conflictUserId: req.params.request_id,
+                                        "notAcceptedUserId.userId": req.params.user_id
+                                    })
+                                    if (findInconflict) {
+
+                                    } else {
+                                        if (model1[0]) {
+                                            await conflictModel.updateOne({
+                                                groupId: createRoom._id,
+                                            },
+                                                {
+                                                    $push: {
+                                                        acceptedUserId: {
+                                                            userId: acceptedUser[0]
+                                                        },
+                                                        notAcceptedUserId: {
+                                                            userId: req.params.user_id
+                                                        }
+                                                    }
+                                                })
+                                        } else {
+
+                                            await conflictModel.updateOne({
+                                                groupId: createRoom._id,
+                                            },
+                                                {
+                                                    $push: {
+                                                        notAcceptedUserId: {
+                                                            userId: req.params.user_id
+                                                        }
+                                                    }
+                                                })
+                                            await conflictModel.updateOne({
+                                                groupId: createRoom._id,
+                                            },
+                                                {
+                                                    $push: {
+                                                        notAcceptedUserId: {
+                                                            userId: acceptedUser[0]
+                                                        }
+                                                    }
+                                                })
+                                        }
+
+                                        if (model2[0]) {
+                                            await conflictModel.updateOne({
+                                                groupId: createRoom._id,
+                                            },
+                                                {
+                                                    $push: {
+                                                        acceptedUserId: {
+                                                            userId: acceptedUser[1]
+                                                        },
+                                                        notAcceptedUserId: {
+                                                            userId: req.params.user_id
+                                                        }
+                                                    }
+                                                })
+
+                                        } else {
+                                            await conflictModel.updateOne({
+                                                groupId: createRoom._id,
+                                            },
+                                                {
+                                                    $push: {
+                                                        notAcceptedUserId: {
+                                                            userId: req.params.user_id
+                                                        }
+                                                    }
+                                                })
+                                            await conflictModel.updateOne({
+                                                groupId: createRoom._id,
+                                            },
+                                                {
+                                                    $push: {
+                                                        notAcceptedUserId: {
+                                                            userId: acceptedUser[1]
+                                                        }
+                                                    }
+                                                })
+                                        }
+
+                                    }
+
+                                }
+
+                                res.status(status.OK).json(
+                                    new APIResponse("updated link profile!", "true", 200, "1")
+                                );
+
+                            }
+
                         } else {
-                            res.status(status.OK).json(
-                                new APIResponse("updated link profile!", "true", 200, "1")
+                            res.status(status.NOT_ACCEPTABLE).json(
+                                new APIResponse("Reject user", "false", 496, "0")
                             );
                         }
                     }
 
                 } else {
+
                     await userModel.updateOne({
                         _id: mongoose.Types.ObjectId(req.params.user_id),
                         "linkProfile.userId": mongoose.Types.ObjectId(req.params.request_id),
@@ -1482,6 +2891,7 @@ exports.acceptedLinkProfile = async (req, res, next) => {
                             "linkProfile.$.accepted": 2
                         }
                     })
+
 
                     res.status(status.OK).json(
                         new APIResponse("reject link profile!", "true", 200, "1")

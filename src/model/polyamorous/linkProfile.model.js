@@ -1,6 +1,9 @@
 const mongoose = require("mongoose");
 
 const linkProfileSchema = mongoose.Schema({
+    groupId: {
+        type: mongoose.Schema.Types.ObjectId,
+    },
     user1: {
         type: mongoose.Schema.Types.ObjectId,
         ref: "User",

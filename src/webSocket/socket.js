@@ -8,6 +8,7 @@ const groupChatRoomModels = require("./models/groupChatRoom.models");
 const groupChatModel = require("./models/groupChat.model");
 const { default: mongoose } = require("mongoose");
 const linkProfileModel = require("../model/polyamorous/linkProfile.model");
+const conflictModel = require("../model/polyamorous/conflict.model");
 function socket(io) {
 
     console.log("socket connected...");
@@ -430,7 +431,7 @@ function socket(io) {
 
                 const exiestUser = allGroupUser.includes((arg.sender_id).toString())
 
-       
+
 
                 if (exiestUser) {
                     if (validGroup == null) {
@@ -446,7 +447,7 @@ function socket(io) {
 
                         const read = [];
                         for (const user of newArray) {
-                          
+
                             if (user == null) {
 
                             } else {
@@ -491,11 +492,11 @@ function socket(io) {
                     } else {
 
                         var newArray = allGroupUser.filter(function (f) { return f !== (arg.sender_id).toString() })
-                 
+
 
                         const read = [];
                         for (const user of newArray) {
-                  
+
                             if (user == null) {
 
                             } else {
@@ -524,7 +525,7 @@ function socket(io) {
                         io.to(userRoom).emit("chatReceive", arg.text);
 
                         var newArray = allGroupUser.filter(function (f) { return f !== (arg.sender_id).toString() })
-                
+
                         const findAllUser = await userModel.find({
                             _id: {
                                 $in: newArray
@@ -576,7 +577,7 @@ function socket(io) {
                     { arrayFilters: [{ "read.userId": mongoose.Types.ObjectId(arg.user_id) }] }
                 )
             }
-     
+
             io.emit("chatReceive", "read All chat");
         })
 
@@ -584,7 +585,7 @@ function socket(io) {
             const findRoom = await chatModels.findOne({
                 chatRoomId: arg.chat_room
             })
-      
+
             if (findRoom == null) {
                 io.emit("chatReceive", "chat room not found");
             } else {
@@ -749,6 +750,8 @@ function socket(io) {
 
         socket.on('sendRequest', async (arg) => {
 
+            console.log(arg);
+
             const findUser = await userModel.findOne({
                 _id: arg.user_id,
                 polyDating: "Polyamorous"
@@ -792,6 +795,8 @@ function socket(io) {
                                     if ((findValidUser1.user1).toString() == (arg.user_id).toString() || (findValidUser1.user2).toString() == (arg.user_id).toString()) {
                                         io.emit("sendRequestUser", "already In link profile...");
                                     } else {
+
+                                        console.log("combineUser", combineUser.user1);
 
                                         await userModel.updateOne({
                                             _id: combineUser.user1
@@ -891,11 +896,6 @@ function socket(io) {
                                     io.emit("sendRequestUser", "already create link profile..");
                                 }
                             }
-
-
-
-
-
                         }
 
                     } else {
@@ -903,6 +903,47 @@ function socket(io) {
                     }
 
                 }
+            }
+
+        })
+
+        socket.on('conflictOfIntrest', async (arg) => {
+            const userRoom = arg.group_room_id;
+            socket.join(userRoom);
+
+            const findRoom = groupChatRoomModels.findOne({
+                _id: arg.group_room_id
+            })
+
+            if (findRoom == null) {
+                io.emit("showConflictOfIntrest", "this group is not Found");
+            } else {
+                const conflictOfIntrest = [];
+                const findGroupInConflictModel = await conflictModel.find({
+                    groupId: arg.group_room_id
+                })
+
+                for (const getGroup of findGroupInConflictModel) {
+                    console.log(getGroup);
+                    const findUser = await userModel.findOne({
+                        _id: getGroup.conflictUserId
+                    })
+                    const findFinalDisionUser = await userModel.findOne({
+                        _id: arg.user_id
+                    })
+                    const response = {
+                        userIdWhichConflictUser: getGroup.conflictUserId,
+                        profileConflictUser: findUser.photo[0] ? findUser.photo[0].res : null,
+                        nameOfConflictUser: findUser.firstName,
+                        finalDesionForMySide: findFinalDisionUser.firstName,
+                        countAgree: getGroup.aggreeCount,
+                        countDisAgree: getGroup.disAggreeCount
+                    }
+                    conflictOfIntrest.push(response)
+
+                }
+
+                io.to(userRoom).emit("showConflictOfIntrest", conflictOfIntrest);
             }
 
         })

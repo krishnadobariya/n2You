@@ -30,6 +30,8 @@ const basketRoutes = require("./src/routes/basket.routes");
 const datingRoutes = require("./src/routes/polyamorous/dating.routes");
 const blockUnblockRoutes = require('./src/routes/polyamorous/blockUnblock.routes');
 const groupChatRoutes = require("./src/routes/polyamorous/groupChat.routes");
+const notificationRoutes = require('./src/routes/polyamorous/notification.routes');
+const conflictRoutes = require('./src/routes/polyamorous/conflict.routes');
 
 
 app.use('/user', userRoutes);
@@ -47,5 +49,7 @@ app.use('/basket', basketRoutes);
 app.use('/dating', datingRoutes);
 app.use('/blockUnblockUsers', blockUnblockRoutes);
 app.use('/groupChat', groupChatRoutes);
+app.use('/notification', notificationRoutes);
+app.use('/conflict', conflictRoutes);
 
 module.exports = app;
