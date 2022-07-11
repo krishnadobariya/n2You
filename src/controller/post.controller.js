@@ -246,6 +246,7 @@ exports.getPostsbyUseId = async (req, res, next) => {
                     const posts = {
                         userName: findUser.firstName,
                         email: findUser.email,
+                        profile: findUser.photo[0] ? findUser.photo[0].res : null,
                         postId: createResponse._id,
                         post: createResponse.post,
                         description: createResponse.description,
@@ -319,7 +320,8 @@ exports.getPostsVideobyUseId = async (req, res, next) => {
                 for (const createResponse of storeAllpostsUserWise) {
 
 
-                    const getExtName = path.extname(createResponse.post[0].res);
+                    const getExtName = path.extname(createResponse.post[0] ? createResponse.post[0].res : null);
+
                     if (getExtName == ".mp4") {
                         datetime = createResponse.createdAt;
 
@@ -430,8 +432,14 @@ exports.getPostsImagesbyUseId = async (req, res, next) => {
                 for (const createResponse of storeAllpostsUserWise) {
 
 
-                    const getExtName = path.extname(createResponse.post[0].res);
+                    const getExtName = createResponse.post[0] ? createResponse.post[0].res : null;
+                    if (getExtName == null) {
+
+                    } else {
+                        const getExtName = path.extname(createResponse.post[0].res);
+                    }
                     if (getExtName != ".mp4") {
+
                         datetime = createResponse.createdAt;
 
                         var userPostedDate = new Date(datetime);
@@ -802,8 +810,6 @@ exports.userAllFriendPost = async (req, res, next) => {
 
             const final_data = [];
 
-
-
             const finalStatus = [];
             for (const [key, finalData] of meargAllTable.entries()) {
                 for (const [key, final1Data] of statusByEmail.entries())
@@ -830,6 +836,7 @@ exports.userAllFriendPost = async (req, res, next) => {
                             postId: response.data.posts[0].getallposts._id,
                             email: response.data.email,
                             userName: findUser.firstName,
+                            profile: findUser.photo[0] ? findUser.photo[0].res : null,
                             posts: response.data.posts[0].getallposts.post,
                             description: response.data.posts[0].getallposts.description,
                             like: response.data.posts[0].getallposts.like,
@@ -846,21 +853,6 @@ exports.userAllFriendPost = async (req, res, next) => {
 
 
             }
-
-
-
-            // const data = {
-            //     postId: response.data.posts[0].getallposts._id,
-            //     email: response.data.email,
-            //     posts: response.data.posts[0].getallposts.post,
-            //     description: response.data.posts[0].getallposts.description,
-            //     like: response.data.posts[0].getallposts.like,
-            //     comment: response.data.posts[0].getallposts.comment,
-            //     report: response.data.posts[0].getallposts.report,
-            // }
-
-
-            console.log(final_data[0].data);
 
             res.status(status.OK).json(
                 new APIResponse("show all post When accept by the user", "true", 201, "1", final_data)
