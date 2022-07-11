@@ -25,7 +25,7 @@ exports.addPostVideo = async (req, res, next) => {
         }
 
         const id = req.params.id;
-        const userFindForViedos = await userModal.findOne({ _id: id, polyDating: "Social Meida & Dating" });
+        const userFindForViedos = await userModal.findOne({ _id: id, polyDating: "0" });
 
         if (userFindForViedos) {
             const checkInPost = await postModal.findOne({ userId: id });
@@ -105,7 +105,7 @@ exports.addPostImages = async (req, res, next) => {
             })
         }
         const id = req.params.id;
-        const userFindForImages = await userModal.findOne({ _id: id, polyDating: "Social Meida & Dating" });
+        const userFindForImages = await userModal.findOne({ _id: id, polyDating: "0" });
 
         if (userFindForImages) {
             const checkInPost = await postModal.findOne({ userId: id });
@@ -485,7 +485,7 @@ exports.getPostsImagesbyUseId = async (req, res, next) => {
             }
         } else {
             res.status(status.NOT_FOUND).json(
-                new APIResponse("User Not Found and not Social Meida & Dating type user!", "false", 404, "0")
+                new APIResponse("User Not Found in post Table and not Social Meida & Dating type user!", "false", 404, "0")
             )
         }
 
@@ -800,7 +800,7 @@ exports.userAllFriendPost = async (req, res, next) => {
             }
 
 
-            
+
             res.status(status.OK).json(
                 new APIResponse("show all post When accept by the user", "true", 201, "1", final_data)
             )

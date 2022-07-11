@@ -35,11 +35,11 @@ function socket(io) {
 
             const fcm_token = [];
             if (arg.sender_id == arg.user_1) {
-                const userFind = await userModel.findOne({ _id: arg.user_2, polyDating: "Social Meida & Dating" })
+                const userFind = await userModel.findOne({ _id: arg.user_2, polyDating: "0" })
                 fcm_token.push(userFind.fcm_token)
 
             } else {
-                const userFind = await userModel.findOne({ _id: arg.user_1, polyDating: "Social Meida & Dating" })
+                const userFind = await userModel.findOne({ _id: arg.user_1, polyDating: "0" })
                 fcm_token.push(userFind.fcm_token)
 
             }
@@ -326,14 +326,14 @@ function socket(io) {
 
 
 
-            const user1 = await userModel.findOne({ _id: arg.user1, polyDating: "Polyamorous" });
-            const user2 = await userModel.findOne({ _id: arg.user2, polyDating: "Polyamorous" });
-            const user3 = await userModel.findOne({ _id: arg.user3, polyDating: "Polyamorous" });
-            const user4 = await userModel.findOne({ _id: arg.user4, polyDating: "Polyamorous" });
-            const user5 = await userModel.findOne({ _id: arg.user5, polyDating: "Polyamorous" });
-            const user6 = await userModel.findOne({ _id: arg.user6, polyDating: "Polyamorous" });
-            const user7 = await userModel.findOne({ _id: arg.user7, polyDating: "Polyamorous" });
-            const user8 = await userModel.findOne({ _id: arg.user8, polyDating: "Polyamorous" });
+            const user1 = await userModel.findOne({ _id: arg.user1, polyDating: "1" });
+            const user2 = await userModel.findOne({ _id: arg.user2, polyDating: "1" });
+            const user3 = await userModel.findOne({ _id: arg.user3, polyDating: "1" });
+            const user4 = await userModel.findOne({ _id: arg.user4, polyDating: "1" });
+            const user5 = await userModel.findOne({ _id: arg.user5, polyDating: "1" });
+            const user6 = await userModel.findOne({ _id: arg.user6, polyDating: "1" });
+            const user7 = await userModel.findOne({ _id: arg.user7, polyDating: "1" });
+            const user8 = await userModel.findOne({ _id: arg.user8, polyDating: "1" });
 
             const userRoom = user1 ? user1._id : null || user2 ? user2._id : null || user3 ? user3._id : null || user4 ? user4._id : null || user5 ? user5._id : null || user6 ? user6._id : null || user7 ? user7._id : null || user8 ? user8._id : null
 
@@ -493,7 +493,6 @@ function socket(io) {
 
                         var newArray = allGroupUser.filter(function (f) { return f !== (arg.sender_id).toString() })
 
-
                         const read = [];
                         for (const user of newArray) {
 
@@ -648,7 +647,7 @@ function socket(io) {
                     if (existUserInLike == null && exisrUserIndisLike == null) {
                         const findInUserModel = await userModel.findOne({
                             _id: arg.like_user_id,
-                            polyDating: "Polyamorous"
+                            polyDating: "1"
                         });
 
                         const findInLinkProfileModel = await linkProfileModel.findOne({
@@ -656,7 +655,7 @@ function socket(io) {
                         })
 
 
-                        if (findInUserModel || findInLinkProfileModel) {
+                        if (findInUserModel) {
                             const findUserInDating = await datingLikeDislikeUserModel.findOne({
                                 userId: arg.user_id
                             })
@@ -684,6 +683,109 @@ function socket(io) {
                                 })
                                 io.emit("likeDislikeUser", "User Like Dating");
                             }
+                        } else if (findInLinkProfileModel) {
+
+
+                            const findUserInDating = await datingLikeDislikeUserModel.findOne({
+                                userId: arg.user_id
+                            })
+
+
+
+                            if (findUserInDating == null) {
+                                const insertuserInDatingModel = datingLikeDislikeUserModel({
+                                    userId: arg.user_id,
+                                    LikeUser: {
+                                        LikeduserId: arg.like_user_id
+                                    }
+                                })
+
+                                await insertuserInDatingModel.save();
+
+
+
+                                io.emit("likeDislikeUser", "User Like Dating");
+                            } else {
+
+                                await datingLikeDislikeUserModel.updateOne({
+                                    userId: arg.user_id
+                                }, {
+                                    $push: {
+                                        LikeUser: {
+                                            LikeduserId: arg.like_user_id
+                                        }
+                                    }
+                                })
+
+
+                                const allUser = [];
+
+                                if (findInLinkProfileModel.user1 && findInLinkProfileModel.user2 && findInLinkProfileModel.user3 && findInLinkProfileModel.user4) {
+                                    allUser.push(findInLinkProfileModel.user1, findInLinkProfileModel.user2, findInLinkProfileModel.user3, findInLinkProfileModel.user4)
+                                } else if (findInLinkProfileModel.user1 && findInLinkProfileModel.user2 && findInLinkProfileModel.user3) {
+                                    allUser.push(findInLinkProfileModel.user1, findInLinkProfileModel.user2, findInLinkProfileModel.user3)
+                                } else if (findInLinkProfileModel.user1 && findInLinkProfileModel.user2) {
+                                    allUser.push(findInLinkProfileModel.user1, findInLinkProfileModel.user2)
+                                }
+
+
+
+                                for (const userInLinkProfile of allUser) {
+
+                                    const findInDatingLikeModel = await datingLikeDislikeUserModel.findOne({
+                                        userId: userInLinkProfile
+                                    })
+
+                                    if (findInDatingLikeModel == null) {
+
+                                        const insertuserInDatingModel = datingLikeDislikeUserModel({
+                                            userId: userInLinkProfile,
+                                            LikeUser: {
+                                                LikeduserId: arg.user_id
+                                            }
+                                        })
+
+                                        await insertuserInDatingModel.save();
+
+                                    } else {
+                                        const findInDatingLikeModel = await datingLikeDislikeUserModel.findOne({
+                                            userId: userInLinkProfile,
+                                            "LikeUser.LikeduserId": arg.user_id
+                                        })
+
+                                        if (findInDatingLikeModel) {
+
+                                        } else {
+                                            await datingLikeDislikeUserModel.updateOne({
+                                                userId: userInLinkProfile,
+
+                                            }, {
+                                                $pull: {
+                                                    disLikeUser: {
+                                                        disLikeduserId: arg.user_id
+                                                    }
+                                                }
+                                            })
+
+                                            await datingLikeDislikeUserModel.updateOne({
+                                                userId: userInLinkProfile,
+
+                                            }, {
+                                                $push: {
+                                                    LikeUser: {
+                                                        LikeduserId: arg.user_id
+                                                    }
+                                                }
+                                            })
+                                        }
+
+                                    }
+                                }
+
+
+                                io.emit("likeDislikeUser", "User Like Dating");
+                            }
+
                         } else {
                             io.emit("likeDislikeUser", "User Not polyDating...");
                         }
@@ -702,16 +804,20 @@ function socket(io) {
                         "disLikeUser.disLikeduserId": arg.like_user_id
                     })
 
+
                     if (existUserInLike == null && exisrUserIndisLike == null) {
                         const findInUserModel = await userModel.findOne({
                             _id: arg.like_user_id,
-                            polyDating: "Polyamorous"
+                            polyDating: "1"
                         });
 
-                        if (findInUserModel == null) {
-                            io.emit("likeDislikeUser", "User Not polyDating");
-                        } else {
 
+
+                        const findInLinkProfileModel = await linkProfileModel.findOne({
+                            _id: arg.like_user_id
+                        })
+
+                        if (findInUserModel) {
                             const findUserInDating = await datingLikeDislikeUserModel.findOne({
                                 userId: arg.user_id
                             })
@@ -726,6 +832,8 @@ function socket(io) {
 
                                 await insertuserInDatingModel.save();
                                 io.emit("likeDislikeUser", "User DisLike Dating");
+
+
                             } else {
 
                                 await datingLikeDislikeUserModel.updateOne({
@@ -738,7 +846,100 @@ function socket(io) {
                                     }
                                 })
                                 io.emit("likeDislikeUser", "User DisLike Dating");
+
                             }
+                        } else if (findInLinkProfileModel) {
+
+                            const findUserInDating = await datingLikeDislikeUserModel.findOne({
+                                userId: arg.user_id
+                            })
+
+
+
+                            if (findUserInDating == null) {
+                                const insertuserInDatingModel = datingLikeDislikeUserModel({
+                                    userId: arg.user_id,
+                                    disLikeUser: {
+                                        disLikeduserId: arg.like_user_id
+                                    }
+                                })
+
+                                await insertuserInDatingModel.save();
+
+                                console.log(findInLinkProfileModel);
+
+
+                                io.emit("likeDislikeUser", "User Like Dating");
+                            } else {
+                                await datingLikeDislikeUserModel.updateOne({
+                                    userId: arg.user_id
+                                }, {
+                                    $push: {
+                                        disLikeUser: {
+                                            disLikeduserId: arg.like_user_id
+                                        }
+                                    }
+                                })
+
+                                const allUser = [];
+
+                                if (findInLinkProfileModel.user1 && findInLinkProfileModel.user2 && findInLinkProfileModel.user3 && findInLinkProfileModel.user4) {
+                                    allUser.push(findInLinkProfileModel.user1, findInLinkProfileModel.user2, findInLinkProfileModel.user3, findInLinkProfileModel.user4)
+                                } else if (findInLinkProfileModel.user1 && findInLinkProfileModel.user2 && findInLinkProfileModel.user3) {
+                                    allUser.push(findInLinkProfileModel.user1, findInLinkProfileModel.user2, findInLinkProfileModel.user3)
+                                } else if (findInLinkProfileModel.user1 && findInLinkProfileModel.user2) {
+                                    allUser.push(findInLinkProfileModel.user1, findInLinkProfileModel.user2)
+                                }
+
+
+                                for (const userInLinkProfile of allUser) {
+                                    const findInDatingLikeModel = await datingLikeDislikeUserModel.findOne({
+                                        userId: userInLinkProfile
+                                    })
+
+                                    if (findInDatingLikeModel == null) {
+
+                                        const insertuserInDatingModel = datingLikeDislikeUserModel({
+                                            userId: userInLinkProfile,
+                                            disLikeUser: {
+                                                disLikeduserId: arg.user_id
+                                            }
+                                        })
+
+                                        await insertuserInDatingModel.save();
+
+                                    } else {
+                                        await datingLikeDislikeUserModel.updateOne({
+                                            userId: userInLinkProfile,
+
+                                        }, {
+                                            $pull: {
+                                                LikeUser: {
+                                                    LikeduserId: arg.user_id
+                                                }
+                                            }
+                                        })
+
+                                        await datingLikeDislikeUserModel.updateOne({
+                                            userId: userInLinkProfile,
+
+                                        }, {
+                                            $push: {
+                                                disLikeUser: {
+                                                    disLikeduserId: arg.user_id
+                                                }
+                                            }
+                                        })
+                                    }
+
+                                }
+
+                                io.emit("likeDislikeUser", "User Like Dating");
+                            }
+
+
+                        } else {
+                            io.emit("likeDislikeUser", "User Not polyDating...");
                         }
                     } else {
                         io.emit("likeDislikeUser", "Already Liked or Dislike For Dating");
@@ -750,24 +951,22 @@ function socket(io) {
 
         socket.on('sendRequest', async (arg) => {
 
-            console.log(arg);
-
             const findUser = await userModel.findOne({
                 _id: arg.user_id,
-                polyDating: "Polyamorous"
+                polyDating: "1"
             })
 
             if (findUser == null) {
                 io.emit("sendRequestUser", "User Not Found or user Not Polyamorous...!");
             } else {
 
-                const getAllUserWhichLoginAsPolyamorous = await userModel.find({ "polyDating": "Polyamorous" });
+                const getAllUserWhichLoginAsPolyamorous = await userModel.find({ polyDating: "1" });
                 if (getAllUserWhichLoginAsPolyamorous) {
                     const findAllUser = await userModel.find({
                         _id: {
                             $ne: arg.user_id
                         },
-                        "polyDating": "Polyamorous"
+                        polyDating: "1"
                     })
 
                     if (findAllUser) {
@@ -775,6 +974,7 @@ function socket(io) {
                         const findValidUser = await userModel.findOne({
                             _id: arg.request_id
                         })
+
 
                         if (findValidUser == null) {
                             io.emit("sendRequestUser", "User Not Found!");
@@ -796,33 +996,72 @@ function socket(io) {
                                         io.emit("sendRequestUser", "already In link profile...");
                                     } else {
 
-                                        console.log("combineUser", combineUser.user1);
 
-                                        await userModel.updateOne({
-                                            _id: combineUser.user1
-                                        }, {
-                                            $push: {
-                                                linkProfile: {
-                                                    userId: arg.user_id,
-                                                    combineId: arg.combine_id
-                                                }
+
+
+                                        const findAlrearyRerquestedUser1 = await userModel.findOne({
+                                            _id: combineUser.user1,
+                                            linkProfile: {
+                                                userId: arg.user_id,
+                                                combineId: arg.combine_id,
+                                                status: 0
                                             }
                                         })
 
-                                        await userModel.updateOne({
-                                            _id: combineUser.user2
-                                        }, {
-                                            $push: {
-                                                linkProfile: {
-                                                    userId: arg.user_id,
-                                                    combineId: arg.combine_id
-                                                }
+                                        const findAlrearyRerquestedUser2 = await userModel.findOne({
+                                            _id: combineUser.user2,
+                                            linkProfile: {
+                                                userId: arg.user_id,
+                                                combineId: arg.combine_id,
+                                                status: 0
                                             }
                                         })
 
-                                        io.emit("sendRequestUser", "successfully send link profile...");
+                                        if (findAlrearyRerquestedUser1 && findAlrearyRerquestedUser2) {
+
+                                            const data = {
+                                                message: "already requested link Profile....",
+                                                status: 1
+                                            }
+
+                                            io.emit("sendRequestUser", data);
+
+                                        } else {
+                                            await userModel.updateOne({
+                                                _id: combineUser.user1
+                                            }, {
+                                                $push: {
+                                                    linkProfile: {
+                                                        userId: arg.user_id,
+                                                        combineId: arg.combine_id
+                                                    }
+                                                }
+                                            })
+
+                                            await userModel.updateOne({
+                                                _id: combineUser.user2
+                                            }, {
+                                                $push: {
+                                                    linkProfile: {
+                                                        userId: arg.user_id,
+                                                        combineId: arg.combine_id
+                                                    }
+                                                }
+                                            })
+
+
+                                            const data = {
+                                                message: "successfully send link profile...",
+                                                status: 0
+                                            }
+                                            io.emit("sendRequestUser", data);
+                                        }
+
                                     }
+
+
                                 } else if (combineUser.user1 && combineUser.user2 && combineUser.user3 && combineUser.user4 == undefined) {
+
                                     const findValidUser = await linkProfileModel.findOne({
                                         _id: arg.combine_id
                                     })
@@ -834,40 +1073,90 @@ function socket(io) {
 
                                     } else {
 
-                                        await userModel.updateOne({
-                                            _id: combineUser.user1
-                                        }, {
-                                            $push: {
-                                                linkProfile: {
-                                                    userId: arg.user_id,
-                                                    combineId: arg.combine_id
-                                                }
+
+                                        console.log(combineUser._id);
+
+                                        const findAlrearyRerquestedUser1 = await userModel.findOne({
+                                            _id: combineUser.user1,
+                                            linkProfile: {
+                                                userId: arg.user_id,
+                                                combineId: arg.combine_id,
+                                                status: 0
                                             }
                                         })
 
-                                        await userModel.updateOne({
-                                            _id: combineUser.user2
-                                        }, {
-                                            $push: {
-                                                linkProfile: {
-                                                    userId: arg.user_id,
-                                                    combineId: arg.combine_id
-                                                }
+                                        console.log(findAlrearyRerquestedUser1);
+
+                                        const findAlrearyRerquestedUser2 = await userModel.findOne({
+                                            _id: combineUser.user2,
+                                            linkProfile: {
+                                                userId: arg.user_id,
+                                                combineId: arg.combine_id,
+                                                status: 0
                                             }
                                         })
 
-                                        await userModel.updateOne({
-                                            _id: combineUser.user3
-                                        }, {
-                                            $push: {
-                                                linkProfile: {
-                                                    userId: arg.user_id,
-                                                    combineId: arg.combine_id
-                                                }
+                                        const findAlrearyRerquestedUser3 = await userModel.findOne({
+                                            _id: combineUser.user3,
+                                            linkProfile: {
+                                                userId: arg.user_id,
+                                                combineId: arg.combine_id,
+                                                status: 0
                                             }
                                         })
 
-                                        io.emit("sendRequestUser", "successfully send link profile...");
+
+                                        if (findAlrearyRerquestedUser1 && findAlrearyRerquestedUser2 && findAlrearyRerquestedUser3) {
+
+                                            const data = {
+                                                message: "already requested link Profile....",
+                                                status: 1
+                                            }
+
+                                            io.emit("sendRequestUser", data);
+
+                                        } else {
+                                            await userModel.updateOne({
+                                                _id: combineUser.user1
+                                            }, {
+                                                $push: {
+                                                    linkProfile: {
+                                                        userId: arg.user_id,
+                                                        combineId: arg.combine_id
+                                                    }
+                                                }
+                                            })
+
+                                            await userModel.updateOne({
+                                                _id: combineUser.user2
+                                            }, {
+                                                $push: {
+                                                    linkProfile: {
+                                                        userId: arg.user_id,
+                                                        combineId: arg.combine_id
+                                                    }
+                                                }
+                                            })
+
+                                            await userModel.updateOne({
+                                                _id: combineUser.user3
+                                            }, {
+                                                $push: {
+                                                    linkProfile: {
+                                                        userId: arg.user_id,
+                                                        combineId: arg.combine_id
+                                                    }
+                                                }
+                                            })
+
+                                            const data = {
+                                                message: "successfully send link profile...",
+                                                status: 0
+                                            }
+                                            io.emit("sendRequestUser", data);
+
+                                        }
+
                                     }
                                 } else {
                                     io.emit("sendRequestUser", "already have 4 users...");
@@ -892,8 +1181,13 @@ function socket(io) {
 
                                     io.emit("sendRequestUser", "successfully send link profile..");
                                 } else {
+                                    const data = {
+                                        message: "already requested link Profile....",
+                                        status: 1
+                                    }
+                                    io.emit("sendRequestUser", data);
 
-                                    io.emit("sendRequestUser", "already create link profile..");
+
                                 }
                             }
                         }

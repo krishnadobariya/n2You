@@ -5,13 +5,13 @@ const blockUnblockModel = require("../../model/polyamorous/blockUnblock.model");
 exports.blockUnblockUser = async (req, res, next) => {
     try {
 
-        const userFind = await userModel.findOne({ _id: req.params.user_id, polyDating: "Polyamorous" });
+        const userFind = await userModel.findOne({ _id: req.params.user_id, polyDating: "1" });
         if (userFind == null) {
             res.status(status.NOT_FOUND).json(
                 new APIResponse("no User Found Which is not a Polyamorous ", "false", 404, "0")
             );
         } else {
-            const blockUserFound = await userModel.findOne({ _id: req.params.block_user_id, polyDating: "Polyamorous" })
+            const blockUserFound = await userModel.findOne({ _id: req.params.block_user_id, polyDating: "1" })
 
             if (blockUserFound == null) {
                 res.status(status.NOT_FOUND).json(
@@ -20,7 +20,7 @@ exports.blockUnblockUser = async (req, res, next) => {
 
             } else {
                 if (req.query.block_unblock == 1) {
-                    const finduserIdInBlockModel = await blockUnblockModel.findOne({ userId: req.params.user_id, polyDating: "Polyamorous" })
+                    const finduserIdInBlockModel = await blockUnblockModel.findOne({ userId: req.params.user_id, polyDating: "1" })
                     if (finduserIdInBlockModel == null) {
                         const blockUser = blockUnblockModel({
                             userId: req.params.user_id,

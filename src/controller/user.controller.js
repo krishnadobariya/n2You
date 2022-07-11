@@ -87,8 +87,36 @@ exports.userRegister = async (req, res, next) => {
                 const saveData = await user.save();
 
 
+                const data = {
+                    polyDating: req.body.poly_dating,
+                    HowDoYouPoly: req.body.how_do_you_poly,
+                    loveToGive: req.body.love_to_give,
+                    polyRelationship: req.body.poly_relationship,
+                    email: req.body.email,
+                    firstName: req.body.first_name,
+                    birthDate: req.body.birth_date,
+                    identity: req.body.identity,
+                    relationshipSatus: req.body.relationship_satus,
+                    IntrestedIn: req.body.intrested_in,
+                    Bio: req.body.bio,
+                    photo: urls,
+                    longitude: req.body.longitude,
+                    latitude: req.body.latitude,
+                    fcm_token: req.body.fcm_token,
+                    hopingToFind: req.body.hoping_to_find,
+                    jobTitle: req.body.job_title,
+                    wantChildren: req.body.want_children,
+                    bodyType: req.body.body_type,
+                    height: req.body.height,
+                    smoking: req.body.smoking,
+                    drinking: req.body.drinking,
+                    hobbies: req.body.hobbies,
+                    phoneNumber: `${countryCode}${phoneNum}`
+                }
+
+
                 res.status(status.CREATED).json(
-                    new APIResponse("User Register", true, 201, 1, saveData)
+                    new APIResponse("User Register", true, 201, 1, data)
                 )
             }
 
@@ -297,7 +325,7 @@ exports.tokenUpdate = async (req, res, next) => {
 exports.searchFriend = async (req, res, next) => {
     try {
         const Regexname = new RegExp(req.body.search_key, 'i');
-        const searchName = await userModel.find({ firstName: Regexname, polyDating: "Social Meida & Dating" });
+        const searchName = await userModel.find({ firstName: Regexname, polyDating: "0" });
         const reaquestedAllEmail = [];
         searchName.map((result, index) => {
             reaquestedAllEmail.push(result.email)
@@ -595,7 +623,7 @@ exports.searchFriend = async (req, res, next) => {
 exports.getDataUserWise = async (req, res, next) => {
     try {
 
-        const userFind = await userModel.findOne({ _id: req.params.user_id, polyDating: "Social Meida & Dating" })
+        const userFind = await userModel.findOne({ _id: req.params.user_id, polyDating: "0" })
 
         if (userFind == null) {
             res.status(status.NOT_FOUND).json(
@@ -738,7 +766,7 @@ exports.storeBasketValue = async (req, res, next) => {
         const allUserWithProfileMatch = [];
         const findUser = await userModel.findOne({
             _id: req.params.user_id,
-            polyDating: "Social Meida & Dating"
+            polyDating: "0"
         })
 
         if (findUser == null) {
@@ -773,7 +801,7 @@ exports.storeBasketValue = async (req, res, next) => {
                 _id: {
                     $ne: req.params.user_id
                 },
-                polyDating: "Social Meida & Dating"
+                polyDating: "0"
             })
 
             const identity = findUser.identity
@@ -890,7 +918,7 @@ exports.yesBasket = async (req, res, next) => {
 
             const findUser = await userModel.findOne({
                 _id: req.params.user_id,
-                polyDating: "Social Meida & Dating"
+                polyDating: "0"
             })
 
             if (findUser == null) {
@@ -1292,7 +1320,7 @@ exports.yesBasket = async (req, res, next) => {
 
                                 const findThumbUp = await userModel.findOne({
                                     _id: req.params.request_user_id,
-                                    polyDating: "Social Meida & Dating"
+                                    polyDating: "0"
                                 })
 
                                 for (const getOriginalData of finalData) {
@@ -1342,7 +1370,7 @@ exports.yesBasket = async (req, res, next) => {
 
                                 const findThumbUp = await userModel.findOne({
                                     _id: req.params.request_user_id,
-                                    polyDating: "Social Meida & Dating"
+                                    polyDating: "0"
                                 })
 
 
@@ -1471,7 +1499,7 @@ exports.yesBasket = async (req, res, next) => {
 
                                                 const findThumbUp = await userModel.findOne({
                                                     _id: req.params.request_user_id,
-                                                    polyDating: "Social Meida & Dating"
+                                                    polyDating: "0"
                                                 })
 
 
@@ -1603,7 +1631,7 @@ exports.noBasket = async (req, res, next) => {
 
             const findUser = await userModel.findOne({
                 _id: req.params.user_id,
-                polyDating: "Social Meida & Dating"
+                polyDating: "0"
             })
 
             if (findUser == null) {
@@ -1664,7 +1692,7 @@ exports.noBasket = async (req, res, next) => {
 
                         const findThumbUp = await userModel.findOne({
                             _id: req.params.request_user_id,
-                            polyDating: "Social Meida & Dating"
+                            polyDating: "0"
                         })
 
 
@@ -1718,7 +1746,7 @@ exports.noBasket = async (req, res, next) => {
 
                         const findThumbUp = await userModel.findOne({
                             _id: req.params.request_user_id,
-                            polyDating: "Social Meida & Dating"
+                            polyDating: "0"
                         })
 
                         for (const getOriginalData of finalData) {
@@ -1852,7 +1880,7 @@ exports.noBasket = async (req, res, next) => {
 
                                         const findThumbUp = await userModel.findOne({
                                             _id: req.params.request_user_id,
-                                            polyDating: "Social Meida & Dating"
+                                            polyDating: "0"
                                         })
 
 
@@ -1954,7 +1982,7 @@ exports.noBasket = async (req, res, next) => {
                 if (accessBasket == true) {
                     const findUser = await userModel.findOne({
                         _id: req.params.request_user_id,
-                        polyDating: "Social Meida & Dating"
+                        polyDating: "0"
                     })
 
                     if (findUser == null) {
@@ -2017,7 +2045,7 @@ exports.noBasket = async (req, res, next) => {
 
                                 const findThumbUp = await userModel.findOne({
                                     _id: req.params.request_user_id,
-                                    polyDating: "Social Meida & Dating"
+                                    polyDating: "0"
                                 })
 
                                 for (const getOriginalData of finalData) {
@@ -2068,7 +2096,7 @@ exports.noBasket = async (req, res, next) => {
 
                                 const findThumbUp = await userModel.findOne({
                                     _id: req.params.request_user_id,
-                                    polyDating: "Social Meida & Dating"
+                                    polyDating: "0"
                                 })
 
                                 for (const getOriginalData of finalData) {
@@ -2194,7 +2222,7 @@ exports.noBasket = async (req, res, next) => {
                                             if (requestEmail.requestedEmail == meageAllTableEmail.email) {
                                                 const findThumbUp = await userModel.findOne({
                                                     _id: req.params.request_user_id,
-                                                    polyDating: "Social Meida & Dating"
+                                                    polyDating: "0"
                                                 })
 
                                                 for (const findThumb of findThumbUp.basket) {
@@ -2294,3 +2322,19 @@ exports.noBasket = async (req, res, next) => {
 }
 
 
+
+
+// exports.add = async (req, res, next) => {
+//     try {
+
+
+//         await userModel.updateMany({
+//             relationshipSatus: "swinger",
+//         }, {
+//             relationshipSatus: 2
+//         })
+
+//     } catch (error) {
+
+//     }
+// }

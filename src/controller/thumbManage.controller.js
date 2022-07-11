@@ -10,7 +10,7 @@ exports.thumbCount = async (req, res, next) => {
 
         const findUser = await userModel.findOne({
             _id: req.params.admin_user_id,
-            polyDating: "Social Meida & Dating"
+            polyDating: "0"
         })
         if (findUser == null) {
             res.status(status.NOT_FOUND).json(
@@ -20,13 +20,13 @@ exports.thumbCount = async (req, res, next) => {
 
             const findExistUser = await userModel.findOne({
                 _id: req.params.user_id,
-                polyDating: "Social Meida & Dating"
+                polyDating: "0"
             })
 
 
             const findExistUserInUser = await userModel.findOne({
                 _id: req.params.req_user_id,
-                polyDating: "Social Meida & Dating"
+                polyDating: "0"
             })
 
             if (findExistUser == null && findExistUserInUser == null) {

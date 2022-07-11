@@ -12,6 +12,8 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 app.use(express.static('public'));
 app.use('/images', express.static('images'));
+
+
 const userRoutes = require("./src/routes/user.routes");
 const postRoutes = require("./src/routes/post.routes");
 const requestRoutes = require("./src/routes/request.routes");
@@ -22,8 +24,6 @@ const chatRoutes = require("./src/routes/chat.routes");
 const sessionRoutes = require('./src/routes/session.routes');
 const thumbManageRoutes = require("./src/routes/thumbManage.routes");
 const basketRoutes = require("./src/routes/basket.routes");
-
-
 
 
 // polyamorous

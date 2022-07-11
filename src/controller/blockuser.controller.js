@@ -6,13 +6,13 @@ const blockUnblockUserModel = require("../model/blockuser.model");
 exports.blockUnblockUser = async (req, res, next) => {
     try {
 
-        const userFind = await userModel.findOne({ _id: req.params.user_id, polyDating: "Social Meida & Dating" });
+        const userFind = await userModel.findOne({ _id: req.params.user_id, polyDating: "0" });
         if (userFind == null) {
             res.status(status.NOT_FOUND).json(
                 new APIResponse("User Not Found and not Social Meida & Dating type user", "false", 404, "0")
             );
         } else {
-            const blockUserFound = await userModel.findOne({ _id: req.params.block_user_id, polyDating: "Social Meida & Dating" })
+            const blockUserFound = await userModel.findOne({ _id: req.params.block_user_id, polyDating: "0" })
 
             if (blockUserFound == null) {
                 res.status(status.NOT_FOUND).json(

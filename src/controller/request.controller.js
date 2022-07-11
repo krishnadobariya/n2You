@@ -8,10 +8,10 @@ const { response } = require("express");
 exports.sendRequest = async (req, res, next) => {
     try {
 
-        const checkUserExist = await userModel.findOne({ email: req.params.user_email, polyDating: "Social Meida & Dating" });
+        const checkUserExist = await userModel.findOne({ email: req.params.user_email, polyDating: "0" });
 
         if (checkUserExist) {
-            const checkRequestedEmail = await userModel.findOne({ email: req.params.requested_email, polyDating: "Social Meida & Dating" });
+            const checkRequestedEmail = await userModel.findOne({ email: req.params.requested_email, polyDating: "0" });
 
             if (checkRequestedEmail) {
                 const emailExitInRequestedModel = await requestModel.findOne({ userEmail: req.params.user_email })
