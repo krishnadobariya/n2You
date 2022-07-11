@@ -230,7 +230,7 @@ exports.getPostsbyUseId = async (req, res, next) => {
                         commentData.push(getComment)
                     } else if (hours > 0 && days == 0) {
                         const getComment = await commentModel.findOne({ postId: createResponse._id });
-                        console.log("getComment", getComment);
+
                         finalPostedTime.push(`${hours} hours`);
                         commentData.push(getComment)
                     } else if (minutes > 0 && hours == 0) {
@@ -254,10 +254,11 @@ exports.getPostsbyUseId = async (req, res, next) => {
                         comment: createResponse.comment,
                         report: createResponse.report
                     }
+
                     const response = {
                         posts,
                         finalPostedTime,
-                        commentData
+                        commentData: commentData[0] == null ? [] : commentData
                     }
 
                     finalResponse.push(response)
@@ -386,7 +387,7 @@ exports.getPostsVideobyUseId = async (req, res, next) => {
                         const response = {
                             posts,
                             finalPostedTime,
-                            commentData
+                            commentData: commentData[0] == null ? [] : commentData
                         }
 
                         finalResponse.push(response)
@@ -515,14 +516,12 @@ exports.getPostsImagesbyUseId = async (req, res, next) => {
                             like: createResponse.like,
                             comment: createResponse.comment,
                             report: createResponse.report
-
-
                         }
 
                         const response = {
                             posts,
                             finalPostedTime,
-                            commentData
+                            commentData: commentData[0] == null ? [] : commentData
                         }
 
                         finalResponse.push(response)
@@ -587,7 +586,6 @@ exports.getPostsImagesbyUseId = async (req, res, next) => {
 //         )
 //     }
 // }
-
 
 // Edit Post
 
@@ -824,7 +822,7 @@ exports.userAllFriendPost = async (req, res, next) => {
                                         const response = {
                                             getallposts,
                                             finalPostedTime,
-                                            commentData
+                                            commentData: commentData[0] == null ? [] : commentData
                                         }
                                         finalResponse.push(response);
 
