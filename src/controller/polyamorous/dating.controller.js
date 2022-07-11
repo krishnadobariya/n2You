@@ -780,105 +780,6 @@ exports.acceptedLinkProfile = async (req, res, next) => {
                             }
                         })
 
-                        const createRoom = await groupChatRoomModels.findOne(
-                            {
-                                _id: req.query.group_room_id
-                            }
-                        )
-
-
-
-                        if (createRoom) {
-                            await groupChatRoomModels.updateOne({
-                                _id: req.query.group_room_id
-                            }, {
-                                $set: {
-                                    user3: req.params.request_id
-                                }
-                            })
-                        }
-
-
-                        const user2Id = [];
-                        if (findInLinkProfile1.user1 == req.params.user_id) {
-                            const findUser2Deatil = await userModel.findOne({
-                                _id: findInLinkProfile1.user2
-                            })
-                            user2Id.push(findUser2Deatil.firstName)
-                        } else {
-                            const findUser2Deatil = await userModel.findOne({
-                                _id: findInLinkProfile1.user1
-                            })
-                            user2Id.push(findUser2Deatil.firstName)
-                        }
-                        const findUser = await notificationModel.findOne({
-                            userId: req.params.request_id
-                        })
-
-
-                        if (findUser == null) {
-
-                            const findUser = await userModel.findOne({
-                                _id: req.params.user_id
-                            })
-
-                            console.log(findUser);
-
-                            const existUser = await notificationModel.findOne({
-                                userId: req.params.request_id,
-                                notifications: {
-                                    $elemMatch: {
-                                        notifications: `You are added in polyamorous group with ${findUser.firstName}, ${user2Id[0]}`
-                                    }
-                                }
-                            })
-
-                            if (existUser) {
-
-                            } else {
-
-                                const notificationData = notificationModel({
-                                    userId: req.params.request_id,
-                                    notifications: {
-                                        notifications: `You are added in polyamorous group with ${findUser.firstName}, ${user2Id[0]}`,
-                                        status: 2
-                                    }
-                                })
-
-                                await notificationData.save();
-                            }
-
-                        } else {
-
-                            const findUser = await userModel.findOne({
-                                _id: req.params.user_id
-                            })
-
-                            const existUser = await notificationModel.findOne({
-                                userId: req.params.request_id,
-                                notifications: {
-                                    $elemMatch: {
-                                        notifications: `You are added in polyamorous group with ${findUser.firstName}, ${user2Id[0]}`
-                                    }
-                                }
-                            })
-
-
-                            if (existUser) {
-
-                            } else {
-                                await notificationModel.updateOne({
-                                    userId: req.params.request_id
-                                }, {
-                                    $push: {
-                                        notifications: {
-                                            notifications: `You are added in polyamorous group with ${findUser.firstName}, ${user2Id[0]}`,
-                                            status: 2,
-                                        }
-                                    }
-                                })
-                            }
-                        }
 
                         const user1 = findInLinkProfile1.user1
 
@@ -946,6 +847,108 @@ exports.acceptedLinkProfile = async (req, res, next) => {
                                         user3: req.params.request_id
                                     }
                                 })
+
+
+
+                                const createRoom = await groupChatRoomModels.findOne(
+                                    {
+                                        _id: req.query.group_room_id
+                                    }
+                                )
+
+
+
+                                if (createRoom) {
+                                    await groupChatRoomModels.updateOne({
+                                        _id: req.query.group_room_id
+                                    }, {
+                                        $set: {
+                                            user3: req.params.request_id
+                                        }
+                                    })
+                                }
+
+
+                                const user2Id = [];
+                                if (findInLinkProfile1.user1 == req.params.user_id) {
+                                    const findUser2Deatil = await userModel.findOne({
+                                        _id: findInLinkProfile1.user2
+                                    })
+                                    user2Id.push(findUser2Deatil.firstName)
+                                } else {
+                                    const findUser2Deatil = await userModel.findOne({
+                                        _id: findInLinkProfile1.user1
+                                    })
+                                    user2Id.push(findUser2Deatil.firstName)
+                                }
+                                const findUser = await notificationModel.findOne({
+                                    userId: req.params.request_id
+                                })
+
+
+                                if (findUser == null) {
+
+                                    const findUser = await userModel.findOne({
+                                        _id: req.params.user_id
+                                    })
+
+                                    console.log(findUser);
+
+                                    const existUser = await notificationModel.findOne({
+                                        userId: req.params.request_id,
+                                        notifications: {
+                                            $elemMatch: {
+                                                notifications: `You are added in polyamorous group with ${findUser.firstName}, ${user2Id[0]}`
+                                            }
+                                        }
+                                    })
+
+                                    if (existUser) {
+
+                                    } else {
+
+                                        const notificationData = notificationModel({
+                                            userId: req.params.request_id,
+                                            notifications: {
+                                                notifications: `You are added in polyamorous group with ${findUser.firstName}, ${user2Id[0]}`,
+                                                status: 2
+                                            }
+                                        })
+
+                                        await notificationData.save();
+                                    }
+
+                                } else {
+
+                                    const findUser = await userModel.findOne({
+                                        _id: req.params.user_id
+                                    })
+
+                                    const existUser = await notificationModel.findOne({
+                                        userId: req.params.request_id,
+                                        notifications: {
+                                            $elemMatch: {
+                                                notifications: `You are added in polyamorous group with ${findUser.firstName}, ${user2Id[0]}`
+                                            }
+                                        }
+                                    })
+
+
+                                    if (existUser) {
+
+                                    } else {
+                                        await notificationModel.updateOne({
+                                            userId: req.params.request_id
+                                        }, {
+                                            $push: {
+                                                notifications: {
+                                                    notifications: `You are added in polyamorous group with ${findUser.firstName}, ${user2Id[0]}`,
+                                                    status: 2,
+                                                }
+                                            }
+                                        })
+                                    }
+                                }
 
                                 res.status(status.OK).json(
                                     new APIResponse("accepted Both User!", "true", 200, "1")
@@ -1125,119 +1128,7 @@ exports.acceptedLinkProfile = async (req, res, next) => {
                             }
                         })
 
-                        const createRoom = await groupChatRoomModels.findOne({
-                            _id: req.query.group_room_id
 
-                        })
-
-
-                        if (createRoom) {
-                            await groupChatRoomModels.updateOne({
-                                _id: req.query.group_room_id
-                            }, {
-                                $set: {
-                                    user4: req.params.request_id
-                                }
-                            })
-                        }
-
-
-                        const user2Id = [];
-                        if (findInLinkProfile5.user1 == req.params.user_id) {
-                            const findUser2Deatil = await userModel.findOne({
-                                _id: findInLinkProfile5.user2
-                            })
-                            const findUser3Deatil = await userModel.findOne({
-                                _id: findInLinkProfile5.user3
-                            })
-                            user2Id.push(findUser2Deatil.firstName, findUser3Deatil.firstName)
-                        } else if (findInLinkProfile5.user2 == req.params.user_id) {
-                            const findUser1Deatil = await userModel.findOne({
-                                _id: findInLinkProfile5.user1
-                            })
-                            const findUser3Deatil = await userModel.findOne({
-                                _id: findInLinkProfile5.user3
-                            })
-
-                            user2Id.push(findUser1Deatil.firstName, findUser3Deatil.firstName)
-                        } else if (findInLinkProfile5.user3 == req.params.user_id) {
-                            const findUser1Deatil = await userModel.findOne({
-                                _id: findInLinkProfile5.user1
-                            })
-                            const findUser2Deatil = await userModel.findOne({
-                                _id: findInLinkProfile5.user2
-                            })
-
-                            user2Id.push(findUser1Deatil.firstName, findUser2Deatil.firstName)
-                        }
-
-
-
-                        const findUser = await notificationModel.findOne({
-                            userId: req.params.request_id
-                        })
-
-
-                        if (findUser == null) {
-
-                            const findUser = await userModel.findOne({
-                                _id: req.params.user_id
-                            })
-
-                            const existUser = await notificationModel.findOne({
-                                userId: req.params.request_id,
-                                notifications: {
-                                    $elemMatch: {
-                                        notifications: `You are added in polyamorous group with ${findUser.firstName}, ${user2Id[0]}, ${user2Id[1]}`
-                                    }
-                                }
-                            })
-
-                            if (existUser) {
-
-                            } else {
-
-                                const notificationData = notificationModel({
-                                    userId: req.params.request_id,
-                                    notifications: {
-                                        notifications: `You are added in polyamorous group with ${findUser.firstName}, ${user2Id[0]}, ${user2Id[1]}`,
-                                        status: 2
-                                    }
-                                })
-
-                                await notificationData.save();
-                            }
-
-                        } else {
-
-                            const findUser = await userModel.findOne({
-                                _id: req.params.user_id
-                            })
-
-                            const existUser = await notificationModel.findOne({
-                                userId: req.params.request_id,
-                                notifications: {
-                                    $elemMatch: {
-                                        notifications: `You are added in polyamorous group with ${findUser.firstName}, ${user2Id[0]}, ${user2Id[1]}`
-                                    }
-                                }
-                            })
-
-                            if (existUser) {
-
-                            } else {
-                                await notificationModel.updateOne({
-                                    userId: req.params.request_id
-                                }, {
-                                    $push: {
-                                        notifications: {
-                                            notifications: `You are added in polyamorous group with ${findUser.firstName}, ${user2Id[0]}, ${user2Id[1]}`,
-                                            status: 2
-                                        }
-                                    }
-                                })
-                            }
-                        }
 
                         const user1 = findInLinkProfile5.user1
 
@@ -1337,9 +1228,127 @@ exports.acceptedLinkProfile = async (req, res, next) => {
                                         user4: req.params.request_id
                                     }
                                 })
+
+
+                                const createRoom = await groupChatRoomModels.findOne({
+                                    _id: req.query.group_room_id
+
+                                })
+
+
+                                if (createRoom) {
+                                    await groupChatRoomModels.updateOne({
+                                        _id: req.query.group_room_id
+                                    }, {
+                                        $set: {
+                                            user4: req.params.request_id
+                                        }
+                                    })
+                                }
+
+
+                                const user2Id = [];
+
+                                if (findInLinkProfile5.user1 == req.params.user_id) {
+                                    const findUser2Deatil = await userModel.findOne({
+                                        _id: findInLinkProfile5.user2
+                                    })
+                                    const findUser3Deatil = await userModel.findOne({
+                                        _id: findInLinkProfile5.user3
+                                    })
+                                    user2Id.push(findUser2Deatil.firstName, findUser3Deatil.firstName)
+                                } else if (findInLinkProfile5.user2 == req.params.user_id) {
+                                    const findUser1Deatil = await userModel.findOne({
+                                        _id: findInLinkProfile5.user1
+                                    })
+                                    const findUser3Deatil = await userModel.findOne({
+                                        _id: findInLinkProfile5.user3
+                                    })
+
+                                    user2Id.push(findUser1Deatil.firstName, findUser3Deatil.firstName)
+                                } else if (findInLinkProfile5.user3 == req.params.user_id) {
+                                    const findUser1Deatil = await userModel.findOne({
+                                        _id: findInLinkProfile5.user1
+                                    })
+                                    const findUser2Deatil = await userModel.findOne({
+                                        _id: findInLinkProfile5.user2
+                                    })
+
+                                    user2Id.push(findUser1Deatil.firstName, findUser2Deatil.firstName)
+                                }
+
+
+
+                                const findUser = await notificationModel.findOne({
+                                    userId: req.params.request_id
+                                })
+
+
+                                if (findUser == null) {
+
+                                    const findUser = await userModel.findOne({
+                                        _id: req.params.user_id
+                                    })
+
+                                    const existUser = await notificationModel.findOne({
+                                        userId: req.params.request_id,
+                                        notifications: {
+                                            $elemMatch: {
+                                                notifications: `You are added in polyamorous group with ${findUser.firstName}, ${user2Id[0]}, ${user2Id[1]}`
+                                            }
+                                        }
+                                    })
+
+                                    if (existUser) {
+
+                                    } else {
+
+                                        const notificationData = notificationModel({
+                                            userId: req.params.request_id,
+                                            notifications: {
+                                                notifications: `You are added in polyamorous group with ${findUser.firstName}, ${user2Id[0]}, ${user2Id[1]}`,
+                                                status: 2
+                                            }
+                                        })
+
+                                        await notificationData.save();
+                                    }
+
+                                } else {
+
+                                    const findUser = await userModel.findOne({
+                                        _id: req.params.user_id
+                                    })
+
+                                    const existUser = await notificationModel.findOne({
+                                        userId: req.params.request_id,
+                                        notifications: {
+                                            $elemMatch: {
+                                                notifications: `You are added in polyamorous group with ${findUser.firstName}, ${user2Id[0]}, ${user2Id[1]}`
+                                            }
+                                        }
+                                    })
+
+                                    if (existUser) {
+
+                                    } else {
+                                        await notificationModel.updateOne({
+                                            userId: req.params.request_id
+                                        }, {
+                                            $push: {
+                                                notifications: {
+                                                    notifications: `You are added in polyamorous group with ${findUser.firstName}, ${user2Id[0]}, ${user2Id[1]}`,
+                                                    status: 2
+                                                }
+                                            }
+                                        })
+                                    }
+                                }
+
                                 res.status(status.OK).json(
                                     new APIResponse("accepted all User!", "true", 200, "1")
                                 );
+
                             } else {
                                 const findIdInLinkProfile = await linkProfileModel.findOne({
                                     $and: [
@@ -2036,23 +2045,6 @@ exports.acceptedLinkProfile = async (req, res, next) => {
                             }
                         })
 
-
-                        const createRoom = await groupChatRoomModels.findOne({
-                            _id: req.query.group_room_id
-                        })
-
-
-                        if (createRoom) {
-
-                            await groupChatRoomModels.updateOne({
-                                _id: req.query.group_room_id
-                            }, {
-                                $set: {
-                                    user3: req.params.request_id
-                                }
-                            })
-                        }
-
                         const user1 = findInLinkProfile1.user1
 
                         const findUser1 = await userModel.findOne({
@@ -2305,22 +2297,6 @@ exports.acceptedLinkProfile = async (req, res, next) => {
                                 "linkProfile.$.accepted": 2
                             }
                         })
-
-                        const createRoom = await groupChatRoomModels.findOne({
-                            _id: req.query.group_room_id
-                        })
-
-                        if (createRoom) {
-
-                            await groupChatRoomModels.updateOne({
-                                _id: req.query.group_room_id
-                            }, {
-                                $set: {
-                                    user4: req.params.request_id
-                                }
-                            })
-                        }
-
 
                         const user1 = findInLinkProfile5.user1
 

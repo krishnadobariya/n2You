@@ -4,6 +4,8 @@ const groupChatModel = require("../../webSocket/models/groupChat.model");
 const userModel = require("../../model/user.model");
 const { default: mongoose } = require("mongoose");
 const groupChatRoomModels = require("../../webSocket/models/groupChatRoom.models");
+const chatRoomModel = require("../../webSocket/models/chatRoom.model");
+const linkProfileModel = require("../../model/polyamorous/linkProfile.model");
 
 exports.getGroupChat = async (req, res, next) => {
     try {
@@ -18,32 +20,37 @@ exports.getGroupChat = async (req, res, next) => {
             );
         } else {
 
-            const chat = findRoom.chat;
-            unReadMessage = [];
             const allChat = [];
-            for (const getChat of chat) {
+            for (const finalChatUserWise of findRoom.chat) {
+                for (const chatOrUser of finalChatUserWise.read) {
+                    if (chatOrUser.userId == req.params.user_id) {
+                        const chat = findRoom.chat;
 
-                const findUser = await userModel.findOne({
-                    _id: getChat.sender
-                })
 
-                const date = getChat.createdAt
-                let hours = date.getHours();
-                let minutes = date.getMinutes();
-                let ampm = hours >= 12 ? 'pm' : 'am';
-                hours = hours % 12;
-                hours = hours ? hours : 12;
-                minutes = minutes.toString().padStart(2, '0');
-                let strTime = hours + ':' + minutes + ' ' + ampm;
+                        const findUser = await userModel.findOne({
+                            _id: finalChatUserWise.sender
+                        })
 
-                const response = {
-                    _id: findUser._id,
-                    text: getChat.text,
-                    photo: findUser.photo[0] ? findUser.photo[0].res : null,
-                    name: findUser.firstName,
-                    time: strTime
+                        const date = finalChatUserWise.createdAt
+                        let hours = date.getHours();
+                        let minutes = date.getMinutes();
+                        let ampm = hours >= 12 ? 'pm' : 'am';
+                        hours = hours % 12;
+                        hours = hours ? hours : 12;
+                        minutes = minutes.toString().padStart(2, '0');
+                        let strTime = hours + ':' + minutes + ' ' + ampm;
+
+                        const response = {
+                            _id: findUser._id,
+                            text: finalChatUserWise.text,
+                            photo: findUser.photo[0] ? findUser.photo[0].res : null,
+                            name: findUser.firstName,
+                            time: strTime
+                        }
+                        allChat.push(response)
+                    }
+
                 }
-                allChat.push(response)
             }
 
             res.status(status.OK).json(
@@ -66,7 +73,7 @@ exports.groupList = async (req, res, next) => {
         const finalData = [];
         for (const allRoom of findRoom) {
 
-       
+
             const findRoom = await groupChatModel.findOne({
                 chatRoomId: allRoom._id
             })
@@ -83,7 +90,7 @@ exports.groupList = async (req, res, next) => {
                 var count = 0;
 
                 const lastMessage = [];
-                
+
                 for (const getChat of findRoom.chat) {
                     for (const findReadOrUnread of getChat.read) {
                         if ((findReadOrUnread.userId).toString() == (req.params.user_id).toString()) {
@@ -146,3 +153,119 @@ exports.groupList = async (req, res, next) => {
     }
 }
 
+exports.exitGroup = async (req, res, next) => {
+    try {
+
+        const findGrupRoom = await groupChatRoomModels.findOne({
+            _id: req.params.group_room_id
+        })
+
+        if (findGrupRoom == null) {
+            res.status(status.NOT_FOUND).json(
+                new APIResponse("group not Found", "false", 404, "0")
+            );
+        } else {
+
+
+            if (findGrupRoom.user1 == req.params.user_id) {
+                console.log("efweafwef");
+                await groupChatRoomModels.updateOne({
+                    _id: req.params.group_room_id
+                }, {
+                    $set: {
+                        user1: null,
+                    },
+                })
+            } else if (findGrupRoom.user2 == req.params.user_id) {
+
+                await groupChatRoomModels.updateOne({
+                    _id: req.params.group_room_id
+                }, {
+                    $set: {
+                        user2: null,
+                    },
+
+                })
+            } else if (findGrupRoom.user3 == req.params.user_id) {
+                await groupChatRoomModels.updateOne({
+                    _id: req.params.group_room_id
+                }, {
+                    $set: {
+                        user3: null,
+                    },
+
+                })
+            } else if (findGrupRoom.user4 == req.params.user_id) {
+                await groupChatRoomModels.updateOne({
+                    _id: req.params.group_room_id
+                }, {
+                    $set: {
+                        user4: null,
+                    },
+
+                })
+            }
+
+
+            const findLinkProfileUser = await linkProfileModel.findOne({
+                groupId: req.params.group_room_id
+            })
+
+            if (findLinkProfileUser == null) {
+
+            } else {
+
+
+                if (findLinkProfileUser.user1 == req.params.user_id) {
+                    await linkProfileModel.updateOne({
+                        groupId: req.params.group_room_id
+                    }, {
+                        $set: {
+                            user1: null,
+                        },
+
+                    })
+                } else if (findLinkProfileUser.user2 == req.params.user_id) {
+                    await linkProfileModel.updateOne({
+                        groupId: req.params.group_room_id
+                    }, {
+                        $set: {
+                            user2: null,
+                        },
+
+                    })
+                } else if (findLinkProfileUser.user3 == req.params.user_id) {
+                    await linkProfileModel.updateOne({
+                        groupId: req.params.group_room_id
+                    }, {
+                        $set: {
+                            user3: null,
+                        },
+
+                    })
+                } else if (findLinkProfileUser.user4 == req.params.user_id) {
+                    await linkProfileModel.updateOne({
+                        groupId: req.params.group_room_id
+                    }, {
+                        $set: {
+                            user4: null,
+                        },
+
+                    })
+                }
+            }
+
+
+            res.status(status.OK).json(
+                new APIResponse("Exit group successfully", "true", 200, "1")
+            );
+
+        }
+
+    } catch (error) {
+        console.log("Error:", error);
+        res.status(status.INTERNAL_SERVER_ERROR).json(
+            new APIResponse("Something Went Wrong", false, 500, error.message)
+        );
+    }
+}
