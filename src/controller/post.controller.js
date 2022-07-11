@@ -305,6 +305,10 @@ exports.getPostsVideobyUseId = async (req, res, next) => {
         const finalResponse = [];
         const userFindInPosts = await postModal.findOne({ userId: id });
 
+        const findUser = await userModal.findOne({
+            _id: userFindInPosts.userId
+        })
+
         if (userFindInPosts) {
 
             const userWisePosts = await postModal.findOne({ userId: id });
@@ -365,8 +369,22 @@ exports.getPostsVideobyUseId = async (req, res, next) => {
                             commentData.push(getComment)
                         }
 
+                        const posts = {
+                            userName: findUser.firstName,
+                            email: findUser.email,
+                            profile: findUser.photo[0] ? findUser.photo[0].res : null,
+                            postId: createResponse._id,
+                            post: createResponse.post,
+                            description: createResponse.description,
+                            like: createResponse.like,
+                            comment: createResponse.comment,
+                            report: createResponse.report
+
+
+                        }
+
                         const response = {
-                            createResponse,
+                            posts,
                             finalPostedTime,
                             commentData
                         }
@@ -416,6 +434,10 @@ exports.getPostsImagesbyUseId = async (req, res, next) => {
         const id = req.params.id;
         const finalResponse = [];
         const userFindInPosts = await postModal.findOne({ userId: id });
+
+        const findUser = await userModal.findOne({
+            _id: userFindInPosts.userId
+        })
 
         if (userFindInPosts) {
 
@@ -483,8 +505,22 @@ exports.getPostsImagesbyUseId = async (req, res, next) => {
                         }
 
 
+                        const posts = {
+                            userName: findUser.firstName,
+                            email: findUser.email,
+                            profile: findUser.photo[0] ? findUser.photo[0].res : null,
+                            postId: createResponse._id,
+                            post: createResponse.post,
+                            description: createResponse.description,
+                            like: createResponse.like,
+                            comment: createResponse.comment,
+                            report: createResponse.report
+
+
+                        }
+
                         const response = {
-                            createResponse,
+                            posts,
                             finalPostedTime,
                             commentData
                         }
