@@ -177,9 +177,17 @@ exports.getPostsbyUseId = async (req, res, next) => {
         const id = req.params.id;
         const finalResponse = [];
         const userFindInPosts = await postModal.findOne({ userId: id });
+
+
         if (userFindInPosts) {
 
             const userWisePosts = await postModal.findOne({ userId: id });
+            console.log(userWisePosts);
+
+            const findUser = await userModal.findOne({
+                _id: userWisePosts.userId
+            })
+
             if (userWisePosts.posts) {
                 const storeAllpostsUserWise = [];
                 const getAllPostsUserWise = userWisePosts.posts;
@@ -190,6 +198,7 @@ exports.getPostsbyUseId = async (req, res, next) => {
 
 
                 for (const createResponse of storeAllpostsUserWise) {
+
 
                     datetime = createResponse.createdAt;
 
@@ -221,6 +230,7 @@ exports.getPostsbyUseId = async (req, res, next) => {
                         commentData.push(getComment)
                     } else if (hours > 0 && days == 0) {
                         const getComment = await commentModel.findOne({ postId: createResponse._id });
+                        console.log("getComment", getComment);
                         finalPostedTime.push(`${hours} hours`);
                         commentData.push(getComment)
                     } else if (minutes > 0 && hours == 0) {
@@ -233,8 +243,18 @@ exports.getPostsbyUseId = async (req, res, next) => {
                         commentData.push(getComment)
                     }
 
+                    const posts = {
+                        userName: findUser.firstName,
+                        email: findUser.email,
+                        postId: createResponse._id,
+                        post: createResponse.post,
+                        description: createResponse.description,
+                        like: createResponse.like,
+                        comment: createResponse.comment,
+                        report: createResponse.report
+                    }
                     const response = {
-                        createResponse,
+                        posts,
                         finalPostedTime,
                         commentData
                     }
@@ -454,6 +474,7 @@ exports.getPostsImagesbyUseId = async (req, res, next) => {
                             commentData.push(getComment)
                         }
 
+
                         const response = {
                             createResponse,
                             finalPostedTime,
@@ -624,7 +645,6 @@ exports.userAllFriendPost = async (req, res, next) => {
 
         const statusByEmail = [];
         const data = await requestsModel.findOne({ userEmail: req.params.user_email });
-        console.log("DATA", data);
 
         if (data != null) {
             const allRequestedEmail = data.RequestedEmails
@@ -692,6 +712,8 @@ exports.userAllFriendPost = async (req, res, next) => {
             }])
 
             const emailDataDetail = meargAllTable[0].result;
+
+
 
             for (const emailData of emailDataDetail) {
 
@@ -771,11 +793,7 @@ exports.userAllFriendPost = async (req, res, next) => {
                                 }
                                 statusByEmail.push(status1)
                             } else {
-                                var status2 = {
-                                    posts: "not accepted request",
-                                    email: requestEmail.requestedEmail
-                                }
-                                statusByEmail.push(status2)
+
                             }
                         }
                     }
@@ -783,6 +801,8 @@ exports.userAllFriendPost = async (req, res, next) => {
             }
 
             const final_data = [];
+
+
 
             const finalStatus = [];
             for (const [key, finalData] of meargAllTable.entries()) {
@@ -796,10 +816,51 @@ exports.userAllFriendPost = async (req, res, next) => {
                 const response = {
                     data: finalStatus[key]
                 }
-                final_data.push(response);
+
+
+                if (response.data == undefined) {
+
+                } else {
+
+                    const findUser = await userModal.findOne({
+                        email: response.data.email
+                    })
+                    const data = {
+                        posts: {
+                            postId: response.data.posts[0].getallposts._id,
+                            email: response.data.email,
+                            userName: findUser.firstName,
+                            posts: response.data.posts[0].getallposts.post,
+                            description: response.data.posts[0].getallposts.description,
+                            like: response.data.posts[0].getallposts.like,
+                            comment: response.data.posts[0].getallposts.comment,
+                            report: response.data.posts[0].getallposts.report,
+                        },
+                        finalPostedTime: response.data.posts[0].finalPostedTime,
+                        commentData: response.data.posts[0].commentData
+
+                    }
+
+                    final_data.push(data);
+                }
+
+
             }
 
 
+
+            // const data = {
+            //     postId: response.data.posts[0].getallposts._id,
+            //     email: response.data.email,
+            //     posts: response.data.posts[0].getallposts.post,
+            //     description: response.data.posts[0].getallposts.description,
+            //     like: response.data.posts[0].getallposts.like,
+            //     comment: response.data.posts[0].getallposts.comment,
+            //     report: response.data.posts[0].getallposts.report,
+            // }
+
+
+            console.log(final_data[0].data);
 
             res.status(status.OK).json(
                 new APIResponse("show all post When accept by the user", "true", 201, "1", final_data)

@@ -326,8 +326,11 @@ exports.matchUsers = async (req, res, next) => {
         } else {
 
             const matchUser = [];
+
             for (const allLiked of findUsers.LikeUser) {
 
+
+                console.log(allLiked.LikeduserId);
                 const findInOtherUserForMatching = await datingLikeDislikeUserModel.findOne({
                     userId: allLiked.LikeduserId
                 })
@@ -336,6 +339,9 @@ exports.matchUsers = async (req, res, next) => {
                     userId: allLiked.LikeduserId
                 })
 
+
+
+                console.log("findMatchUser", findMatchUser);
                 const findInUserModel = await userModel.findOne({
                     _id: allLiked.LikeduserId
                 })
@@ -399,8 +405,13 @@ exports.matchUsers = async (req, res, next) => {
                     }
                 }
 
+
+                console.log(findMatchUser);
+
                 for (const matchUser of findMatchUser.LikeUser) {
 
+
+                    console.log(matchUser);
 
 
                     if ((matchUser.LikeduserId).toString() == (findUsers.userId).toString()) {
@@ -445,6 +456,9 @@ exports.matchUsers = async (req, res, next) => {
                     }
                 }
             }
+
+
+
 
             const allMatchUser = await matchUserModel.findOne({
                 userId: req.params.user_id

@@ -705,6 +705,7 @@ function socket(io) {
 
 
                                 io.emit("likeDislikeUser", "User Like Dating");
+
                             } else {
 
                                 await datingLikeDislikeUserModel.updateOne({
@@ -716,6 +717,8 @@ function socket(io) {
                                         }
                                     }
                                 })
+
+                                
 
 
                                 const allUser = [];
@@ -997,27 +1000,30 @@ function socket(io) {
                                     } else {
 
 
-
-
                                         const findAlrearyRerquestedUser1 = await userModel.findOne({
                                             _id: combineUser.user1,
-                                            linkProfile: {
-                                                userId: arg.user_id,
-                                                combineId: arg.combine_id,
-                                                status: 0
-                                            }
                                         })
-
                                         const findAlrearyRerquestedUser2 = await userModel.findOne({
-                                            _id: combineUser.user2,
-                                            linkProfile: {
-                                                userId: arg.user_id,
-                                                combineId: arg.combine_id,
-                                                status: 0
-                                            }
+                                            _id: combineUser.user1,
                                         })
 
-                                        if (findAlrearyRerquestedUser1 && findAlrearyRerquestedUser2) {
+
+                                        const data = [];
+                                        for (const linkUser of findAlrearyRerquestedUser1.linkProfile) {
+                                            console.log(linkUser);
+                                            if (linkUser.userId == arg.user_id && linkUser.status == 0 && linkUser.combineId == arg.combine_id) {
+                                                data.push(1)
+                                            }
+                                        }
+                                        for (const linkUser of findAlrearyRerquestedUser2.linkProfile) {
+                                            if (linkUser.userId == arg.user_id && linkUser.status == 0 && linkUser.combineId == arg.combine_id) {
+                                                data.push(1)
+                                            }
+                                        }
+
+
+
+                                        if (data[0] == 1 && data[1] == 1) {
 
                                             const data = {
                                                 message: "already requested link Profile....",
@@ -1027,6 +1033,7 @@ function socket(io) {
                                             io.emit("sendRequestUser", data);
 
                                         } else {
+
                                             await userModel.updateOne({
                                                 _id: combineUser.user1
                                             }, {
@@ -1074,39 +1081,37 @@ function socket(io) {
                                     } else {
 
 
-                                        console.log(combineUser._id);
 
                                         const findAlrearyRerquestedUser1 = await userModel.findOne({
                                             _id: combineUser.user1,
-                                            linkProfile: {
-                                                userId: arg.user_id,
-                                                combineId: arg.combine_id,
-                                                status: 0
-                                            }
                                         })
-
-                                        console.log(findAlrearyRerquestedUser1);
-
                                         const findAlrearyRerquestedUser2 = await userModel.findOne({
-                                            _id: combineUser.user2,
-                                            linkProfile: {
-                                                userId: arg.user_id,
-                                                combineId: arg.combine_id,
-                                                status: 0
-                                            }
+                                            _id: combineUser.user1,
                                         })
-
                                         const findAlrearyRerquestedUser3 = await userModel.findOne({
-                                            _id: combineUser.user3,
-                                            linkProfile: {
-                                                userId: arg.user_id,
-                                                combineId: arg.combine_id,
-                                                status: 0
-                                            }
+                                            _id: combineUser.user1,
                                         })
 
+                                        const data = [];
+                                        for (const linkUser of findAlrearyRerquestedUser1.linkProfile) {
+                                            console.log(linkUser);
+                                            if (linkUser.userId == arg.user_id && linkUser.status == 0 && linkUser.combineId == arg.combine_id) {
+                                                data.push(1)
+                                            }
+                                        }
+                                        for (const linkUser of findAlrearyRerquestedUser2.linkProfile) {
+                                            if (linkUser.userId == arg.user_id && linkUser.status == 0 && linkUser.combineId == arg.combine_id) {
+                                                data.push(1)
+                                            }
+                                        }
+                                        for (const linkUser of findAlrearyRerquestedUser3.linkProfile) {
+                                            if (linkUser.userId == arg.user_id && linkUser.status == 0 && linkUser.combineId == arg.combine_id) {
+                                                data.push(1)
+                                            }
+                                        }
 
-                                        if (findAlrearyRerquestedUser1 && findAlrearyRerquestedUser2 && findAlrearyRerquestedUser3) {
+                                        console.log(data);
+                                        if (data[0] == 1 && data[1] == 1 && data[2] == 1) {
 
                                             const data = {
                                                 message: "already requested link Profile....",
