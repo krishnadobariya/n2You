@@ -1562,7 +1562,7 @@ exports.acceptedLinkProfile = async (req, res, next) => {
                                 allUser.push(findAllUser.user1, findAllUser.user2, findAllUser.user3)
 
                                 for (const user of allUser) {
-                                    if (model1[0] && model2[0] == null) {
+                                    if (model1[0]) {
                                         const findUser = await notificationModel.findOne({
                                             userId: user
                                         })
@@ -1621,7 +1621,7 @@ exports.acceptedLinkProfile = async (req, res, next) => {
                                                 })
                                             }
                                         }
-                                    } else if (model1[0] == null && model2[0]) {
+                                    } else if (model1[0]) {
                                         const findUser = await notificationModel.findOne({
                                             userId: user
                                         })
@@ -2438,21 +2438,35 @@ exports.acceptedLinkProfile = async (req, res, next) => {
 
 
 
-                                const findUserInUserModels1 = await userModel.findOne({
+
+                                const findInUser1 = await userModel.findOne({
                                     _id: acceptedUsers[1],
-                                    linkProfile: {
-                                        userId: req.params.request_id,
-                                        status: 2
-                                    }
                                 })
 
-                                const findUserInUserModels2 = await userModel.findOne({
-                                    _id: acceptedUsers[0],
-                                    linkProfile: {
-                                        userId: req.params.request_id,
-                                        status: 2
+
+                                const model1 = []
+                                for (const data of findInUser1.linkProfile) {
+                                    data.userId = req.params.request_id,
+                                        data.accepted = 2
+                                    if (data.userId == req.params.request_id && data.accepted == 2) {
+                                        model1.push(findInUser1)
+
                                     }
+                                }
+
+                                const findInUser2 = await userModel.findOne({
+                                    _id: acceptedUsers[0],
                                 })
+
+
+                                const model2 = []
+                                for (const data of findInUser2.linkProfile) {
+                                    data.userId = req.params.request_id,
+                                        data.accepted = 2
+                                    if (data.userId == req.params.request_id && data.accepted == 2) {
+                                        model1.push(findInUser2)
+                                    }
+                                }
 
 
                                 const findAllUser = await linkProfileModel.findOne({
@@ -2462,7 +2476,7 @@ exports.acceptedLinkProfile = async (req, res, next) => {
                                 allUser.push(findAllUser.user1, findAllUser.user2, findAllUser.user3)
 
                                 for (const user of allUser) {
-                                    if (findUserInUserModels1 && findUserInUserModels2 == null) {
+                                    if (model1) {
 
 
 
@@ -2476,7 +2490,7 @@ exports.acceptedLinkProfile = async (req, res, next) => {
                                                 userId: user,
                                                 notifications: {
                                                     $elemMatch: {
-                                                        notifications: `There is Conflict of interest with ${findUserInUserModels1.firstName}, Please discuss in group`
+                                                        notifications: `There is Conflict of interest with ${model1[0].firstName}, Please discuss in group`
                                                     }
                                                 }
                                             })
@@ -2488,7 +2502,7 @@ exports.acceptedLinkProfile = async (req, res, next) => {
                                                 const notificationData = notificationModel({
                                                     userId: user,
                                                     notifications: {
-                                                        notifications: `There is Conflict of interest with ${findUserInUserModels1.firstName}, Please discuss in group`,
+                                                        notifications: `There is Conflict of interest with ${model1[0].firstName}, Please discuss in group`,
                                                         userId: findUser._id,
                                                         status: 3
                                                     }
@@ -2507,7 +2521,7 @@ exports.acceptedLinkProfile = async (req, res, next) => {
                                                 userId: user,
                                                 notifications: {
                                                     $elemMatch: {
-                                                        notifications: `There is Conflict of interest with ${findUserInUserModels1.firstName}, Please discuss in group`
+                                                        notifications: `There is Conflict of interest with ${model1[0].firstName}, Please discuss in group`
                                                     }
                                                 }
                                             })
@@ -2521,7 +2535,7 @@ exports.acceptedLinkProfile = async (req, res, next) => {
                                                 }, {
                                                     $push: {
                                                         notifications: {
-                                                            notifications: `There is Conflict of interest with ${findUserInUserModels1.firstName}, Please discuss in group`,
+                                                            notifications: `There is Conflict of interest with ${model1[0].firstName}, Please discuss in group`,
                                                             status: 3,
                                                             userId: findUser._id
                                                         }
@@ -2529,10 +2543,7 @@ exports.acceptedLinkProfile = async (req, res, next) => {
                                                 })
                                             }
                                         }
-                                    } else if (findUserInUserModels1 == null && findUserInUserModels2) {
-
-
-
+                                    } else if (model2[0]) {
                                         const findUser = await notificationModel.findOne({
                                             userId: user
                                         })
@@ -2544,7 +2555,7 @@ exports.acceptedLinkProfile = async (req, res, next) => {
                                                 userId: user,
                                                 notifications: {
                                                     $elemMatch: {
-                                                        notifications: `There is Conflict of interest with ${findUserInUserModels2.firstName}, Please discuss in group`
+                                                        notifications: `There is Conflict of interest with ${model2[0].firstName}, Please discuss in group`
                                                     }
                                                 }
                                             })
@@ -2556,7 +2567,7 @@ exports.acceptedLinkProfile = async (req, res, next) => {
                                                 const notificationData = notificationModel({
                                                     userId: user,
                                                     notifications: {
-                                                        notifications: `There is Conflict of interest with ${findUserInUserModels2.firstName}, Please discuss in group`,
+                                                        notifications: `There is Conflict of interest with ${model2[0].firstName}, Please discuss in group`,
                                                         userId: findUser._id,
                                                         status: 3
                                                     }
@@ -2575,7 +2586,7 @@ exports.acceptedLinkProfile = async (req, res, next) => {
                                                 userId: user,
                                                 notifications: {
                                                     $elemMatch: {
-                                                        notifications: `There is Conflict of interest with ${findUserInUserModels2.firstName}, Please discuss in group`
+                                                        notifications: `There is Conflict of interest with ${model2[0].firstName}, Please discuss in group`
                                                     }
                                                 }
                                             })
@@ -2589,7 +2600,7 @@ exports.acceptedLinkProfile = async (req, res, next) => {
                                                 }, {
                                                     $push: {
                                                         notifications: {
-                                                            notifications: `There is Conflict of interest with ${findUserInUserModels2.firstName}, Please discuss in group`,
+                                                            notifications: `There is Conflict of interest with ${model2[0].firstName}, Please discuss in group`,
                                                             status: 3,
                                                             userId: findUser._id
                                                         }
@@ -2597,7 +2608,7 @@ exports.acceptedLinkProfile = async (req, res, next) => {
                                                 })
                                             }
                                         }
-                                    } else if (findUserInUserModels1 && findUserInUserModels2) {
+                                    } else if (model1[0] && model2[0]) {
                                         const findUser = await notificationModel.findOne({
                                             userId: user
                                         })
@@ -2609,7 +2620,7 @@ exports.acceptedLinkProfile = async (req, res, next) => {
                                                 userId: user,
                                                 notifications: {
                                                     $elemMatch: {
-                                                        notifications: `There is Conflict of interest with ${findUserInUserModels1.firstName}, ${findUserInUserModels2.firstName}, Please discuss in group`
+                                                        notifications: `There is Conflict of interest with ${model1[0].firstName}, ${model2[0].firstName}, Please discuss in group`
                                                     }
                                                 }
                                             })
@@ -2621,7 +2632,7 @@ exports.acceptedLinkProfile = async (req, res, next) => {
                                                 const notificationData = notificationModel({
                                                     userId: user,
                                                     notifications: {
-                                                        notifications: `There is Conflict of interest with ${findUserInUserModels1.firstName}, ${findUserInUserModels2.firstName}, Please discuss in group`,
+                                                        notifications: `There is Conflict of interest with ${model1[0].firstName}, ${model2[0].firstName}, Please discuss in group`,
                                                         userId: findUser._id,
                                                         status: 3
                                                     }
@@ -2640,7 +2651,7 @@ exports.acceptedLinkProfile = async (req, res, next) => {
                                                 userId: user,
                                                 notifications: {
                                                     $elemMatch: {
-                                                        notifications: `There is Conflict of interest with ${findUserInUserModels1.firstName}, ${findUserInUserModels2.firstName} Please discuss in group`
+                                                        notifications: `There is Conflict of interest with ${model1[0].firstName}, ${model2[0].firstName} Please discuss in group`
                                                     }
                                                 }
                                             })
@@ -2654,7 +2665,7 @@ exports.acceptedLinkProfile = async (req, res, next) => {
                                                 }, {
                                                     $push: {
                                                         notifications: {
-                                                            notifications: `There is Conflict of interest with ${findUserInUserModels1.firstName}, ${findUserInUserModels2.firstName} Please discuss in group`,
+                                                            notifications: `There is Conflict of interest with ${model1[0].firstName}, ${model2[0].firstName} Please discuss in group`,
                                                             status: 3,
                                                             userId: findUser._id
                                                         }
@@ -2686,31 +2697,6 @@ exports.acceptedLinkProfile = async (req, res, next) => {
                                     conflictUserId: req.params.request_id
                                 })
 
-                                const findInUser1 = await userModel.findOne({
-                                    _id: acceptedUser[1],
-                                })
-
-                                const model1 = []
-                                for (const data of findInUser1.linkProfile) {
-                                    data.userId = req.params.request_id,
-                                        data.accepted = 2
-                                    if (data.userId == req.params.request_id && data.accepted == 2) {
-                                        model1.push(model1[0])
-                                    }
-                                }
-
-                                const findInUser2 = await userModel.findOne({
-                                    _id: acceptedUser[0],
-                                })
-
-                                const model2 = []
-                                for (const data of findInUser2.linkProfile) {
-                                    data.userId = req.params.request_id,
-                                        data.accepted = 2
-                                    if (data.userId == req.params.request_id && data.accepted == 2) {
-                                        model1.push(model2[0])
-                                    }
-                                }
 
                                 if (findGroupInConflickModel == null) {
 
