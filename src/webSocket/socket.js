@@ -89,8 +89,22 @@ function socket(io) {
                             })
 
                             await data.save();
+                            const receiver_id = [];
+                            if (arg.sender_id == arg.user_1) {
+                                const userFind = await userModel.findOne({ _id: arg.user_2, polyDating: 0 })
+                                receiver_id.push(userFind._id)
 
-                            io.to(userRoom).emit("chatReceive", arg.text);
+                            } else {
+                                const userFind = await userModel.findOne({ _id: arg.user_1, polyDating: 0 })
+                                receiver_id.push(userFind._id)
+
+                            }
+                            const chat = {
+                                text: arg.text,
+                                sender: arg.sender_id,
+                                receiver: receiver_id[0]
+                            }
+                            io.to(userRoom).emit("chatReceive", chat);
 
                             const title = "n2you Notification";
                             const body = `${arg.sender_id} send request to `;
@@ -125,7 +139,21 @@ function socket(io) {
                             })
 
                             await data.save();
-                            io.to(userRoom).emit("chatReceive", arg.text);
+                            if (arg.sender_id == arg.user_1) {
+                                const userFind = await userModel.findOne({ _id: arg.user_2, polyDating: 0 })
+                                receiver_id.push(userFind._id)
+
+                            } else {
+                                const userFind = await userModel.findOne({ _id: arg.user_1, polyDating: 0 })
+                                receiver_id.push(userFind._id)
+
+                            }
+                            const chat = {
+                                text: arg.text,
+                                sender: arg.sender_id,
+                                receiver: receiver_id[0]
+                            }
+                            io.to(userRoom).emit("chatReceive", chat);
                             const title = "n2you Notification";
                             const body = `${arg.sender_id} send request to `;
 
@@ -181,7 +209,22 @@ function socket(io) {
 
                                 await data.save();
 
-                                io.to(userRoom[0]).emit("chatReceive", arg.text);
+                                if (arg.sender_id == arg.user_1) {
+                                    const userFind = await userModel.findOne({ _id: arg.user_2, polyDating: 0 })
+                                    receiver_id.push(userFind._id)
+
+                                } else {
+                                    const userFind = await userModel.findOne({ _id: arg.user_1, polyDating: 0 })
+                                    receiver_id.push(userFind._id)
+
+                                }
+                                const chat = {
+                                    text: arg.text,
+                                    sender: arg.sender_id,
+                                    receiver: receiver_id[0]
+                                }
+
+                                io.to(userRoom[0]).emit("chatReceive", chat);
                                 const title = "n2you Notification";
                                 const body = `${arg.sender_id} send request to `;
 
@@ -218,7 +261,23 @@ function socket(io) {
                                     }
                                 })
 
-                                io.to(userRoom[0]).emit("chatReceive", finalData.text);
+                                const receiver_id = [];
+                                if (arg.sender_id == arg.user_1) {
+                                    const userFind = await userModel.findOne({ _id: arg.user_2, polyDating: 0 })
+                                    receiver_id.push(userFind._id)
+
+                                } else {
+                                    const userFind = await userModel.findOne({ _id: arg.user_1, polyDating: 0 })
+                                    receiver_id.push(userFind._id)
+
+                                }
+                                const chat = {
+                                    text: finalData.text,
+                                    sender: arg.sender_id,
+                                    receiver: receiver_id[0]
+                                }
+                                io.to(userRoom[0]).emit("chatReceive", chat);
+
                                 const title = "n2you Notification";
                                 const body = `${arg.sender_id} send request to `;
 
@@ -256,7 +315,23 @@ function socket(io) {
                                 })
 
                                 await data.save();
-                                io.to(userRoom[0]).emit("chatReceive", arg.text);
+                                const receiver_id = [];
+                                if (arg.sender_id == arg.user_1) {
+                                    const userFind = await userModel.findOne({ _id: arg.user_2, polyDating: 0 })
+                                    receiver_id.push(userFind._id)
+
+                                } else {
+                                    const userFind = await userModel.findOne({ _id: arg.user_1, polyDating: 0 })
+                                    receiver_id.push(userFind._id)
+
+                                }
+                                const chat = {
+                                    text: arg.text,
+                                    sender: arg.sender_id,
+                                    receiver: receiver_id[0]
+                                }
+                                io.to(userRoom[0]).emit("chatReceive", chat);
+
                                 const title = "n2you Notification";
                                 const body = `${arg.sender_id} send request to `;
 
@@ -291,8 +366,23 @@ function socket(io) {
                                         chat: finalData
                                     }
                                 })
+                                const receiver_id = [];
+                                if (arg.sender_id == arg.user_1) {
+                                    const userFind = await userModel.findOne({ _id: arg.user_2, polyDating: 0 })
+                                    receiver_id.push(userFind._id)
 
-                                io.to(userRoom[0]).emit("chatReceive", finalData.text);
+                                } else {
+                                    const userFind = await userModel.findOne({ _id: arg.user_1, polyDating: 0 })
+                                    receiver_id.push(userFind._id)
+
+                                }
+                                const chat = {
+                                    text: finalData.text,
+                                    sender: arg.sender_id,
+                                    receiver: receiver_id[0]
+                                }
+                                io.to(userRoom[0]).emit("chatReceive", chat);
+
                                 const title = "n2you Notification";
                                 const body = `${arg.sender_id} send request to `;
 
