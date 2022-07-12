@@ -35,11 +35,11 @@ function socket(io) {
 
             const fcm_token = [];
             if (arg.sender_id == arg.user_1) {
-                const userFind = await userModel.findOne({ _id: arg.user_2, polyDating: "0" })
+                const userFind = await userModel.findOne({ _id: arg.user_2, polyDating: 0 })
                 fcm_token.push(userFind.fcm_token)
 
             } else {
-                const userFind = await userModel.findOne({ _id: arg.user_1, polyDating: "0" })
+                const userFind = await userModel.findOne({ _id: arg.user_1, polyDating: 0 })
                 fcm_token.push(userFind.fcm_token)
 
             }
@@ -326,14 +326,14 @@ function socket(io) {
 
 
 
-            const user1 = await userModel.findOne({ _id: arg.user1, polyDating: "1" });
-            const user2 = await userModel.findOne({ _id: arg.user2, polyDating: "1" });
-            const user3 = await userModel.findOne({ _id: arg.user3, polyDating: "1" });
-            const user4 = await userModel.findOne({ _id: arg.user4, polyDating: "1" });
-            const user5 = await userModel.findOne({ _id: arg.user5, polyDating: "1" });
-            const user6 = await userModel.findOne({ _id: arg.user6, polyDating: "1" });
-            const user7 = await userModel.findOne({ _id: arg.user7, polyDating: "1" });
-            const user8 = await userModel.findOne({ _id: arg.user8, polyDating: "1" });
+            const user1 = await userModel.findOne({ _id: arg.user1, polyDating: 1 });
+            const user2 = await userModel.findOne({ _id: arg.user2, polyDating: 1 });
+            const user3 = await userModel.findOne({ _id: arg.user3, polyDating: 1 });
+            const user4 = await userModel.findOne({ _id: arg.user4, polyDating: 1 });
+            const user5 = await userModel.findOne({ _id: arg.user5, polyDating: 1 });
+            const user6 = await userModel.findOne({ _id: arg.user6, polyDating: 1 });
+            const user7 = await userModel.findOne({ _id: arg.user7, polyDating: 1 });
+            const user8 = await userModel.findOne({ _id: arg.user8, polyDating: 1 });
 
             const userRoom = user1 ? user1._id : null || user2 ? user2._id : null || user3 ? user3._id : null || user4 ? user4._id : null || user5 ? user5._id : null || user6 ? user6._id : null || user7 ? user7._id : null || user8 ? user8._id : null
 
@@ -647,7 +647,7 @@ function socket(io) {
                     if (existUserInLike == null && exisrUserIndisLike == null) {
                         const findInUserModel = await userModel.findOne({
                             _id: arg.like_user_id,
-                            polyDating: "1"
+                            polyDating: 1
                         });
 
                         const findInLinkProfileModel = await linkProfileModel.findOne({
@@ -718,7 +718,7 @@ function socket(io) {
                                     }
                                 })
 
-                                
+
 
 
                                 const allUser = [];
@@ -811,7 +811,7 @@ function socket(io) {
                     if (existUserInLike == null && exisrUserIndisLike == null) {
                         const findInUserModel = await userModel.findOne({
                             _id: arg.like_user_id,
-                            polyDating: "1"
+                            polyDating: 1
                         });
 
 
@@ -956,20 +956,20 @@ function socket(io) {
 
             const findUser = await userModel.findOne({
                 _id: arg.user_id,
-                polyDating: "1"
+                polyDating: 1
             })
 
             if (findUser == null) {
                 io.emit("sendRequestUser", "User Not Found or user Not Polyamorous...!");
             } else {
 
-                const getAllUserWhichLoginAsPolyamorous = await userModel.find({ polyDating: "1" });
+                const getAllUserWhichLoginAsPolyamorous = await userModel.find({ polyDating: 1 });
                 if (getAllUserWhichLoginAsPolyamorous) {
                     const findAllUser = await userModel.find({
                         _id: {
                             $ne: arg.user_id
                         },
-                        polyDating: "1"
+                        polyDating: 1
                     })
 
                     if (findAllUser) {

@@ -55,7 +55,7 @@ exports.publicSession = async (req, res, next) => {
 
                 const findUser = await userModel.findOne({
                     _id: publicSessionwithUserDetails.cretedSessionUser,
-                    polyDating: "0"
+                    polyDating: 0
                 })
 
                 const participants1Find = await userModel.findOne({
@@ -139,22 +139,22 @@ exports.invitedInSession = async (req, res, next) => {
 
                 const createdSessionUser = await userModel.findOne({
                     _id: findInvited.cretedSessionUser,
-                    polyDating: "0"
+                    polyDating: 0
                 })
 
                 const participants_2 = await userModel.findOne({
                     _id: findInvited.participants[0].participants_2,
-                    polyDating: "0"
+                    polyDating: 0
                 })
                 const participants_3 = await userModel.findOne({
                     _id: findInvited.participants[0].participants_3,
-                    polyDating: "0"
+                    polyDating: 0
                 })
 
 
                 const participants_4 = await userModel.findOne({
                     _id: findInvited.participants[0].participants_4,
-                    polyDating: "0"
+                    polyDating: 0
                 })
 
                 const createdSessionUserDetail = {
@@ -178,21 +178,21 @@ exports.invitedInSession = async (req, res, next) => {
             } else if (findInvited.participants[0].participants_2 == req.params.user_id) {
                 const createdSessionUser = await userModel.findOne({
                     _id: findInvited.cretedSessionUser,
-                    polyDating: "0"
+                    polyDating: 0
                 })
                 const participants_1 = await userModel.findOne({
                     _id: findInvited.participants[0].participants_1,
-                    polyDating: "0"
+                    polyDating: 0
                 })
                 const participants_3 = await userModel.findOne({
                     _id: findInvited.participants[0].participants_3,
-                    polyDating: "0"
+                    polyDating: 0
                 })
 
 
                 const participants_4 = await userModel.findOne({
                     _id: findInvited.participants[0].participants_4,
-                    polyDating: "0"
+                    polyDating: 0
                 })
 
                 const createdSessionUserDetail = {
@@ -216,19 +216,19 @@ exports.invitedInSession = async (req, res, next) => {
             } else if (findInvited.participants[0].participants_3 == req.params.user_id) {
                 const createdSessionUser = await userModel.findOne({
                     _id: findInvited.cretedSessionUser,
-                    polyDating: "0"
+                    polyDating: 0
                 })
                 const participants_1 = await userModel.findOne({
                     _id: findInvited.participants[0].participants_1,
-                    polyDating: "0"
+                    polyDating: 0
                 })
                 const participants_2 = await userModel.findOne({
                     _id: findInvited.participants[0].participants_2,
-                    polyDating: "0"
+                    polyDating: 0
                 })
                 const participants_4 = await userModel.findOne({
                     _id: findInvited.participants[0].participants_4,
-                    polyDating: "0"
+                    polyDating: 0
                 })
 
                 const createdSessionUserDetail = {
@@ -252,19 +252,19 @@ exports.invitedInSession = async (req, res, next) => {
             } else if (findInvited.participants[0].participants_4 == req.params.user_id) {
                 const createdSessionUser = await userModel.findOne({
                     _id: findInvited.cretedSessionUser,
-                    polyDating: "0"
+                    polyDating: 0
                 })
                 const participants_1 = await userModel.findOne({
                     _id: findInvited.participants[0].participants_1,
-                    polyDating: "0"
+                    polyDating: 0
                 })
                 const participants_2 = await userModel.findOne({
                     _id: findInvited.participants[0].participants_2,
-                    polyDating: "0"
+                    polyDating: 0
                 })
                 const participants_3 = await userModel.findOne({
                     _id: findInvited.participants[0].participants_3,
-                    polyDating: "0"
+                    polyDating: 0
                 })
 
                 const createdSessionUserDetail = {
@@ -321,25 +321,25 @@ exports.mySession = async (req, res, next) => {
 
             const findUserDeatil = await userModel.findOne({
                 _id: findMySession.cretedSessionUser,
-                polyDating: "0"
+                polyDating: 0
             })
 
             const findParticipantsiUserDeatil1 = await userModel.findOne({
                 _id: findMySession.participants[0].participants_1,
-                polyDating: "0"
+                polyDating: 0
             })
 
             const findParticipantsiUserDeatil2 = await userModel.findOne({
                 _id: findMySession.participants[0].participants_2,
-                polyDating: "0"
+                polyDating: 0
             })
             const findParticipantsiUserDeatil3 = await userModel.findOne({
                 _id: findMySession.participants[0].participants_3,
-                polyDating: "0"
+                polyDating: 0
             })
             const findParticipantsiUserDeatil4 = await userModel.findOne({
                 _id: findMySession.participants[0].participants_4,
-                polyDating: "0"
+                polyDating: 0
             })
 
 

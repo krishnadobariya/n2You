@@ -17,7 +17,7 @@ exports.getUserWhichNotChoiceForLikeOrDislike = async (req, res, next) => {
 
         const findUser = await userModel.findOne({
             _id: req.params.user_id,
-            polyDating: "1"
+            polyDating: 1
         })
 
         if (findUser == null) {
@@ -27,7 +27,7 @@ exports.getUserWhichNotChoiceForLikeOrDislike = async (req, res, next) => {
         } else {
 
             const getAllUserWhichLoginAsPolyamorous = await userModel.find({
-                polyDating: "1"
+                polyDating: 1
             })
 
             if (getAllUserWhichLoginAsPolyamorous) {
@@ -37,7 +37,7 @@ exports.getUserWhichNotChoiceForLikeOrDislike = async (req, res, next) => {
                     {
                         $ne: req.params.user_id
                     },
-                    polyDating: "1"
+                    polyDating: 1
                 })
 
                 const response = [];
@@ -507,7 +507,7 @@ exports.getPolyamorousUser = async (req, res, next) => {
 
         const findUser = await userModel.findOne({
             _id: req.params.user_id,
-            polyDating: "1"
+            polyDating: 1
         })
 
         if (findUser == null) {
@@ -518,7 +518,7 @@ exports.getPolyamorousUser = async (req, res, next) => {
 
             const findPolyamorousUser = await userModel.findOne({
                 _id: req.params.user_id,
-                polyDating: "1"
+                polyDating: 1
             })
 
             if (findPolyamorousUser == null) {
@@ -574,7 +574,7 @@ exports.listLinkProfile = async (req, res, next) => {
 
         const findUser = await userModel.findOne({
             _id: req.params.user_id,
-            polyDating: "1"
+            polyDating: 1
         })
 
         if (findUser == null) {
@@ -618,7 +618,7 @@ exports.inviteFriends = async (req, res, next) => {
 
         const findUser = await userModel.findOne({
             _id: req.params.user_id,
-            polyDating: "1"
+            polyDating: 1
 
         })
 
@@ -629,7 +629,7 @@ exports.inviteFriends = async (req, res, next) => {
         } else {
             const findValidUser = await userModel.findOne({
                 _id: req.params.request_id,
-                polyDating: "1"
+                polyDating: 1
             })
 
             if (findValidUser == null) {
@@ -709,7 +709,7 @@ exports.acceptedLinkProfile = async (req, res, next) => {
 
         const findUser = await userModel.findOne({
             _id: req.params.user_id,
-            polyDating: "1",
+            polyDating: 1,
             "linkProfile.userId": req.params.request_id
         })
 
@@ -773,7 +773,7 @@ exports.acceptedLinkProfile = async (req, res, next) => {
                         await userModel.updateOne({
                             _id: mongoose.Types.ObjectId(req.params.user_id),
                             "linkProfile.userId": mongoose.Types.ObjectId(req.params.request_id),
-                            polyDating: "1"
+                            polyDating: 1
                         }, {
                             $set: {
                                 "linkProfile.$.accepted": 1
@@ -793,7 +793,7 @@ exports.acceptedLinkProfile = async (req, res, next) => {
                                     }
                                 }
                             },
-                            polyDating: "1"
+                            polyDating: 1
                         })
 
                         const user2 = findInLinkProfile1.user2
@@ -807,7 +807,7 @@ exports.acceptedLinkProfile = async (req, res, next) => {
                                     }
                                 }
                             },
-                            polyDating: "1"
+                            polyDating: 1
 
                         })
 
@@ -822,7 +822,7 @@ exports.acceptedLinkProfile = async (req, res, next) => {
                                         accepted: 1
                                     }
                                 },
-                                polyDating: "1"
+                                polyDating: 1
                             })
 
                             const user2 = findInLinkProfile1.user2
@@ -834,7 +834,7 @@ exports.acceptedLinkProfile = async (req, res, next) => {
                                         accepted: 1
                                     }
                                 },
-                                polyDating: "1"
+                                polyDating: 1
 
                             })
 
@@ -1121,7 +1121,7 @@ exports.acceptedLinkProfile = async (req, res, next) => {
                         await userModel.updateOne({
                             _id: mongoose.Types.ObjectId(req.params.user_id),
                             "linkProfile.userId": mongoose.Types.ObjectId(req.params.request_id),
-                            polyDating: "1"
+                            polyDating: 1
                         }, {
                             $set: {
                                 "linkProfile.$.accepted": 1
@@ -1142,7 +1142,7 @@ exports.acceptedLinkProfile = async (req, res, next) => {
                                     }
                                 }
                             },
-                            polyDating: "1"
+                            polyDating: 1
                         })
 
 
@@ -1158,7 +1158,7 @@ exports.acceptedLinkProfile = async (req, res, next) => {
                                     }
                                 }
                             },
-                            polyDating: "1"
+                            polyDating: 1
                         })
 
                         const user3 = findInLinkProfile5.user3
@@ -1173,7 +1173,7 @@ exports.acceptedLinkProfile = async (req, res, next) => {
                                     }
                                 }
                             },
-                            polyDating: "1"
+                            polyDating: 1
 
                         })
 
@@ -1188,7 +1188,7 @@ exports.acceptedLinkProfile = async (req, res, next) => {
                                         accepted: 1
                                     }
                                 },
-                                polyDating: "1"
+                                polyDating: 1
                             })
 
 
@@ -1202,7 +1202,7 @@ exports.acceptedLinkProfile = async (req, res, next) => {
                                         accepted: 1
                                     }
                                 },
-                                polyDating: "1"
+                                polyDating: 1
                             })
 
                             const user3 = findInLinkProfile5.user3
@@ -1215,7 +1215,7 @@ exports.acceptedLinkProfile = async (req, res, next) => {
                                         accepted: 1
                                     }
                                 },
-                                polyDating: "1"
+                                polyDating: 1
 
                             })
 
@@ -1787,7 +1787,7 @@ exports.acceptedLinkProfile = async (req, res, next) => {
                     await userModel.updateOne({
                         _id: mongoose.Types.ObjectId(req.params.user_id),
                         "linkProfile.userId": mongoose.Types.ObjectId(req.params.request_id),
-                        polyDating: "1"
+                        polyDating: 1
                     }, {
                         $set: {
                             "linkProfile.$.accepted": 1
@@ -2038,7 +2038,7 @@ exports.acceptedLinkProfile = async (req, res, next) => {
                         await userModel.updateOne({
                             _id: mongoose.Types.ObjectId(req.params.user_id),
                             "linkProfile.userId": mongoose.Types.ObjectId(req.params.request_id),
-                            polyDating: "1"
+                            polyDating: 1
                         }, {
                             $set: {
                                 "linkProfile.$.accepted": 2
@@ -2057,7 +2057,7 @@ exports.acceptedLinkProfile = async (req, res, next) => {
                                     }
                                 }
                             },
-                            polyDating: "1"
+                            polyDating: 1
                         })
 
                         const user2 = findInLinkProfile1.user2
@@ -2072,7 +2072,7 @@ exports.acceptedLinkProfile = async (req, res, next) => {
                                     }
                                 }
                             },
-                            polyDating: "1"
+                            polyDating: 1
 
                         })
 
@@ -2088,7 +2088,7 @@ exports.acceptedLinkProfile = async (req, res, next) => {
                                         accepted: 2
                                     }
                                 },
-                                polyDating: "1"
+                                polyDating: 1
                             })
 
                             const findUser2 = await userModel.findOne({
@@ -2099,7 +2099,7 @@ exports.acceptedLinkProfile = async (req, res, next) => {
                                         accepted: 2
                                     }
                                 },
-                                polyDating: "1"
+                                polyDating: 1
 
                             })
 
@@ -2291,7 +2291,7 @@ exports.acceptedLinkProfile = async (req, res, next) => {
                         await userModel.updateOne({
                             _id: mongoose.Types.ObjectId(req.params.user_id),
                             "linkProfile.userId": mongoose.Types.ObjectId(req.params.request_id),
-                            polyDating: "1"
+                            polyDating: 1
                         }, {
                             $set: {
                                 "linkProfile.$.accepted": 2
@@ -2310,7 +2310,7 @@ exports.acceptedLinkProfile = async (req, res, next) => {
                                     }
                                 }
                             },
-                            polyDating: "1"
+                            polyDating: 1
                         })
 
 
@@ -2325,7 +2325,7 @@ exports.acceptedLinkProfile = async (req, res, next) => {
                                     }
                                 }
                             },
-                            polyDating: "1"
+                            polyDating: 1
 
                         })
 
@@ -2340,7 +2340,7 @@ exports.acceptedLinkProfile = async (req, res, next) => {
                                     }
                                 }
                             },
-                            polyDating: "1"
+                            polyDating: 1
 
                         })
 
@@ -2365,7 +2365,7 @@ exports.acceptedLinkProfile = async (req, res, next) => {
                                         accepted: 2
                                     }
                                 },
-                                polyDating: "1"
+                                polyDating: 1
                             })
 
 
@@ -2378,7 +2378,7 @@ exports.acceptedLinkProfile = async (req, res, next) => {
                                         accepted: 2
                                     }
                                 },
-                                polyDating: "1"
+                                polyDating: 1
 
                             })
 
@@ -2391,7 +2391,7 @@ exports.acceptedLinkProfile = async (req, res, next) => {
                                         accepted: 2
                                     }
                                 },
-                                polyDating: "1"
+                                polyDating: 1
 
                             })
 
@@ -2860,7 +2860,7 @@ exports.acceptedLinkProfile = async (req, res, next) => {
                     await userModel.updateOne({
                         _id: mongoose.Types.ObjectId(req.params.user_id),
                         "linkProfile.userId": mongoose.Types.ObjectId(req.params.request_id),
-                        polyDating: "1"
+                        polyDating: 1
                     }, {
                         $set: {
                             "linkProfile.$.accepted": 2

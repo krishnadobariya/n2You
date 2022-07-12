@@ -8,7 +8,7 @@ exports.settingBasket = async (req, res, next) => {
 
         const findUser = await userModel.findOne({
             _id: req.params.user_id,
-            polyDating: "0"
+            polyDating: 0
         })
 
         if (findUser == null) {

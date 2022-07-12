@@ -5,6 +5,7 @@ const likeModel = require("../model/like.model");
 const requestsModel = require("../model/requests.model");
 const userModel = require("../model/user.model");
 const { default: mongoose } = require("mongoose");
+const { LOCKED } = require("http-status");
 
 exports.LikeOrDislikeInUserPost = async (req, res, next) => {
     try {
@@ -106,7 +107,6 @@ exports.showAllUserWhichIsLikePost = async (req, res, next) => {
                 allRequestedId.push((findAllRequestedEmail.reqUserId).toString());
             }
 
-
             const RequestedEmailExiestInUser = await requestsModel.findOne(
                 {
                     userId: req.params.user_id,
@@ -121,6 +121,7 @@ exports.showAllUserWhichIsLikePost = async (req, res, next) => {
             )
 
 
+
             if (RequestedEmailExiestInUser == null) {
                 res.status(status.NOT_FOUND).json(
                     new APIResponse("Requested Email Not Exiest In User or User not Found", "false", 404, "0")
@@ -132,6 +133,7 @@ exports.showAllUserWhichIsLikePost = async (req, res, next) => {
                 for (const getEmail of RequestedEmailExiestInUser.RequestedEmails) {
                     emailGet.push((getEmail.userId).toString())
                 }
+
 
 
                 var difference = allRequestedId.filter(x => emailGet.indexOf(x) === -1);
@@ -150,9 +152,9 @@ exports.showAllUserWhichIsLikePost = async (req, res, next) => {
 
                     UniqueId.push(response);
                 }
+                console.log(RequestedEmailExiestInUser[0]);
 
-
-                if (RequestedEmailExiestInUser[0] == undefined) {
+                if (RequestedEmailExiestInUser == null) {
                     const responseData = [];
                     for (const allrequestedDataNotAcceptedRequestAndNotFriend of allRequestedId) {
                         const userDetail = await userModel.findOne({ _id: mongoose.Types.ObjectId(allrequestedDataNotAcceptedRequestAndNotFriend) });
@@ -172,7 +174,7 @@ exports.showAllUserWhichIsLikePost = async (req, res, next) => {
                 } else {
 
                     const statusByEmail = [];
-                    const allRequestedEmail = RequestedEmailExiestInUser[0].RequestedEmails;
+                    const allRequestedEmail = RequestedEmailExiestInUser.RequestedEmails;
                     const requestedEmailWitchIsInuserRequeted = [];
                     allRequestedEmail.map((result, next) => {
                         const resultEmail = result.userId

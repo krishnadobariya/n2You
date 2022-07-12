@@ -86,8 +86,12 @@ exports.userRegister = async (req, res, next) => {
 
                 const saveData = await user.save();
 
+                const findUser = await userModel.findOne({
+                    email: req.body.email
+                })
 
                 const data = {
+                    _id: findUser._id,
                     polyDating: req.body.poly_dating,
                     HowDoYouPoly: req.body.how_do_you_poly,
                     loveToGive: req.body.love_to_give,
@@ -325,7 +329,7 @@ exports.tokenUpdate = async (req, res, next) => {
 exports.searchFriend = async (req, res, next) => {
     try {
         const Regexname = new RegExp(req.body.search_key, 'i');
-        const searchName = await userModel.find({ firstName: Regexname, polyDating: "0" });
+        const searchName = await userModel.find({ firstName: Regexname, polyDating: 0 });
         const reaquestedAllEmail = [];
         searchName.map((result, index) => {
             reaquestedAllEmail.push(result.email)
@@ -599,7 +603,50 @@ exports.searchFriend = async (req, res, next) => {
                         posts: finalData.posts,
                         status: finalStatus[key]
                     }
-                    final_data.push(response);
+
+
+                    if (response.status == 1) {
+                        const getDetail = {
+                            _id: finalData._id,
+                            polyDating: finalData.polyDating,
+                            HowDoYouPoly: finalData.HowDoYouPoly,
+                            loveToGive: finalData.loveToGive,
+                            polyRelationship: finalData.polyRelationship,
+                            firstName: finalData.firstName,
+                            email: finalData.email,
+                            relationshipSatus: finalData.relationshipSatus,
+                            Bio: finalData.Bio,
+                            photo: finalData.photo,
+                            hopingToFind: finalData.hopingToFind,
+                            jobTitle: finalData.jobTitle,
+                            wantChildren: finalData.wantChildren,
+                            posts: finalData.posts[0].posts,
+                            status: finalStatus[key]
+                        }
+
+                        final_data.push(getDetail);
+                    } else {
+
+                        const getDetail = {
+                            _id: finalData._id,
+                            polyDating: finalData.polyDating,
+                            HowDoYouPoly: finalData.HowDoYouPoly,
+                            loveToGive: finalData.loveToGive,
+                            polyRelationship: finalData.polyRelationship,
+                            firstName: finalData.firstName,
+                            email: finalData.email,
+                            relationshipSatus: finalData.relationshipSatus,
+                            Bio: finalData.Bio,
+                            photo: finalData.photo,
+                            hopingToFind: finalData.hopingToFind,
+                            jobTitle: finalData.jobTitle,
+                            wantChildren: finalData.wantChildren,
+                            status: finalStatus[key]
+                        }
+
+                        final_data.push(getDetail);
+                    }
+
                 }
 
                 const final_response = [...final_data, ...UniqueEmail]
@@ -623,7 +670,7 @@ exports.searchFriend = async (req, res, next) => {
 exports.getDataUserWise = async (req, res, next) => {
     try {
 
-        const userFind = await userModel.findOne({ _id: req.params.user_id, polyDating: "0" })
+        const userFind = await userModel.findOne({ _id: req.params.user_id, polyDating: 0 })
 
         if (userFind == null) {
             res.status(status.NOT_FOUND).json(
@@ -745,8 +792,10 @@ exports.getDataUserWise = async (req, res, next) => {
                 wantChildren: data[0].wantChildren,
                 phoneNumber: data[0].phoneNumber,
                 extraAtrribute: data[0].extraAtrribute,
-                getAllPosts
+                getAllPosts: getAllPosts
             }
+
+
             res.status(status.OK).json(
                 new APIResponse("show UserWise get", "true", 201, "1", response)
             )
@@ -766,7 +815,7 @@ exports.storeBasketValue = async (req, res, next) => {
         const allUserWithProfileMatch = [];
         const findUser = await userModel.findOne({
             _id: req.params.user_id,
-            polyDating: "0"
+            polyDating: 0
         })
 
         if (findUser == null) {
@@ -801,7 +850,7 @@ exports.storeBasketValue = async (req, res, next) => {
                 _id: {
                     $ne: req.params.user_id
                 },
-                polyDating: "0"
+                polyDating: 0
             })
 
             const identity = findUser.identity
@@ -918,7 +967,7 @@ exports.yesBasket = async (req, res, next) => {
 
             const findUser = await userModel.findOne({
                 _id: req.params.user_id,
-                polyDating: "0"
+                polyDating: 0
             })
 
             if (findUser == null) {
@@ -1320,7 +1369,7 @@ exports.yesBasket = async (req, res, next) => {
 
                                 const findThumbUp = await userModel.findOne({
                                     _id: req.params.request_user_id,
-                                    polyDating: "0"
+                                    polyDating: 0
                                 })
 
                                 for (const getOriginalData of finalData) {
@@ -1370,7 +1419,7 @@ exports.yesBasket = async (req, res, next) => {
 
                                 const findThumbUp = await userModel.findOne({
                                     _id: req.params.request_user_id,
-                                    polyDating: "0"
+                                    polyDating: 0
                                 })
 
 
@@ -1499,7 +1548,7 @@ exports.yesBasket = async (req, res, next) => {
 
                                                 const findThumbUp = await userModel.findOne({
                                                     _id: req.params.request_user_id,
-                                                    polyDating: "0"
+                                                    polyDating: 0
                                                 })
 
 
@@ -1631,7 +1680,7 @@ exports.noBasket = async (req, res, next) => {
 
             const findUser = await userModel.findOne({
                 _id: req.params.user_id,
-                polyDating: "0"
+                polyDating: 0
             })
 
             if (findUser == null) {
@@ -1692,7 +1741,7 @@ exports.noBasket = async (req, res, next) => {
 
                         const findThumbUp = await userModel.findOne({
                             _id: req.params.request_user_id,
-                            polyDating: "0"
+                            polyDating: 0
                         })
 
 
@@ -1746,7 +1795,7 @@ exports.noBasket = async (req, res, next) => {
 
                         const findThumbUp = await userModel.findOne({
                             _id: req.params.request_user_id,
-                            polyDating: "0"
+                            polyDating: 0
                         })
 
                         for (const getOriginalData of finalData) {
@@ -1880,7 +1929,7 @@ exports.noBasket = async (req, res, next) => {
 
                                         const findThumbUp = await userModel.findOne({
                                             _id: req.params.request_user_id,
-                                            polyDating: "0"
+                                            polyDating: 0
                                         })
 
 
@@ -1982,7 +2031,7 @@ exports.noBasket = async (req, res, next) => {
                 if (accessBasket == true) {
                     const findUser = await userModel.findOne({
                         _id: req.params.request_user_id,
-                        polyDating: "0"
+                        polyDating: 0
                     })
 
                     if (findUser == null) {
@@ -2045,7 +2094,7 @@ exports.noBasket = async (req, res, next) => {
 
                                 const findThumbUp = await userModel.findOne({
                                     _id: req.params.request_user_id,
-                                    polyDating: "0"
+                                    polyDating: 0
                                 })
 
                                 for (const getOriginalData of finalData) {
@@ -2096,7 +2145,7 @@ exports.noBasket = async (req, res, next) => {
 
                                 const findThumbUp = await userModel.findOne({
                                     _id: req.params.request_user_id,
-                                    polyDating: "0"
+                                    polyDating: 0
                                 })
 
                                 for (const getOriginalData of finalData) {
@@ -2222,7 +2271,7 @@ exports.noBasket = async (req, res, next) => {
                                             if (requestEmail.requestedEmail == meageAllTableEmail.email) {
                                                 const findThumbUp = await userModel.findOne({
                                                     _id: req.params.request_user_id,
-                                                    polyDating: "0"
+                                                    polyDating: 0
                                                 })
 
                                                 for (const findThumb of findThumbUp.basket) {

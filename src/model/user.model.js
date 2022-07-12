@@ -3,7 +3,7 @@ const validator = require('validator');
 
 const userSchema = mongoose.Schema({
     polyDating: {
-        type: String,
+        type: Number,
         require: true
     },
     HowDoYouPoly: {
@@ -34,11 +34,11 @@ const userSchema = mongoose.Schema({
         require: true
     },
     identity: {
-        type: String,
+        type: Number,
         require: true
     },
     relationshipSatus: {
-        type: String,
+        type: Number,
         require: true
     },
     IntrestedIn: {
