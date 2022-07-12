@@ -87,13 +87,17 @@ exports.groupList = async (req, res, next) => {
                 const userProfile2 = await userModel.findOne({
                     _id: allRoom.user2
                 })
+
                 var count = 0;
 
                 const lastMessage = [];
 
                 for (const getChat of findRoom.chat) {
                     for (const findReadOrUnread of getChat.read) {
+
                         if ((findReadOrUnread.userId).toString() == (req.params.user_id).toString()) {
+
+
 
                             const date = getChat.createdAt
                             let hours = date.getHours();
@@ -111,6 +115,7 @@ exports.groupList = async (req, res, next) => {
                             }
                             lastMessage.push(lastUnreadMessage);
                             const lastValue = lastMessage[lastMessage.length - 1];
+                       
                             const response = {
                                 _id: userProfile1._id,
                                 countUnreadMessage: count,
@@ -122,7 +127,7 @@ exports.groupList = async (req, res, next) => {
                                     user2: userProfile2.photo[0] == undefined ? null : userProfile2.photo[0].res
                                 }
                             }
-
+                 
                             unReadMessage.push(response);
 
                         }
@@ -168,7 +173,7 @@ exports.exitGroup = async (req, res, next) => {
 
 
             if (findGrupRoom.user1 == req.params.user_id) {
-                console.log("efweafwef");
+            
                 await groupChatRoomModels.updateOne({
                     _id: req.params.group_room_id
                 }, {

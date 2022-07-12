@@ -182,7 +182,6 @@ exports.getPostsbyUseId = async (req, res, next) => {
         if (userFindInPosts) {
 
             const userWisePosts = await postModal.findOne({ userId: id });
-            console.log(userWisePosts);
 
             const findUser = await userModal.findOne({
                 _id: userWisePosts.userId

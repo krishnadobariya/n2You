@@ -768,7 +768,7 @@ exports.getDataUserWise = async (req, res, next) => {
                         const response = {
                             getPost,
                             finalPostedTime,
-                            commentData
+                            commentData: commentData[0] == null ? [] : commentData
                         }
                         getAllPosts.push(response);
                     }
@@ -792,7 +792,7 @@ exports.getDataUserWise = async (req, res, next) => {
                 wantChildren: data[0].wantChildren,
                 phoneNumber: data[0].phoneNumber,
                 extraAtrribute: data[0].extraAtrribute,
-                getAllPosts: getAllPosts
+                Posts: getAllPosts
             }
 
 
@@ -955,8 +955,6 @@ exports.yesBasket = async (req, res, next) => {
         // const findYesBasket = await userModel.find({
         //     basket: { $lt: 100 }, basket: { $gt: 50 }
         // })
-
-
 
 
         const user_id = req.params.user_id;

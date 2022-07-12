@@ -869,9 +869,6 @@ function socket(io) {
 
                                 await insertuserInDatingModel.save();
 
-                                console.log(findInLinkProfileModel);
-
-
                                 io.emit("likeDislikeUser", "User Like Dating");
                             } else {
                                 await datingLikeDislikeUserModel.updateOne({
@@ -1010,7 +1007,7 @@ function socket(io) {
 
                                         const data = [];
                                         for (const linkUser of findAlrearyRerquestedUser1.linkProfile) {
-                                            console.log(linkUser);
+
                                             if (linkUser.userId == arg.user_id && linkUser.status == 0 && linkUser.combineId == arg.combine_id) {
                                                 data.push(1)
                                             }
@@ -1094,7 +1091,7 @@ function socket(io) {
 
                                         const data = [];
                                         for (const linkUser of findAlrearyRerquestedUser1.linkProfile) {
-                                            console.log(linkUser);
+
                                             if (linkUser.userId == arg.user_id && linkUser.status == 0 && linkUser.combineId == arg.combine_id) {
                                                 data.push(1)
                                             }
@@ -1110,7 +1107,6 @@ function socket(io) {
                                             }
                                         }
 
-                                        console.log(data);
                                         if (data[0] == 1 && data[1] == 1 && data[2] == 1) {
 
                                             const data = {
@@ -1223,7 +1219,7 @@ function socket(io) {
                 })
 
                 for (const getGroup of findGroupInConflictModel) {
-                    console.log(getGroup);
+
                     const findUser = await userModel.findOne({
                         _id: getGroup.conflictUserId
                     })

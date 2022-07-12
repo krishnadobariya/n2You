@@ -16,7 +16,7 @@ exports.CommetInsert = async (req, res, next) => {
             );
 
         } else {
-            const findUser = await userModel.findOne({ _id: req.params.user_id, polyDating: 0 });
+            const findUser = await userModel.findOne({ _id: req.params.user_id, polyDating: "0" });
             if (findUser == null) {
                 res.status(status.NOT_FOUND).json(
                     new APIResponse("User Not Found and not a Social Meida & Dating type user", "false", 404, "0")
@@ -77,7 +77,7 @@ exports.replyComment = async (req, res, next) => {
                 new APIResponse("Post Not Found", "false", 404, "0")
             );
         } else {
-            const findUser = await userModel.findOne({ _id: req.params.user_id, polyDating: 0 });
+            const findUser = await userModel.findOne({ _id: req.params.user_id, polyDating: "0" });
             if (findUser == null) {
                 res.status(status.NOT_FOUND).json(
                     new APIResponse("User Not Found and not Social Meida & Dating type user", "false", 404, "0")
@@ -134,7 +134,12 @@ exports.editComment = async (req, res, next) => {
         } else {
             const athorizeUser = await commentModel.findOne({
                 postId: req.params.post_id,
-                "comments._id": req.params.comment_id
+                comments: {
+                    $elemMatch: {
+                        userId: req.params.commented_user,
+                        _id: req.params.comment_id
+                    }
+                }
             })
 
             if (athorizeUser == null) {
@@ -169,7 +174,12 @@ exports.deleteComment = async (req, res, next) => {
         } else {
             const athorizeUser = await commentModel.findOne({
                 postId: req.params.post_id,
-                "comments._id": req.params.comment_id
+                comments: {
+                    $elemMatch: {
+                        userId: req.params.commented_user,
+                        _id: req.params.comment_id
+                    }
+                }
             })
 
             if (athorizeUser == null) {

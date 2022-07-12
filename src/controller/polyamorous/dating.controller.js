@@ -329,8 +329,6 @@ exports.matchUsers = async (req, res, next) => {
 
             for (const allLiked of findUsers.LikeUser) {
 
-
-                console.log(allLiked.LikeduserId);
                 const findInOtherUserForMatching = await datingLikeDislikeUserModel.findOne({
                     userId: allLiked.LikeduserId
                 })
@@ -339,9 +337,6 @@ exports.matchUsers = async (req, res, next) => {
                     userId: allLiked.LikeduserId
                 })
 
-
-
-                console.log("findMatchUser", findMatchUser);
                 const findInUserModel = await userModel.findOne({
                     _id: allLiked.LikeduserId
                 })
@@ -387,7 +382,6 @@ exports.matchUsers = async (req, res, next) => {
                         }
                     })
 
-                    console.log("existUser", existUser);
                     if (existUser) {
 
                     } else {
@@ -406,55 +400,57 @@ exports.matchUsers = async (req, res, next) => {
                 }
 
 
-                console.log(findMatchUser);
 
-                for (const matchUser of findMatchUser.LikeUser) {
+                if (findMatchUser == null) {
 
-
-                    console.log(matchUser);
-
-
-                    if ((matchUser.LikeduserId).toString() == (findUsers.userId).toString()) {
+                } else {
+                    for (const matchUser of findMatchUser.LikeUser) {
 
 
 
-                        const findinMatchUserModel = await matchUserModel.findOne({
-                            userId: req.params.user_id
-                        })
-
-                        if (findinMatchUserModel == null) {
-                            const saveInMatchUserModel = matchUserModel({
-                                userId: req.params.user_id,
-                                allMatches: {
-                                    matchId: allLiked.LikeduserId
-                                }
-                            })
-                            await saveInMatchUserModel.save();
+                        if ((matchUser.LikeduserId).toString() == (findUsers.userId).toString()) {
 
 
-                        } else {
 
-                            const checkExiest = await matchUserModel.findOne({
-                                userId: req.params.user_id,
-                                "allMatches.matchId": allLiked.LikeduserId
+                            const findinMatchUserModel = await matchUserModel.findOne({
+                                userId: req.params.user_id
                             })
 
-                            if (checkExiest) {
-
-                            } else {
-                                await matchUserModel.updateOne({
-                                    userId: req.params.user_id
-                                }, {
-                                    $push: {
-                                        allMatches: {
-                                            matchId: allLiked.LikeduserId
-                                        }
+                            if (findinMatchUserModel == null) {
+                                const saveInMatchUserModel = matchUserModel({
+                                    userId: req.params.user_id,
+                                    allMatches: {
+                                        matchId: allLiked.LikeduserId
                                     }
                                 })
+                                await saveInMatchUserModel.save();
+
+
+                            } else {
+
+                                const checkExiest = await matchUserModel.findOne({
+                                    userId: req.params.user_id,
+                                    "allMatches.matchId": allLiked.LikeduserId
+                                })
+
+                                if (checkExiest) {
+
+                                } else {
+                                    await matchUserModel.updateOne({
+                                        userId: req.params.user_id
+                                    }, {
+                                        $push: {
+                                            allMatches: {
+                                                matchId: allLiked.LikeduserId
+                                            }
+                                        }
+                                    })
+                                }
                             }
                         }
                     }
                 }
+
             }
 
 
@@ -891,9 +887,6 @@ exports.acceptedLinkProfile = async (req, res, next) => {
                                     const findUser = await userModel.findOne({
                                         _id: req.params.user_id
                                     })
-
-                                    console.log(findUser);
-
                                     const existUser = await notificationModel.findOne({
                                         userId: req.params.request_id,
                                         notifications: {
@@ -989,13 +982,13 @@ exports.acceptedLinkProfile = async (req, res, next) => {
                                 })
 
                                 const findGroupInConflickModel = await conflictModel.findOne({
-                                    groupId: createRoom._id,
+                                    groupId: req.query.group_room_id,
                                     conflictUserId: req.params.request_id
                                 })
 
                                 if (findGroupInConflickModel == null) {
                                     const addInConflictModel = conflictModel({
-                                        groupId: createRoom._id,
+                                        groupId: req.query.group_room_id,
                                         conflictUserId: req.params.request_id,
                                         acceptedUserId: {
                                             userId: req.params.user_id
@@ -1009,7 +1002,7 @@ exports.acceptedLinkProfile = async (req, res, next) => {
                                 } else {
 
                                     const findInconflict = await conflictModel.findOne({
-                                        groupId: createRoom._id,
+                                        groupId: req.query.group_room_id,
                                         conflictUserId: req.params.request_id,
                                         "acceptedUserId.userId": req.params.user_id
                                     })
@@ -1017,7 +1010,7 @@ exports.acceptedLinkProfile = async (req, res, next) => {
 
                                     } else {
                                         await conflictModel.updateOne({
-                                            groupId: createRoom._id,
+                                            groupId: req.query.group_room_id,
                                         },
                                             {
                                                 $push: {
@@ -1373,9 +1366,6 @@ exports.acceptedLinkProfile = async (req, res, next) => {
                                         }
                                     ]
                                 })
-
-
-                                console.log(findIdInLinkProfile);
                                 const notAcceptedUser = [];
 
                                 if (findIdInLinkProfile.user1 == req.params.user_id) {
@@ -1385,10 +1375,6 @@ exports.acceptedLinkProfile = async (req, res, next) => {
                                 } else if (findIdInLinkProfile.user3 == req.params.user_id) {
                                     notAcceptedUser.push(findIdInLinkProfile.user1, findIdInLinkProfile.user2)
                                 }
-
-                                console.log(notAcceptedUser);
-
-                                console.log();
 
                                 const findInUser1 = await userModel.findOne({
                                     _id: notAcceptedUser[1],
@@ -1421,7 +1407,7 @@ exports.acceptedLinkProfile = async (req, res, next) => {
 
 
                                 const findGroupInConflickModel = await conflictModel.findOne({
-                                    groupId: createRoom._id,
+                                    groupId: req.query.group_room_id,
                                     conflictUserId: req.params.request_id
                                 })
 
@@ -1429,7 +1415,7 @@ exports.acceptedLinkProfile = async (req, res, next) => {
                                 if (findGroupInConflickModel == null) {
                                     if (model1[0]) {
                                         const addInConflictModel = conflictModel({
-                                            groupId: createRoom._id,
+                                            groupId: req.query.group_room_id,
                                             conflictUserId: req.params.request_id,
                                             acceptedUserId: {
                                                 userId: req.params.user_id
@@ -1441,7 +1427,7 @@ exports.acceptedLinkProfile = async (req, res, next) => {
                                         await addInConflictModel.save();
                                     } else {
                                         const addInConflictModel = conflictModel({
-                                            groupId: createRoom._id,
+                                            groupId: req.query.group_room_id,
                                             conflictUserId: req.params.request_id,
                                             acceptedUserId: {
                                                 userId: req.params.user_id
@@ -1451,7 +1437,7 @@ exports.acceptedLinkProfile = async (req, res, next) => {
 
                                         await conflictModel.updateOne(
                                             {
-                                                groupId: createRoom._id,
+                                                groupId: req.query.group_room_id,
                                             },
                                             {
                                                 $push: {
@@ -1464,7 +1450,7 @@ exports.acceptedLinkProfile = async (req, res, next) => {
 
                                     if (model2[0]) {
                                         await conflictModel.updateOne({
-                                            groupId: createRoom._id,
+                                            groupId: req.query.group_room_id,
                                         },
                                             {
                                                 $push: {
@@ -1475,7 +1461,7 @@ exports.acceptedLinkProfile = async (req, res, next) => {
                                             })
                                     } else {
                                         await conflictModel.updateOne({
-                                            groupId: createRoom._id,
+                                            groupId: req.query.group_room_id,
                                         },
                                             {
                                                 $push: {
@@ -1490,7 +1476,7 @@ exports.acceptedLinkProfile = async (req, res, next) => {
                                 } else {
 
                                     const findInconflict = await conflictModel.findOne({
-                                        groupId: createRoom._id,
+                                        groupId: req.query.group_room_id,
                                         conflictUserId: req.params.request_id,
                                         "acceptedUserId.userId": req.params.user_id
                                     })
@@ -1501,7 +1487,7 @@ exports.acceptedLinkProfile = async (req, res, next) => {
 
                                         if (model1[0]) {
                                             await conflictModel.updateOne({
-                                                groupId: createRoom._id,
+                                                groupId: req.query.group_room_id,
                                             },
                                                 {
                                                     $push: {
@@ -1515,7 +1501,7 @@ exports.acceptedLinkProfile = async (req, res, next) => {
                                                 })
                                         } else {
                                             await conflictModel.updateOne({
-                                                groupId: createRoom._id,
+                                                groupId: req.query.group_room_id,
                                             },
                                                 {
                                                     $push: {
@@ -1525,7 +1511,7 @@ exports.acceptedLinkProfile = async (req, res, next) => {
                                                     }
                                                 })
                                             await conflictModel.updateOne({
-                                                groupId: createRoom._id,
+                                                groupId: req.query.group_room_id,
                                             },
                                                 {
                                                     $push: {
@@ -1538,7 +1524,7 @@ exports.acceptedLinkProfile = async (req, res, next) => {
 
                                         if (model2[0]) {
                                             await conflictModel.updateOne({
-                                                groupId: createRoom._id,
+                                                groupId: req.query.group_room_id,
                                             },
                                                 {
                                                     $push: {
@@ -1552,7 +1538,7 @@ exports.acceptedLinkProfile = async (req, res, next) => {
                                                 })
                                         } else {
                                             await conflictModel.updateOne({
-                                                groupId: createRoom._id,
+                                                groupId: req.query.group_room_id,
                                             },
                                                 {
                                                     $push: {
@@ -1562,7 +1548,7 @@ exports.acceptedLinkProfile = async (req, res, next) => {
                                                     }
                                                 })
                                             await conflictModel.updateOne({
-                                                groupId: createRoom._id,
+                                                groupId: req.query.group_room_id,
                                             },
                                                 {
                                                     $push: {
@@ -2231,7 +2217,7 @@ exports.acceptedLinkProfile = async (req, res, next) => {
                                 }
 
                                 const findGroupInConflickModel = await conflictModel.findOne({
-                                    groupId: createRoom._id,
+                                    groupId: req.query.group_room_id,
                                     conflictUserId: req.params.request_id
                                 })
 
@@ -2239,7 +2225,7 @@ exports.acceptedLinkProfile = async (req, res, next) => {
 
                                 if (findGroupInConflickModel == null) {
                                     const addInConflictModel = conflictModel({
-                                        groupId: createRoom._id,
+                                        groupId: req.query.group_room_id,
                                         conflictUserId: req.params.request_id,
                                         acceptedUserId: {
                                             userId: acceptedUser[0]
@@ -2252,7 +2238,7 @@ exports.acceptedLinkProfile = async (req, res, next) => {
                                     await addInConflictModel.save();
                                 } else {
                                     const findInconflict = await conflictModel.findOne({
-                                        groupId: createRoom._id,
+                                        groupId: req.query.group_room_id,
                                         conflictUserId: req.params.request_id,
                                         "notAcceptedUserId.userId": req.params.user_id
                                     })
@@ -2260,7 +2246,7 @@ exports.acceptedLinkProfile = async (req, res, next) => {
 
                                     } else {
                                         await conflictModel.updateOne({
-                                            groupId: createRoom._id,
+                                            groupId: req.query.group_room_id,
                                         },
                                             {
                                                 $push: {
@@ -2461,13 +2447,12 @@ exports.acceptedLinkProfile = async (req, res, next) => {
                                 const findAllUser = await linkProfileModel.findOne({
                                     groupId: req.query.group_room_id
                                 })
+
                                 const allUser = [];
                                 allUser.push(findAllUser.user1, findAllUser.user2, findAllUser.user3)
-
+                         
                                 for (const user of allUser) {
                                     if (model1) {
-
-
 
                                         const findUser = await notificationModel.findOne({
                                             userId: user
@@ -2487,6 +2472,9 @@ exports.acceptedLinkProfile = async (req, res, next) => {
                                             if (existUser) {
 
                                             } else {
+                                                const findUser = await userModel.findOne({
+                                                    _id: req.params.request_id
+                                                })
 
                                                 const notificationData = notificationModel({
                                                     userId: user,
@@ -2570,6 +2558,8 @@ exports.acceptedLinkProfile = async (req, res, next) => {
                                             const findUser = await userModel.findOne({
                                                 _id: req.params.request_id
                                             })
+
+
 
                                             const existUser = await notificationModel.findOne({
                                                 userId: user,
@@ -2682,7 +2672,7 @@ exports.acceptedLinkProfile = async (req, res, next) => {
                                 }
 
                                 const findGroupInConflickModel = await conflictModel.findOne({
-                                    groupId: createRoom._id,
+                                    groupId: req.query.group_room_id,
                                     conflictUserId: req.params.request_id
                                 })
 
@@ -2691,7 +2681,7 @@ exports.acceptedLinkProfile = async (req, res, next) => {
 
                                     if (model1[0]) {
                                         const addInConflictModel = conflictModel({
-                                            groupId: createRoom._id,
+                                            groupId: req.query.group_room_id,
                                             conflictUserId: req.params.request_id,
                                             acceptedUserId: {
                                                 userId: acceptedUser[0]
@@ -2704,7 +2694,7 @@ exports.acceptedLinkProfile = async (req, res, next) => {
                                         await addInConflictModel.save();
                                     } else {
                                         const addInConflictModel = conflictModel({
-                                            groupId: createRoom._id,
+                                            groupId: req.query.group_room_id,
                                             conflictUserId: req.params.request_id,
                                             notAcceptedUserId: {
                                                 userId: req.params.user_id
@@ -2714,7 +2704,7 @@ exports.acceptedLinkProfile = async (req, res, next) => {
                                         await addInConflictModel.save();
                                         await conflictModel.updateOne(
                                             {
-                                                groupId: createRoom._id,
+                                                groupId: req.query.group_room_id,
                                             },
                                             {
                                                 $push: {
@@ -2728,7 +2718,7 @@ exports.acceptedLinkProfile = async (req, res, next) => {
                                     if (model2[0]) {
                                         await conflictModel.updateOne(
                                             {
-                                                groupId: createRoom._id,
+                                                groupId: req.query.group_room_id,
                                             },
                                             {
                                                 $push: {
@@ -2741,7 +2731,7 @@ exports.acceptedLinkProfile = async (req, res, next) => {
 
                                         await conflictModel.updateOne(
                                             {
-                                                groupId: createRoom._id,
+                                                groupId: req.query.group_room_id,
                                             },
                                             {
                                                 $push: {
@@ -2755,7 +2745,7 @@ exports.acceptedLinkProfile = async (req, res, next) => {
 
                                 } else {
                                     const findInconflict = await conflictModel.findOne({
-                                        groupId: createRoom._id,
+                                        groupId: req.query.group_room_id,
                                         conflictUserId: req.params.request_id,
                                         "notAcceptedUserId.userId": req.params.user_id
                                     })
@@ -2764,7 +2754,7 @@ exports.acceptedLinkProfile = async (req, res, next) => {
                                     } else {
                                         if (model1[0]) {
                                             await conflictModel.updateOne({
-                                                groupId: createRoom._id,
+                                                groupId: req.query.group_room_id,
                                             },
                                                 {
                                                     $push: {
@@ -2779,7 +2769,7 @@ exports.acceptedLinkProfile = async (req, res, next) => {
                                         } else {
 
                                             await conflictModel.updateOne({
-                                                groupId: createRoom._id,
+                                                groupId: req.query.group_room_id,
                                             },
                                                 {
                                                     $push: {
@@ -2789,7 +2779,7 @@ exports.acceptedLinkProfile = async (req, res, next) => {
                                                     }
                                                 })
                                             await conflictModel.updateOne({
-                                                groupId: createRoom._id,
+                                                groupId: req.query.group_room_id,
                                             },
                                                 {
                                                     $push: {
@@ -2802,7 +2792,7 @@ exports.acceptedLinkProfile = async (req, res, next) => {
 
                                         if (model2[0]) {
                                             await conflictModel.updateOne({
-                                                groupId: createRoom._id,
+                                                groupId: req.query.group_room_id,
                                             },
                                                 {
                                                     $push: {
@@ -2817,7 +2807,7 @@ exports.acceptedLinkProfile = async (req, res, next) => {
 
                                         } else {
                                             await conflictModel.updateOne({
-                                                groupId: createRoom._id,
+                                                groupId: req.query.group_room_id,
                                             },
                                                 {
                                                     $push: {
@@ -2827,7 +2817,7 @@ exports.acceptedLinkProfile = async (req, res, next) => {
                                                     }
                                                 })
                                             await conflictModel.updateOne({
-                                                groupId: createRoom._id,
+                                                groupId: req.query.group_room_id,
                                             },
                                                 {
                                                     $push: {
