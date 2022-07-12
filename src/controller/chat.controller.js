@@ -63,7 +63,7 @@ exports.getUserWithChat = async (req, res, next) => {
                 })
                 const date = getChat.createdAt
                 let dates = date.getDate();
-                let month = date.getMonth();
+                let month = date.toLocaleString('en-us', { month: 'long' });
                 let year = date.getFullYear();
                 let hours = date.getHours();
                 let minutes = date.getMinutes();
@@ -71,7 +71,7 @@ exports.getUserWithChat = async (req, res, next) => {
                 hours = hours % 12;
                 hours = hours ? hours : 12;
                 minutes = minutes.toString().padStart(2, '0');
-                let strTime = hours + ':' + minutes + ' ' + ampm + ' ' + dates + '-' + month + '-' + year;
+                let strTime = 'At' + ' ' + hours + ':' + minutes + ' ' + ampm + ' ' + 'on' + ' ' + month + ' ' + dates + ',' + year;
 
                 const response = {
                     _id: findUser._id,
@@ -121,7 +121,7 @@ exports.allUserListWithUnreadCount = async (req, res, next) => {
         })
 
         const unReadMessage = [];
- 
+
         for (const roomId of findAllUserWithIchat) {
 
             console.log("roomId", roomId);
@@ -155,14 +155,14 @@ exports.allUserListWithUnreadCount = async (req, res, next) => {
                     const date = getChat.createdAt
                     let hours = date.getHours();
                     let dates = date.getDate();
-                    let month = date.getMonth();
+                    let month = date.toLocaleString('en-us', { month: 'long' });
                     let year = date.getFullYear();
                     let minutes = date.getMinutes();
                     let ampm = hours >= 12 ? 'pm' : 'am';
                     hours = hours % 12;
                     hours = hours ? hours : 12;
                     minutes = minutes.toString().padStart(2, '0');
-                    let strTime = hours + ':' + minutes + ' ' + ampm + ' ' + dates + '-' + month + '-' + year;
+                    let strTime = 'At' + ' ' + hours + ':' + minutes + ' ' + ampm + ' ' + 'on' + ' ' + month + ' ' + dates + ',' + year;
 
                     var count = count + getChat.read;
                     const lastUnreadMessage = {

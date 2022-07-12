@@ -43,8 +43,8 @@ exports.LikeOrDislikeInUserPost = async (req, res, next) => {
                             new APIResponse("Like Added", "true", 201, "1")
                         );
                     } else {
-                        res.status(status.CREATED).json(
-                            new APIResponse("Already Liked Post", "true", 201, "1")
+                        res.status(status.ALREADY_REPORTED).json(
+                            new APIResponse("Already Liked Post", "true", 208, "1")
                         );
                     }
 

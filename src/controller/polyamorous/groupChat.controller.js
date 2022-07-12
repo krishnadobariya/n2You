@@ -6,6 +6,7 @@ const { default: mongoose } = require("mongoose");
 const groupChatRoomModels = require("../../webSocket/models/groupChatRoom.models");
 const chatRoomModel = require("../../webSocket/models/chatRoom.model");
 const linkProfileModel = require("../../model/polyamorous/linkProfile.model");
+const relationShipHistoryModel = require("../../model/polyamorous/relationShipHistory.model");
 
 exports.getGroupChat = async (req, res, next) => {
     try {
@@ -115,7 +116,7 @@ exports.groupList = async (req, res, next) => {
                             }
                             lastMessage.push(lastUnreadMessage);
                             const lastValue = lastMessage[lastMessage.length - 1];
-                       
+
                             const response = {
                                 _id: userProfile1._id,
                                 countUnreadMessage: count,
@@ -127,7 +128,7 @@ exports.groupList = async (req, res, next) => {
                                     user2: userProfile2.photo[0] == undefined ? null : userProfile2.photo[0].res
                                 }
                             }
-                 
+
                             unReadMessage.push(response);
 
                         }
@@ -173,7 +174,7 @@ exports.exitGroup = async (req, res, next) => {
 
 
             if (findGrupRoom.user1 == req.params.user_id) {
-            
+
                 await groupChatRoomModels.updateOne({
                     _id: req.params.group_room_id
                 }, {
@@ -260,9 +261,181 @@ exports.exitGroup = async (req, res, next) => {
                 }
             }
 
-
             res.status(status.OK).json(
                 new APIResponse("Exit group successfully", "true", 200, "1")
+            );
+
+        }
+
+    } catch (error) {
+        console.log("Error:", error);
+        res.status(status.INTERNAL_SERVER_ERROR).json(
+            new APIResponse("Something Went Wrong", false, 500, error.message)
+        );
+    }
+}
+
+exports.exitByGroupUser = async (req, res, next) => {
+    try {
+
+        const findGrupRoom = await groupChatRoomModels.findOne({
+            _id: req.params.group_room_id
+        })
+
+        if (findGrupRoom == null) {
+            res.status(status.NOT_FOUND).json(
+                new APIResponse("chat room not Found", "false", 404, "0")
+            );
+        } else {
+            const allUser = [];
+            if (findGrupRoom.user1 == req.params.exituser_id) {
+                await groupChatRoomModels.updateOne({
+                    _id: req.params.group_room_id
+                }, {
+                    $set: {
+                        user1: null
+                    }
+                })
+
+                allUser.push(findGrupRoom.user2, findGrupRoom.user3, findGrupRoom.user4)
+
+
+            } else if (findGrupRoom.user2 == req.params.exituser_id) {
+                await groupChatRoomModels.updateOne({
+                    _id: req.params.group_room_id
+                }, {
+                    $set: {
+                        user2: null
+                    }
+                })
+                allUser.push(findGrupRoom.user1, findGrupRoom.user3, findGrupRoom.user4)
+            } else if (findGrupRoom.user3 == req.params.exituser_id) {
+                await groupChatRoomModels.updateOne({
+                    _id: req.params.group_room_id
+                }, {
+                    $set: {
+                        user3: null
+                    }
+                })
+                allUser.push(findGrupRoom.user2, findGrupRoom.user1, findGrupRoom.user4)
+            } else if (findGrupRoom.user4 == req.params.exituser_id) {
+                await groupChatRoomModels.updateOne({
+                    _id: req.params.group_room_id
+                }, {
+                    $set: {
+                        user4: null
+                    }
+                })
+                allUser.push(findGrupRoom.user2, findGrupRoom.user3, findGrupRoom.user1)
+            }
+
+            const findLinkProfileUser = await linkProfileModel.findOne({
+                groupId: req.params.group_room_id
+            })
+
+            if (findLinkProfileUser == null) {
+
+            } else {
+
+
+                if (findLinkProfileUser.user1 == req.params.exituser_id) {
+                    await linkProfileModel.updateOne({
+                        groupId: req.params.group_room_id
+                    }, {
+                        $set: {
+                            user1: null,
+                        },
+
+                    })
+                } else if (findLinkProfileUser.user2 == req.params.exituser_id) {
+                    await linkProfileModel.updateOne({
+                        groupId: req.params.group_room_id
+                    }, {
+                        $set: {
+                            user2: null,
+                        },
+
+                    })
+                } else if (findLinkProfileUser.user3 == req.params.exituser_id) {
+                    await linkProfileModel.updateOne({
+                        groupId: req.params.group_room_id
+                    }, {
+                        $set: {
+                            user3: null,
+                        },
+
+                    })
+                } else if (findLinkProfileUser.user4 == req.params.exituser_id) {
+                    await linkProfileModel.updateOne({
+                        groupId: req.params.group_room_id
+                    }, {
+                        $set: {
+                            user4: null,
+                        },
+
+                    })
+                }
+            }
+
+
+            const userName = [];
+            for (const getDetail of allUser) {
+                if (getDetail == null) {
+
+                } else {
+
+                    const findUser = await userModel.findOne({
+                        _id: getDetail
+                    })
+
+                    userName.push(findUser.firstName);
+                }
+            }
+
+
+            if (userName.length == 3) {
+
+                await relationShipHistoryModel.updateOne({
+                    userId: req.params.exituser_id
+                }, {
+                    $push:
+                    {
+                        relastionShipHistory: {
+                            message: `You got removed from Poly group by ${userName[0]}, ${userName[1]}, ${userName[2]}'s Poly group`
+                        }
+                    }
+                })
+
+            } else if (userName.length == 2) {
+
+                await relationShipHistoryModel.updateOne({
+                    userId: req.params.exituser_id
+                }, {
+                    $push:
+                    {
+                        relastionShipHistory: {
+                            message: `You got removed from Poly group by ${userName[0]}, ${userName[1]}'s Poly group`
+                        }
+                    }
+                })
+
+
+            } else if (userName.length == 1) {
+                await relationShipHistoryModel.updateOne({
+                    userId: req.params.exituser_id
+                }, {
+                    $push:
+                    {
+                        relastionShipHistory: {
+                            message: `You got removed from Poly group by ${userName[0]}'s Poly group`
+                        }
+                    }
+                })
+            }
+
+            console.log(userName);
+            res.status(status.OK).json(
+                new APIResponse("Exit group successfully by group mamber", "true", 200, "1")
             );
 
         }

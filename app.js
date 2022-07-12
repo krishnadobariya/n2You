@@ -32,7 +32,7 @@ const blockUnblockRoutes = require('./src/routes/polyamorous/blockUnblock.routes
 const groupChatRoutes = require("./src/routes/polyamorous/groupChat.routes");
 const notificationRoutes = require('./src/routes/polyamorous/notification.routes');
 const conflictRoutes = require('./src/routes/polyamorous/conflict.routes');
-
+const relastionShipHistoryRoutes = require('./src/routes/polyamorous/relationShipHistory.routes');
 
 app.use('/user', userRoutes);
 app.use('/posts', postRoutes);
@@ -51,5 +51,6 @@ app.use('/blockUnblockUsers', blockUnblockRoutes);
 app.use('/groupChat', groupChatRoutes);
 app.use('/notification', notificationRoutes);
 app.use('/conflict', conflictRoutes);
+app.use('/retaionship/histoy', relastionShipHistoryRoutes);
 
 module.exports = app;

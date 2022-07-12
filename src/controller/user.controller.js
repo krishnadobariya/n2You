@@ -6,6 +6,8 @@ const requestsModel = require("../model/requests.model");
 const { default: mongoose } = require("mongoose");
 const commentModel = require("../model/comment.model");
 const basketModel = require("../model/basket.model");
+const relationShipHistoryModel = require("../model/polyamorous/relationShipHistory.model");
+
 
 exports.userRegister = async (req, res, next) => {
     try {
@@ -116,6 +118,16 @@ exports.userRegister = async (req, res, next) => {
                     drinking: req.body.drinking,
                     hobbies: req.body.hobbies,
                     phoneNumber: `${countryCode}${phoneNum}`
+                }
+
+                if (findUser.polyDating == 1) {
+                    const storeInHistory = relationShipHistoryModel({
+                        userId: findUser._id,
+                        relastionShipHistory: {
+                            message: "You got registered in N2You"
+                        }
+                    })
+                    await storeInHistory.save()
                 }
 
 
@@ -2058,9 +2070,6 @@ exports.noBasket = async (req, res, next) => {
                             reaquestedAllEmail.push(meargeData.email)
                         }
 
-
-
-
                         if (reaquestedAllEmail[0] == undefined) {
                             res.status(status.NOT_FOUND).json(
                                 new APIResponse("No User Found", 'false', 404, '0')
@@ -2128,13 +2137,9 @@ exports.noBasket = async (req, res, next) => {
                                     emailGet.push(getEmail.requestedEmail)
                                 }
 
-
                                 var difference = reaquestedAllEmail.filter(x => emailGet.indexOf(x) === -1);
 
-
-
                                 const UniqueEmail = [];
-
 
                                 for (const uniqueEmail of difference) {
                                     const userDetail = await userModel.findOne({ email: uniqueEmail });
@@ -2241,12 +2246,7 @@ exports.noBasket = async (req, res, next) => {
                                     }
                                 }])
 
-
-
-
                                 const finalExistUser = [];
-
-
 
                                 const emailDataDetail = meageAllTable;
                                 for (const DataDetail of emailDataDetail) {
@@ -2257,8 +2257,6 @@ exports.noBasket = async (req, res, next) => {
                                         }
                                     }
                                 }
-
-
 
                                 for (const emailData of finalExistUser[0].result) {
 
@@ -2294,8 +2292,6 @@ exports.noBasket = async (req, res, next) => {
                                                         }
                                                     }
                                                 }
-
-
                                             }
                                         }
                                     }
@@ -2335,8 +2331,6 @@ exports.noBasket = async (req, res, next) => {
                                     final_data.push(response);
                                 }
 
-
-
                                 const final_response = [...final_data, ...UniqueEmail]
 
                                 // let uniqueObjArray = [...new Map(final_data.map((item) => [item["details"], item])).values()];
@@ -2353,13 +2347,8 @@ exports.noBasket = async (req, res, next) => {
                         new APIResponse("Not have Any Access, All Access Lock By User", "false", 406, "0")
                     );
                 }
-
             }
-
         }
-
-
-
     } catch (error) {
         console.log("error", error);
         res.status(status.INTERNAL_SERVER_ERROR).json(

@@ -10,6 +10,7 @@ const notificationModel = require("../../model/polyamorous/notification.model");
 const groupChatRoomModels = require("../../webSocket/models/groupChatRoom.models");
 const { update, updateOne } = require("../../model/user.model");
 const conflictModel = require("../../model/polyamorous/conflict.model");
+const relationShipHistoryModel = require("../../model/polyamorous/relationShipHistory.model");
 
 
 exports.getUserWhichNotChoiceForLikeOrDislike = async (req, res, next) => {
@@ -356,6 +357,25 @@ exports.matchUsers = async (req, res, next) => {
                             }
                         }
                     })
+                    const existUserInHistory = await relationShipHistoryModel.findOne({
+                        userId: req.params.user_id,
+                        "relastionShipHistory.message": `You found match with ${findInUserModel.firstName}`
+                    })
+
+                    if (existUserInHistory) {
+
+                    } else {
+                        await relationShipHistoryModel.updateOne({
+                            userId: req.params.user_id,
+                        }, {
+                            $push: {
+                                relastionShipHistory: {
+                                    message: `You found match with ${findInUserModel.firstName}`
+                                }
+                            }
+                        })
+                    }
+
                     if (existUser) {
 
                     } else {
@@ -381,6 +401,26 @@ exports.matchUsers = async (req, res, next) => {
                             }
                         }
                     })
+
+
+                    const existUserInHistory = await relationShipHistoryModel.findOne({
+                        userId: req.params.user_id,
+                        "relastionShipHistory.message": `You found match with ${findInUserModel.firstName}`
+                    })
+
+                    if (existUserInHistory) {
+
+                    } else {
+                        await relationShipHistoryModel.updateOne({
+                            userId: req.params.user_id,
+                        }, {
+                            $push: {
+                                relastionShipHistory: {
+                                    message: `You found match with ${findInUserModel.firstName}`
+                                }
+                            }
+                        })
+                    }
 
                     if (existUser) {
 
@@ -523,6 +563,43 @@ exports.getPolyamorousUser = async (req, res, next) => {
                 );
             } else {
 
+
+                const findUserInHistory = await relationShipHistoryModel.findOne({
+                    userId: req.params.user_id
+                })
+                const finalResponse = [];
+
+                if (findUserInHistory == null) {
+                    res.status(status.NOT_FOUND).json(
+                        new APIResponse("User don't have any relationship history", "false", 404, "0")
+                    );
+                } else {
+
+
+                    for (const response of findUserInHistory.relastionShipHistory) {
+
+                        const date = response.createdAt
+                        let dates = date.getDate();
+                        let month = date.toLocaleString('en-us', { month: 'long' });
+                        let year = date.getFullYear();
+                        let hours = date.getHours();
+                        let minutes = date.getMinutes();
+                        let ampm = hours >= 12 ? 'pm' : 'am';
+                        hours = hours % 12;
+                        hours = hours ? hours : 12;
+                        minutes = minutes.toString().padStart(2, '0');
+                        let strTime = 'At' + ' ' + hours + ':' + minutes + ' ' + ampm + ' ' + 'on' + ' ' + month + ' ' + dates + ',' + year;
+
+                        const relationShipHistory = {
+                            message: response.message,
+                            date: strTime
+                        }
+
+                        finalResponse.push(relationShipHistory)
+                    }
+                }
+
+
                 let brithDate = new Date(findPolyamorousUser.birthDate);
                 brithDate = brithDate.getFullYear();
                 let currentDate = new Date(Date.now());
@@ -547,7 +624,8 @@ exports.getPolyamorousUser = async (req, res, next) => {
                     height: findPolyamorousUser.extraAtrribute.height,
                     smoking: findPolyamorousUser.extraAtrribute.smoking,
                     drinking: findPolyamorousUser.extraAtrribute.drinking,
-                    hobbies: findPolyamorousUser.extraAtrribute.hobbies
+                    hobbies: findPolyamorousUser.extraAtrribute.hobbies,
+                    history: finalResponse
                 }
                 res.status(status.OK).json(
                     new APIResponse("get Polyamorous User", "true", 200, "1", response)
@@ -896,6 +974,23 @@ exports.acceptedLinkProfile = async (req, res, next) => {
                                         }
                                     })
 
+                                    const findUserInHistory = await relationShipHistoryModel.findOne({
+                                        userId: req.params.request_id,
+                                        "relastionShipHistory.message": `Your ploy group found match with ${findUser.firstName}, ${user2Id[0]} Poly group`
+                                    })
+
+                                    if (findUserInHistory) { } else {
+                                        await relationShipHistoryModel.updateOne({
+                                            userId: req.params.request_id,
+                                        }, {
+                                            $push: {
+                                                relastionShipHistory: {
+                                                    message: `Your ploy group found match with ${findUser.firstName}, ${user2Id[0]} Poly group`
+                                                }
+                                            }
+                                        })
+                                    }
+
                                     if (existUser) {
 
                                     } else {
@@ -926,6 +1021,22 @@ exports.acceptedLinkProfile = async (req, res, next) => {
                                         }
                                     })
 
+                                    const findUserInHistory = await relationShipHistoryModel.findOne({
+                                        userId: req.params.request_id,
+                                        "relastionShipHistory.message": `Your ploy group found match with ${findUser.firstName}, ${user2Id[0]} Poly group`
+                                    })
+
+                                    if (findUserInHistory) { } else {
+                                        await relationShipHistoryModel.updateOne({
+                                            userId: req.params.request_id,
+                                        }, {
+                                            $push: {
+                                                relastionShipHistory: {
+                                                    message: `Your ploy group found match with ${findUser.firstName}, ${user2Id[0]} Poly group`
+                                                }
+                                            }
+                                        })
+                                    }
 
                                     if (existUser) {
 
@@ -1292,6 +1403,23 @@ exports.acceptedLinkProfile = async (req, res, next) => {
                                         }
                                     })
 
+                                    const findUserInHistory = await relationShipHistoryModel.findOne({
+                                        userId: req.params.request_id,
+                                        "relastionShipHistory.message": `Your ploy group found match with ${findUser.firstName}, ${user2Id[0]}, ${user2Id[1]} Poly group`
+                                    })
+
+                                    if (findUserInHistory) { } else {
+                                        await relationShipHistoryModel.updateOne({
+                                            userId: req.params.request_id,
+                                        }, {
+                                            $push: {
+                                                relastionShipHistory: {
+                                                    message: `Your ploy group found match with ${findUser.firstName}, ${user2Id[0]}, ${user2Id[1]} Poly group`
+                                                }
+                                            }
+                                        })
+                                    }
+
                                     if (existUser) {
 
                                     } else {
@@ -1321,6 +1449,23 @@ exports.acceptedLinkProfile = async (req, res, next) => {
                                             }
                                         }
                                     })
+
+                                    const findUserInHistory = await relationShipHistoryModel.findOne({
+                                        userId: req.params.request_id,
+                                        "relastionShipHistory.message": `Your ploy group found match with ${findUser.firstName}, ${user2Id[0]}, ${user2Id[1]} Poly group`
+                                    })
+
+                                    if (findUserInHistory) { } else {
+                                        await relationShipHistoryModel.updateOne({
+                                            userId: req.params.request_id,
+                                        }, {
+                                            $push: {
+                                                relastionShipHistory: {
+                                                    message: `Your ploy group found match with ${findUser.firstName}, ${user2Id[0]}, ${user2Id[1]} Poly group`
+                                                }
+                                            }
+                                        })
+                                    }
 
                                     if (existUser) {
 
@@ -1821,8 +1966,12 @@ exports.acceptedLinkProfile = async (req, res, next) => {
                     if (findInChatRoom1 || findInChatRoom2) {
 
                     } else {
+
+                        const findUser = await userModel.findOne({
+                            _id: req.params.user_id
+                        })
                         const groupRoom = groupChatRoomModels({
-                            groupName: "siya",
+                            groupName: findUser.firstName,
                             user1: req.params.user_id,
                             user2: req.params.request_id,
                             user3: null,
@@ -1831,9 +1980,6 @@ exports.acceptedLinkProfile = async (req, res, next) => {
 
                         await groupRoom.save()
                     }
-
-
-
 
                     const findUser = await notificationModel.findOne({
                         userId: req.params.request_id
@@ -2450,7 +2596,7 @@ exports.acceptedLinkProfile = async (req, res, next) => {
 
                                 const allUser = [];
                                 allUser.push(findAllUser.user1, findAllUser.user2, findAllUser.user3)
-                         
+
                                 for (const user of allUser) {
                                     if (model1) {
 
