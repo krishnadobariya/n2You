@@ -22,15 +22,13 @@ function socket(io) {
 
         socket.on("chat", async (arg) => {
 
-            const userRoom = []
-            if (arg.sender_id == arg.user_1) {
-                const userRooms = `${arg.user_2}`
-                userRoom.push(userRooms)
-            } else {
-                const userRooms = `${arg.user_1}`
-                userRoom.push(userRooms)
-            }
+            const userRoom = [];
 
+            const userRooms = `${arg.user_2}`
+            userRoom.push(userRooms)
+
+
+            console.log("userRooms", userRooms);
             socket.join(userRoom[0])
 
             const fcm_token = [];
@@ -41,7 +39,6 @@ function socket(io) {
             } else {
                 const userFind = await userModel.findOne({ _id: arg.user_1, polyDating: 0 })
                 fcm_token.push(userFind.fcm_token)
-
             }
 
             const addInChatRoom = await chatRoomModel.findOne({
@@ -99,6 +96,7 @@ function socket(io) {
                                 receiver_id.push(userFind._id)
 
                             }
+
                             const chat = {
                                 text: arg.text,
                                 sender: arg.sender_id,
@@ -139,6 +137,8 @@ function socket(io) {
                             })
 
                             await data.save();
+
+                            const receiver_id = [];
                             if (arg.sender_id == arg.user_1) {
                                 const userFind = await userModel.findOne({ _id: arg.user_2, polyDating: 0 })
                                 receiver_id.push(userFind._id)
@@ -148,6 +148,7 @@ function socket(io) {
                                 receiver_id.push(userFind._id)
 
                             }
+
                             const chat = {
                                 text: arg.text,
                                 sender: arg.sender_id,
@@ -209,6 +210,7 @@ function socket(io) {
 
                                 await data.save();
 
+                                const receiver_id = [];
                                 if (arg.sender_id == arg.user_1) {
                                     const userFind = await userModel.findOne({ _id: arg.user_2, polyDating: 0 })
                                     receiver_id.push(userFind._id)
@@ -385,8 +387,6 @@ function socket(io) {
 
                                 const title = "n2you Notification";
                                 const body = `${arg.sender_id} send request to `;
-
-
                                 const text = arg.text;
                                 const sendBy = arg.sender_id;
 
