@@ -29,21 +29,28 @@ function socket(io) {
 
         socket.on("chat", async (arg) => {
 
-            const userRoom = `User${ arg.user_2 }`;
+            const userRoom = `User${arg.user_2}`;
+            console.log("userRoom1", userRoom);
+
 
             // const userRooms = `${arg.user_2}`
             // userRoom.push(userRooms)
 
 
             // console.log("userRooms", userRooms);
-            // socket.join(userRoom[0])
+            // socket.join(userRoom)
 
             const fcm_token = [];
             if (arg.sender_id == arg.user_1) {
+
+                console.log("first Block");
+
                 const userFind = await userModel.findOne({ _id: arg.user_2, polyDating: 0 })
                 fcm_token.push(userFind.fcm_token)
 
             } else {
+
+                console.log("second Block");
                 const userFind = await userModel.findOne({ _id: arg.user_1, polyDating: 0 })
 
                 console.log("userFind", userFind);
@@ -62,6 +69,8 @@ function socket(io) {
 
 
             if (addInChatRoom == null && checkUsers == null) {
+
+                console.log("third Block");
                 const insertChatRoom = chatRoomModel({
                     user1: arg.user_1,
                     user2: arg.user_2
@@ -81,8 +90,9 @@ function socket(io) {
 
                 if (getChatRoom == null && alterNateChatRoom == null) {
                     io.emit("chatReceive", "chat room not found");
+                    console.log("not found");
                 } else {
-
+                    console.log("userRoom", userRoom);
                     if (getChatRoom) {
 
                         if (arg.sender_id == arg.user_1 || arg.sender_id == arg.user_2) {
@@ -147,6 +157,9 @@ function socket(io) {
                                 }
                             })
 
+                            console.log("userRoom2", userRoom);
+
+
                             await data.save();
 
                             const receiver_id = [];
@@ -165,6 +178,10 @@ function socket(io) {
                                 sender: arg.sender_id,
                                 receiver: receiver_id[0]
                             }
+
+                            console.log("userRoom3", userRoom);
+
+
                             io.to(userRoom).emit("chatReceive", chat);
                             const title = "n2you Notification";
                             const body = `${arg.sender_id} send request to `;
@@ -188,6 +205,8 @@ function socket(io) {
 
                 }
             } else {
+
+                console.log("fourth Block");
                 const getChatRoom = await chatRoomModel.findOne({
                     user1: arg.user_1,
                     user2: arg.user_2
@@ -210,6 +229,7 @@ function socket(io) {
                         })
 
                         if (find1 == null) {
+                            log
                             if (arg.sender_id == arg.user_1 || arg.sender_id == arg.user_2) {
                                 const data = chatModels({
                                     chatRoomId: getChatRoom._id,
@@ -236,8 +256,8 @@ function socket(io) {
                                     sender: arg.sender_id,
                                     receiver: receiver_id[0]
                                 }
-
-                                io.to(userRoom[0]).emit("chatReceive", chat);
+                                console.log("userRoom4", userRoom);
+                                io.to(userRoom).emit("chatReceive", chat);
                                 const title = "n2you Notification";
                                 const body = `${arg.sender_id} send request to `;
 
@@ -289,7 +309,9 @@ function socket(io) {
                                     sender: arg.sender_id,
                                     receiver: receiver_id[0]
                                 }
-                                io.to(userRoom[0]).emit("chatReceive", chat);
+
+                                console.log("userRoom5", userRoom);
+                                io.to(userRoom).emit("chatReceive", chat);
 
                                 const title = "n2you Notification";
                                 const body = `${arg.sender_id} send request to `;
@@ -343,7 +365,7 @@ function socket(io) {
                                     sender: arg.sender_id,
                                     receiver: receiver_id[0]
                                 }
-                                io.to(userRoom[0]).emit("chatReceive", chat);
+                                io.to(userRoom).emit("chatReceive", chat);
 
                                 const title = "n2you Notification";
                                 const body = `${arg.sender_id} send request to `;
@@ -394,7 +416,7 @@ function socket(io) {
                                     sender: arg.sender_id,
                                     receiver: receiver_id[0]
                                 }
-                                io.to(userRoom[0]).emit("chatReceive", chat);
+                                io.to(userRoom).emit("chatReceive", chat);
 
                                 const title = "n2you Notification";
                                 const body = `${arg.sender_id} send request to `;
