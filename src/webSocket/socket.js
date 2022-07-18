@@ -15,21 +15,28 @@ function socket(io) {
 
     io.on('connection', (socket) => {
 
+        // socket.on("joinUser", function (data) {
+        //     const userRoom = `User${data.user_1}`
+        //     socket.join(userRoom)
+        // })
+
         socket.on("joinUser", function (data) {
-            const userRoom = `User${data.user_1}`
-            socket.join(userRoom)
-        })
+            const userRoom = `User${data.user_id}`;
+
+            socket.join(userRoom);
+            // io.to(data.user_id).emit('join', {msg: 'hello world.'});
+        });
 
         socket.on("chat", async (arg) => {
 
-            const userRoom = [];
+            const userRoom = `User${ arg.user_2 }`;
 
-            const userRooms = `${arg.user_2}`
-            userRoom.push(userRooms)
+            // const userRooms = `${arg.user_2}`
+            // userRoom.push(userRooms)
 
 
-            console.log("userRooms", userRooms);
-            socket.join(userRoom[0])
+            // console.log("userRooms", userRooms);
+            // socket.join(userRoom[0])
 
             const fcm_token = [];
             if (arg.sender_id == arg.user_1) {
@@ -38,6 +45,8 @@ function socket(io) {
 
             } else {
                 const userFind = await userModel.findOne({ _id: arg.user_1, polyDating: 0 })
+
+                console.log("userFind", userFind);
                 fcm_token.push(userFind.fcm_token)
             }
 
@@ -102,6 +111,8 @@ function socket(io) {
                                 sender: arg.sender_id,
                                 receiver: receiver_id[0]
                             }
+
+                            console.log("userRoom", userRoom);
                             io.to(userRoom).emit("chatReceive", chat);
 
                             const title = "n2you Notification";
