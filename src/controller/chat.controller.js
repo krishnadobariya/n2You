@@ -58,7 +58,6 @@ exports.getUserWithChat = async (req, res, next) => {
                 chatRoom.push(user1)
             }
 
-            console.log(chatRoom[0]);
             const allChat = [];
 
 
@@ -66,17 +65,13 @@ exports.getUserWithChat = async (req, res, next) => {
                 chatRoomId: chatRoom[0]
             })
 
-            console.log(findRoom);
 
             const chat = findRoom.chat;
-
-
             for (const getChat of chat) {
 
                 const findUser = await userModel.findOne({
                     _id: getChat.sender
                 })
-
 
                 const date = getChat.createdAt
                 let dates = date.getDate();
@@ -90,8 +85,6 @@ exports.getUserWithChat = async (req, res, next) => {
                 minutes = minutes.toString().padStart(2, '0');
                 let strTime = 'At' + ' ' + hours + ':' + minutes + ' ' + ampm + ' ' + 'on' + ' ' + month + ' ' + dates + ',' + year;
 
-                console.log("strTime", strTime);
-
                 const response = {
                     _id: findUser._id,
                     text: getChat.text,
@@ -99,17 +92,15 @@ exports.getUserWithChat = async (req, res, next) => {
                     name: findUser.firstName,
                     time: strTime
                 }
+
                 allChat.push(response)
 
             }
-
-            console.log("allChatc", allChat);
 
             const page = parseInt(req.query.page)
             const limit = parseInt(req.query.limit)
             const startIndex = (page - 1) * limit;
             const endIndex = page * limit;
-
 
             res.status(status.OK).json(
                 new APIResponse("show all record with chat", "true", 201, "1", allChat.slice(startIndex, endIndex))
@@ -144,8 +135,6 @@ exports.allUserListWithUnreadCount = async (req, res, next) => {
         const unReadMessage = [];
 
         for (const roomId of findAllUserWithIchat) {
-
-            console.log("roomId", roomId);
 
             const findRoom = await chatModels.findOne({
                 chatRoomId: roomId._id
