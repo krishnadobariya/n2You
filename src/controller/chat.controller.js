@@ -90,6 +90,8 @@ exports.getUserWithChat = async (req, res, next) => {
                 minutes = minutes.toString().padStart(2, '0');
                 let strTime = 'At' + ' ' + hours + ':' + minutes + ' ' + ampm + ' ' + 'on' + ' ' + month + ' ' + dates + ',' + year;
 
+                console.log("strTime", strTime);
+
                 const response = {
                     _id: findUser._id,
                     text: getChat.text,
@@ -98,8 +100,10 @@ exports.getUserWithChat = async (req, res, next) => {
                     time: strTime
                 }
                 allChat.push(response)
+
             }
 
+            console.log("allChatc", allChat);
 
             const page = parseInt(req.query.page)
             const limit = parseInt(req.query.limit)
