@@ -59,15 +59,17 @@ exports.getUserWithChat = async (req, res, next) => {
             }
 
             const allChat = [];
-
-
             const findRoom = await chatModels.findOne({
                 chatRoomId: chatRoom[0]
             })
-
+            const page = parseInt(req.query.page)
+            const limit = parseInt(req.query.limit)
+            const startIndex = (page - 1) * limit;
+            const endIndex = page * limit;
 
             const chat = findRoom.chat;
-            for (const getChat of chat) {
+
+            for (const getChat of chat.slice(startIndex, endIndex)) {
 
                 const findUser = await userModel.findOne({
                     _id: getChat.sender
@@ -97,13 +99,10 @@ exports.getUserWithChat = async (req, res, next) => {
 
             }
 
-            const page = parseInt(req.query.page)
-            const limit = parseInt(req.query.limit)
-            const startIndex = (page - 1) * limit;
-            const endIndex = page * limit;
+
 
             res.status(status.OK).json(
-                new APIResponse("show all record with chat", "true", 201, "1", allChat.slice(startIndex, endIndex))
+                new APIResponse("show all record with chat", "true", 201, "1", allChat)
             )
         }
     } catch (error) {
