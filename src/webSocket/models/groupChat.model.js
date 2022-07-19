@@ -16,7 +16,6 @@ const groupChatSchema = mongoose.Schema({
             },
             createdAt: {
                 type: Date,
-                default: Date.now()
             },
             read: [{
                 userId: {

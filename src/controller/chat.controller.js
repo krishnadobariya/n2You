@@ -82,8 +82,8 @@ exports.getUserWithChat = async (req, res, next) => {
                 let dates = date.getDate();
                 let month = date.toLocaleString('en-us', { month: 'long' });
                 let year = date.getFullYear();
-                let hours = date.getHours();
-                let minutes = date.getMinutes();
+                let hours = date.getHours() + 6;
+                let minutes = date.getMinutes() + 30;
                 let ampm = hours >= 12 ? 'pm' : 'am';
                 hours = hours % 12;
                 hours = hours ? hours : 12;
