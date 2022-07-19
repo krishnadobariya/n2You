@@ -42,4 +42,5 @@ const groupChatRoomSchema = mongoose.Schema({
     collection: 'groupChatRoom'
 });
 
+
 module.exports = mongoose.model('groupChatRoom', groupChatRoomSchema);

@@ -49,18 +49,35 @@ exports.getUserWithChat = async (req, res, next) => {
 
         } else {
 
-            const chatRoom = findAllRecordInChat1._id || findAllRecordInChat2._id
+            const chatRoom = []
+            if (findAllRecordInChat1 == null) {
+                const user2 = findAllRecordInChat2._id
+                chatRoom.push(user2)
+            } else {
+                const user1 = findAllRecordInChat1._id
+                chatRoom.push(user1)
+            }
+
+            console.log(chatRoom[0]);
             const allChat = [];
+
+
             const findRoom = await chatModels.findOne({
-                chatRoomId: chatRoom
+                chatRoomId: chatRoom[0]
             })
 
+            console.log(findRoom);
+
             const chat = findRoom.chat;
+
+
             for (const getChat of chat) {
 
                 const findUser = await userModel.findOne({
                     _id: getChat.sender
                 })
+
+
                 const date = getChat.createdAt
                 let dates = date.getDate();
                 let month = date.toLocaleString('en-us', { month: 'long' });

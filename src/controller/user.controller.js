@@ -41,7 +41,7 @@ exports.userRegister = async (req, res, next) => {
             )
         } else {
             const phoneNum = req.body.phone_num;
-
+            
             const countryCode = req.body.country_code
 
             const findNumber = await userModel.findOne({ phoneNumber: `${countryCode}${phoneNum}` });
