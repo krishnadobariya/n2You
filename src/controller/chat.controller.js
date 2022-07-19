@@ -58,14 +58,18 @@ exports.getUserWithChat = async (req, res, next) => {
                 chatRoom.push(user1)
             }
 
-            const allChat = [];
-            const findRoom = await chatModels.findOne({
-                chatRoomId: chatRoom[0]
-            })
             const page = parseInt(req.query.page)
             const limit = parseInt(req.query.limit)
             const startIndex = (page - 1) * limit;
             const endIndex = page * limit;
+            const allChat = [];
+
+
+
+            const findRoom = await chatModels.findOne({
+                chatRoomId: chatRoom[0]
+            }).select('-text -createdAt');
+
 
             const chat = findRoom.chat;
 
@@ -98,9 +102,6 @@ exports.getUserWithChat = async (req, res, next) => {
                 allChat.push(response)
 
             }
-
-
-
             res.status(status.OK).json(
                 new APIResponse("show all record with chat", "true", 201, "1", allChat)
             )
