@@ -52,10 +52,16 @@ exports.getUserWithChat = async (req, res, next) => {
             const chatRoom = []
             if (findAllRecordInChat1 == null) {
                 const user2 = findAllRecordInChat2._id
-                chatRoom.push(user2)
+                const findRoom = await chatModels.findOne({
+                    chatRoomId: user2
+                });
+                chatRoom.push(findRoom)
             } else {
                 const user1 = findAllRecordInChat1._id
-                chatRoom.push(user1)
+                const findRoom = await chatModels.findOne({
+                    chatRoomId: user1
+                });
+                chatRoom.push(findRoom)
             }
 
             const page = parseInt(req.query.page)
@@ -64,14 +70,7 @@ exports.getUserWithChat = async (req, res, next) => {
             const endIndex = page * limit;
             const allChat = [];
 
-
-
-            const findRoom = await chatModels.findOne({
-                chatRoomId: chatRoom[0]
-            });
-
-
-            const chat = findRoom.chat;
+            const chat = chatRoom[0].chat;
 
             for (const getChat of chat.slice(startIndex, endIndex)) {
                 console.log("getChat", getChat);
