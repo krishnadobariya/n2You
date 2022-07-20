@@ -4,13 +4,9 @@ const chatModels = require("../webSocket/models/chat.models");
 const { default: mongoose, get } = require("mongoose");
 const chatRoomModel = require("../webSocket/models/chatRoom.model");
 const userModel = require("../model/user.model");
-const { find, aggregate } = require("../model/user.model");
-const { FORBIDDEN } = require("http-status");
-
 
 exports.readChat = async (req, res, next) => {
     try {
-
 
         const findChatId = await chatModels.findOne({ chatRoomId: mongoose.Types.ObjectId(req.params.chat_room_id) })
 
@@ -167,22 +163,11 @@ exports.allUserListWithUnreadCount = async (req, res, next) => {
 
                 for (const getChat of findRoom.chat) {
 
-                    const date = getChat.createdAt
-                    let hours = date.getHours();
-                    let dates = date.getDate();
-                    let month = date.toLocaleString('en-us', { month: 'long' });
-                    let year = date.getFullYear();
-                    let minutes = date.getMinutes();
-                    let ampm = hours >= 12 ? 'pm' : 'am';
-                    hours = hours % 12;
-                    hours = hours ? hours : 12;
-                    minutes = minutes.toString().padStart(2, '0');
-                    let strTime = 'At' + ' ' + hours + ':' + minutes + ' ' + ampm + ' ' + 'on' + ' ' + month + ' ' + dates + ',' + year;
-
+                    console.log("getChat", getChat);
                     var count = count + getChat.read;
                     const lastUnreadMessage = {
                         text: getChat.text,
-                        createdAt: strTime
+                        createdAt: getChat.createdAt
                     }
                     lastMessage.push(lastUnreadMessage);
                     const lastValue = lastMessage[lastMessage.length - 1];
