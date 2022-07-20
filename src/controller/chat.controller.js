@@ -57,7 +57,7 @@ exports.getUserWithChat = async (req, res, next) => {
                 });
                 chatRoom.push(findRoom)
 
-                allChat.push(chat)
+                // allChat.push(chat)
 
 
                 const chat = findRoom.chat;
@@ -66,35 +66,35 @@ exports.getUserWithChat = async (req, res, next) => {
                 const startIndex = (page - 1) * limit;
                 const endIndex = page * limit;
 
-                // for (const getChat of chat.slice(startIndex, endIndex)) {
-                //     console.log("getChat", getChat);
-                //     const findUser = await userModel.findOne({
-                //         _id: getChat.sender
-                //     })
+                for (const getChat of chat.slice(startIndex, endIndex)) {
+                    console.log("getChat", getChat);
+                    const findUser = await userModel.findOne({
+                        _id: getChat.sender
+                    })
 
-                //     const date = getChat.createdAt
-                //     let dates = date.getDate();
-                //     let month = date.toLocaleString('en-us', { month: 'long' });
-                //     let year = date.getFullYear();
-                //     let hours = date.getHours() + 5;
-                //     let minutes = date.getMinutes() + 30;
-                //     let ampm = hours >= 12 ? 'pm' : 'am';
-                //     hours = hours % 12;
-                //     hours = hours ? hours : 12;
-                //     minutes = minutes.toString().padStart(2, '0');
-                //     let strTime = 'At' + ' ' + hours + ':' + minutes + ' ' + ampm + ' ' + 'on' + ' ' + month + ' ' + dates + ',' + year;
+                    // const date = getChat.createdAt
+                    // let dates = date.getDate();
+                    // let month = date.toLocaleString('en-us', { month: 'long' });
+                    // let year = date.getFullYear();
+                    // let hours = date.getHours() + 5;
+                    // let minutes = date.getMinutes() + 30;
+                    // let ampm = hours >= 12 ? 'pm' : 'am';
+                    // hours = hours % 12;
+                    // hours = hours ? hours : 12;
+                    // minutes = minutes.toString().padStart(2, '0');
+                    // let strTime = 'At' + ' ' + hours + ':' + minutes + ' ' + ampm + ' ' + 'on' + ' ' + month + ' ' + dates + ',' + year;
 
-                //     const response = {
-                //         _id: findUser._id,
-                //         text: getChat.text,
-                //         photo: findUser.photo[0] ? findUser.photo[0].res : null,
-                //         name: findUser.firstName,
-                //         time: strTime
-                //     }
+                    const response = {
+                        _id: findUser._id,
+                        text: getChat.text,
+                        photo: findUser.photo[0] ? findUser.photo[0].res : null,
+                        name: findUser.firstName,
+                        // time: strTime
+                    }
 
-                //     allChat.push(response)
+                    allChat.push(response)
 
-                // }
+                }
             } else {
                 const user1 = findAllRecordInChat1._id
                 const findRoom = await chatModels.findOne({
@@ -104,42 +104,42 @@ exports.getUserWithChat = async (req, res, next) => {
 
                 const chat = findRoom.chat;
 
-                allChat.push(chat)
+                // allChat.push(chat)
                 const page = parseInt(req.query.page)
                 const limit = parseInt(req.query.limit)
                 const startIndex = (page - 1) * limit;
                 const endIndex = page * limit;
 
 
-                //   for (const getChat of chat.slice(startIndex, endIndex)) {
-                //         console.log("getChat", getChat);
-                //         const findUser = await userModel.findOne({
-                //             _id: getChat.sender
-                //         })
+                  for (const getChat of chat.slice(startIndex, endIndex)) {
+                        console.log("getChat", getChat);
+                        const findUser = await userModel.findOne({
+                            _id: getChat.sender
+                        })
 
-                //         const date = getChat.createdAt
-                //         let dates = date.getDate();
-                //         let month = date.toLocaleString('en-us', { month: 'long' });
-                //         let year = date.getFullYear();
-                //         let hours = date.getHours() + 5;
-                //         let minutes = date.getMinutes() + 30;
-                //         let ampm = hours >= 12 ? 'pm' : 'am';
-                //         hours = hours % 12;
-                //         hours = hours ? hours : 12;
-                //         minutes = minutes.toString().padStart(2, '0');
-                //         let strTime = 'At' + ' ' + hours + ':' + minutes + ' ' + ampm + ' ' + 'on' + ' ' + month + ' ' + dates + ',' + year;
+                        // const date = getChat.createdAt
+                        // let dates = date.getDate();
+                        // let month = date.toLocaleString('en-us', { month: 'long' });
+                        // let year = date.getFullYear();
+                        // let hours = date.getHours() + 5;
+                        // let minutes = date.getMinutes() + 30;
+                        // let ampm = hours >= 12 ? 'pm' : 'am';
+                        // hours = hours % 12;
+                        // hours = hours ? hours : 12;
+                        // minutes = minutes.toString().padStart(2, '0');
+                        // let strTime = 'At' + ' ' + hours + ':' + minutes + ' ' + ampm + ' ' + 'on' + ' ' + month + ' ' + dates + ',' + year;
 
-                //         const response = {
-                //             _id: findUser._id,
-                //             text: getChat.text,
-                //             photo: findUser.photo[0] ? findUser.photo[0].res : null,
-                //             name: findUser.firstName,
-                //             time: strTime
-                //         }
+                        const response = {
+                            _id: findUser._id,
+                            text: getChat.text,
+                            photo: findUser.photo[0] ? findUser.photo[0].res : null,
+                            name: findUser.firstName,
+                            // time: strTime
+                        }
 
-                //         allChat.push(response)
+                        allChat.push(response)
 
-                //     }
+                    }
 
                 res.status(status.OK).json(
                     new APIResponse("show all record with chat", "true", 201, "1", allChat)
