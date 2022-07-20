@@ -136,13 +136,15 @@ exports.getUserWithChat = async (req, res, next) => {
                     allChat.push(response)
 
                 }
+
+                res.status(status.OK).json(
+                    new APIResponse("show all record with chat", "true", 201, "1", allChat)
+                )
             }
 
 
 
-            res.status(status.OK).json(
-                new APIResponse("show all record with chat", "true", 201, "1", allChat)
-            )
+            
         }
     } catch (error) {
         console.log("Error:", error);
