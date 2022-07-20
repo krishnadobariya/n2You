@@ -68,13 +68,13 @@ exports.getUserWithChat = async (req, res, next) => {
 
             const findRoom = await chatModels.findOne({
                 chatRoomId: chatRoom[0]
-            }).select('-text -createdAt');
+            });
 
 
             const chat = findRoom.chat;
 
             for (const getChat of chat.slice(startIndex, endIndex)) {
-
+                console.log("getChat", getChat);
                 const findUser = await userModel.findOne({
                     _id: getChat.sender
                 })
