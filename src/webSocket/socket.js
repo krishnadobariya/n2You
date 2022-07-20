@@ -30,13 +30,18 @@ function socket(io) {
         socket.on("chat", async (arg) => {
 
             const userRoom = `User${arg.user_2}`;
+            const date = new Date()
+            let dates = date.getDate();
+            let month = date.toLocaleString('en-us', { month: 'long' });
+            let year = date.getFullYear();
+            let hours = date.getHours();
+            let minutes = date.getMinutes();
+            let ampm = hours >= 12 ? 'pm' : 'am';
+            hours = hours % 12;
+            hours = hours ? hours : 12;
+            minutes = minutes.toString().padStart(2, '0');
+            let time = 'At' + ' ' + hours + ':' + minutes + ' ' + ampm + ' ' + 'on' + ' ' + month + ' ' + dates + ',' + year;
 
-            // const userRooms = `${arg.user_2}`
-            // userRoom.push(userRooms)
-
-
-            // console.log("userRooms", userRooms);
-            // socket.join(userRoom[0])
 
             const fcm_token = [];
             if (arg.sender_id == arg.user_1) {
@@ -86,11 +91,18 @@ function socket(io) {
                     if (getChatRoom) {
 
                         if (arg.sender_id == arg.user_1 || arg.sender_id == arg.user_2) {
+
+                            const findUser = await userModel.findOne({
+                                _id: arg.sender_id
+                            })
                             const data = chatModels({
                                 chatRoomId: getChatRoom._id,
                                 chat: {
                                     sender: arg.sender_id,
-                                    text: arg.text
+                                    text: arg.text,
+                                    name: findUser.name,
+                                    photo: findUser.photo[0] ? findUser.photo[0].res : null,
+                                    createdAt: time
                                 }
                             })
 
@@ -103,7 +115,6 @@ function socket(io) {
                             } else {
                                 const userFind = await userModel.findOne({ _id: arg.user_1, polyDating: 0 })
                                 receiver_id.push(userFind._id)
-
                             }
 
                             const chat = {
@@ -139,13 +150,21 @@ function socket(io) {
 
                     } else {
                         if (arg.sender_id == arg.user_1 || arg.sender_id == arg.user_2) {
+
+                            const findUser = await userModel.findOne({
+                                _id: arg.sender_id
+                            })
                             const data = chatModels({
                                 chatRoomId: alterNateChatRoom._id,
                                 chat: {
                                     sender: arg.sender_id,
-                                    text: arg.text
+                                    text: arg.text,
+                                    name: findUser.name,
+                                    photo: findUser.photo[0] ? findUser.photo[0].res : null,
+                                    createdAt: time
                                 }
                             })
+
 
                             await data.save();
 
@@ -211,13 +230,21 @@ function socket(io) {
 
                         if (find1 == null) {
                             if (arg.sender_id == arg.user_1 || arg.sender_id == arg.user_2) {
+                                const findUser = await userModel.findOne({
+                                    _id: arg.sender_id
+                                })
                                 const data = chatModels({
                                     chatRoomId: getChatRoom._id,
                                     chat: {
                                         sender: arg.sender_id,
-                                        text: arg.text
+                                        text: arg.text,
+                                        name: findUser.name,
+                                        photo: findUser.photo[0] ? findUser.photo[0].res : null,
+                                        createdAt: time
+
                                     }
                                 })
+
 
                                 await data.save();
 
@@ -260,11 +287,16 @@ function socket(io) {
 
                             if (arg.sender_id == arg.user_1 || arg.sender_id == arg.user_2) {
 
+                                const findUser = await userModel.findOne({
+                                    _id: arg.sender_id
+                                })
                                 const finalData = {
                                     sender: arg.sender_id,
-                                    text: arg.text
+                                    text: arg.text,
+                                    name: findUser.name,
+                                    photo: findUser.photo[0] ? findUser.photo[0].res : null,
+                                    createdAt: time
                                 }
-
 
                                 await chatModels.updateOne({
                                     chatRoomId: getChatRoom._id,
@@ -319,11 +351,21 @@ function socket(io) {
 
                         if (find2 == null) {
                             if (arg.sender_id == arg.user_1 || arg.sender_id == arg.user_2) {
+
+
+                                const findUser = await userModel.findOne({
+                                    _id: arg.sender_id
+                                })
+
                                 const data = chatModels({
                                     chatRoomId: alterNateChatRoom._id,
                                     chat: {
                                         sender: arg.sender_id,
-                                        text: arg.text
+                                        text: arg.text,
+                                        name: findUser.name,
+                                        photo: findUser.photo[0] ? findUser.photo[0].res : null,
+                                        createdAt: time
+
                                     }
                                 })
 
@@ -366,9 +408,16 @@ function socket(io) {
                         } else {
                             if (arg.sender_id == arg.user_1 || arg.sender_id == arg.user_2) {
 
+                                const findUser = await userModel.findOne({
+                                    _id: arg.sender_id
+                                })
+
                                 const finalData = {
                                     sender: arg.sender_id,
-                                    text: arg.text
+                                    text: arg.text,
+                                    name: findUser.name,
+                                    photo: findUser.photo[0] ? findUser.photo[0].res : null,
+                                    createdAt: time
                                 }
 
 

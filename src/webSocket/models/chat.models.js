@@ -15,8 +15,13 @@ const chatSchema = mongoose.Schema({
                 type: String
             },
             createdAt: {
-                type: Date,
-                default: Date.now()
+                type: String
+            },
+            photo: {
+                type: String
+            },
+            name: {
+                type: String
             },
             read: {
                 type: Number,
