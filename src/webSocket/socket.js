@@ -29,7 +29,18 @@ function socket(io) {
 
         socket.on("chat", async (arg) => {
 
-            const userRoom = `User${arg.user_2}`;
+
+            const userRoom = [];
+            if (arg.sender_id = arg.user_2) {
+                userRoom.push(arg.user_2)
+                socket.join(arg.user_2);
+            } else {
+                userRoom.push(arg.user_1)
+                socket.join(arg.user_1);
+            }
+
+
+
             const date = new Date()
             let dates = date.getDate();
             let month = date.toLocaleString('en-us', { month: 'long' });
@@ -51,7 +62,6 @@ function socket(io) {
             } else {
                 const userFind = await userModel.findOne({ _id: arg.user_1, polyDating: 0 })
 
-                console.log("userFind", userFind);
                 fcm_token.push(userFind.fcm_token)
             }
 
@@ -123,8 +133,7 @@ function socket(io) {
                                 receiver: receiver_id[0]
                             }
 
-                            console.log("userRoom", userRoom);
-                            io.to(userRoom).emit("chatReceive", chat);
+                            io.to(userRoom[0]).emit("chatReceive", chat);
 
                             const title = "n2you Notification";
                             const body = `${arg.sender_id} send request to `;
@@ -184,7 +193,8 @@ function socket(io) {
                                 sender: arg.sender_id,
                                 receiver: receiver_id[0]
                             }
-                            io.to(userRoom).emit("chatReceive", chat);
+
+                            io.to(userRoom[0]).emit("chatReceive", chat);
                             const title = "n2you Notification";
                             const body = `${arg.sender_id} send request to `;
 

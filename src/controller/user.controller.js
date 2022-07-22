@@ -106,7 +106,7 @@ exports.userRegister = async (req, res, next) => {
                     IntrestedIn: req.body.intrested_in,
                     Bio: req.body.bio,
                     photo: urls,
-                    longitude: req.body.longitude,
+                    longitude: req.body.longitude,  
                     latitude: req.body.latitude,
                     fcm_token: req.body.fcm_token,
                     hopingToFind: req.body.hoping_to_find,
