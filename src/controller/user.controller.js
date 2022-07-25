@@ -365,7 +365,7 @@ exports.searchFriend = async (req, res, next) => {
                         }
                     }
                 }
-            )
+            ).maxTimeMS(10)
 
 
             if (reaquestedAllEmail && RequestedEmailExiestInUser == null) {
@@ -459,10 +459,6 @@ exports.searchFriend = async (req, res, next) => {
 
                 }
 
-                console.log(
-                    "finalData", finalData
-                );
-
                 for (const getOriginalData of finalData) {
                     const response = {
                         _id: getOriginalData._id,
@@ -474,9 +470,6 @@ exports.searchFriend = async (req, res, next) => {
 
                     UniqueEmail.push(response);
                 }
-
-
-
                 const statusByEmail = [];
                 const allRequestedEmail = RequestedEmailExiestInUser.RequestedEmails
                 const requestedEmailWitchIsInuserRequeted = [];
