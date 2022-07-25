@@ -68,13 +68,13 @@ function socket(io) {
             const addInChatRoom = await chatRoomModel.findOne({
                 user1: arg.user_1,
                 user2: arg.user_2,
-            }).maxTimeMS(1)
+            })
 
 
             const checkUsers = await chatRoomModel.findOne({
                 user1: arg.user_2,
                 user2: arg.user_1,
-            }).maxTimeMS(1)
+            })
 
 
 
