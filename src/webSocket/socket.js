@@ -378,7 +378,7 @@ function socket(io) {
                     } else {
                         const find2 = await chatModels.findOne({
                             chatRoomId: alterNateChatRoom._id
-                        }).lean();
+                        }).select('chatRoomId').lean();
 
                         console.log("find2", find2);
                         if (find2 == null) {
