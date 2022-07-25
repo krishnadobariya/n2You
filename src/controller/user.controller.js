@@ -41,7 +41,7 @@ exports.userRegister = async (req, res, next) => {
             )
         } else {
             const phoneNum = req.body.phone_num;
-            
+
             const countryCode = req.body.country_code
 
             const findNumber = await userModel.findOne({ phoneNumber: `${countryCode}${phoneNum}` });
@@ -106,7 +106,7 @@ exports.userRegister = async (req, res, next) => {
                     IntrestedIn: req.body.intrested_in,
                     Bio: req.body.bio,
                     photo: urls,
-                    longitude: req.body.longitude,  
+                    longitude: req.body.longitude,
                     latitude: req.body.latitude,
                     fcm_token: req.body.fcm_token,
                     hopingToFind: req.body.hoping_to_find,
@@ -372,8 +372,6 @@ exports.searchFriend = async (req, res, next) => {
                 const responseData = [];
                 for (const allrequestedDataNotAcceptedRequestAndNotFriend of reaquestedAllEmail) {
 
-                    const userDetail = await userModel.findOne({ email: allrequestedDataNotAcceptedRequestAndNotFriend });
-
                     const FindLocation = await userModel.aggregate([
                         {
                             $geoNear: {
@@ -430,8 +428,6 @@ exports.searchFriend = async (req, res, next) => {
 
                 const UniqueEmail = [];
                 for (const uniqueEmail of difference) {
-                    const userDetail = await userModel.findOne({ email: uniqueEmail });
-
                     const FindLocation = await userModel.aggregate([
                         {
                             $geoNear: {
@@ -549,6 +545,8 @@ exports.searchFriend = async (req, res, next) => {
                 }])
 
                 const finalExistUser = [];
+
+                console.log("meageAllTable", meageAllTable);
 
                 const emailDataDetail = meageAllTable;
                 for (const DataDetail of emailDataDetail) {

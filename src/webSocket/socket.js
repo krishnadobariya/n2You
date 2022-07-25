@@ -235,7 +235,6 @@ function socket(io) {
 
                 if (getChatRoom == null && alterNateChatRoom == null) {
                     io.emit("chatReceive", "chat room not found");
-
                 } else {
 
                     if (getChatRoom) {
@@ -256,7 +255,6 @@ function socket(io) {
                                         name: findUser.name,
                                         photo: findUser.photo[0] ? findUser.photo[0].res : null,
                                         createdAt: time
-
                                     }
                                 })
 
