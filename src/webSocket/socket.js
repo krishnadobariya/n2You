@@ -300,9 +300,9 @@ function socket(io) {
                             }
                         } else {
 
-                            console.log("fdgrggrdggtrgte");
 
                             if (arg.sender_id == arg.user_1 || arg.sender_id == arg.user_2) {
+
 
                                 // const findUser = await userModel.findOne({
                                 //     _id: arg.sender_id
@@ -314,7 +314,7 @@ function socket(io) {
                                     photo: "NULL",
                                     createdAt: time
                                 }
-
+                                console.log(finalData);
                                 await chatModels.updateOne({
                                     chatRoomId: getChatRoom._id,
                                 }, {
