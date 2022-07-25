@@ -98,6 +98,11 @@ function socket(io) {
                     io.emit("chatReceive", "chat room not found");
                 } else {
 
+
+
+
+
+
                     if (getChatRoom) {
 
                         if (arg.sender_id == arg.user_1 || arg.sender_id == arg.user_2) {
@@ -297,14 +302,14 @@ function socket(io) {
 
                             if (arg.sender_id == arg.user_1 || arg.sender_id == arg.user_2) {
 
-                                const findUser = await userModel.findOne({
-                                    _id: arg.sender_id
-                                })
+                                // const findUser = await userModel.findOne({
+                                //     _id: arg.sender_id
+                                // })
                                 const finalData = {
                                     sender: arg.sender_id,
                                     text: arg.text,
-                                    name: findUser.name,
-                                    photo: findUser.photo[0] ? findUser.photo[0].res : null,
+                                    name: "SBVC",
+                                    photo: "NULL",
                                     createdAt: time
                                 }
 
@@ -347,21 +352,18 @@ function socket(io) {
                                     sendBy,
                                     true
                                 );
-
                             } else {
                                 io.emit("chatReceive", "sender not found");
                             }
                         }
-
-
                     } else {
+
                         const find2 = await chatModels.findOne({
                             chatRoomId: alterNateChatRoom._id
                         })
 
                         if (find2 == null) {
                             if (arg.sender_id == arg.user_1 || arg.sender_id == arg.user_2) {
-
 
                                 const findUser = await userModel.findOne({
                                     _id: arg.sender_id
@@ -375,7 +377,6 @@ function socket(io) {
                                         name: findUser.name,
                                         photo: findUser.photo[0] ? findUser.photo[0].res : null,
                                         createdAt: time
-
                                     }
                                 })
 
@@ -384,11 +385,9 @@ function socket(io) {
                                 if (arg.sender_id == arg.user_1) {
                                     const userFind = await userModel.findOne({ _id: arg.user_2, polyDating: 0 })
                                     receiver_id.push(userFind._id)
-
                                 } else {
                                     const userFind = await userModel.findOne({ _id: arg.user_1, polyDating: 0 })
                                     receiver_id.push(userFind._id)
-
                                 }
                                 const chat = {
                                     text: arg.text,
@@ -416,6 +415,7 @@ function socket(io) {
                                 io.emit("chatReceive", "sender not found");
                             }
                         } else {
+
                             if (arg.sender_id == arg.user_1 || arg.sender_id == arg.user_2) {
 
                                 const findUser = await userModel.findOne({
@@ -429,8 +429,6 @@ function socket(io) {
                                     photo: findUser.photo[0] ? findUser.photo[0].res : null,
                                     createdAt: time
                                 }
-
-
                                 await chatModels.updateOne({
                                     chatRoomId: alterNateChatRoom._id,
                                 }, {
@@ -442,11 +440,9 @@ function socket(io) {
                                 if (arg.sender_id == arg.user_1) {
                                     const userFind = await userModel.findOne({ _id: arg.user_2, polyDating: 0 })
                                     receiver_id.push(userFind._id)
-
                                 } else {
                                     const userFind = await userModel.findOne({ _id: arg.user_1, polyDating: 0 })
                                     receiver_id.push(userFind._id)
-
                                 }
                                 const chat = {
                                     text: finalData.text,
