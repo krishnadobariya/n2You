@@ -440,14 +440,12 @@ function socket(io) {
                             }
                         } else {
 
-                            console.log("fweafwesgwgt");
                             if (arg.sender_id == arg.user_1 || arg.sender_id == arg.user_2) {
 
                                 const findUser = await userModel.findOne({
                                     _id: arg.sender_id
                                 }).select('name, photo').lean();
 
-                                console.log("findUser", findUser)
                                 const finalData = {
                                     sender: arg.sender_id,
                                     text: arg.text,
@@ -463,7 +461,7 @@ function socket(io) {
                                     $push: {
                                         chat: finalData
                                     }
-                                })
+                                }).lean()
                                 const receiver_id = [];
                                 if (arg.sender_id == arg.user_1) {
                                     const userFind = await userModel.findOne({ _id: arg.user_2, polyDating: 0 }).select('_id').lean();
