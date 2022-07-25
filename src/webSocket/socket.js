@@ -232,7 +232,7 @@ function socket(io) {
                 const alterNateChatRoom = await chatRoomModel.findOne({
                     user1: arg.user_2,
                     user2: arg.user_1
-                })
+                }).maxTimeMS(1)
 
 
                 if (getChatRoom == null && alterNateChatRoom == null) {
