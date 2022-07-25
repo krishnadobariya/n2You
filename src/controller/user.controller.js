@@ -341,7 +341,7 @@ exports.tokenUpdate = async (req, res, next) => {
 exports.searchFriend = async (req, res, next) => {
     try {
         const Regexname = new RegExp(req.body.search_key, 'i');
-        const searchName = await userModel.find({ firstName: Regexname, polyDating: 0 }).maxTimeMS(100);
+        const searchName = await userModel.find({ firstName: Regexname, polyDating: 0 }).maxTimeMS(50);
         console.log("searchName", searchName);
         const reaquestedAllEmail = [];
         searchName.map((result, index) => {
