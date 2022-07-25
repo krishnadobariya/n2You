@@ -341,14 +341,14 @@ exports.tokenUpdate = async (req, res, next) => {
 exports.searchFriend = async (req, res, next) => {
     try {
         const Regexname = new RegExp(req.body.search_key, 'i');
-        const searchName = await userModel.find({ firstName: Regexname, polyDating: 0 }).maxTimeMS(50);
+        const searchName = await userModel.find({ firstName: Regexname, polyDating: 0 }).maxTimeMS(10);
         console.log("searchName", searchName);
         const reaquestedAllEmail = [];
         searchName.map((result, index) => {
             reaquestedAllEmail.push(result.email)
         })
 
-     
+
         if (reaquestedAllEmail[0] == undefined) {
             res.status(status.NOT_FOUND).json(
                 new APIResponse("No User Found", 'false', 404, '0')
@@ -475,7 +475,7 @@ exports.searchFriend = async (req, res, next) => {
                     UniqueEmail.push(response);
                 }
 
-              
+
 
                 const statusByEmail = [];
                 const allRequestedEmail = RequestedEmailExiestInUser.RequestedEmails
@@ -555,7 +555,7 @@ exports.searchFriend = async (req, res, next) => {
 
                 const finalExistUser = [];
 
-              
+
 
                 const emailDataDetail = meageAllTable;
                 for (const DataDetail of emailDataDetail) {
