@@ -302,14 +302,14 @@ function socket(io) {
                             if (arg.sender_id == arg.user_1 || arg.sender_id == arg.user_2) {
 
 
-                                // const findUser = await userModel.findOne({
-                                //     _id: arg.sender_id
-                                // })
+                                const findUser = await userModel.findOne({
+                                    _id: arg.sender_id
+                                })
                                 const finalData = {
                                     sender: arg.sender_id,
                                     text: arg.text,
-                                    name: "SBVC",
-                                    photo: "NULL",
+                                    name: findUser.name,
+                                    photo: findUser.photo[0] ? findUser.photo[0].res : null,
                                     createdAt: time
                                 }
                                 console.log(finalData);
@@ -416,6 +416,7 @@ function socket(io) {
                             }
                         } else {
 
+                            console.log("verdfgerg");
                             if (arg.sender_id == arg.user_1 || arg.sender_id == arg.user_2) {
 
                                 const findUser = await userModel.findOne({
