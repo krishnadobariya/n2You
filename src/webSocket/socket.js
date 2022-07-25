@@ -55,13 +55,12 @@ function socket(io) {
             const fcm_token = [];
             if (arg.sender_id == arg.user_1) {
 
-                const userFind = await userModel.findOne({ _id: arg.user_2, polyDating: 0 }).lean();
-                console.log("userFind::", userFind);
+                const userFind = await userModel.findOne({ _id: arg.user_2, polyDating: 0 }).select('name, photo').lean();
                 fcm_token.push(userFind.fcm_token)
 
             } else {
 
-                const userFind = await userModel.findOne({ _id: arg.user_1, polyDating: 0 }).lean();
+                const userFind = await userModel.findOne({ _id: arg.user_1, polyDating: 0 }).select('name, photo').lean();
                 console.log("userFind::else:", userFind);
                 fcm_token.push(userFind.fcm_token)
 
@@ -70,13 +69,13 @@ function socket(io) {
             const addInChatRoom = await chatRoomModel.findOne({
                 user1: arg.user_1,
                 user2: arg.user_2,
-            }).lean();
+            }).select('user1, user2').lean();
             console.log("addInChatRoom::", addInChatRoom);
 
             const checkUsers = await chatRoomModel.findOne({
                 user1: arg.user_2,
                 user2: arg.user_1,
-            }).lean();
+            }).select('user1, user2').lean();
             console.log("checkUsers::;", checkUsers);
 
 
@@ -91,12 +90,12 @@ function socket(io) {
                 const getChatRoom = await chatRoomModel.findOne({
                     user1: arg.user_1,
                     user2: arg.user_2
-                }).lean();
+                }).select('user1, user2').lean();
 
                 const alterNateChatRoom = await chatRoomModel.findOne({
                     user1: arg.user_2,
                     user2: arg.user_1
-                }).lean();
+                }).select('user1, user2').lean();
 
                 if (getChatRoom == null && alterNateChatRoom == null) {
                     io.emit("chatReceive", "chat room not found");
@@ -108,7 +107,7 @@ function socket(io) {
 
                             const findUser = await userModel.findOne({
                                 _id: arg.sender_id
-                            }).lean();
+                            }).select('name, photo').lean();
 
                             const data = chatModels({
                                 chatRoomId: getChatRoom._id,
@@ -124,11 +123,11 @@ function socket(io) {
                             await data.save();
                             const receiver_id = [];
                             if (arg.sender_id == arg.user_1) {
-                                const userFind = await userModel.findOne({ _id: arg.user_2, polyDating: 0 }).lean()
+                                const userFind = await userModel.findOne({ _id: arg.user_2, polyDating: 0 }).select('name, photo').lean()
                                 receiver_id.push(userFind._id)
 
                             } else {
-                                const userFind = await userModel.findOne({ _id: arg.user_1, polyDating: 0 }).lean()
+                                const userFind = await userModel.findOne({ _id: arg.user_1, polyDating: 0 }).select('name, photo').lean()
                                 receiver_id.push(userFind._id)
                             }
 
@@ -167,7 +166,7 @@ function socket(io) {
 
                             const findUser = await userModel.findOne({
                                 _id: arg.sender_id
-                            }).lean();
+                            }).select('name, photo').lean();
 
                             const data = chatModels({
                                 chatRoomId: alterNateChatRoom._id,
@@ -185,11 +184,11 @@ function socket(io) {
 
                             const receiver_id = [];
                             if (arg.sender_id == arg.user_1) {
-                                const userFind = await userModel.findOne({ _id: arg.user_2, polyDating: 0 }).lean();
+                                const userFind = await userModel.findOne({ _id: arg.user_2, polyDating: 0 }).select('name, photo').lean();
                                 receiver_id.push(userFind._id)
 
                             } else {
-                                const userFind = await userModel.findOne({ _id: arg.user_1, polyDating: 0 }).lean();
+                                const userFind = await userModel.findOne({ _id: arg.user_1, polyDating: 0 }).select('name, photo').lean();
                                 receiver_id.push(userFind._id)
 
                             }
@@ -226,12 +225,12 @@ function socket(io) {
                 const getChatRoom = await chatRoomModel.findOne({
                     user1: arg.user_1,
                     user2: arg.user_2
-                }).lean();
+                }).select('user1, user2').lean();
 
                 const alterNateChatRoom = await chatRoomModel.findOne({
                     user1: arg.user_2,
                     user2: arg.user_1
-                }).lean();
+                }).select('user1, user2').lean();
 
 
                 if (getChatRoom == null && alterNateChatRoom == null) {
@@ -242,13 +241,13 @@ function socket(io) {
                     if (getChatRoom) {
                         const find1 = await chatModels.findOne({
                             chatRoomId: getChatRoom._id
-                        }).lean();
+                        }).select('chatRoomId').lean();
 
                         if (find1 == null) {
                             if (arg.sender_id == arg.user_1 || arg.sender_id == arg.user_2) {
                                 const findUser = await userModel.findOne({
                                     _id: arg.sender_id
-                                }).lean();
+                                }).select('name, photo').lean();
 
                                 const data = chatModels({
                                     chatRoomId: getChatRoom._id,
@@ -267,11 +266,11 @@ function socket(io) {
 
                                 const receiver_id = [];
                                 if (arg.sender_id == arg.user_1) {
-                                    const userFind = await userModel.findOne({ _id: arg.user_2, polyDating: 0 }).lean();
+                                    const userFind = await userModel.findOne({ _id: arg.user_2, polyDating: 0 }).select('_id').lean();
                                     receiver_id.push(userFind._id)
 
                                 } else {
-                                    const userFind = await userModel.findOne({ _id: arg.user_1, polyDating: 0 }).lean();
+                                    const userFind = await userModel.findOne({ _id: arg.user_1, polyDating: 0 }).select('_id').lean();
                                     receiver_id.push(userFind._id)
 
                                 }
@@ -306,7 +305,7 @@ function socket(io) {
 
                                 const findUser = await userModel.findOne({
                                     _id: arg.sender_id
-                                }).lean();
+                                }).select('name, photo').lean();
 
                                 const finalData = {
                                     sender: arg.sender_id,
@@ -326,11 +325,11 @@ function socket(io) {
 
                                 const receiver_id = [];
                                 if (arg.sender_id == arg.user_1) {
-                                    const userFind = await userModel.findOne({ _id: arg.user_2, polyDating: 0 }).lean();
+                                    const userFind = await userModel.findOne({ _id: arg.user_2, polyDating: 0 }).select('_id').lean();
                                     receiver_id.push(userFind._id)
 
                                 } else {
-                                    const userFind = await userModel.findOne({ _id: arg.user_1, polyDating: 0 }).lean();
+                                    const userFind = await userModel.findOne({ _id: arg.user_1, polyDating: 0 }).select('_id').lean();
                                     receiver_id.push(userFind._id)
 
                                 }
@@ -373,7 +372,7 @@ function socket(io) {
 
                                 const findUser = await userModel.findOne({
                                     _id: arg.sender_id
-                                }).lean()
+                                }).select('name, photo').lean()
 
                                 const data = chatModels({
                                     chatRoomId: alterNateChatRoom._id,
@@ -390,11 +389,11 @@ function socket(io) {
                                 await data.save();
                                 const receiver_id = [];
                                 if (arg.sender_id == arg.user_1) {
-                                    const userFind = await userModel.findOne({ _id: arg.user_2, polyDating: 0 }).lean();
+                                    const userFind = await userModel.findOne({ _id: arg.user_2, polyDating: 0 }).select('_id').lean();
                                     receiver_id.push(userFind._id)
 
                                 } else {
-                                    const userFind = await userModel.findOne({ _id: arg.user_1, polyDating: 0 }).lean();
+                                    const userFind = await userModel.findOne({ _id: arg.user_1, polyDating: 0 }).select('_id').lean();
                                     receiver_id.push(userFind._id)
 
                                 }
@@ -428,7 +427,7 @@ function socket(io) {
 
                                 const findUser = await userModel.findOne({
                                     _id: arg.sender_id
-                                }).lean();
+                                }).select('name, photo').lean();
 
                                 const finalData = {
                                     sender: arg.sender_id,
@@ -448,11 +447,11 @@ function socket(io) {
                                 })
                                 const receiver_id = [];
                                 if (arg.sender_id == arg.user_1) {
-                                    const userFind = await userModel.findOne({ _id: arg.user_2, polyDating: 0 }).lean();
+                                    const userFind = await userModel.findOne({ _id: arg.user_2, polyDating: 0 }).select('_id').lean();
                                     receiver_id.push(userFind._id)
 
                                 } else {
-                                    const userFind = await userModel.findOne({ _id: arg.user_1, polyDating: 0 }).lean();
+                                    const userFind = await userModel.findOne({ _id: arg.user_1, polyDating: 0 }).select('_id').lean();
                                     receiver_id.push(userFind._id)
 
                                 }
