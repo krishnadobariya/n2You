@@ -85,14 +85,16 @@ function socket(io) {
                 user1: arg.user_2,
                 user2: arg.user_1,
             }).select('user1, user2').lean();
-            console.log("checkUsers::;", checkUsers);
-
+            console.log("checkUsers::", checkUsers);
 
             if (addInChatRoom == null && checkUsers == null) {
                 const insertChatRoom = chatRoomModel({
                     user1: arg.user_1,
                     user2: arg.user_2
                 });
+
+                console.log("insertChatRoom::", insertChatRoom);
+
 
                 await insertChatRoom.save().lean();
 
@@ -101,17 +103,18 @@ function socket(io) {
                     user2: arg.user_2
                 }).select('user1, user2').lean();
 
+                console.log("getChatRoom", getChatRoom);
                 const alterNateChatRoom = await chatRoomModel.findOne({
                     user1: arg.user_2,
                     user2: arg.user_1
                 }).select('user1, user2').lean();
-
+                console.log("alterNateChatRoom", alterNateChatRoom);
                 if (getChatRoom == null && alterNateChatRoom == null) {
                     io.emit("chatReceive", "chat room not found");
                 } else {
 
                     if (getChatRoom) {
-
+                        console.log("getChatRoom", getChatRoom);
                         if (arg.sender_id == arg.user_1 || arg.sender_id == arg.user_2) {
 
                             const findUser = await userModel.findOne({
@@ -171,12 +174,15 @@ function socket(io) {
 
 
                     } else {
+
+
                         if (arg.sender_id == arg.user_1 || arg.sender_id == arg.user_2) {
 
                             const findUser = await userModel.findOne({
                                 _id: arg.sender_id
                             }).select('name, photo').lean();
 
+                            console.log("findUser", findUser);
                             const data = chatModels({
                                 chatRoomId: alterNateChatRoom._id,
                                 chat: {
@@ -195,11 +201,9 @@ function socket(io) {
                             if (arg.sender_id == arg.user_1) {
                                 const userFind = await userModel.findOne({ _id: arg.user_2, polyDating: 0 }).select('name, photo').lean();
                                 receiver_id.push(userFind._id)
-
                             } else {
                                 const userFind = await userModel.findOne({ _id: arg.user_1, polyDating: 0 }).select('name, photo').lean();
                                 receiver_id.push(userFind._id)
-
                             }
 
                             const chat = {
@@ -252,12 +256,13 @@ function socket(io) {
                             chatRoomId: getChatRoom._id
                         }).select('chatRoomId').lean();
 
+                        console.log("find1", find1);
                         if (find1 == null) {
                             if (arg.sender_id == arg.user_1 || arg.sender_id == arg.user_2) {
                                 const findUser = await userModel.findOne({
                                     _id: arg.sender_id
                                 }).select('name, photo').lean();
-
+                                console.log("findUser", findUser);
                                 const data = chatModels({
                                     chatRoomId: getChatRoom._id,
                                     chat: {
@@ -375,6 +380,7 @@ function socket(io) {
                             chatRoomId: alterNateChatRoom._id
                         }).lean();
 
+                        console.log("find2", find2);
                         if (find2 == null) {
                             if (arg.sender_id == arg.user_1 || arg.sender_id == arg.user_2) {
 
@@ -438,6 +444,7 @@ function socket(io) {
                                     _id: arg.sender_id
                                 }).select('name, photo').lean();
 
+                                console.log("findUser", findUser)
                                 const finalData = {
                                     sender: arg.sender_id,
                                     text: arg.text,
