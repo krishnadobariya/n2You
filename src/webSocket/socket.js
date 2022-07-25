@@ -227,14 +227,14 @@ function socket(io) {
                 const getChatRoom = await chatRoomModel.findOne({
                     user1: arg.user_1,
                     user2: arg.user_2
-                }).maxTimeMS(1)
+                })
 
                 console.log("getChatRoom", getChatRoom);
 
                 const alterNateChatRoom = await chatRoomModel.findOne({
                     user1: arg.user_2,
                     user2: arg.user_1
-                }).maxTimeMS(1)
+                })
 
                 console.log("alterNateChatRoom", alterNateChatRoom);
 
