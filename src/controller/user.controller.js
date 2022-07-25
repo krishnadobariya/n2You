@@ -348,8 +348,7 @@ exports.searchFriend = async (req, res, next) => {
             reaquestedAllEmail.push(result.email)
         })
 
-        console.log("reaquestedAllEmail", reaquestedAllEmail);
-
+     
         if (reaquestedAllEmail[0] == undefined) {
             res.status(status.NOT_FOUND).json(
                 new APIResponse("No User Found", 'false', 404, '0')
@@ -476,7 +475,7 @@ exports.searchFriend = async (req, res, next) => {
                     UniqueEmail.push(response);
                 }
 
-                console.log("UniqueEmail", UniqueEmail);
+              
 
                 const statusByEmail = [];
                 const allRequestedEmail = RequestedEmailExiestInUser.RequestedEmails
@@ -556,7 +555,7 @@ exports.searchFriend = async (req, res, next) => {
 
                 const finalExistUser = [];
 
-                console.log("meageAllTable", meageAllTable);
+              
 
                 const emailDataDetail = meageAllTable;
                 for (const DataDetail of emailDataDetail) {
