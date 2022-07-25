@@ -378,9 +378,10 @@ function socket(io) {
                     } else {
                         const find2 = await chatModels.findOne({
                             chatRoomId: alterNateChatRoom._id
-                        }).select('chatRoomId').lean();
+                        }).select("chatRoomId").lean();
 
-                        console.log("find2", find2);
+                        console.log("find2......", find2);
+
                         if (find2 == null) {
                             if (arg.sender_id == arg.user_1 || arg.sender_id == arg.user_2) {
 
@@ -438,6 +439,8 @@ function socket(io) {
                                 io.emit("chatReceive", "sender not found");
                             }
                         } else {
+
+                            console.log("fweafwesgwgt");
                             if (arg.sender_id == arg.user_1 || arg.sender_id == arg.user_2) {
 
                                 const findUser = await userModel.findOne({
