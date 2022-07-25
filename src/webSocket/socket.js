@@ -94,7 +94,7 @@ function socket(io) {
                     user2: arg.user_2
                 });
 
-                await insertChatRoom.save();
+                await insertChatRoom.save().lean();
 
                 const getChatRoom = await chatRoomModel.findOne({
                     user1: arg.user_1,
@@ -129,7 +129,7 @@ function socket(io) {
                                 }
                             });
 
-                            await data.save();
+                            await data.save().lean();
                             const receiver_id = [];
                             if (arg.sender_id == arg.user_1) {
                                 const userFind = await userModel.findOne({ _id: arg.user_2, polyDating: 0 }).select('name, photo').lean()
@@ -189,7 +189,7 @@ function socket(io) {
                             })
 
 
-                            await data.save();
+                            await data.save().lean();
 
                             const receiver_id = [];
                             if (arg.sender_id == arg.user_1) {
@@ -271,7 +271,7 @@ function socket(io) {
                                 })
 
 
-                                await data.save();
+                                await data.save().lean();
 
                                 const receiver_id = [];
                                 if (arg.sender_id == arg.user_1) {
@@ -395,7 +395,7 @@ function socket(io) {
                                     }
                                 })
 
-                                await data.save();
+                                await data.save().lean();
                                 const receiver_id = [];
                                 if (arg.sender_id == arg.user_1) {
                                     const userFind = await userModel.findOne({ _id: arg.user_2, polyDating: 0 }).select('_id').lean();
