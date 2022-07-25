@@ -362,6 +362,8 @@ function socket(io) {
                             chatRoomId: alterNateChatRoom._id
                         }).maxTimeMS(5)
 
+                        console.log("find2", find2);
+
                         if (find2 == null) {
                             if (arg.sender_id == arg.user_1 || arg.sender_id == arg.user_2) {
 
