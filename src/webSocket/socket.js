@@ -230,7 +230,7 @@ function socket(io) {
                 const alterNateChatRoom = await chatRoomModel.findOne({
                     user1: arg.user_2,
                     user2: arg.user_1
-                }).maxTimeMS(5)
+                })
 
 
                 if (getChatRoom == null && alterNateChatRoom == null) {
@@ -240,7 +240,7 @@ function socket(io) {
                     if (getChatRoom) {
                         const find1 = await chatModels.findOne({
                             chatRoomId: getChatRoom._id
-                        }).maxTimeMS(5)
+                        })
 
                         if (find1 == null) {
                             if (arg.sender_id == arg.user_1 || arg.sender_id == arg.user_2) {
@@ -367,7 +367,7 @@ function socket(io) {
 
                                 const findUser = await userModel.findOne({
                                     _id: arg.sender_id
-                                }).maxTimeMS(5)
+                                })
 
                                 const data = chatModels({
                                     chatRoomId: alterNateChatRoom._id,
