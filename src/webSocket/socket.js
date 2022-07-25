@@ -55,12 +55,12 @@ function socket(io) {
             const fcm_token = [];
             if (arg.sender_id == arg.user_1) {
 
-                const userFind = await userModel.findOne({ _id: arg.user_2, polyDating: 0 }).select('name, photo').lean();
+                const userFind = await userModel.findOne({ _id: arg.user_2, polyDating: 0 }).select('name, photo,fcm_token').lean();
                 fcm_token.push(userFind.fcm_token)
 
             } else {
 
-                const userFind = await userModel.findOne({ _id: arg.user_1, polyDating: 0 }).select('name, photo').lean();
+                const userFind = await userModel.findOne({ _id: arg.user_1, polyDating: 0 }).select('name, photo, fcm_token').lean();
                 console.log("userFind::else:", userFind);
                 fcm_token.push(userFind.fcm_token)
 
