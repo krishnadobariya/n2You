@@ -342,6 +342,7 @@ exports.searchFriend = async (req, res, next) => {
     try {
         const Regexname = new RegExp(req.body.search_key, 'i');
         const searchName = await userModel.find({ firstName: Regexname, polyDating: 0 }).maxTimeMS(100);
+        console.log("searchName", searchName);
         const reaquestedAllEmail = [];
         searchName.map((result, index) => {
             reaquestedAllEmail.push(result.email)
