@@ -234,6 +234,7 @@ function socket(io) {
                     user2: arg.user_1
                 }).maxTimeMS(1)
 
+                console.log("alterNateChatRoom", alterNateChatRoom);
 
                 if (getChatRoom == null && alterNateChatRoom == null) {
                     io.emit("chatReceive", "chat room not found");
