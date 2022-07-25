@@ -458,6 +458,10 @@ exports.searchFriend = async (req, res, next) => {
 
                 }
 
+                console.log(
+                    "finalData", finalData
+                );
+
                 for (const getOriginalData of finalData) {
                     const response = {
                         _id: getOriginalData._id,
@@ -470,6 +474,8 @@ exports.searchFriend = async (req, res, next) => {
                     UniqueEmail.push(response);
                 }
 
+                console.log("UniqueEmail", UniqueEmail);
+
                 const statusByEmail = [];
                 const allRequestedEmail = RequestedEmailExiestInUser.RequestedEmails
                 const requestedEmailWitchIsInuserRequeted = [];
@@ -478,6 +484,8 @@ exports.searchFriend = async (req, res, next) => {
                     requestedEmailWitchIsInuserRequeted.push(resultEmail);
                 })
 
+
+                console.log("requestedEmailWitchIsInuserRequeted", requestedEmailWitchIsInuserRequeted);
                 const meageAllTable = await userModel.aggregate([{
                     $match: {
                         email: {
