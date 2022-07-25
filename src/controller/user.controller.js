@@ -347,6 +347,7 @@ exports.searchFriend = async (req, res, next) => {
             reaquestedAllEmail.push(result.email)
         })
 
+        console.log("reaquestedAllEmail", reaquestedAllEmail);
 
         if (reaquestedAllEmail[0] == undefined) {
             res.status(status.NOT_FOUND).json(
