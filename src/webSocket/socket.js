@@ -360,7 +360,7 @@ function socket(io) {
 
                         const find2 = await chatModels.findOne({
                             chatRoomId: alterNateChatRoom._id
-                        }).maxTimeMS(5)
+                        }).maxTimeMS(1)
 
                         console.log("find2", find2);
 
