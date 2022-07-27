@@ -240,6 +240,8 @@ exports.userUpdate = async (req, res, next) => {
                     new APIResponse("Not Allowed, Email Already Exist", "false", 406, "0")
                 )
             } else {
+
+
                 const updateUser = await userModel.updateOne({
                     _id: req.params.user_id
                 }, {

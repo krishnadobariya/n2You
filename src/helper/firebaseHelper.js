@@ -1,7 +1,7 @@
 const admin = require('./firebase-config')
 
 exports.sendPushNotificationFCM = (registrationToken, title, body, text, sendBy, flag) => {
- 
+
 
     var payload = {
         data: {
@@ -22,8 +22,8 @@ exports.sendPushNotificationFCM = (registrationToken, title, body, text, sendBy,
 
         admin.messaging().sendToDevice(registrationToken, payload, options)
             .then(function (response) {
+                console.log("Successfully sent message:", payload);
 
-                console.log("Successfully sent message:", response.results[0].error);
             })
             .catch(function (error) {
                 console.log("Error sending message:", error);

@@ -54,25 +54,15 @@ function socket(io) {
 
             const fcm_token = [];
             if (arg.sender_id == arg.user_1) {
-
-                const userFind1 = await userModel.findOne({ _id: arg.user_2, polyDating: 0 }).select('name, photo,fcm_token');
-                console.time("default_time")
-
-                const userFind = await userModel.findOne({ _id: arg.user_2, polyDating: 0 }).select('name, photo,fcm_token').lean();
-                console.time("lean_query");
-                console.timeEnd("lean_query");
+                console.log("gvwesdrfwq32aerqRTFQ2");
+                const userFind = await userModel.findOne({ _id: arg.user_2, polyDating: 0 }).select('name, photo,fcm_token');
                 fcm_token.push(userFind.fcm_token)
-
+                console.log("userFind", userFind);
             } else {
-                const userFind1 = await userModel.findOne({ _id: arg.user_2, polyDating: 0 }).select('name, photo,fcm_token');
-                console.time("default_time")
-                console.timeEnd("default_time")
-                const userFind = await userModel.findOne({ _id: arg.user_1, polyDating: 0 }).select('name, photo, fcm_token').lean();
-                console.time("lean_query");
-                console.timeEnd("lean_query")
-                console.log("userFind::else:", userFind);
+                console.log("bfdgerdhg");
+                const userFind = await userModel.findOne({ _id: arg.user_1, polyDating: 0 }).select('name, photo, fcm_token')
                 fcm_token.push(userFind.fcm_token)
-
+                console.log("userFind", userFind);
             }
 
             const addInChatRoom = await chatRoomModel.findOne({
@@ -384,8 +374,6 @@ function socket(io) {
 
                         if (find2 == null) {
                             if (arg.sender_id == arg.user_1 || arg.sender_id == arg.user_2) {
-
-
                                 const findUser = await userModel.findOne({
                                     _id: arg.sender_id
                                 }).select('name, photo').lean()
@@ -398,7 +386,6 @@ function socket(io) {
                                         name: findUser.name,
                                         photo: findUser.photo[0] ? findUser.photo[0].res : null,
                                         createdAt: time
-
                                     }
                                 })
 
@@ -407,11 +394,9 @@ function socket(io) {
                                 if (arg.sender_id == arg.user_1) {
                                     const userFind = await userModel.findOne({ _id: arg.user_2, polyDating: 0 }).select('_id').lean();
                                     receiver_id.push(userFind._id)
-
                                 } else {
                                     const userFind = await userModel.findOne({ _id: arg.user_1, polyDating: 0 }).select('_id').lean();
                                     receiver_id.push(userFind._id)
-
                                 }
                                 const chat = {
                                     text: arg.text,
@@ -425,6 +410,7 @@ function socket(io) {
 
                                 const text = arg.text;
                                 const sendBy = arg.sender_id;
+                                console.log("fcm_token:::", fcm_token);
                                 const registrationToken = fcm_token[0]
                                 Notification.sendPushNotificationFCM(
                                     registrationToken,
@@ -441,7 +427,6 @@ function socket(io) {
                         } else {
 
                             if (arg.sender_id == arg.user_1 || arg.sender_id == arg.user_2) {
-
                                 const findUser = await userModel.findOne({
                                     _id: arg.sender_id
                                 }).select('name, photo').lean();
@@ -454,7 +439,6 @@ function socket(io) {
                                     createdAt: time
                                 }
 
-
                                 await chatModels.updateOne({
                                     chatRoomId: alterNateChatRoom._id,
                                 }, {
@@ -462,15 +446,14 @@ function socket(io) {
                                         chat: finalData
                                     }
                                 }).lean()
+
                                 const receiver_id = [];
                                 if (arg.sender_id == arg.user_1) {
                                     const userFind = await userModel.findOne({ _id: arg.user_2, polyDating: 0 }).select('_id').lean();
                                     receiver_id.push(userFind._id)
-
                                 } else {
                                     const userFind = await userModel.findOne({ _id: arg.user_1, polyDating: 0 }).select('_id').lean();
                                     receiver_id.push(userFind._id)
-
                                 }
                                 const chat = {
                                     text: finalData.text,
@@ -485,7 +468,7 @@ function socket(io) {
                                 const sendBy = arg.sender_id;
 
                                 const registrationToken = fcm_token[0]
-
+                                console.log("fcm_token:::", registrationToken);
                                 Notification.sendPushNotificationFCM(
                                     registrationToken,
                                     title,
@@ -499,16 +482,12 @@ function socket(io) {
                                 io.emit("chatReceive", "sender not found");
                             }
                         }
-
                     }
                 }
-
             }
         })
 
         socket.on("createGroupRoom", async (arg) => {
-
-
 
             const user1 = await userModel.findOne({ _id: arg.user1, polyDating: 1 });
             const user2 = await userModel.findOne({ _id: arg.user2, polyDating: 1 });
