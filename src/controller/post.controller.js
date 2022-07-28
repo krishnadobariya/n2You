@@ -48,7 +48,6 @@ exports.addPostVideo = async (req, res, next) => {
                         description: req.body.description
                     }],
                     email: userFindForViedos.email,
-
                 })
 
                 const saveData = await posts.save();

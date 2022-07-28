@@ -278,15 +278,47 @@ exports.userUpdate = async (req, res, next) => {
                         },
                         phoneNumber: `${countryCode}${phoneNum}`
                     }
-                }).then((() => {
-                    res.status(status.OK).json(
-                        new APIResponse("User Successfully updated!", "true", 200, "1")
-                    )
-                })).catch((error) => {
-                    res.status(status.NOT_MODIFIED).json(
-                        new APIResponse("User not updated!", "false", 304, "0")
-                    )
                 })
+
+
+
+                const findUser = await userModel.findOne({
+                    email: req.body.email
+                })
+
+                const data = {
+                    _id: findUser._id,
+                    polyDating: req.body.poly_dating,
+                    HowDoYouPoly: req.body.how_do_you_poly,
+                    loveToGive: req.body.love_to_give,
+                    polyRelationship: req.body.poly_relationship,
+                    email: req.body.email,
+                    firstName: req.body.first_name,
+                    birthDate: req.body.birth_date,
+                    identity: req.body.identity,
+                    relationshipSatus: req.body.relationship_satus,
+                    IntrestedIn: req.body.intrested_in,
+                    Bio: req.body.bio,
+                    photo: urls,
+                    longitude: req.body.longitude,
+                    latitude: req.body.latitude,
+                    fcm_token: req.body.fcm_token,
+                    hopingToFind: req.body.hoping_to_find,
+                    jobTitle: req.body.job_title,
+                    wantChildren: req.body.want_children,
+                    bodyType: req.body.body_type,
+                    height: req.body.height,
+                    smoking: req.body.smoking,
+                    drinking: req.body.drinking,
+                    hobbies: req.body.hobbies,
+                    phoneNumber: `${countryCode}${phoneNum}`
+                }
+
+
+                res.status(status.OK).json(
+                    new APIResponse("User Successfully updated!", "true", 200, "1", data)
+                )
+
             }
         }
 
