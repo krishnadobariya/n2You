@@ -439,6 +439,7 @@ exports.searchFriend = async (req, res, next) => {
                         _id: getOriginalData._id,
                         email: getOriginalData.email,
                         firstName: getOriginalData.firstName,
+                        profile: getOriginalData.photo[0] ? getOriginalData.photo[0].res : null,
                         status: 3
                     }
 
@@ -654,19 +655,9 @@ exports.searchFriend = async (req, res, next) => {
                     if (response.status == 1) {
                         const getDetail = {
                             _id: finalData._id,
-                            polyDating: finalData.polyDating,
-                            HowDoYouPoly: finalData.HowDoYouPoly,
-                            loveToGive: finalData.loveToGive,
-                            polyRelationship: finalData.polyRelationship,
                             firstName: finalData.firstName,
                             email: finalData.email,
-                            relationshipSatus: finalData.relationshipSatus,
-                            Bio: finalData.Bio,
-                            photo: finalData.photo,
-                            hopingToFind: finalData.hopingToFind,
-                            jobTitle: finalData.jobTitle,
-                            wantChildren: finalData.wantChildren,
-                            posts: finalData.posts[0].posts,
+                            profile: finalData.photo ? finalData.photo[0] : null,
                             status: finalStatus[key]
                         }
 
@@ -675,18 +666,9 @@ exports.searchFriend = async (req, res, next) => {
 
                         const getDetail = {
                             _id: finalData._id,
-                            polyDating: finalData.polyDating,
-                            HowDoYouPoly: finalData.HowDoYouPoly,
-                            loveToGive: finalData.loveToGive,
-                            polyRelationship: finalData.polyRelationship,
                             firstName: finalData.firstName,
                             email: finalData.email,
-                            relationshipSatus: finalData.relationshipSatus,
-                            Bio: finalData.Bio,
-                            photo: finalData.photo,
-                            hopingToFind: finalData.hopingToFind,
-                            jobTitle: finalData.jobTitle,
-                            wantChildren: finalData.wantChildren,
+                            profile: finalData.photo ? finalData.photo[0] : null,
                             status: finalStatus[key]
                         }
 
@@ -756,7 +738,8 @@ exports.getDataUserWise = async (req, res, next) => {
                         wantChildren: '$wantChildren',
                         phoneNumber: '$phoneNumber',
                         extraAtrribute: '$extraAtrribute',
-                        posts: '$datas'
+                        posts: '$datas',
+                        fcm_token: '$fcm_token'
                     }
                 }])
 
@@ -833,6 +816,7 @@ exports.getDataUserWise = async (req, res, next) => {
                 IntrestedIn: data[0].IntrestedIn,
                 Bio: data[0].Bio,
                 photo: data[0].photo,
+                fcm_token: data[0].fcm_token,
                 hopingToFind: data[0].hopingToFind,
                 jobTitle: data[0].jobTitle,
                 wantChildren: data[0].wantChildren,
