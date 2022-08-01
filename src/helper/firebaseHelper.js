@@ -9,6 +9,10 @@ exports.sendPushNotificationFCM = (registrationToken, title, body, text, sendBy,
     console.log("flag::", flag);
 
     var payload = {
+        notification: {
+            title: title,
+            body: body
+        },
         data: {
             title: title,
             body: body,
