@@ -172,6 +172,7 @@ exports.allUserListWithUnreadCount = async (req, res, next) => {
                     lastMessage.push(lastUnreadMessage);
                     const lastValue = lastMessage[lastMessage.length - 1];
                     const response = {
+                        chatRoomId: findRoom.chatRoomId,
                         _id: userDetail[0]._id,
                         countUnreadMessage: count,
                         lastMessage: lastValue.text,

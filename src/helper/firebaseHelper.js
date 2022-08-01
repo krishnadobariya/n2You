@@ -13,6 +13,7 @@ exports.sendPushNotificationFCM = (registrationToken, title, body, text, sendBy,
             title: title,
             body: body
         },
+
         data: {
             title: title,
             body: body,
@@ -20,6 +21,7 @@ exports.sendPushNotificationFCM = (registrationToken, title, body, text, sendBy,
             sendBy: sendBy,
         }
     };
+    
     var options = {
         priority: "high",
         timeToLive: 60 * 60 * 24
