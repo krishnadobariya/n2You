@@ -286,7 +286,7 @@ function socket(io) {
 
                                 io.to(userRoom[0]).emit("chatReceive", chat);
                                 const title = "n2you Notification";
-                                const body = `${arg.sender_id} send request to `;
+                                const body = `${arg.sender_id} send request to`;
 
                                 const text = arg.text;
                                 const sendBy = arg.sender_id;

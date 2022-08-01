@@ -123,7 +123,7 @@ exports.getRequestUserWise = async (req, res, next) => {
                     new APIResponse("Not Have any requested User!", "false", 404, "0")
                 )
             } else {
-                res.status(status.NOT_FOUND).json(
+                res.status(status.CREATED).json(
                     new APIResponse("All Reuested User", "true", 200, "1", allNotAcceptedRequestes)
                 )
             }
