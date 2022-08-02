@@ -7,6 +7,7 @@ const { default: mongoose } = require("mongoose");
 const commentModel = require("../model/comment.model");
 const basketModel = require("../model/basket.model");
 const relationShipHistoryModel = require("../model/polyamorous/relationShipHistory.model");
+const chatRoomModel = require("../webSocket/models/chatRoom.model");
 
 
 exports.userRegister = async (req, res, next) => {
@@ -374,9 +375,14 @@ exports.tokenUpdate = async (req, res, next) => {
 
 exports.searchFriend = async (req, res, next) => {
     try {
+
+        const id = await userModel.findOne({
+            email: req.params.user_email
+        }).select('_id')
+
         const Regexname = new RegExp(req.body.search_key, 'i');
         const searchName = await userModel.find({ firstName: Regexname, polyDating: 0 }).maxTimeMS(10);
-        console.log("searchName", searchName);
+        // console.log("searchName", searchName);
         const reaquestedAllEmail = [];
         searchName.map((result, index) => {
             reaquestedAllEmail.push(result.email)
@@ -433,17 +439,69 @@ exports.searchFriend = async (req, res, next) => {
                         }
                     }
                 }
-
+                const chatRoomId = [];
                 for (const getOriginalData of finalData) {
-                    const response = {
-                        _id: getOriginalData._id,
-                        email: getOriginalData.email,
-                        firstName: getOriginalData.firstName,
-                        profile: getOriginalData.photo[0] ? getOriginalData.photo[0].res : null,
-                        status: 3
+
+                    const findAllUserWithIchat1 = await chatRoomModel.findOne({
+                        $and: [{
+                            user1: getOriginalData._id
+                        }, {
+                            user2: id._id
+                        }]
+                    })
+
+
+                    const findAllUserWithIchat2 = await chatRoomModel.findOne({
+                        $and: [{
+                            user1: id._id
+                        }, {
+                            user2: getOriginalData._id
+                        }]
+                    })
+
+
+
+
+                    if (findAllUserWithIchat1) {
+                        chatRoomId.push(findAllUserWithIchat1._id)
+                        // console.log("fsdgfdhgrtfjygtjkytjki");
+                        const response = {
+                            chatRoomId: chatRoomId[0],
+                            _id: getOriginalData._id,
+                            email: getOriginalData.email,
+                            firstName: getOriginalData.firstName,
+                            profile: getOriginalData.photo[0] ? getOriginalData.photo[0].res : null,
+                            status: 3
+                        }
+
+                        UniqueEmail.push(response);
+
+                        console.log(chatRoomId[0]);
+                    } else if (findAllUserWithIchat2) {
+                        chatRoomId.push(findAllUserWithIchat2._id)
+                        const response = {
+                            chatRoomId: chatRoomId[0],
+                            _id: getOriginalData._id,
+                            email: getOriginalData.email,
+                            firstName: getOriginalData.firstName,
+                            profile: getOriginalData.photo[0] ? getOriginalData.photo[0].res : null,
+                            status: 3
+                        }
+
+                        UniqueEmail.push(response);
+                    } else {
+
+                        const response = {
+                            _id: getOriginalData._id,
+                            email: getOriginalData.email,
+                            firstName: getOriginalData.firstName,
+                            profile: getOriginalData.photo[0] ? getOriginalData.photo[0].res : null,
+                            status: 3
+                        }
+
+                        UniqueEmail.push(response);
                     }
 
-                    responseData.push(response);
                 }
 
                 res.status(status.OK).json(
@@ -493,17 +551,71 @@ exports.searchFriend = async (req, res, next) => {
                     }
 
                 }
-
+                const chatRoomId = [];
                 for (const getOriginalData of finalData) {
-                    const response = {
-                        _id: getOriginalData._id,
-                        email: getOriginalData.email,
-                        firstName: getOriginalData.firstName,
-                        profile: getOriginalData.photo[0] ? getOriginalData.photo[0].res : null,
-                        status: 3
+                    console.log("id is", id._id);
+                    console.log(getOriginalData._id);
+                    const findAllUserWithIchat1 = await chatRoomModel.findOne({
+                        $and: [{
+                            user1: getOriginalData._id
+                        }, {
+                            user2: id._id
+                        }]
+                    })
+
+
+                    const findAllUserWithIchat2 = await chatRoomModel.findOne({
+                        $and: [{
+                            user1: id._id
+                        }, {
+                            user2: getOriginalData._id
+                        }]
+                    })
+
+
+
+
+                    if (findAllUserWithIchat1) {
+                        chatRoomId.push(findAllUserWithIchat1._id)
+                        // console.log("fsdgfdhgrtfjygtjkytjki");
+                        const response = {
+                            chatRoomId: chatRoomId[0],
+                            _id: getOriginalData._id,
+                            email: getOriginalData.email,
+                            firstName: getOriginalData.firstName,
+                            profile: getOriginalData.photo[0] ? getOriginalData.photo[0].res : null,
+                            status: 3
+                        }
+
+                        UniqueEmail.push(response);
+
+                        console.log(chatRoomId[0]);
+                    } else if (findAllUserWithIchat2) {
+                        chatRoomId.push(findAllUserWithIchat2._id)
+                        const response = {
+                            chatRoomId: chatRoomId[0],
+                            _id: getOriginalData._id,
+                            email: getOriginalData.email,
+                            firstName: getOriginalData.firstName,
+                            profile: getOriginalData.photo[0] ? getOriginalData.photo[0].res : null,
+                            status: 3
+                        }
+
+                        UniqueEmail.push(response);
+                    } else {
+
+                        const response = {
+                            _id: getOriginalData._id,
+                            email: getOriginalData.email,
+                            firstName: getOriginalData.firstName,
+                            profile: getOriginalData.photo[0] ? getOriginalData.photo[0].res : null,
+                            status: 3
+                        }
+
+                        UniqueEmail.push(response);
                     }
 
-                    UniqueEmail.push(response);
+
                 }
                 const statusByEmail = [];
                 const allRequestedEmail = RequestedEmailExiestInUser.RequestedEmails
@@ -513,8 +625,6 @@ exports.searchFriend = async (req, res, next) => {
                     requestedEmailWitchIsInuserRequeted.push(resultEmail);
                 })
 
-
-                console.log("requestedEmailWitchIsInuserRequeted", requestedEmailWitchIsInuserRequeted);
                 const meageAllTable = await userModel.aggregate([{
                     $match: {
                         email: {
@@ -633,6 +743,8 @@ exports.searchFriend = async (req, res, next) => {
                 }
                 for (const [key, finalData] of finalExistUser.entries()) {
 
+                    // console.log("finalData", finalData);
+
                     const response = {
                         _id: finalData._id,
                         polyDating: finalData.polyDating,
@@ -652,29 +764,64 @@ exports.searchFriend = async (req, res, next) => {
                     }
 
 
-                    if (response.status == 1) {
-                        const getDetail = {
-                            _id: finalData._id,
-                            firstName: finalData.firstName,
-                            email: finalData.email,
-                            profile: finalData.photo ? finalData.photo[0] : null,
-                            status: finalStatus[key]
+                        const chatRoomId = [];
+                        console.log(finalData._id);
+                        const findAllUserWithIchat1 = await chatRoomModel.findOne({
+                            $and: [{
+                                user1: finalData._id
+                            }, {
+                                user2: id._id
+                            }]
+                        })
+
+
+                        const findAllUserWithIchat2 = await chatRoomModel.findOne({
+                            $and: [{
+                                user1: id._id
+                            }, {
+                                user2: finalData._id
+                            }]
+                        })
+
+                        if (findAllUserWithIchat1) {
+                            chatRoomId.push(findAllUserWithIchat1._id)
+                          
+                            const getDetail = {
+                                _id: finalData._id,
+                                firstName: finalData.firstName,
+                                email: finalData.email,
+                                profile: finalData.photo ? finalData.photo[0] : null,
+                                status: finalStatus[key]
+                            }
+
+                            final_data.push(getDetail);
+
+                            console.log(chatRoomId[0]);
+                        } else if (findAllUserWithIchat2) {
+                            chatRoomId.push(findAllUserWithIchat2._id)
+                            const getDetail = {
+                                chatRoomId: chatRoomId[0],
+                                _id: finalData._id,
+                                firstName: finalData.firstName,
+                                email: finalData.email,
+                                profile: finalData.photo ? finalData.photo[0] : null,
+                                status: finalStatus[key]
+                            }
+
+                            final_data.push(getDetail);
+                        } else {
+
+                            const getDetail = {
+                                chatRoomId: chatRoomId[0],
+                                _id: finalData._id,
+                                firstName: finalData.firstName,
+                                email: finalData.email,
+                                profile: finalData.photo ? finalData.photo[0] : null,
+                                status: finalStatus[key]
+                            }
+
+                            final_data.push(getDetail);
                         }
-
-                        final_data.push(getDetail);
-                    } else {
-
-                        const getDetail = {
-                            _id: finalData._id,
-                            firstName: finalData.firstName,
-                            email: finalData.email,
-                            profile: finalData.photo ? finalData.photo[0] : null,
-                            status: finalStatus[key]
-                        }
-
-                        final_data.push(getDetail);
-                    }
-
                 }
 
                 const final_response = [...final_data, ...UniqueEmail]

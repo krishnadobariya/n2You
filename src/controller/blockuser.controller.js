@@ -83,8 +83,8 @@ exports.blockUnblockUser = async (req, res, next) => {
 
 exports.blockUserList = async (req, res, next) => {
     try {
-
         const userFound = await blockUnblockUserModel.findOne({ userId: req.params.user_id })
+        
         if (userFound == null) {
             res.status(status.NOT_FOUND).json(
                 new APIResponse("User Not Found", "false", 404, "0")
