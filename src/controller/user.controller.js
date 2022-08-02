@@ -382,7 +382,6 @@ exports.searchFriend = async (req, res, next) => {
 
         const Regexname = new RegExp(req.body.search_key, 'i');
         const searchName = await userModel.find({ firstName: Regexname, polyDating: 0 }).maxTimeMS(10);
-        // console.log("searchName", searchName);
         const reaquestedAllEmail = [];
         searchName.map((result, index) => {
             reaquestedAllEmail.push(result.email)
@@ -448,7 +447,7 @@ exports.searchFriend = async (req, res, next) => {
                         }, {
                             user2: id._id
                         }]
-                    })
+                    }).select("_id")
 
 
                     const findAllUserWithIchat2 = await chatRoomModel.findOne({
@@ -457,14 +456,13 @@ exports.searchFriend = async (req, res, next) => {
                         }, {
                             user2: getOriginalData._id
                         }]
-                    })
+                    }).select("_id")
 
 
 
 
                     if (findAllUserWithIchat1) {
                         chatRoomId.push(findAllUserWithIchat1._id)
-                        // console.log("fsdgfdhgrtfjygtjkytjki");
                         const response = {
                             chatRoomId: chatRoomId[0],
                             _id: getOriginalData._id,
@@ -476,7 +474,6 @@ exports.searchFriend = async (req, res, next) => {
 
                         UniqueEmail.push(response);
 
-                        console.log(chatRoomId[0]);
                     } else if (findAllUserWithIchat2) {
                         chatRoomId.push(findAllUserWithIchat2._id)
                         const response = {
@@ -553,15 +550,13 @@ exports.searchFriend = async (req, res, next) => {
                 }
                 const chatRoomId = [];
                 for (const getOriginalData of finalData) {
-                    console.log("id is", id._id);
-                    console.log(getOriginalData._id);
                     const findAllUserWithIchat1 = await chatRoomModel.findOne({
                         $and: [{
                             user1: getOriginalData._id
                         }, {
                             user2: id._id
                         }]
-                    })
+                    }).select("_id")
 
 
                     const findAllUserWithIchat2 = await chatRoomModel.findOne({
@@ -570,14 +565,13 @@ exports.searchFriend = async (req, res, next) => {
                         }, {
                             user2: getOriginalData._id
                         }]
-                    })
+                    }).select("_id")
 
 
 
 
                     if (findAllUserWithIchat1) {
                         chatRoomId.push(findAllUserWithIchat1._id)
-                        // console.log("fsdgfdhgrtfjygtjkytjki");
                         const response = {
                             chatRoomId: chatRoomId[0],
                             _id: getOriginalData._id,
@@ -764,64 +758,61 @@ exports.searchFriend = async (req, res, next) => {
                     }
 
 
-                        const chatRoomId = [];
-                        console.log(finalData._id);
-                        const findAllUserWithIchat1 = await chatRoomModel.findOne({
-                            $and: [{
-                                user1: finalData._id
-                            }, {
-                                user2: id._id
-                            }]
-                        })
+                    const chatRoomId = [];
+                    const findAllUserWithIchat1 = await chatRoomModel.findOne({
+                        $and: [{
+                            user1: finalData._id
+                        }, {
+                            user2: id._id
+                        }]
+                    }).select("_id")
 
+                    const findAllUserWithIchat2 = await chatRoomModel.findOne({
+                        $and: [{
+                            user1: id._id
+                        }, {
+                            user2: finalData._id
+                        }]
+                    }).select("_id")
 
-                        const findAllUserWithIchat2 = await chatRoomModel.findOne({
-                            $and: [{
-                                user1: id._id
-                            }, {
-                                user2: finalData._id
-                            }]
-                        })
+        
+                    if (findAllUserWithIchat1) {
+                        chatRoomId.push(findAllUserWithIchat1._id)
 
-                        if (findAllUserWithIchat1) {
-                            chatRoomId.push(findAllUserWithIchat1._id)
-                          
-                            const getDetail = {
-                                _id: finalData._id,
-                                firstName: finalData.firstName,
-                                email: finalData.email,
-                                profile: finalData.photo ? finalData.photo[0] : null,
-                                status: finalStatus[key]
-                            }
-
-                            final_data.push(getDetail);
-
-                            console.log(chatRoomId[0]);
-                        } else if (findAllUserWithIchat2) {
-                            chatRoomId.push(findAllUserWithIchat2._id)
-                            const getDetail = {
-                                chatRoomId: chatRoomId[0],
-                                _id: finalData._id,
-                                firstName: finalData.firstName,
-                                email: finalData.email,
-                                profile: finalData.photo ? finalData.photo[0] : null,
-                                status: finalStatus[key]
-                            }
-
-                            final_data.push(getDetail);
-                        } else {
-
-                            const getDetail = {
-                                chatRoomId: chatRoomId[0],
-                                _id: finalData._id,
-                                firstName: finalData.firstName,
-                                email: finalData.email,
-                                profile: finalData.photo ? finalData.photo[0] : null,
-                                status: finalStatus[key]
-                            }
-
-                            final_data.push(getDetail);
+                        const getDetail = {
+                            _id: finalData._id,
+                            firstName: finalData.firstName,
+                            email: finalData.email,
+                            profile: finalData.photo ? finalData.photo[0] : null,
+                            status: finalStatus[key]
                         }
+
+                        final_data.push(getDetail);
+                    } else if (findAllUserWithIchat2) {
+                        chatRoomId.push(findAllUserWithIchat2._id)
+                        const getDetail = {
+                            chatRoomId: chatRoomId[0],
+                            _id: finalData._id,
+                            firstName: finalData.firstName,
+                            email: finalData.email,
+                            profile: finalData.photo ? finalData.photo[0] : null,
+                            status: finalStatus[key]
+                        }
+
+                        final_data.push(getDetail);
+                    } else {
+
+                        const getDetail = {
+                            chatRoomId: chatRoomId[0],
+                            _id: finalData._id,
+                            firstName: finalData.firstName,
+                            email: finalData.email,
+                            profile: finalData.photo ? finalData.photo[0] : null,
+                            status: finalStatus[key]
+                        }
+
+                        final_data.push(getDetail);
+                    }
                 }
 
                 const final_response = [...final_data, ...UniqueEmail]
