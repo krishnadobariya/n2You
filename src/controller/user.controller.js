@@ -1436,7 +1436,7 @@ exports.yesBasket = async (req, res, next) => {
                                 hopingToFind: finalData.hopingToFind,
                                 jobTitle: finalData.jobTitle,
                                 wantChildren: finalData.wantChildren,
-                                posts: finalData.posts,
+                                posts_data: finalData.posts,
                                 statusAndTumbCount: finalStatus[key]
                             }
                             final_data.push(response);
@@ -1777,7 +1777,7 @@ exports.yesBasket = async (req, res, next) => {
                                         hopingToFind: finalData.hopingToFind,
                                         jobTitle: finalData.jobTitle,
                                         wantChildren: finalData.wantChildren,
-                                        posts: finalData.posts,
+                                        posts_data: finalData.posts,
                                         statusAndTumbCount: finalStatus[key]
                                     }
                                     final_data.push(response);
