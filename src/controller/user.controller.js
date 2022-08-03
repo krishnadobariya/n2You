@@ -460,7 +460,7 @@ exports.searchFriend = async (req, res, next) => {
 
 
 
-
+                    const UniqueEmail = [];
                     if (findAllUserWithIchat1) {
                         chatRoomId.push(findAllUserWithIchat1._id)
                         const response = {
@@ -775,7 +775,7 @@ exports.searchFriend = async (req, res, next) => {
                         }]
                     }).select("_id")
 
-        
+
                     if (findAllUserWithIchat1) {
                         chatRoomId.push(findAllUserWithIchat1._id)
 
