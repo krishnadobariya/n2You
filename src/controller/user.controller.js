@@ -1070,10 +1070,10 @@ exports.storeBasketValue = async (req, res, next) => {
 
                 // console.log("chechUser", chechUser);
 
-                const findUser = await userModel.findOne({
-                    _id: req.params.user_id,
-                    "basket.userId": chechUser._id
-                })
+                    const findUser = await userModel.findOne({
+                        _id: req.params.user_id,
+                        "basket.userId": chechUser._id
+                    })
 
                 if (findUser == null) {
                     const addInUser = await userModel.updateOne({

@@ -771,8 +771,6 @@ exports.userAllFriendPost = async (req, res, next) => {
                                 for (const allposts of meargAllTableEmail.posts) {
 
                                     for (const getallposts of allposts.posts) {
-
-
                                         const userPostDate = getallposts.createdAt;
 
                                         datetime = userPostDate;
@@ -819,6 +817,7 @@ exports.userAllFriendPost = async (req, res, next) => {
                                         }
 
                                         const response = {
+                                            userId: allposts.userId,
                                             getallposts,
                                             finalPostedTime,
                                             commentData: commentData[0] == null ? [] : commentData
@@ -827,6 +826,8 @@ exports.userAllFriendPost = async (req, res, next) => {
 
                                     }
                                 }
+
+
 
                                 var status1 = {
                                     email: requestEmail.requestedEmail,
@@ -850,6 +851,8 @@ exports.userAllFriendPost = async (req, res, next) => {
                         finalStatus.push(final1Data)
                     }
             }
+
+
             for (const [key, finalData] of meargAllTable.entries()) {
 
                 const response = {
@@ -864,8 +867,11 @@ exports.userAllFriendPost = async (req, res, next) => {
                     const findUser = await userModal.findOne({
                         email: response.data.email
                     })
+
+
                     const data = {
                         posts: {
+                            userId: findUser._id,
                             postId: response.data.posts[0].getallposts._id,
                             email: response.data.email,
                             userName: findUser.firstName,
@@ -877,7 +883,8 @@ exports.userAllFriendPost = async (req, res, next) => {
                             report: response.data.posts[0].getallposts.report,
                         },
                         finalPostedTime: response.data.posts[0].finalPostedTime,
-                        commentData: response.data.posts[0].commentData
+                        commentData: response.data.posts[0].commentData,
+                        userId: response.data.userId,
 
                     }
 
