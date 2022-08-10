@@ -12,10 +12,10 @@ exports.sessionCreate = async (req, res, next) => {
             selectedTime: req.body.selected_time,
             cretedSessionUser: req.body.creted_session_user,
             participants: {
-                participants_1: req.body.participants_1 ?  req.body.participants_1 : null,
-                participants_2: req.body.participants_2 ?  req.body.participants_2 : null,
-                participants_3: req.body.participants_3 ?  req.body.participants_3 : null,
-                participants_4: req.body.participants_4 ?  req.body.participants_4 : null
+                participants_1: req.body.participants_1 ? req.body.participants_1 : null,
+                participants_2: req.body.participants_2 ? req.body.participants_2 : null,
+                participants_3: req.body.participants_3 ? req.body.participants_3 : null,
+                participants_4: req.body.participants_4 ? req.body.participants_4 : null
             },
             RoomType: req.body.room_type
         })
@@ -58,6 +58,9 @@ exports.publicSession = async (req, res, next) => {
                     polyDating: 0
                 })
 
+
+                console.log(findUser);
+
                 const participants1Find = await userModel.findOne({
                     _id: publicSessionwithUserDetails.participants[0].participants_1,
                     polyDating: 0
@@ -99,17 +102,20 @@ exports.publicSession = async (req, res, next) => {
                 const userDetail = findUser.firstName
 
                 const sessionDetail = {
+                    name: userDetail,
                     selectedDate: publicSessionwithUserDetails.selectedDate,
                     selectedTime: publicSessionwithUserDetails.selectedTime,
                     cretedSessionUser: publicSessionwithUserDetails.cretedSessionUser,
+                    roomType: publicSessionwithUserDetails.RoomType,
+                    detail: publicSessionwithUserDetails.isLive == "true" ? "100 people joined" : "12 Jan 2020 12:00 PM",
+                    isLive: publicSessionwithUserDetails.isLive,
                     participants_1: participants_1,
                     participants_2: participants_2,
                     participants_3: participants_3,
                     participants_4: participants_4,
                 }
                 const response = {
-                    sessionDetail,
-                    userDetail
+                    sessionDetail
                 }
                 publicSession.push(response)
             }

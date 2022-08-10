@@ -7,6 +7,10 @@ const sessionSchema = mongoose.Schema({
     selectedTime: {
         type: String
     },
+    isLive: {
+        type: String,
+        default: true
+    },
     cretedSessionUser: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'User',
