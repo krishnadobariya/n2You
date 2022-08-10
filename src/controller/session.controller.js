@@ -12,10 +12,10 @@ exports.sessionCreate = async (req, res, next) => {
             selectedTime: req.body.selected_time,
             cretedSessionUser: req.body.creted_session_user,
             participants: {
-                participants_1: req.body.participants_1 || " ",
-                participants_2: req.body.participants_2 || " ",
-                participants_3: req.body.participants_3 || " ",
-                participants_4: req.body.participants_4 || " "
+                participants_1: req.body.participants_1 ?  req.body.participants_1 : null,
+                participants_2: req.body.participants_2 ?  req.body.participants_2 : null,
+                participants_3: req.body.participants_3 ?  req.body.participants_3 : null,
+                participants_4: req.body.participants_4 ?  req.body.participants_4 : null
             },
             RoomType: req.body.room_type
         })
