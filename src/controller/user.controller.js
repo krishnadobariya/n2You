@@ -839,11 +839,11 @@ exports.getAllUser = async (req, res, next) => {
     try {
 
         const id = await userModel.findOne({
-            email: req.params.user_email
+            _id: req.params.user_id
         }).select('_id')
 
 
-        const searchName = await userModel.find({ polyDating: 0 }).maxTimeMS(10);
+        const searchName = await userModel.find({ polyDating: 0, _id: { $ne: req.params.user_id } }).maxTimeMS(10);
         const reaquestedAllEmail = [];
         searchName.map((result, index) => {
             reaquestedAllEmail.push(result.email)
@@ -857,7 +857,7 @@ exports.getAllUser = async (req, res, next) => {
         } else {
             const RequestedEmailExiestInUser = await requestsModel.findOne(
                 {
-                    userEmail: req.params.user_email,
+                    userId: req.params.user_id,
                     RequestedEmails: {
                         $elemMatch: {
                             requestedEmail: {
@@ -1070,7 +1070,7 @@ exports.getAllUser = async (req, res, next) => {
                         from: 'requests',
                         let: {
 
-                            userEmail: req.params.user_email,
+                            userEmail: req.params.user_id,
                             email: "$email"
                         },
                         pipeline: [
