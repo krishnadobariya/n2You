@@ -1314,7 +1314,7 @@ exports.userAllFriendPost = async (req, res, next) => {
                                         photourl: user.photo[0] ? user.photo[0] : null,
                                         username: user.firstName,
                                         replyUser: commnetData.replyUser
-                                    }
+                                    }   
                                     commentData.push(response)
                                 }
 

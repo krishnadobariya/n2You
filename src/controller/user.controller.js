@@ -875,7 +875,23 @@ exports.getAllUser = async (req, res, next) => {
                 const UniqueEmail = [];
                 for (const allrequestedDataNotAcceptedRequestAndNotFriend of reaquestedAllEmail) {
 
-                    const FindUser = await userModel.find();
+                    const FindUser = await userModel.aggregate([
+                        {
+                            $geoNear: {
+                                near: {
+                                    type: "Point",
+                                    coordinates: [
+                                        parseFloat(req.query.long),
+                                        parseFloat(req.query.lat)
+                                    ]
+                                },
+                                distanceField: "distance",
+                                maxDistance: 1000,
+                                minDistance: 0,
+                                spherical: true
+                            }
+                        }
+                    ]);
 
                     for (const uniqueUser of FindUser) {
 
@@ -970,7 +986,24 @@ exports.getAllUser = async (req, res, next) => {
 
                 const UniqueEmail = [];
                 for (const uniqueEmail of difference) {
-                    const FindUser = await userModel.find();
+                    const FindUser = await userModel.aggregate([
+                        {
+                            $geoNear: {
+                                near: {
+                                    type: "Point",
+                                    coordinates: [
+                                        parseFloat(req.query.long),
+                                        parseFloat(req.query.lat)
+                                    ]
+                                },
+                                distanceField: "distance",
+                                maxDistance: 1000,
+                                minDistance: 0,
+                                spherical: true
+                            }
+                        }
+                    ]);
+
                     for (const uniqueUser of FindUser) {
 
                         if (uniqueUser.email == uniqueEmail) {
@@ -1367,7 +1400,7 @@ exports.getDataUserWise = async (req, res, next) => {
                         } else if (seconds > 0 && minutes == 0 && hours == 0 && days === 0) {
                             const getComment = await commentModel.findOne({ postId: getPost._id });
                             finalPostedTime.push(`${seconds} second`);
-                            
+
                             commentData.push(getComment)
                         }
 
@@ -1469,6 +1502,8 @@ exports.storeBasketValue = async (req, res, next) => {
 
             for (const chechUser of matchUser) {
 
+                console.log(chechUser._id);
+
                 var local = 0;
 
                 if (chechUser.identity == identity) {
@@ -1514,27 +1549,27 @@ exports.storeBasketValue = async (req, res, next) => {
                     "basket.userId": chechUser._id
                 })
 
-                if (findUser == null) {
-                    const addInUser = await userModel.updateOne({
-                        _id: req.params.user_id
-                    }, {
-                        $push: {
-                            basket: {
-                                match: profileMatch,
-                                userId: chechUser._id
-                            }
-                        }
-                    })
-                } else {
-                    const updateUser = await userModel.updateOne({
-                        _id: req.params.user_id,
-                        "basket.userId": chechUser._id
-                    }, {
+                // if (findUser == null) {
+                const addInUser = await userModel.updateOne({
+                    _id: req.params.user_id
+                }, {
+                    $push: {
                         basket: {
                             match: profileMatch,
+                            userId: chechUser._id
                         }
-                    })
-                }
+                    }
+                })
+                // } else {
+                //     const updateUser = await userModel.updateOne({
+                //         _id: req.params.user_id,
+                //         "basket.userId": chechUser._id
+                //     }, {
+                //         basket: {
+                //             match: profileMatch,
+                //         }
+                //     })
+                // }
 
                 const response = {
                     chechUser,
