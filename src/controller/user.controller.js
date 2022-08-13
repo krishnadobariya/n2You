@@ -1367,6 +1367,7 @@ exports.getDataUserWise = async (req, res, next) => {
                         } else if (seconds > 0 && minutes == 0 && hours == 0 && days === 0) {
                             const getComment = await commentModel.findOne({ postId: getPost._id });
                             finalPostedTime.push(`${seconds} second`);
+                            
                             commentData.push(getComment)
                         }
 
@@ -1586,10 +1587,10 @@ exports.yesBasket = async (req, res, next) => {
 
                     if (allBakest.match > 50) {
                         YesBasketData.push(allBakest.userId)
-
                     }
-
                 }
+
+                console.log("reaquestedAllEmail", YesBasketData);
 
                 for (const allYesBasketData of YesBasketData) {
                     const meargeData = await userModel.findOne({
