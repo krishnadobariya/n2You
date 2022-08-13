@@ -690,13 +690,17 @@ exports.userAllFriendPost = async (req, res, next) => {
         if (data != null && user != null) {
             const allRequestedEmail = data.RequestedEmails
             const requestedEmailWitchIsInuserRequeted = [];
+            const allData = [];
 
             allRequestedEmail.map((result, next) => {
                 const resultEmail = result.requestedEmail;
                 requestedEmailWitchIsInuserRequeted.push(resultEmail);
-            });
+                allData.push(resultEmail)
 
+            });
+            allData.push(user.email)
             console.log(requestedEmailWitchIsInuserRequeted);
+
             const meargAllTable = await userModal.aggregate([{
                 $match: {
                     email: {
@@ -716,8 +720,7 @@ exports.userAllFriendPost = async (req, res, next) => {
                 $lookup: {
                     from: 'requests',
                     let: {
-
-                        userId: req.params.user_id,
+                        userId: mongoose.Types.ObjectId(req.params.user_id),
                         email: "$email"
                     },
                     pipeline: [
@@ -752,6 +755,8 @@ exports.userAllFriendPost = async (req, res, next) => {
                     result: "$form_data.RequestedEmails",
                 }
             }])
+
+            console.log("meargAllTable", meargAllTable);
 
             const emailDataDetail = meargAllTable[0].result;
 
@@ -895,8 +900,157 @@ exports.userAllFriendPost = async (req, res, next) => {
 
             }
 
+
+
+            const meargAllTable2 = await userModal.aggregate([{
+                $match: {
+                    _id: mongoose.Types.ObjectId(req.params.user_id)
+                }
+            },
+            {
+                $lookup: {
+                    from: 'posts',
+                    localField: 'email',
+                    foreignField: 'email',
+                    as: 'req_data'
+                }
+            },
+            {
+                $project: {
+                    email: "$email",
+                    posts: "$req_data"
+                }
+            }])
+
+
+            console.log("meargAllTable2", meargAllTable2);
+            for (const meargAllTableEmail of meargAllTable2) {
+                console.log("meargAllTable2", meargAllTableEmail);
+                const finalResponse = [];
+
+                for (const allposts of meargAllTableEmail.posts) {
+
+                    for (const getallposts of allposts.posts) {
+                        const userPostDate = getallposts.createdAt;
+
+                        datetime = userPostDate;
+                        var userPostedDate = new Date(datetime);
+                        now = new Date();
+                        var sec_num = (now - userPostedDate) / 1000;
+                        var days = Math.floor(sec_num / (3600 * 24));
+                        var hours = Math.floor((sec_num - (days * (3600 * 24))) / 3600);
+                        var minutes = Math.floor((sec_num - (days * (3600 * 24)) - (hours * 3600)) / 60);
+                        var seconds = Math.floor(sec_num - (days * (3600 * 24)) - (hours * 3600) - (minutes * 60));
+
+                        if (hours < 10) { hours = "0" + hours; }
+                        if (minutes < 10) { minutes = "0" + minutes; }
+                        if (seconds < 10) { seconds = "0" + seconds; }
+
+                        const finalPostedTime = [];
+                        const commentData = [];
+
+
+
+                        if (days > 30) {
+                            const getComment = await commentModel.findOne({ postId: getallposts._id });
+                            let whenUserPosted = userPostedDate;
+                            const fullDate = new Date(whenUserPosted).toDateString()
+                            finalPostedTime.push(`${fullDate}`);
+                            commentData.push(getComment)
+                        }
+                        if (days > 0 && days < 30) {
+                            const getComment = await commentModel.findOne({ postId: getallposts._id });
+                            finalPostedTime.push(`${days} days`);
+                            commentData.push(getComment)
+                        } else if (hours > 0 && days == 0) {
+                            const getComment = await commentModel.findOne({ postId: getallposts._id });
+                            finalPostedTime.push(`${hours} hours`);
+                            commentData.push(getComment)
+                        } else if (minutes > 0 && hours == 0) {
+                            const getComment = await commentModel.findOne({ postId: getallposts._id });
+                            finalPostedTime.push(`${minutes} minute`);
+                            commentData.push(getComment)
+                        } else if (seconds > 0 && minutes == 0 && hours == 0 && days === 0) {
+                            const getComment = await commentModel.findOne({ postId: getallposts._id });
+                            finalPostedTime.push(`${seconds} second`);
+                            commentData.push(getComment)
+                        }
+
+                        const response = {
+                            userId: allposts.userId,
+                            getallposts,
+                            finalPostedTime,
+                            commentData: commentData[0] == null ? [] : commentData
+                        }
+                        finalResponse.push(response);
+
+                    }
+                }
+                var status1 = {
+                    email: meargAllTable2[0].email,
+                    posts: finalResponse
+                }
+                statusByEmail.push(status1)
+            }
+
+
+            const final_data1 = [];
+
+            const finalStatus1 = [];
+            for (const [key, finalData] of meargAllTable2.entries()) {
+                for (const [key, final1Data] of statusByEmail.entries())
+                    if (finalData.email === final1Data.email) {
+                        finalStatus1.push(final1Data)
+                    }
+            }
+            console.log("finalStatus1", finalStatus1);
+
+            for (const [key, finalData] of meargAllTable2.entries()) {
+
+                const response = {
+                    data: finalStatus1[key]
+                }
+
+
+                if (response.data == undefined) {
+
+                } else {
+
+                    const findUser = await userModal.findOne({
+                        email: response.data.email
+                    })
+
+
+                    const data = {
+                        posts: {
+                            userId: findUser._id,
+                            postId: response.data.posts[0].getallposts._id,
+                            email: response.data.email,
+                            userName: findUser.firstName,
+                            profile: findUser.photo[0] ? findUser.photo[0].res : null,
+                            posts_data: response.data.posts[0].getallposts.post,
+                            description: response.data.posts[0].getallposts.description,
+                            like: response.data.posts[0].getallposts.like,
+                            comment: response.data.posts[0].getallposts.comment,
+                            report: response.data.posts[0].getallposts.report,
+                        },
+                        finalPostedTime: response.data.posts[0].finalPostedTime,
+                        commentData: response.data.posts[0].commentData,
+                        userId: response.data.userId,
+
+                    }
+
+                    final_data1.push(data);
+                }
+
+
+            }
+
+
+            const allDatas = [...final_data1, ...final_data,]
+
             res.status(status.OK).json(
-                new APIResponse("show all post When accept by the user", "true", 201, "1", final_data)
+                new APIResponse("show all post When accept by the user", "true", 201, "1", allDatas)
             )
         } else if (user) {
             const meargAllTable = await userModal.aggregate([{
