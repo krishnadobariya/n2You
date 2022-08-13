@@ -685,15 +685,15 @@ exports.userAllFriendPost = async (req, res, next) => {
     try {
 
         const statusByEmail = [];
-        const data = await requestsModel.findOne({ userEmail: req.params.user_email });
-        const user = await userModal.findOne({ emial: req.params.user_email })
+        const data = await requestsModel.findOne({ userId: req.params.user_id });
+        const user = await userModal.findOne({ _id: req.params.user_id })
         if (data != null && user != null) {
             const allRequestedEmail = data.RequestedEmails
             const requestedEmailWitchIsInuserRequeted = [];
 
             allRequestedEmail.map((result, next) => {
                 const resultEmail = result.requestedEmail;
-                requestedEmailWitchIsInuserRequeted.push(resultEmail, req.params.user_email);
+                requestedEmailWitchIsInuserRequeted.push(resultEmail);
             });
 
             console.log(requestedEmailWitchIsInuserRequeted);
@@ -717,7 +717,7 @@ exports.userAllFriendPost = async (req, res, next) => {
                     from: 'requests',
                     let: {
 
-                        userEmail: req.params.user_email,
+                        userId: req.params.user_id,
                         email: "$email"
                     },
                     pipeline: [
@@ -727,7 +727,7 @@ exports.userAllFriendPost = async (req, res, next) => {
                                     $and: [
                                         {
                                             $eq: [
-                                                "$userEmail", "$$userEmail"
+                                                "$userId", "$$userId"
                                             ]
                                         },
                                         {
@@ -901,7 +901,7 @@ exports.userAllFriendPost = async (req, res, next) => {
         } else if (user) {
             const meargAllTable = await userModal.aggregate([{
                 $match: {
-                    email: req.params.user_email
+                    _id: mongoose.Types.ObjectId(req.params.user_id)
                 }
             },
             {
@@ -913,135 +913,85 @@ exports.userAllFriendPost = async (req, res, next) => {
                 }
             },
             {
-                $lookup: {
-                    from: 'requests',
-                    let: {
-
-                        userEmail: req.params.user_email,
-                        email: "$email"
-                    },
-                    pipeline: [
-                        {
-                            $match: {
-                                $expr: {
-                                    $and: [
-                                        {
-                                            $eq: [
-                                                "$userEmail", "$$userEmail"
-                                            ]
-                                        },
-                                        {
-                                            $in:
-                                                [
-                                                    "$$email", "$RequestedEmails.requestedEmail"
-                                                ]
-                                        }
-                                    ]
-                                }
-                            }
-                        },
-                    ],
-                    as: 'form_data'
-                }
-            },
-            {
                 $project: {
-
                     email: "$email",
-                    posts: "$req_data",
-                    result: "$form_data.RequestedEmails",
+                    posts: "$req_data"
                 }
             }])
 
-            const emailDataDetail = meargAllTable[0].result;
+
+            console.log("meargAllTable", meargAllTable);
+
+            for (const meargAllTableEmail of meargAllTable) {
+
+                const finalResponse = [];
+
+                for (const allposts of meargAllTableEmail.posts) {
+
+                    for (const getallposts of allposts.posts) {
+                        const userPostDate = getallposts.createdAt;
+
+                        datetime = userPostDate;
+                        var userPostedDate = new Date(datetime);
+                        now = new Date();
+                        var sec_num = (now - userPostedDate) / 1000;
+                        var days = Math.floor(sec_num / (3600 * 24));
+                        var hours = Math.floor((sec_num - (days * (3600 * 24))) / 3600);
+                        var minutes = Math.floor((sec_num - (days * (3600 * 24)) - (hours * 3600)) / 60);
+                        var seconds = Math.floor(sec_num - (days * (3600 * 24)) - (hours * 3600) - (minutes * 60));
+
+                        if (hours < 10) { hours = "0" + hours; }
+                        if (minutes < 10) { minutes = "0" + minutes; }
+                        if (seconds < 10) { seconds = "0" + seconds; }
+
+                        const finalPostedTime = [];
+                        const commentData = [];
 
 
 
-            for (const emailData of emailDataDetail) {
-
-                for (const requestEmail of emailData) {
-
-                    for (const meargAllTableEmail of meargAllTable) {
-
-                        if (requestEmail.requestedEmail == meargAllTableEmail.email) {
-
-                            if (requestEmail.accepted == 1) {
-
-                                const finalResponse = [];
-
-                                for (const allposts of meargAllTableEmail.posts) {
-
-                                    for (const getallposts of allposts.posts) {
-                                        const userPostDate = getallposts.createdAt;
-
-                                        datetime = userPostDate;
-                                        var userPostedDate = new Date(datetime);
-                                        now = new Date();
-                                        var sec_num = (now - userPostedDate) / 1000;
-                                        var days = Math.floor(sec_num / (3600 * 24));
-                                        var hours = Math.floor((sec_num - (days * (3600 * 24))) / 3600);
-                                        var minutes = Math.floor((sec_num - (days * (3600 * 24)) - (hours * 3600)) / 60);
-                                        var seconds = Math.floor(sec_num - (days * (3600 * 24)) - (hours * 3600) - (minutes * 60));
-
-                                        if (hours < 10) { hours = "0" + hours; }
-                                        if (minutes < 10) { minutes = "0" + minutes; }
-                                        if (seconds < 10) { seconds = "0" + seconds; }
-
-                                        const finalPostedTime = [];
-                                        const commentData = [];
-
-
-
-                                        if (days > 30) {
-                                            const getComment = await commentModel.findOne({ postId: getallposts._id });
-                                            let whenUserPosted = userPostedDate;
-                                            const fullDate = new Date(whenUserPosted).toDateString()
-                                            finalPostedTime.push(`${fullDate}`);
-                                            commentData.push(getComment)
-                                        }
-                                        if (days > 0 && days < 30) {
-                                            const getComment = await commentModel.findOne({ postId: getallposts._id });
-                                            finalPostedTime.push(`${days} days`);
-                                            commentData.push(getComment)
-                                        } else if (hours > 0 && days == 0) {
-                                            const getComment = await commentModel.findOne({ postId: getallposts._id });
-                                            finalPostedTime.push(`${hours} hours`);
-                                            commentData.push(getComment)
-                                        } else if (minutes > 0 && hours == 0) {
-                                            const getComment = await commentModel.findOne({ postId: getallposts._id });
-                                            finalPostedTime.push(`${minutes} minute`);
-                                            commentData.push(getComment)
-                                        } else if (seconds > 0 && minutes == 0 && hours == 0 && days === 0) {
-                                            const getComment = await commentModel.findOne({ postId: getallposts._id });
-                                            finalPostedTime.push(`${seconds} second`);
-                                            commentData.push(getComment)
-                                        }
-
-                                        const response = {
-                                            userId: allposts.userId,
-                                            getallposts,
-                                            finalPostedTime,
-                                            commentData: commentData[0] == null ? [] : commentData
-                                        }
-                                        finalResponse.push(response);
-
-                                    }
-                                }
-
-
-
-                                var status1 = {
-                                    email: requestEmail.requestedEmail,
-                                    posts: finalResponse.slice(req.query.skip, req.query.limit)
-                                }
-                                statusByEmail.push(status1)
-                            } else {
-
-                            }
+                        if (days > 30) {
+                            const getComment = await commentModel.findOne({ postId: getallposts._id });
+                            let whenUserPosted = userPostedDate;
+                            const fullDate = new Date(whenUserPosted).toDateString()
+                            finalPostedTime.push(`${fullDate}`);
+                            commentData.push(getComment)
                         }
+                        if (days > 0 && days < 30) {
+                            const getComment = await commentModel.findOne({ postId: getallposts._id });
+                            finalPostedTime.push(`${days} days`);
+                            commentData.push(getComment)
+                        } else if (hours > 0 && days == 0) {
+                            const getComment = await commentModel.findOne({ postId: getallposts._id });
+                            finalPostedTime.push(`${hours} hours`);
+                            commentData.push(getComment)
+                        } else if (minutes > 0 && hours == 0) {
+                            const getComment = await commentModel.findOne({ postId: getallposts._id });
+                            finalPostedTime.push(`${minutes} minute`);
+                            commentData.push(getComment)
+                        } else if (seconds > 0 && minutes == 0 && hours == 0 && days === 0) {
+                            const getComment = await commentModel.findOne({ postId: getallposts._id });
+                            finalPostedTime.push(`${seconds} second`);
+                            commentData.push(getComment)
+                        }
+
+                        const response = {
+                            userId: allposts.userId,
+                            getallposts,
+                            finalPostedTime,
+                            commentData: commentData[0] == null ? [] : commentData
+                        }
+                        finalResponse.push(response);
+
                     }
                 }
+                var status1 = {
+                    email: meargAllTable[0].email,
+                    posts: finalResponse
+                }
+                statusByEmail.push(status1)
             }
+
+
 
             const final_data = [];
 
@@ -1094,7 +1044,9 @@ exports.userAllFriendPost = async (req, res, next) => {
 
 
             }
-
+            res.status(status.OK).json(
+                new APIResponse("show all post When accept by the user", "true", 201, "1", final_data)
+            )
         }
 
     } catch (error) {

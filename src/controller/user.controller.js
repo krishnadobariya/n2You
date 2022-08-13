@@ -1596,11 +1596,9 @@ exports.yesBasket = async (req, res, next) => {
                         _id: allYesBasketData,
                     })
 
-
+                    console.log(allYesBasketData);
                     reaquestedAllEmail.push(meargeData.email)
                 }
-
-
 
                 if (reaquestedAllEmail[0] == undefined) {
                     res.status(status.NOT_FOUND).json(

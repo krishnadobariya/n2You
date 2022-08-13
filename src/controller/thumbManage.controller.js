@@ -41,18 +41,18 @@ exports.thumbCount = async (req, res, next) => {
                 if (req.query.value == 1) {
 
 
-                    const findUserInBasket = await basketModel.findOne({
-                        userId: req.params.admin_user_id
-                    })
+                    // const findUserInBasket = await basketModel.findOne({
+                    //     userId: req.params.admin_user_id
+                    // })
 
-                    if (findUserInBasket == null) {
-                        res.status(status.NOT_FOUND).json(
-                            new APIResponse("Not In Basket", "false", 404, "0")
-                        )
-                    } else {
-                        const accessBasket = findUserInBasket.thumpsUpAndDown
+                    // if (findUserInBasket == null) {
+                    //     res.status(status.NOT_FOUND).json(
+                    //         new APIResponse("Not In Basket", "false", 404, "0")
+                    //     )
+                    // } else {
+                        // const accessBasket = findUserInBasket.thumpsUpAndDown
 
-                        if (accessBasket == true) {
+                        // if (accessBasket == true) {
                             const updateThumb = await userModel.updateOne(
                                 {
                                     _id: req.params.admin_user_id, "basket.userId": req.params.user_id
@@ -216,29 +216,29 @@ exports.thumbCount = async (req, res, next) => {
 
                             }
 
-                        } else {
-                            res.status(status.NOT_ACCEPTABLE).json(
-                                new APIResponse("Not have Any Access, All Access Lock By User", "false", 406, "0")
-                            );
+                        // } else {
+                        //     res.status(status.NOT_ACCEPTABLE).json(
+                        //         new APIResponse("Not have Any Access, All Access Lock By User", "false", 406, "0")
+                        //     );
 
-                        }
+                        // }
 
-                    }
+                    // }
 
                 } else if (req.query.value == 0) {
 
-                    const findUserInBasket = await basketModel.findOne({
-                        userId: req.params.admin_user_id
-                    })
+                    // const findUserInBasket = await basketModel.findOne({
+                    //     userId: req.params.admin_user_id
+                    // })
 
-                    if (findUserInBasket == null) {
-                        res.status(status.NOT_FOUND).json(
-                            new APIResponse("Not In Basket", "false", 404, "0")
-                        )
-                    } else {
-                        const accessBasket = findUserInBasket.thumpsUpAndDown
+                    // if (findUserInBasket == null) {
+                        // res.status(status.NOT_FOUND).json(
+                        //     new APIResponse("Not In Basket", "false", 404, "0")
+                        // )
+                    // } else {
+                        // const accessBasket = findUserInBasket.thumpsUpAndDown
 
-                        if (accessBasket == true) {
+                        // if (accessBasket == true) {
                             const updateThumb = await userModel.updateOne(
                                 {
                                     _id: req.params.admin_user_id, "basket.userId": req.params.user_id
@@ -400,12 +400,12 @@ exports.thumbCount = async (req, res, next) => {
                                     );
                                 }
                             }
-                        } else {
-                            res.status(status.NOT_ACCEPTABLE).json(
-                                new APIResponse("Not have Any Access, All Access Lock By User", "false", 406, "0")
-                            );
-                        }
-                    }
+                        // } else {
+                        //     res.status(status.NOT_ACCEPTABLE).json(
+                        //         new APIResponse("Not have Any Access, All Access Lock By User", "false", 406, "0")
+                        //     );
+                        // }
+                    // }
                 }
             }
         }
