@@ -3,6 +3,7 @@ const requestModel = require("../model/requests.model");
 const status = require("http-status");
 const APIResponse = require("../helper/APIResponse");
 const postModel = require("../model/post.model");
+const notificationModel = require("../model/polyamorous/notification.model");
 
 
 
@@ -33,6 +34,40 @@ exports.sendRequest = async (req, res, next) => {
                     })
 
                     const saveData = await request.save();
+
+                    const findUserInNotification = await notificationModel.findOne({
+                        userId: checkRequestedEmail._id
+                    })
+
+                    if (findUserInNotification) {
+                        await notificationModel.updateOne({
+                            userId: checkRequestedEmail._id
+                        }, {
+                            $push: {
+                                notifications: {
+                                    notifications: `${checkUserExist.firstName} added you as a friend`,
+                                    userId: checkUserExist._id,
+                                    status: 2
+                                }
+                            }
+                        })
+                    } else {
+
+                        console.log("DWQAFWEAFG");
+                        const data = notificationModel({
+                            userId: checkRequestedEmail._id,
+                            notifications: {
+                                notifications: `${checkUserExist.firstName} added you as a friend`,
+                                userId: checkUserExist._id,
+                                status: 2
+                            }
+                        })
+
+                        await data.save();
+                    }
+
+
+
                     res.status(status.CREATED).json(
                         new APIResponse("Request Send successfully!", true, 201, 1, saveData)
                     )
@@ -60,7 +95,33 @@ exports.sendRequest = async (req, res, next) => {
                                     }]
                                 }
                             })
+                        const findUserInNotification = await notificationModel.findOne({
+                            userId: checkRequestedEmail._id
+                        })
+                        if (findUserInNotification) {
+                            await notificationModel.updateOne({
+                                userId: checkRequestedEmail._id
+                            }, {
+                                $push: {
+                                    notifications: {
+                                        notifications: `${checkUserExist.firstName} added you as a friend`,
+                                        userId: checkUserExist._id,
+                                        status: 2
+                                    }
+                                }
+                            })
+                        } else {
+                            const data = notificationModel({
+                                userId: checkRequestedEmail._id,
+                                notifications: {
+                                    notifications: `${checkUserExist.firstName} added you as a friend`,
+                                    userId: checkUserExist._id,
+                                    status: 2
+                                }
+                            })
 
+                            await data.save();
+                        }
                         res.status(status.CREATED).json(
                             new APIResponse("Request Send successfully!", "true", 201, "1")
                         )
