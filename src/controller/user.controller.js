@@ -1733,9 +1733,13 @@ exports.yesBasket = async (req, res, next) => {
                         _id: allYesBasketData,
                     })
 
-                    console.log(allYesBasketData);
-                    reaquestedAllEmail.push(meargeData.email)
-                }
+                    if(meargeData){
+
+                        reaquestedAllEmail.push(meargeData.email)
+                    }else{
+                        reaquestedAllEmail.push()
+
+                    }
 
                 if (reaquestedAllEmail[0] == undefined) {
                     res.status(status.NOT_FOUND).json(
@@ -2037,7 +2041,7 @@ exports.yesBasket = async (req, res, next) => {
 
             }
 
-
+        }
 
         } else {
 
@@ -2080,7 +2084,14 @@ exports.yesBasket = async (req, res, next) => {
                             const meargeData = await userModel.findOne({
                                 _id: allYesBasketData,
                             })
-                            reaquestedAllEmail.push(meargeData.email)
+
+                            if(meargeData){
+
+                                reaquestedAllEmail.push(meargeData.email)
+                            }else{
+                                reaquestedAllEmail.push()
+        
+                            }
                         }
 
 
@@ -2450,7 +2461,13 @@ exports.noBasket = async (req, res, next) => {
                     const meargeData = await userModel.findOne({
                         _id: allNoBasketData,
                     })
-                    reaquestedAllEmail.push(meargeData.email)
+                    if(meargeData){
+
+                        reaquestedAllEmail.push(meargeData.email)
+                    }else{
+                        reaquestedAllEmail.push()
+
+                    }
                 }
 
                 if (reaquestedAllEmail[0] == undefined) {
@@ -2759,8 +2776,6 @@ exports.noBasket = async (req, res, next) => {
 
                         let uniqueObjArray = [...new Map(final_response.map((item) => [item["_id"], item])).values()];
 
-
-
                         res.status(status.OK).json(
                             new APIResponse("show all no basket record", true, 201, 1, uniqueObjArray)
                         )
@@ -2812,8 +2827,13 @@ exports.noBasket = async (req, res, next) => {
                                 _id: allNoBasketData,
                             })
 
+                            if(meargeData){
 
-                            reaquestedAllEmail.push(meargeData.email)
+                                reaquestedAllEmail.push(meargeData.email)
+                            }else{
+                                reaquestedAllEmail.push()
+        
+                            }
                         }
 
                         if (reaquestedAllEmail[0] == undefined) {
