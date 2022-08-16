@@ -136,15 +136,16 @@ exports.userRegister = async (req, res, next) => {
                 )
 
                 next()
+
+
                 const find_User = await userModel.findOne({
                     email: req.body.email
                 })
-                const allUserWithProfileMatch = [];
+
                 const findUsers = await userModel.findOne({
                     _id: find_User._id,
                     polyDating: 0
                 })
-
 
                 if (findUsers == null) {
 
@@ -159,6 +160,8 @@ exports.userRegister = async (req, res, next) => {
                         },
                         polyDating: 0
                     })
+
+                    console.log("matchUser", matchUser);
 
                     const identity = findUser.identity
                     const relationshipSatus = findUser.relationshipSatus
@@ -206,15 +209,11 @@ exports.userRegister = async (req, res, next) => {
                         const matchProfile = local / 5 * 100;
 
                         const profileMatch = `${parseInt(matchProfile)}`
-
-                        // console.log("chechUser", chechUser);
-
                         const findUser = await userModel.findOne({
                             _id: findUsers._id,
                             "basket.userId": chechUser._id
                         })
 
-                        // if (findUser == null) {
                         const addInUser = await userModel.updateOne({
                             _id: findUsers._id
                         }, {
@@ -225,18 +224,19 @@ exports.userRegister = async (req, res, next) => {
                                 }
                             }
                         })
-                        // } else {
-                        //     const updateUser = await userModel.updateOne({
-                        //         _id: req.params.user_id,
-                        //         "basket.userId": chechUser._id
-                        //     }, {
-                        //         basket: {
-                        //             match: profileMatch,
-                        //         }
-                        //     })
-                        // }
-                    }
 
+
+                        const updateINExistUser = await userModel.updateOne({
+                            _id: chechUser._id
+                        }, {
+                            $push: {
+                                basket: {
+                                    match: profileMatch,
+                                    userId: findUsers._id
+                                }
+                            }
+                        })
+                    }
                 }
             }
         }
@@ -421,6 +421,106 @@ exports.userUpdate = async (req, res, next) => {
                     new APIResponse("User Successfully updated!", "true", 200, "1", data)
                 )
 
+
+                next();
+
+                const find_User = await userModel.findOne({
+                    email: req.body.email
+                })
+
+
+                const findUsers = await userModel.findOne({
+                    _id: find_User._id,
+                    polyDating: 0
+                })
+
+
+                if (findUsers == null) {
+
+                } else {
+
+                    const findUsers = await userModel.findOne({
+                        email: req.body.email
+                    })
+                    var matchUser = await userModel.find({
+                        _id: {
+                            $ne: findUsers._id
+                        },
+                        polyDating: 0
+                    })
+
+                    const identity = findUser.identity
+                    const relationshipSatus = findUser.relationshipSatus
+                    const IntrestedIn = findUser.IntrestedIn
+                    const hopingToFind = findUser.hopingToFind
+                    const wantChildren = findUser.wantChildren
+
+
+                    for (const chechUser of matchUser) {
+
+                        var local = 0;
+                        console.log(chechUser.identity);
+                        console.log(identity);
+                        if (chechUser.identity == identity) {
+                            var local = local + 1
+                        } else {
+                            var local = local + 0
+                        }
+
+                        if (chechUser.relationshipSatus == relationshipSatus) {
+                            var local = local + 1
+                        } else {
+                            var local = local + 0
+                        }
+
+
+                        if (chechUser.IntrestedIn == IntrestedIn) {
+                            var local = local + 1
+                        } else {
+                            var local = local + 0
+                        }
+
+                        if (chechUser.hopingToFind == hopingToFind) {
+                            var local = local + 1
+                        } else {
+                            var local = local + 0
+                        }
+
+                        if (chechUser.wantChildren == wantChildren) {
+                            var local = local + 1
+                        } else {
+                            var local = local + 0
+                        }
+
+
+                        const matchProfile = local / 5 * 100;
+
+                        const profileMatch = `${parseInt(matchProfile)}`
+                        const findUser = await userModel.findOne({
+                            _id: findUsers._id,
+                            "basket.userId": chechUser._id
+                        })
+
+                        const addInUser = await userModel.updateOne({
+                            _id: findUsers._id,
+                            "basket.userId": chechUser._id
+                        }, {
+                            $set: {
+                                "basket.match": profileMatch
+                            }
+                        })
+
+
+                        const updateINExistUser = await userModel.updateOne({
+                            _id: chechUser._id,
+                            "basket.userId": findUsers._id
+                        }, {
+                            $set: {
+                                "basket.match": profileMatch
+                            }
+                        })
+                    }
+                }
             }
         }
 
@@ -481,8 +581,12 @@ exports.searchFriend = async (req, res, next) => {
             email: req.params.user_email
         }).select('_id')
 
+
+        console.log("id", id);
+
         const Regexname = new RegExp(req.body.search_key, 'i');
         const searchName = await userModel.find({ firstName: Regexname, polyDating: 0 }).maxTimeMS(10);
+        console.log("searchName", searchName);
         const reaquestedAllEmail = [];
         searchName.map((result, index) => {
             reaquestedAllEmail.push(result.email)
@@ -511,26 +615,32 @@ exports.searchFriend = async (req, res, next) => {
             if (reaquestedAllEmail && RequestedEmailExiestInUser == null) {
                 const finalData = [];
                 const responseData = [];
+                console.log("reaquestedAllEmail", reaquestedAllEmail);
+                console.log("RequestedEmailExiestInUser", RequestedEmailExiestInUser);
                 for (const allrequestedDataNotAcceptedRequestAndNotFriend of reaquestedAllEmail) {
 
-                    const FindLocation = await userModel.aggregate([
-                        {
-                            $geoNear: {
-                                near: {
-                                    type: "Point",
-                                    coordinates: [
-                                        parseFloat(req.query.lat),
-                                        parseFloat(req.query.long)
+                    console.log();
+                    const FindLocation = await userModel.find()
+                    // .aggregate([
+                    //     {
+                    //         $geoNear: {
+                    //             near: {
+                    //                 type: "Point",
+                    //                 coordinates: [
+                    //                     parseFloat(req.query.lat),
+                    //                     parseFloat(req.query.long)
 
-                                    ],
-                                },
-                                distanceField: "distanceFrom",
-                                maxDistance: 10000,
-                                minDistance: 0,
-                                uniqueDoc: true,
-                                spherical: true
-                            },
-                        }]);
+                    //                 ],
+                    //             },
+                    //             distanceField: "distanceFrom",
+                    //             maxDistance: 10000,
+                    //             minDistance: 0,
+                    //             uniqueDoc: true,
+                    //             spherical: true
+                    //         },
+                    //     }]);
+
+                    console.log("FindLocation", FindLocation);
 
                     for (const uniqueDistance of FindLocation) {
 
@@ -539,6 +649,7 @@ exports.searchFriend = async (req, res, next) => {
                         }
                     }
                 }
+                const UniqueEmail = [];
                 const chatRoomId = [];
                 for (const getOriginalData of finalData) {
 
@@ -560,8 +671,9 @@ exports.searchFriend = async (req, res, next) => {
                     }).select("_id")
 
 
+                    console.log("findAllUserWithIchat1", findAllUserWithIchat1);
+                    console.log("findAllUserWithIchat2", findAllUserWithIchat2);
 
-                    const UniqueEmail = [];
                     if (findAllUserWithIchat1) {
                         chatRoomId.push(findAllUserWithIchat1._id)
                         const response = {
@@ -588,7 +700,7 @@ exports.searchFriend = async (req, res, next) => {
 
                         UniqueEmail.push(response);
                     } else {
-
+                        console.log("");
                         const response = {
                             _id: getOriginalData._id,
                             email: getOriginalData.email,
@@ -603,7 +715,7 @@ exports.searchFriend = async (req, res, next) => {
                 }
 
                 res.status(status.OK).json(
-                    new APIResponse("show all record searchwise", true, 201, 1, responseData)
+                    new APIResponse("show all record searchwise", true, 201, 1, UniqueEmail)
                 )
 
 
@@ -620,24 +732,7 @@ exports.searchFriend = async (req, res, next) => {
 
                 const UniqueEmail = [];
                 for (const uniqueEmail of difference) {
-                    const FindLocation = await userModel.aggregate([
-                        {
-                            $geoNear: {
-                                near: {
-                                    type: "Point",
-                                    coordinates: [
-                                        parseFloat(req.query.long),
-                                        parseFloat(req.query.lat)
-
-                                    ],
-                                },
-                                distanceField: "distanceFrom",
-                                maxDistance: 10000,
-                                minDistance: 0,
-                                uniqueDoc: true,
-                                spherical: true
-                            },
-                        }]);
+                    const FindLocation = await userModel.find()
 
 
 
@@ -1733,315 +1828,315 @@ exports.yesBasket = async (req, res, next) => {
                         _id: allYesBasketData,
                     })
 
-                    if(meargeData){
+                    if (meargeData) {
 
                         reaquestedAllEmail.push(meargeData.email)
-                    }else{
+                    } else {
                         reaquestedAllEmail.push()
 
                     }
 
-                if (reaquestedAllEmail[0] == undefined) {
-                    res.status(status.NOT_FOUND).json(
-                        new APIResponse("No User Found", 'false', 404, '0')
-                    )
-                } else {
-
-                    const RequestedEmailExiestInUser = await requestsModel.findOne(
-                        {
-                            userId: req.params.user_id,
-                            RequestedEmails: {
-                                $elemMatch: {
-                                    requestedEmail: {
-                                        $in: reaquestedAllEmail
-                                    }
-                                }
-                            }
-                        }
-                    )
-
-
-                    if (reaquestedAllEmail && RequestedEmailExiestInUser == null) {
-                        const finalData = [];
-                        const responseData = [];
-                        for (const allrequestedDataNotAcceptedRequestAndNotFriend of reaquestedAllEmail) {
-                            const userDetail = await userModel.findOne({ email: allrequestedDataNotAcceptedRequestAndNotFriend });
-                            finalData.push(userDetail)
-                        }
-
-                        const findThumbUp = await userModel.findOne({
-                            _id: req.params.request_user_id
-                        })
-
-                        for (const getOriginalData of finalData) {
-
-                            for (const findThumb of findThumbUp.basket) {
-                                const findThumbData = findThumb.userId
-                                const orginalData = getOriginalData._id
-
-                                if (orginalData.toString() == findThumbData.toString()) {
-
-                                    const response = {
-                                        _id: getOriginalData._id,
-                                        email: getOriginalData.email,
-                                        profile: getOriginalData.photo[0] ? getOriginalData.photo[0].res : null,
-                                        firstName: getOriginalData.firstName,
-                                        status: 3,
-                                        thumbUp: findThumb.thumbUp,
-                                        thumbDown: findThumb.thumbDown
-                                    }
-
-                                    responseData.push(response);
-                                }
-
-                            }
-                        }
-
-
-                        let uniqueObjArray = [...new Map(responseData.map((item) => [item["_id"], item])).values()];
-                        res.status(status.OK).json(
-                            new APIResponse("show all yes basket Record", true, 201, 1, uniqueObjArray)
+                    if (reaquestedAllEmail[0] == undefined) {
+                        res.status(status.NOT_FOUND).json(
+                            new APIResponse("No User Found", 'false', 404, '0')
                         )
-
                     } else {
 
-                        const emailGet = [];
-                        const finalData = [];
-                        for (const getEmail of RequestedEmailExiestInUser.RequestedEmails) {
-                            emailGet.push(getEmail.requestedEmail)
-                        }
+                        const RequestedEmailExiestInUser = await requestsModel.findOne(
+                            {
+                                userId: req.params.user_id,
+                                RequestedEmails: {
+                                    $elemMatch: {
+                                        requestedEmail: {
+                                            $in: reaquestedAllEmail
+                                        }
+                                    }
+                                }
+                            }
+                        )
 
 
-                        var difference = reaquestedAllEmail.filter(x => emailGet.indexOf(x) === -1);
+                        if (reaquestedAllEmail && RequestedEmailExiestInUser == null) {
+                            const finalData = [];
+                            const responseData = [];
+                            for (const allrequestedDataNotAcceptedRequestAndNotFriend of reaquestedAllEmail) {
+                                const userDetail = await userModel.findOne({ email: allrequestedDataNotAcceptedRequestAndNotFriend });
+                                finalData.push(userDetail)
+                            }
 
+                            const findThumbUp = await userModel.findOne({
+                                _id: req.params.request_user_id
+                            })
 
+                            for (const getOriginalData of finalData) {
 
-                        const UniqueEmail = [];
+                                for (const findThumb of findThumbUp.basket) {
+                                    const findThumbData = findThumb.userId
+                                    const orginalData = getOriginalData._id
 
+                                    if (orginalData.toString() == findThumbData.toString()) {
 
-                        for (const uniqueEmail of difference) {
-                            const userDetail = await userModel.findOne({ email: uniqueEmail });
-                            finalData.push(userDetail)
-                        }
+                                        const response = {
+                                            _id: getOriginalData._id,
+                                            email: getOriginalData.email,
+                                            profile: getOriginalData.photo[0] ? getOriginalData.photo[0].res : null,
+                                            firstName: getOriginalData.firstName,
+                                            status: 3,
+                                            thumbUp: findThumb.thumbUp,
+                                            thumbDown: findThumb.thumbDown
+                                        }
 
-                        const findThumbUp = await userModel.findOne({
-                            _id: req.params.request_user_id
-                        })
-
-                        for (const getOriginalData of finalData) {
-
-                            for (const findThumb of findThumbUp.basket) {
-                                const findThumbData = findThumb.userId
-                                const orginalData = getOriginalData._id
-
-                                if (orginalData.toString() == findThumbData.toString()) {
-                                    const response = {
-                                        _id: getOriginalData._id,
-                                        email: getOriginalData.email,
-                                        profile: getOriginalData.photo[0] ? getOriginalData.photo[0].res : null,
-                                        firstName: getOriginalData.firstName,
-                                        status: 3,
-                                        thumbUp: findThumb.thumbUp,
-                                        thumbDown: findThumb.thumbDown
+                                        responseData.push(response);
                                     }
 
-                                    UniqueEmail.push(response);
-                                }
-
-                            }
-                        }
-
-
-                        const statusByEmail = [];
-                        const allRequestedEmail = RequestedEmailExiestInUser.RequestedEmails
-                        const requestedEmailWitchIsInuserRequeted = [];
-                        allRequestedEmail.map((result, next) => {
-                            const resultEmail = result.requestedEmail
-                            requestedEmailWitchIsInuserRequeted.push(resultEmail);
-                        })
-
-                        const meageAllTable = await userModel.aggregate([{
-                            $match: {
-                                email: {
-                                    $in: requestedEmailWitchIsInuserRequeted
                                 }
                             }
-                        },
-                        {
-                            $lookup: {
-                                from: 'posts',
-                                localField: 'email',
-                                foreignField: 'email',
-                                as: 'req_data'
-                            }
-                        },
-                        {
-                            $lookup: {
-                                from: 'requests',
-                                let: {
 
-                                    userId: mongoose.Types.ObjectId(req.params.user_id),
-                                    email: "$email"
-                                },
-                                pipeline: [
-                                    {
-                                        $match: {
-                                            $expr: {
-                                                $and: [
-                                                    {
-                                                        $eq: [
-                                                            "$userId", "$$userId"
-                                                        ]
-                                                    },
-                                                    {
-                                                        $in:
-                                                            [
-                                                                "$$email", "$RequestedEmails.requestedEmail"
-                                                            ]
-                                                    }
-                                                ]
-                                            }
+
+                            let uniqueObjArray = [...new Map(responseData.map((item) => [item["_id"], item])).values()];
+                            res.status(status.OK).json(
+                                new APIResponse("show all yes basket Record", true, 201, 1, uniqueObjArray)
+                            )
+
+                        } else {
+
+                            const emailGet = [];
+                            const finalData = [];
+                            for (const getEmail of RequestedEmailExiestInUser.RequestedEmails) {
+                                emailGet.push(getEmail.requestedEmail)
+                            }
+
+
+                            var difference = reaquestedAllEmail.filter(x => emailGet.indexOf(x) === -1);
+
+
+
+                            const UniqueEmail = [];
+
+
+                            for (const uniqueEmail of difference) {
+                                const userDetail = await userModel.findOne({ email: uniqueEmail });
+                                finalData.push(userDetail)
+                            }
+
+                            const findThumbUp = await userModel.findOne({
+                                _id: req.params.request_user_id
+                            })
+
+                            for (const getOriginalData of finalData) {
+
+                                for (const findThumb of findThumbUp.basket) {
+                                    const findThumbData = findThumb.userId
+                                    const orginalData = getOriginalData._id
+
+                                    if (orginalData.toString() == findThumbData.toString()) {
+                                        const response = {
+                                            _id: getOriginalData._id,
+                                            email: getOriginalData.email,
+                                            profile: getOriginalData.photo[0] ? getOriginalData.photo[0].res : null,
+                                            firstName: getOriginalData.firstName,
+                                            status: 3,
+                                            thumbUp: findThumb.thumbUp,
+                                            thumbDown: findThumb.thumbDown
                                         }
-                                    },
-                                ],
-                                as: 'form_data'
-                            }
-                        },
-                        {
-                            $project: {
-                                polyDating: "$polyDating",
-                                HowDoYouPoly: "$HowDoYouPoly",
-                                loveToGive: "$loveToGive",
-                                polyRelationship: "$polyRelationship",
-                                firstName: "$firstName",
-                                profile: "$photo",
-                                email: "$email",
-                                firstName: "$firstName",
-                                relationshipSatus: "$relationshipSatus",
-                                Bio: "$Bio",
-                                hopingToFind: "$hopingToFind",
-                                jobTitle: "$jobTitle",
-                                wantChildren: "$wantChildren",
-                                posts: "$req_data",
-                                result: "$form_data.RequestedEmails",
-                            }
-                        }])
 
+                                        UniqueEmail.push(response);
+                                    }
 
-
-                        const finalExistUser = [];
-
-                        const emailDataDetail = meageAllTable;
-                        for (const DataDetail of emailDataDetail) {
-
-                            for (const reqEmail of reaquestedAllEmail) {
-                                if (DataDetail.email == reqEmail) {
-                                    finalExistUser.push(DataDetail)
                                 }
                             }
-                        }
-
-                        for (const emailData of finalExistUser[0].result) {
 
 
+                            const statusByEmail = [];
+                            const allRequestedEmail = RequestedEmailExiestInUser.RequestedEmails
+                            const requestedEmailWitchIsInuserRequeted = [];
+                            allRequestedEmail.map((result, next) => {
+                                const resultEmail = result.requestedEmail
+                                requestedEmailWitchIsInuserRequeted.push(resultEmail);
+                            })
 
-                            for (const requestEmail of emailData) {
+                            const meageAllTable = await userModel.aggregate([{
+                                $match: {
+                                    email: {
+                                        $in: requestedEmailWitchIsInuserRequeted
+                                    }
+                                }
+                            },
+                            {
+                                $lookup: {
+                                    from: 'posts',
+                                    localField: 'email',
+                                    foreignField: 'email',
+                                    as: 'req_data'
+                                }
+                            },
+                            {
+                                $lookup: {
+                                    from: 'requests',
+                                    let: {
 
-                                for (const meageAllTableEmail of finalExistUser) {
-
-                                    if (requestEmail.requestedEmail == meageAllTableEmail.email) {
-
-                                        const findThumbUp = await userModel.findOne({
-                                            _id: req.params.request_user_id
-                                        })
-
-                                        for (const findThumb of findThumbUp.basket) {
-
-                                            const findThumbData = findThumb.userId
-                                            const originalData = requestEmail.userId
-
-                                            if (originalData.toString() == findThumbData.toString()) {
-                                                if (requestEmail.accepted == 1) {
-                                                    var status1 = {
-                                                        status: 1,
-                                                        profile: findThumbUp.photo[0] ? findThumbUp.photo[0].res : null,
-                                                        firstName: findThumbUp.firstName,
-                                                        email: requestEmail.requestedEmail,
-                                                        thumbUp: findThumb.thumbUp,
-                                                        thumbDown: findThumb.thumbDown
-                                                    }
-                                                    statusByEmail.push(status1)
-                                                } else {
-                                                    var status2 = {
-                                                        status: 2,
-                                                        profile: findThumbUp.photo[0] ? findThumbUp.photo[0].res : null,
-                                                        firstName: findThumbUp.firstName,
-                                                        email: requestEmail.requestedEmail,
-                                                        thumbUp: findThumb.thumbUp,
-                                                        thumbDown: findThumb.thumbDown
-                                                    }
-                                                    statusByEmail.push(status2)
+                                        userId: mongoose.Types.ObjectId(req.params.user_id),
+                                        email: "$email"
+                                    },
+                                    pipeline: [
+                                        {
+                                            $match: {
+                                                $expr: {
+                                                    $and: [
+                                                        {
+                                                            $eq: [
+                                                                "$userId", "$$userId"
+                                                            ]
+                                                        },
+                                                        {
+                                                            $in:
+                                                                [
+                                                                    "$$email", "$RequestedEmails.requestedEmail"
+                                                                ]
+                                                        }
+                                                    ]
                                                 }
                                             }
+                                        },
+                                    ],
+                                    as: 'form_data'
+                                }
+                            },
+                            {
+                                $project: {
+                                    polyDating: "$polyDating",
+                                    HowDoYouPoly: "$HowDoYouPoly",
+                                    loveToGive: "$loveToGive",
+                                    polyRelationship: "$polyRelationship",
+                                    firstName: "$firstName",
+                                    profile: "$photo",
+                                    email: "$email",
+                                    firstName: "$firstName",
+                                    relationshipSatus: "$relationshipSatus",
+                                    Bio: "$Bio",
+                                    hopingToFind: "$hopingToFind",
+                                    jobTitle: "$jobTitle",
+                                    wantChildren: "$wantChildren",
+                                    posts: "$req_data",
+                                    result: "$form_data.RequestedEmails",
+                                }
+                            }])
+
+
+
+                            const finalExistUser = [];
+
+                            const emailDataDetail = meageAllTable;
+                            for (const DataDetail of emailDataDetail) {
+
+                                for (const reqEmail of reaquestedAllEmail) {
+                                    if (DataDetail.email == reqEmail) {
+                                        finalExistUser.push(DataDetail)
+                                    }
+                                }
+                            }
+
+                            for (const emailData of finalExistUser[0].result) {
+
+
+
+                                for (const requestEmail of emailData) {
+
+                                    for (const meageAllTableEmail of finalExistUser) {
+
+                                        if (requestEmail.requestedEmail == meageAllTableEmail.email) {
+
+                                            const findThumbUp = await userModel.findOne({
+                                                _id: req.params.request_user_id
+                                            })
+
+                                            for (const findThumb of findThumbUp.basket) {
+
+                                                const findThumbData = findThumb.userId
+                                                const originalData = requestEmail.userId
+
+                                                if (originalData.toString() == findThumbData.toString()) {
+                                                    if (requestEmail.accepted == 1) {
+                                                        var status1 = {
+                                                            status: 1,
+                                                            profile: findThumbUp.photo[0] ? findThumbUp.photo[0].res : null,
+                                                            firstName: findThumbUp.firstName,
+                                                            email: requestEmail.requestedEmail,
+                                                            thumbUp: findThumb.thumbUp,
+                                                            thumbDown: findThumb.thumbDown
+                                                        }
+                                                        statusByEmail.push(status1)
+                                                    } else {
+                                                        var status2 = {
+                                                            status: 2,
+                                                            profile: findThumbUp.photo[0] ? findThumbUp.photo[0].res : null,
+                                                            firstName: findThumbUp.firstName,
+                                                            email: requestEmail.requestedEmail,
+                                                            thumbUp: findThumb.thumbUp,
+                                                            thumbDown: findThumb.thumbDown
+                                                        }
+                                                        statusByEmail.push(status2)
+                                                    }
+                                                }
+
+                                            }
 
                                         }
-
                                     }
                                 }
                             }
-                        }
 
-                        const final_data = [];
+                            const final_data = [];
 
-                        const finalStatus = []
-                        for (const [key, finalData] of meageAllTable.entries()) {
-                            for (const [key, final1Data] of statusByEmail.entries())
-                                if (finalData.email === final1Data.email) {
-                                    const response = {
-                                        status: final1Data.status,
-                                        thumbUp: final1Data.thumbUp,
-                                        thumbDown: final1Data.thumbDown
+                            const finalStatus = []
+                            for (const [key, finalData] of meageAllTable.entries()) {
+                                for (const [key, final1Data] of statusByEmail.entries())
+                                    if (finalData.email === final1Data.email) {
+                                        const response = {
+                                            status: final1Data.status,
+                                            thumbUp: final1Data.thumbUp,
+                                            thumbDown: final1Data.thumbDown
+                                        }
+                                        finalStatus.push(response)
                                     }
-                                    finalStatus.push(response)
-                                }
-                        }
-                        for (const [key, finalData] of finalExistUser.entries()) {
-
-                            const response = {
-                                _id: finalData._id,
-                                polyDating: finalData.polyDating,
-                                HowDoYouPoly: finalData.HowDoYouPoly,
-                                loveToGive: finalData.loveToGive,
-                                polyRelationship: finalData.polyRelationship,
-                                firstName: finalData.firstName,
-                                email: finalData.email,
-                                profile: finalData.photo[0] ? finalData.photo[0].res : null,
-                                relationshipSatus: finalData.relationshipSatus,
-                                Bio: finalData.Bio,
-                                hopingToFind: finalData.hopingToFind,
-                                jobTitle: finalData.jobTitle,
-                                wantChildren: finalData.wantChildren,
-                                posts_data: finalData.posts,
-                                statusAndTumbCount: finalStatus[key]
                             }
-                            final_data.push(response);
+                            for (const [key, finalData] of finalExistUser.entries()) {
+
+                                const response = {
+                                    _id: finalData._id,
+                                    polyDating: finalData.polyDating,
+                                    HowDoYouPoly: finalData.HowDoYouPoly,
+                                    loveToGive: finalData.loveToGive,
+                                    polyRelationship: finalData.polyRelationship,
+                                    firstName: finalData.firstName,
+                                    email: finalData.email,
+                                    profile: finalData.photo[0] ? finalData.photo[0].res : null,
+                                    relationshipSatus: finalData.relationshipSatus,
+                                    Bio: finalData.Bio,
+                                    hopingToFind: finalData.hopingToFind,
+                                    jobTitle: finalData.jobTitle,
+                                    wantChildren: finalData.wantChildren,
+                                    posts_data: finalData.posts,
+                                    statusAndTumbCount: finalStatus[key]
+                                }
+                                final_data.push(response);
+                            }
+
+
+
+                            const final_response = [...final_data, ...UniqueEmail]
+
+                            let uniqueObjArray = [...new Map(final_response.map((item) => [item["details"], item])).values()];
+
+                            res.status(status.OK).json(
+                                new APIResponse("show all yes basket record", true, 201, 1, uniqueObjArray)
+                            )
                         }
-
-
-
-                        const final_response = [...final_data, ...UniqueEmail]
-
-                        let uniqueObjArray = [...new Map(final_response.map((item) => [item["details"], item])).values()];
-
-                        res.status(status.OK).json(
-                            new APIResponse("show all yes basket record", true, 201, 1, uniqueObjArray)
-                        )
                     }
+
                 }
 
             }
-
-        }
 
         } else {
 
@@ -2085,12 +2180,12 @@ exports.yesBasket = async (req, res, next) => {
                                 _id: allYesBasketData,
                             })
 
-                            if(meargeData){
+                            if (meargeData) {
 
                                 reaquestedAllEmail.push(meargeData.email)
-                            }else{
+                            } else {
                                 reaquestedAllEmail.push()
-        
+
                             }
                         }
 
@@ -2461,10 +2556,10 @@ exports.noBasket = async (req, res, next) => {
                     const meargeData = await userModel.findOne({
                         _id: allNoBasketData,
                     })
-                    if(meargeData){
+                    if (meargeData) {
 
                         reaquestedAllEmail.push(meargeData.email)
-                    }else{
+                    } else {
                         reaquestedAllEmail.push()
 
                     }
@@ -2827,12 +2922,12 @@ exports.noBasket = async (req, res, next) => {
                                 _id: allNoBasketData,
                             })
 
-                            if(meargeData){
+                            if (meargeData) {
 
                                 reaquestedAllEmail.push(meargeData.email)
-                            }else{
+                            } else {
                                 reaquestedAllEmail.push()
-        
+
                             }
                         }
 
