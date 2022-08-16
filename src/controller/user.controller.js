@@ -3,7 +3,7 @@ const APIResponse = require("../helper/APIResponse");
 const status = require("http-status");
 const cloudinary = require("../utils/cloudinary.utils");
 const requestsModel = require("../model/requests.model");
-const { default: mongoose } = require("mongoose");
+const { default: mongoose, get } = require("mongoose");
 const commentModel = require("../model/comment.model");
 const basketModel = require("../model/basket.model");
 const relationShipHistoryModel = require("../model/polyamorous/relationShipHistory.model");
@@ -131,14 +131,115 @@ exports.userRegister = async (req, res, next) => {
                     await storeInHistory.save()
                 }
 
-
                 res.status(status.CREATED).json(
                     new APIResponse("User Register", true, 201, 1, data)
                 )
+
+                next()
+                const find_User = await userModel.findOne({
+                    email: req.body.email
+                })
+                const allUserWithProfileMatch = [];
+                const findUsers = await userModel.findOne({
+                    _id: find_User._id,
+                    polyDating: 0
+                })
+
+
+                if (findUsers == null) {
+
+                } else {
+
+                    const findUsers = await userModel.findOne({
+                        email: req.body.email
+                    })
+                    var matchUser = await userModel.find({
+                        _id: {
+                            $ne: findUsers._id
+                        },
+                        polyDating: 0
+                    })
+
+                    const identity = findUser.identity
+                    const relationshipSatus = findUser.relationshipSatus
+                    const IntrestedIn = findUser.IntrestedIn
+                    const hopingToFind = findUser.hopingToFind
+                    const wantChildren = findUser.wantChildren
+
+
+                    for (const chechUser of matchUser) {
+
+                        var local = 0;
+
+                        if (chechUser.identity == identity) {
+                            var local = local + 1
+                        } else {
+                            var local = local + 0
+                        }
+
+                        if (chechUser.relationshipSatus == relationshipSatus) {
+                            var local = local + 1
+                        } else {
+                            var local = local + 0
+                        }
+
+
+                        if (chechUser.IntrestedIn == IntrestedIn) {
+                            var local = local + 1
+                        } else {
+                            var local = local + 0
+                        }
+
+                        if (chechUser.hopingToFind == hopingToFind) {
+                            var local = local + 1
+                        } else {
+                            var local = local + 0
+                        }
+
+                        if (chechUser.wantChildren == wantChildren) {
+                            var local = local + 1
+                        } else {
+                            var local = local + 0
+                        }
+
+
+                        const matchProfile = local / 5 * 100;
+
+                        const profileMatch = `${parseInt(matchProfile)}`
+
+                        // console.log("chechUser", chechUser);
+
+                        const findUser = await userModel.findOne({
+                            _id: findUsers._id,
+                            "basket.userId": chechUser._id
+                        })
+
+                        // if (findUser == null) {
+                        const addInUser = await userModel.updateOne({
+                            _id: findUsers._id
+                        }, {
+                            $push: {
+                                basket: {
+                                    match: profileMatch,
+                                    userId: chechUser._id
+                                }
+                            }
+                        })
+                        // } else {
+                        //     const updateUser = await userModel.updateOne({
+                        //         _id: req.params.user_id,
+                        //         "basket.userId": chechUser._id
+                        //     }, {
+                        //         basket: {
+                        //             match: profileMatch,
+                        //         }
+                        //     })
+                        // }
+                    }
+
+                }
             }
-
         }
-
     } catch (error) {
         console.log("Error:", error);
         res.status(status.INTERNAL_SERVER_ERROR).json(
@@ -1679,6 +1780,7 @@ exports.yesBasket = async (req, res, next) => {
                                     const response = {
                                         _id: getOriginalData._id,
                                         email: getOriginalData.email,
+                                        profile: getOriginalData.photo[0] ? getOriginalData.photo[0].res : null,
                                         firstName: getOriginalData.firstName,
                                         status: 3,
                                         thumbUp: findThumb.thumbUp,
@@ -1730,6 +1832,7 @@ exports.yesBasket = async (req, res, next) => {
                                     const response = {
                                         _id: getOriginalData._id,
                                         email: getOriginalData.email,
+                                        profile: getOriginalData.photo[0] ? getOriginalData.photo[0].res : null,
                                         firstName: getOriginalData.firstName,
                                         status: 3,
                                         thumbUp: findThumb.thumbUp,
@@ -1805,6 +1908,7 @@ exports.yesBasket = async (req, res, next) => {
                                 loveToGive: "$loveToGive",
                                 polyRelationship: "$polyRelationship",
                                 firstName: "$firstName",
+                                profile: "$photo",
                                 email: "$email",
                                 firstName: "$firstName",
                                 relationshipSatus: "$relationshipSatus",
@@ -1820,8 +1924,6 @@ exports.yesBasket = async (req, res, next) => {
 
 
                         const finalExistUser = [];
-
-
 
                         const emailDataDetail = meageAllTable;
                         for (const DataDetail of emailDataDetail) {
@@ -1856,6 +1958,8 @@ exports.yesBasket = async (req, res, next) => {
                                                 if (requestEmail.accepted == 1) {
                                                     var status1 = {
                                                         status: 1,
+                                                        profile: findThumbUp.photo[0] ? findThumbUp.photo[0].res : null,
+                                                        firstName: findThumbUp.firstName,
                                                         email: requestEmail.requestedEmail,
                                                         thumbUp: findThumb.thumbUp,
                                                         thumbDown: findThumb.thumbDown
@@ -1864,6 +1968,8 @@ exports.yesBasket = async (req, res, next) => {
                                                 } else {
                                                     var status2 = {
                                                         status: 2,
+                                                        profile: findThumbUp.photo[0] ? findThumbUp.photo[0].res : null,
+                                                        firstName: findThumbUp.firstName,
                                                         email: requestEmail.requestedEmail,
                                                         thumbUp: findThumb.thumbUp,
                                                         thumbDown: findThumb.thumbDown
@@ -1903,6 +2009,7 @@ exports.yesBasket = async (req, res, next) => {
                                 polyRelationship: finalData.polyRelationship,
                                 firstName: finalData.firstName,
                                 email: finalData.email,
+                                profile: finalData.photo[0] ? finalData.photo[0].res : null,
                                 relationshipSatus: finalData.relationshipSatus,
                                 Bio: finalData.Bio,
                                 hopingToFind: finalData.hopingToFind,
@@ -2021,6 +2128,7 @@ exports.yesBasket = async (req, res, next) => {
 
                                                 _id: getOriginalData._id,
                                                 email: getOriginalData.email,
+                                                profile: getOriginalData.photo[0] ? getOriginalData.photo[0].res : null,
                                                 firstName: getOriginalData.firstName,
                                                 status: 3,
                                                 thumbUp: findThumb.thumbUp
@@ -2072,6 +2180,7 @@ exports.yesBasket = async (req, res, next) => {
                                             const response = {
                                                 _id: getOriginalData._id,
                                                 email: getOriginalData.email,
+                                                profile: getOriginalData.photo[0] ? getOriginalData.photo[0].res : null,
                                                 firstName: getOriginalData.firstName,
                                                 status: 3,
                                                 thumbUp: findThumb.thumbUp
@@ -2151,6 +2260,7 @@ exports.yesBasket = async (req, res, next) => {
                                         firstName: "$firstName",
                                         relationshipSatus: "$relationshipSatus",
                                         Bio: "$Bio",
+                                        photo: "$Photo",
                                         hopingToFind: "$hopingToFind",
                                         jobTitle: "$jobTitle",
                                         wantChildren: "$wantChildren",
@@ -2201,6 +2311,8 @@ exports.yesBasket = async (req, res, next) => {
                                                             var status1 = {
                                                                 status: 1,
                                                                 email: requestEmail.requestedEmail,
+                                                                firstName: findThumbUp.firstName,
+                                                                profile: findThumbUp.photo[0] ? findThumb.photo[0].res : null,
                                                                 thumbUp: findThumb.thumbUp
                                                             }
                                                             statusByEmail.push(status1)
@@ -2209,6 +2321,8 @@ exports.yesBasket = async (req, res, next) => {
 
                                                             var status2 = {
                                                                 status: 2,
+                                                                firstName: findThumbUp.firstName,
+                                                                profile: findThumbUp.photo[0] ? findThumbUp.photo[0].res : null,
                                                                 email: requestEmail.requestedEmail,
                                                                 thumbUp: findThumb.thumbUp
                                                             }
@@ -2246,6 +2360,7 @@ exports.yesBasket = async (req, res, next) => {
                                         email: finalData.email,
                                         relationshipSatus: finalData.relationshipSatus,
                                         Bio: finalData.Bio,
+                                        profile: finalData.photo[0] ? finalData.photo[0].res : null,
                                         hopingToFind: finalData.hopingToFind,
                                         jobTitle: finalData.jobTitle,
                                         wantChildren: finalData.wantChildren,
@@ -2288,17 +2403,6 @@ exports.yesBasket = async (req, res, next) => {
             new APIResponse("Something Went Wrong", "false", 500, "0", error.message)
         )
     }
-
-
-
-
-
-
-
-
-
-
-
 
 }
 
@@ -2393,6 +2497,7 @@ exports.noBasket = async (req, res, next) => {
                                     const response = {
                                         _id: getOriginalData._id,
                                         email: getOriginalData.email,
+                                        profile: getOriginalData.photo[0] ? getOriginalData.photo[0].res : null,
                                         firstName: getOriginalData.firstName,
                                         status: 3,
                                         thumbUp: findThumb.thumbUp,
@@ -2447,6 +2552,7 @@ exports.noBasket = async (req, res, next) => {
                                         _id: getOriginalData._id,
                                         email: getOriginalData.email,
                                         firstName: getOriginalData.firstName,
+                                        profile: getOriginalData.photo[0] ? getOriginalData.photo[0].res : null,
                                         status: 3,
                                         thumbUp: findThumb.thumbUp,
                                         thumbDown: findThumb.thumbDown
@@ -2527,6 +2633,7 @@ exports.noBasket = async (req, res, next) => {
                                 firstName: "$firstName",
                                 relationshipSatus: "$relationshipSatus",
                                 Bio: "$Bio",
+                                photo: "$photo",
                                 hopingToFind: "$hopingToFind",
                                 jobTitle: "$jobTitle",
                                 wantChildren: "$wantChildren",
@@ -2581,6 +2688,8 @@ exports.noBasket = async (req, res, next) => {
                                                     var status1 = {
                                                         status: 1,
                                                         email: requestEmail.requestedEmail,
+                                                        firstName: findThumbUp.firstName,
+                                                        profile: findThumbUp.photo[0] ? findThumbUp.photo[0].res : null,
                                                         thumbUp: findThumb.thumbUp,
                                                         thumbDown: findThumb.thumbDown
                                                     }
@@ -2589,6 +2698,8 @@ exports.noBasket = async (req, res, next) => {
                                                     var status2 = {
                                                         status: 2,
                                                         email: requestEmail.requestedEmail,
+                                                        firstName: findThumbUp.firstName,
+                                                        profile: findThumbUp.photo[0] ? findThumbUp.photo[0].res : null,
                                                         thumbUp: findThumb.thumbUp,
                                                         thumbDown: findThumb.thumbDown
                                                     }
@@ -2628,6 +2739,7 @@ exports.noBasket = async (req, res, next) => {
                                 email: finalData.email,
                                 relationshipSatus: finalData.relationshipSatus,
                                 Bio: finalData.Bio,
+                                profile: finalData.photo[0] ? getOriginalData.photo[0].res : null,
                                 hopingToFind: finalData.hopingToFind,
                                 jobTitle: finalData.jobTitle,
                                 wantChildren: finalData.wantChildren,
@@ -2743,6 +2855,7 @@ exports.noBasket = async (req, res, next) => {
                                                 _id: getOriginalData._id,
                                                 email: getOriginalData.email,
                                                 firstName: getOriginalData.firstName,
+                                                profile: getOriginalData.photo[0] ? getOriginalData.photo[0].res : null,
                                                 status: 3,
                                                 thumbUp: findThumb.thumbUp
                                             }
@@ -2790,6 +2903,7 @@ exports.noBasket = async (req, res, next) => {
                                                 _id: getOriginalData._id,
                                                 email: getOriginalData.email,
                                                 firstName: getOriginalData.firstName,
+                                                profile: getOriginalData.photo[0] ? getOriginalData.photo[0].res : null,
                                                 status: 3,
                                                 thumbUp: findThumb.thumbUp
                                             }
@@ -2866,6 +2980,7 @@ exports.noBasket = async (req, res, next) => {
                                         firstName: "$firstName",
                                         relationshipSatus: "$relationshipSatus",
                                         Bio: "$Bio",
+                                        photo: "$photo",
                                         hopingToFind: "$hopingToFind",
                                         jobTitle: "$jobTitle",
                                         wantChildren: "$wantChildren",
@@ -2906,6 +3021,8 @@ exports.noBasket = async (req, res, next) => {
                                                         if (requestEmail.accepted == 1) {
                                                             var status1 = {
                                                                 status: 1,
+                                                                firstName: findThumbUp.firstName,
+                                                                profile: findThumbUp.photo[0] ? findThumbUp.photo[0].res : null,
                                                                 email: requestEmail.requestedEmail,
                                                                 thumbUp: findThumb.thumbUp
                                                             }
@@ -2914,6 +3031,8 @@ exports.noBasket = async (req, res, next) => {
                                                             var status2 = {
                                                                 status: 2,
                                                                 email: requestEmail.requestedEmail,
+                                                                firstName: findThumbUp.firstName,
+                                                                profile: findThumbUp.photo[0] ? findThumbUp.photo[0].res : null,
                                                                 thumbUp: findThumb.thumbUp
                                                             }
                                                             statusByEmail.push(status2)
@@ -2950,6 +3069,7 @@ exports.noBasket = async (req, res, next) => {
                                         email: finalData.email,
                                         relationshipSatus: finalData.relationshipSatus,
                                         Bio: finalData.Bio,
+                                        profile: finalData.photo[0] ? finalData.photo[0].res : null,
                                         hopingToFind: finalData.hopingToFind,
                                         jobTitle: finalData.jobTitle,
                                         wantChildren: finalData.wantChildren,

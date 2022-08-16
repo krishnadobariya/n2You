@@ -684,10 +684,14 @@ exports.deletePost = async (req, res, next) => {
 exports.userAllFriendPost = async (req, res, next) => {
     try {
 
+
+
         const statusByEmail = [];
         const data = await requestsModel.findOne({ userId: req.params.user_id });
+        console.log(data);
         const user = await userModal.findOne({ _id: req.params.user_id })
         if (data != null && user != null) {
+            console.log("fdsgfwesdgf");
             const allRequestedEmail = data.RequestedEmails
             const requestedEmailWitchIsInuserRequeted = [];
             const allData = [];
@@ -775,6 +779,8 @@ exports.userAllFriendPost = async (req, res, next) => {
                                 const finalResponse = [];
 
                                 for (const allposts of meargAllTableEmail.posts) {
+
+
 
                                     for (const getallposts of allposts.posts) {
                                         const userPostDate = getallposts.createdAt;
@@ -1116,9 +1122,14 @@ exports.userAllFriendPost = async (req, res, next) => {
                             }
                         }
 
+                        const allPosts = [];
+                        allPosts.push(getallposts)
+
+                        const finalPosts = [...allPosts, ...allPosts]
+
                         const response = {
                             userId: allposts.userId,
-                            getallposts,
+                            finalPosts,
                             finalPostedTime,
                             commentData: commentData[0] == null ? [] : commentData
                         }
@@ -1140,15 +1151,17 @@ exports.userAllFriendPost = async (req, res, next) => {
             for (const [key, finalData] of meargAllTable2.entries()) {
                 for (const [key, final1Data] of statusByEmail.entries())
                     if (finalData.email === final1Data.email) {
-                        finalStatus1.push(final1Data)
+                        for (const data of final1Data.posts) {
+                            finalStatus1.push({ allposts: data.finalPosts[0], finalpostedtime: data.finalPostedTime, comment: data.commentData })
+                        }
+
                     }
             }
-            console.log("finalStatus1", finalStatus1);
 
             for (const [key, finalData] of meargAllTable2.entries()) {
 
                 const response = {
-                    data: finalStatus1[key]
+                    data: finalData.email
                 }
 
 
@@ -1157,7 +1170,7 @@ exports.userAllFriendPost = async (req, res, next) => {
                 } else {
 
                     const findUser = await userModal.findOne({
-                        email: response.data.email
+                        email: response.data
                     })
 
 
@@ -1222,7 +1235,11 @@ exports.userAllFriendPost = async (req, res, next) => {
 
                 for (const allposts of meargAllTableEmail.posts) {
 
+
+
                     for (const getallposts of allposts.posts) {
+
+                        console.log("getallposts", getallposts);
                         const userPostDate = getallposts.createdAt;
 
                         datetime = userPostDate;
@@ -1314,7 +1331,7 @@ exports.userAllFriendPost = async (req, res, next) => {
                                         photourl: user.photo[0] ? user.photo[0] : null,
                                         username: user.firstName,
                                         replyUser: commnetData.replyUser
-                                    }   
+                                    }
                                     commentData.push(response)
                                 }
 
@@ -1341,9 +1358,13 @@ exports.userAllFriendPost = async (req, res, next) => {
 
                         }
 
+                        const allPosts = [];
+                        allPosts.push(getallposts)
+
+                        const finalPosts = [...allPosts, ...allPosts]
                         const response = {
                             userId: allposts.userId,
-                            getallposts,
+                            finalPosts,
                             finalPostedTime,
                             commentData: commentData[0] == null ? [] : commentData
                         }
@@ -1366,49 +1387,38 @@ exports.userAllFriendPost = async (req, res, next) => {
             for (const [key, finalData] of meargAllTable.entries()) {
                 for (const [key, final1Data] of statusByEmail.entries())
                     if (finalData.email === final1Data.email) {
-                        finalStatus.push(final1Data)
+                        for (const data of final1Data.posts) {
+
+                            console.log("data", data.finalPosts[0]);
+                            finalStatus.push({ allposts: data.finalPosts[0], finalpostedtime: data.finalPostedTime, comment: data.commentData })
+
+                        }
                     }
             }
 
 
+
             for (const [key, finalData] of meargAllTable.entries()) {
+                const findUser = await userModal.findOne({
+                    email: finalData.email
+                })
 
-                const response = {
-                    data: finalStatus[key]
+            
+                const data = {
+                    posts: {
+                        userId: findUser._id,
+                        email: finalData.email,
+                        userName: findUser.firstName,
+                        profile: findUser.photo[0] ? findUser.photo[0].res : null,
+                        finalPosts: finalStatus
+                    },
+                    // finalPostedTime: response.data.posts[0].finalPostedTime,
+                    // commentData: response.data.posts[0].commentData,
+                    // userId: response.data.userId,
+
                 }
 
-
-                if (response.data == undefined) {
-
-                } else {
-
-                    const findUser = await userModal.findOne({
-                        email: response.data.email
-                    })
-
-
-                    const data = {
-                        posts: {
-                            userId: findUser._id,
-                            postId: response.data.posts[0].getallposts._id,
-                            email: response.data.email,
-                            userName: findUser.firstName,
-                            profile: findUser.photo[0] ? findUser.photo[0].res : null,
-                            posts_data: response.data.posts[0].getallposts.post,
-                            description: response.data.posts[0].getallposts.description,
-                            like: response.data.posts[0].getallposts.like,
-                            comment: response.data.posts[0].getallposts.comment,
-                            report: response.data.posts[0].getallposts.report,
-                        },
-                        finalPostedTime: response.data.posts[0].finalPostedTime,
-                        commentData: response.data.posts[0].commentData,
-                        userId: response.data.userId,
-
-                    }
-
-                    final_data.push(data);
-                }
-
+                final_data.push(data);
 
             }
             res.status(status.OK).json(
