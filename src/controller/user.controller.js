@@ -9,6 +9,7 @@ const basketModel = require("../model/basket.model");
 const relationShipHistoryModel = require("../model/polyamorous/relationShipHistory.model");
 const chatRoomModel = require("../webSocket/models/chatRoom.model");
 const notificationModel = require("../model/polyamorous/notification.model");
+const likeModel = require("../model/like.model");
 
 exports.userRegister = async (req, res, next) => {
     try {
@@ -1557,9 +1558,22 @@ exports.getDataUserWise = async (req, res, next) => {
 
                     for (const getPost of userPost.posts) {
 
+
                         const userPostDate = getPost.createdAt;
+                        const userId = req.params.user_id;
+                        const postId = getPost._id;
 
+                        const findUserInLike = await likeModel.findOne({
+                            postId: postId,
+                            userId: userId
+                        })
+                        const postShowStatus = []
 
+                        if (findUserInLike) {
+                            postShowStatus.push(1)
+                        } else {
+                            postShowStatus.push(0)
+                        }
                         datetime = userPostDate;
                         var userPostedDate = new Date(datetime);
                         now = new Date();
@@ -1605,7 +1619,8 @@ exports.getDataUserWise = async (req, res, next) => {
                         const response = {
                             getPost,
                             finalPostedTime,
-                            commentData: commentData[0] == null ? [] : commentData
+                            commentData: commentData[0] == null ? [] : commentData,
+                            postShowStatus
                         }
                         getAllPosts.push(response);
                     }

@@ -1404,9 +1404,7 @@ exports.userAllFriendPost = async (req, res, next) => {
                 for (const [key, final1Data] of statusByEmail.entries())
                     if (finalData.email === final1Data.email) {
                         for (const data of final1Data.posts) {
-
-                            console.log("data.finalPosts[0]._id", data.finalPosts[0]._id);
-                            console.log("userId: req.params.user_email", req.params.user_id);
+                          
                             const findUserInLike = await likeModel.findOne({
                                 postId: data.finalPosts[0]._id,
                                 userId: req.params.user_id
