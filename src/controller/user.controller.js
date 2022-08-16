@@ -1071,23 +1071,24 @@ exports.getAllUser = async (req, res, next) => {
                 const UniqueEmail = [];
                 for (const allrequestedDataNotAcceptedRequestAndNotFriend of reaquestedAllEmail) {
 
-                    const FindUser = await userModel.aggregate([
-                        {
-                            $geoNear: {
-                                near: {
-                                    type: "Point",
-                                    coordinates: [
-                                        parseFloat(req.query.long),
-                                        parseFloat(req.query.lat)
-                                    ]
-                                },
-                                distanceField: "distance",
-                                maxDistance: 1000,
-                                minDistance: 0,
-                                spherical: true
-                            }
-                        }
-                    ]);
+                    const FindUser = await userModel.find()
+                    // .aggregate([
+                    //     {
+                    //         $geoNear: {
+                    //             near: {
+                    //                 type: "Point",
+                    //                 coordinates: [
+                    //                     parseFloat(req.query.long),
+                    //                     parseFloat(req.query.lat)
+                    //                 ]
+                    //             },
+                    //             distanceField: "distance",
+                    //             maxDistance: 1000,
+                    //             minDistance: 0,
+                    //             spherical: true
+                    //         }
+                    //     }
+                    // ]);
 
                     for (const uniqueUser of FindUser) {
 
@@ -1182,23 +1183,24 @@ exports.getAllUser = async (req, res, next) => {
 
                 const UniqueEmail = [];
                 for (const uniqueEmail of difference) {
-                    const FindUser = await userModel.aggregate([
-                        {
-                            $geoNear: {
-                                near: {
-                                    type: "Point",
-                                    coordinates: [
-                                        parseFloat(req.query.long),
-                                        parseFloat(req.query.lat)
-                                    ]
-                                },
-                                distanceField: "distance",
-                                maxDistance: 1000,
-                                minDistance: 0,
-                                spherical: true
-                            }
-                        }
-                    ]);
+                    const FindUser = await userModel.find()
+                    // .aggregate([
+                    //     {
+                    //         $geoNear: {
+                    //             near: {
+                    //                 type: "Point",
+                    //                 coordinates: [
+                    //                     parseFloat(req.query.long),
+                    //                     parseFloat(req.query.lat)
+                    //                 ]
+                    //             },
+                    //             distanceField: "distance",
+                    //             maxDistance: 1000,
+                    //             minDistance: 0,
+                    //             spherical: true
+                    //         }
+                    //     }
+                    // ]);
 
                     for (const uniqueUser of FindUser) {
 
