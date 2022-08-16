@@ -1793,8 +1793,10 @@ exports.yesBasket = async (req, res, next) => {
                             }
                         }
 
+
+                        let uniqueObjArray = [...new Map(responseData.map((item) => [item["_id"], item])).values()];
                         res.status(status.OK).json(
-                            new APIResponse("show all yes basket Record", true, 201, 1, responseData)
+                            new APIResponse("show all yes basket Record", true, 201, 1, uniqueObjArray)
                         )
 
                     } else {
@@ -2025,10 +2027,10 @@ exports.yesBasket = async (req, res, next) => {
 
                         const final_response = [...final_data, ...UniqueEmail]
 
-                        // let uniqueObjArray = [...new Map(final_data.map((item) => [item["details"], item])).values()];
+                        let uniqueObjArray = [...new Map(final_response.map((item) => [item["details"], item])).values()];
 
                         res.status(status.OK).json(
-                            new APIResponse("show all yes basket record", true, 201, 1, final_response)
+                            new APIResponse("show all yes basket record", true, 201, 1, uniqueObjArray)
                         )
                     }
                 }
@@ -2138,8 +2140,10 @@ exports.yesBasket = async (req, res, next) => {
                                         }
                                     }
                                 }
+                                let uniqueObjArray = [...new Map(responseData.map((item) => [item["details"], item])).values()];
+
                                 res.status(status.OK).json(
-                                    new APIResponse("show all yes basket record", true, 201, 1, responseData)
+                                    new APIResponse("show all yes basket record", true, 201, 1, uniqueObjArray)
                                 )
 
                             } else {
@@ -2374,10 +2378,10 @@ exports.yesBasket = async (req, res, next) => {
 
                                 const final_response = [...final_data, ...UniqueEmail]
 
-                                // let uniqueObjArray = [...new Map(final_data.map((item) => [item["details"], item])).values()];
+                                let uniqueObjArray = [...new Map(final_response.map((item) => [item["details"], item])).values()];
 
                                 res.status(status.OK).json(
-                                    new APIResponse("show all yes basket record", true, 201, 1, final_response)
+                                    new APIResponse("show all yes basket record", true, 201, 1, uniqueObjArray)
                                 )
                             }
                         }
@@ -2446,12 +2450,8 @@ exports.noBasket = async (req, res, next) => {
                     const meargeData = await userModel.findOne({
                         _id: allNoBasketData,
                     })
-
                     reaquestedAllEmail.push(meargeData.email)
                 }
-
-
-
 
                 if (reaquestedAllEmail[0] == undefined) {
                     res.status(status.NOT_FOUND).json(
@@ -2477,6 +2477,7 @@ exports.noBasket = async (req, res, next) => {
                         const finalData = [];
                         const responseData = [];
                         for (const allrequestedDataNotAcceptedRequestAndNotFriend of reaquestedAllEmail) {
+                            console.log("allrequestedDataNotAcceptedRequestAndNotFriend", allrequestedDataNotAcceptedRequestAndNotFriend);
                             const userDetail = await userModel.findOne({ email: allrequestedDataNotAcceptedRequestAndNotFriend });
                             finalData.push(userDetail)
                         }
@@ -2504,14 +2505,17 @@ exports.noBasket = async (req, res, next) => {
                                         thumbDown: findThumb.thumbDown
                                     }
 
+
                                     responseData.push(response);
                                 }
                             }
 
+
                         }
+                        let uniqueObjArray = [...new Map(responseData.map((item) => [item["_id"], item])).values()];
 
                         res.status(status.OK).json(
-                            new APIResponse("show all no basket record", true, 201, 1, responseData)
+                            new APIResponse("show all no basket record", true, 201, 1, uniqueObjArray)
                         )
 
                     } else {
@@ -2753,10 +2757,12 @@ exports.noBasket = async (req, res, next) => {
 
                         const final_response = [...final_data, ...UniqueEmail]
 
-                        // let uniqueObjArray = [...new Map(final_data.map((item) => [item["details"], item])).values()];
+                        let uniqueObjArray = [...new Map(final_response.map((item) => [item["_id"], item])).values()];
+
+
 
                         res.status(status.OK).json(
-                            new APIResponse("show all no basket record", true, 201, 1, final_response)
+                            new APIResponse("show all no basket record", true, 201, 1, uniqueObjArray)
                         )
                     }
                 }
@@ -2866,8 +2872,9 @@ exports.noBasket = async (req, res, next) => {
 
                                 }
 
+                                let uniqueObjArray = [...new Map(responseData.map((item) => [item["_id"], item])).values()];
                                 res.status(status.OK).json(
-                                    new APIResponse("show all No Basket Record", true, 201, 1, responseData)
+                                    new APIResponse("show all No Basket Record", true, 201, 1, uniqueObjArray)
                                 )
 
                             } else {
@@ -3081,10 +3088,10 @@ exports.noBasket = async (req, res, next) => {
 
                                 const final_response = [...final_data, ...UniqueEmail]
 
-                                // let uniqueObjArray = [...new Map(final_data.map((item) => [item["details"], item])).values()];
+                                let uniqueObjArray = [...new Map(final_response.map((item) => [item["_id"], item])).values()];
 
                                 res.status(status.OK).json(
-                                    new APIResponse("show all No Basket Record", true, 201, 1, final_response)
+                                    new APIResponse("show all No Basket Record", true, 201, 1, uniqueObjArray)
                                 )
                             }
                         }
@@ -3105,20 +3112,3 @@ exports.noBasket = async (req, res, next) => {
     }
 }
 
-
-
-
-// exports.add = async (req, res, next) => {
-//     try {
-
-
-//         await userModel.updateMany({
-//             relationshipSatus: "swinger",
-//         }, {
-//             relationshipSatus: 2
-//         })
-
-//     } catch (error) {
-
-//     }
-// }
