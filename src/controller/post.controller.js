@@ -8,6 +8,7 @@ const requestsModel = require("../model/requests.model");
 const commentModel = require("../model/comment.model");
 const path = require('path');
 const { log } = require("console");
+const likeModel = require("../model/like.model");
 
 // Mutiple Videos Upload
 
@@ -873,7 +874,7 @@ exports.userAllFriendPost = async (req, res, next) => {
                                                     const response = {
                                                         userId: user._id,
                                                         comment: commnetData.comment,
-                                                        commentId: commnetData._id, 
+                                                        commentId: commnetData._id,
                                                         photourl: user.photo[0] ? user.photo[0] : null,
                                                         username: user.firstName,
                                                         replyUser: commnetData.replyUser
@@ -1404,8 +1405,20 @@ exports.userAllFriendPost = async (req, res, next) => {
                     if (finalData.email === final1Data.email) {
                         for (const data of final1Data.posts) {
 
-                            console.log("data", data.finalPosts[0]);
-                            finalStatus.push({ allposts: data.finalPosts[0], finalpostedtime: data.finalPostedTime, comment: data.commentData })
+                            console.log("data.finalPosts[0]._id", data.finalPosts[0]._id);
+                            console.log("userId: req.params.user_email", req.params.user_id);
+                            const findUserInLike = await likeModel.findOne({
+                                postId: data.finalPosts[0]._id,
+                                userId: req.params.user_id
+                            })
+
+                            console.log(findUserInLike);
+
+                            if (findUserInLike) {
+                                finalStatus.push({ allposts: data.finalPosts[0], finalpostedtime: data.finalPostedTime, comment: data.commentData, postShowStatus: 1 })
+                            } else {
+                                finalStatus.push({ allposts: data.finalPosts[0], finalpostedtime: data.finalPostedTime, comment: data.commentData, postShowStatus: 0 })
+                            }
 
                         }
                     }

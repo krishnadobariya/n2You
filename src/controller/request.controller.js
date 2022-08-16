@@ -36,17 +36,17 @@ exports.sendRequest = async (req, res, next) => {
                     const saveData = await request.save();
 
                     const findUserInNotification = await notificationModel.findOne({
-                        userId: checkRequestedEmail._id
+                        userId: checkUserExist._id
                     })
 
                     if (findUserInNotification) {
                         await notificationModel.updateOne({
-                            userId: checkRequestedEmail._id
+                            userId: checkUserExist._id
                         }, {
                             $push: {
                                 notifications: {
-                                    notifications: `${checkUserExist.firstName} added you as a friend`,
-                                    userId: checkUserExist._id,
+                                    notifications: `${checkRequestedEmail.firstName} added you as a friend`,
+                                    userId: checkRequestedEmail._id,
                                     status: 2
                                 }
                             }
@@ -55,10 +55,10 @@ exports.sendRequest = async (req, res, next) => {
 
                         console.log("DWQAFWEAFG");
                         const data = notificationModel({
-                            userId: checkRequestedEmail._id,
+                            userId: checkUserExist._id,
                             notifications: {
-                                notifications: `${checkUserExist.firstName} added you as a friend`,
-                                userId: checkUserExist._id,
+                                notifications: `${checkRequestedEmail.firstName} added you as a friend`,
+                                userId: checkRequestedEmail._id,
                                 status: 2
                             }
                         })
@@ -225,6 +225,42 @@ exports.userAcceptedRequesteOrNot = async (req, res, next) => {
                     }
                 })
 
+            const findUserWhichAcceptRequest = await userModel.findOne({
+                _id: req.params.user_id
+            })
+
+            console.log(findUserWhichAcceptRequest);
+            const findUser = await userModel.findOne({
+                email: reqestEmail
+            })
+            const findUserInNotiofication = await notificationModel.findOne({
+                userId: findUser._id
+            })
+
+            if (findUserInNotiofication) {
+                await notificationModel.updateOne({
+                    userId: findUser._id
+                }, {
+                    $push: {
+                        notifications: {
+                            notifications: `${findUserWhichAcceptRequest.firstName} accepted request`,
+                            userId: findUser._id,
+                            status: 3
+                        }
+                    }
+                })
+            } else {
+                const data = notificationModel({
+                    userId: findUser._id,
+                    notifications: {
+                        notifications: `${findUserWhichAcceptRequest.firstName} accepted request`,
+                        userId: findUser._id,
+                        status: 3
+                    }
+                })
+
+                await data.save();
+            }
             res.status(status.OK).json(
                 new APIResponse("request accepted successfully!", "true", 200, "1")
             )
