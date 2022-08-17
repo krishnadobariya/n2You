@@ -31,8 +31,9 @@ exports.LikeOrDislikeInUserPost = async (req, res, next) => {
                         await InsertIntoLikeTable.save();
 
                         const data = await postModel.updateOne({ "posts._id": req.params.post_id }, { $inc: { "posts.$.like": 1 } }).then(() => {
+                            const status_code = 1
                             res.status(status.CREATED).json(
-                                new APIResponse("Like Added", "true", 201, "1")
+                                new APIResponse("Like Added", "true", 201, "1", status_code)
                             );
                         }).catch((e) => {
                             res.status(status.INTERNAL_SERVER_ERROR).json(
@@ -41,9 +42,9 @@ exports.LikeOrDislikeInUserPost = async (req, res, next) => {
                         })
 
                     } else {
-
+                        const status_code = 2
                         res.status(status.ALREADY_REPORTED).json(
-                            new APIResponse("Already Liked Post", "true", 208, "1")
+                            new APIResponse("Already Liked Post", "true", 208, "1", status_code)
                         );
                     }
 
@@ -55,14 +56,16 @@ exports.LikeOrDislikeInUserPost = async (req, res, next) => {
 
                         await postModel.updateOne({ "posts._id": req.params.post_id }, { $inc: { "posts.$.like": -1 } });
 
-                        await likeModel.deleteOne({ reqUserId: req.params.req_user_id });
+                        await likeModel.deleteOne({ reqUserId: req.params.req_user_id, postId: req.params.post_id });
+                        const status_code = 3
                         res.status(status.NOT_FOUND).json(
-                            new APIResponse("dislike added!", "false", 404, "0")
+                            new APIResponse("dislike added!", "false", 404, "0", status_code)
                         );
 
                     } else {
+                        const status_code = 4
                         res.status(status.NOT_FOUND).json(
-                            new APIResponse("First Time Not Like , Like Not Added", "false", 404, "0")
+                            new APIResponse("First Time Not Like , Like Not Added", "false", 404, "0", status_code)
                         );
                     }
                 }
