@@ -47,7 +47,7 @@ exports.relationShipHistory = async (req, res, next) => {
             const data = {
                 _id: findUser._id,
                 name: findUser.firstName,
-                profile: findUser.photo[0] ? findUser.photo[0].res : null,
+                profile: findUser.photo[0] ? findUser.photo[0].res : "",
                 hisoty: finalResponse
             }
 

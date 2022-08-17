@@ -18,15 +18,6 @@ exports.LikeOrDislikeInUserPost = async (req, res, next) => {
             if (postFindInPostModel) {
 
                 if (req.params.value == 1) {
-                    const data = await postModel.updateOne({ "posts._id": req.params.post_id }, { $inc: { "posts.$.like": 1 } }).then(() => {
-                        res.status(status.CREATED).json(
-                            new APIResponse("Like Added", "true", 201, "1")
-                        );
-                    }).catch((e) => {
-                        res.status(status.INTERNAL_SERVER_ERROR).json(
-                            new APIResponse("somthing went erong", "true", 500, "0", e)
-                        );
-                    })
 
                     const checkUserInLike = await likeModel.findOne({ reqUserId: req.params.req_user_id, postId: req.params.post_id });
 
@@ -39,25 +30,34 @@ exports.LikeOrDislikeInUserPost = async (req, res, next) => {
 
                         await InsertIntoLikeTable.save();
 
-                        res.status(status.CREATED).json(
-                            new APIResponse("Like Added", "true", 201, "1")
-                        );
+                        const data = await postModel.updateOne({ "posts._id": req.params.post_id }, { $inc: { "posts.$.like": 1 } }).then(() => {
+                            res.status(status.CREATED).json(
+                                new APIResponse("Like Added", "true", 201, "1")
+                            );
+                        }).catch((e) => {
+                            res.status(status.INTERNAL_SERVER_ERROR).json(
+                                new APIResponse("somthing went erong", "true", 500, "0", e)
+                            );
+                        })
+
                     } else {
+
                         res.status(status.ALREADY_REPORTED).json(
                             new APIResponse("Already Liked Post", "true", 208, "1")
                         );
                     }
 
                 } else {
-                    await postModel.updateOne({ "posts._id": req.params.post_id }, { $inc: { "posts.$.like": -1 } });
 
-                    const checkUserInLike = await likeModel.findOne({ reqUserId: req.params.req_user_id });
+                    const checkUserInLike = await likeModel.findOne({ reqUserId: req.params.req_user_id, postId: req.params.post_id });
 
                     if (checkUserInLike) {
 
+                        await postModel.updateOne({ "posts._id": req.params.post_id }, { $inc: { "posts.$.like": -1 } });
+
                         await likeModel.deleteOne({ reqUserId: req.params.req_user_id });
                         res.status(status.NOT_FOUND).json(
-                            new APIResponse("First Time Like Or Second Time Dislike , Like Not Added", "false", 404, "0")
+                            new APIResponse("dislike added!", "false", 404, "0")
                         );
 
                     } else {
@@ -146,7 +146,7 @@ exports.showAllUserWhichIsLikePost = async (req, res, next) => {
                         _id: uniqueId,
                         email: userDetail.email,
                         firstName: userDetail.firstName,
-                        profile: userDetail.photo[0] ? userDetail.photo[0].res : null,
+                        profile: userDetail.photo[0] ? userDetail.photo[0].res : "",
                         status: 3
                     }
 
@@ -162,7 +162,7 @@ exports.showAllUserWhichIsLikePost = async (req, res, next) => {
                             _id: allrequestedDataNotAcceptedRequestAndNotFriend,
                             email: userDetail.email,
                             firstName: userDetail.firstName,
-                            profile: userDetail.photo[0] ? userDetail.photo[0].res : null,
+                            profile: userDetail.photo[0] ? userDetail.photo[0].res : "",
                             status: 3
                         }
 
@@ -305,7 +305,7 @@ exports.showAllUserWhichIsLikePost = async (req, res, next) => {
                             // polyRelationship: finalData.polyRelationship,
                             firstName: finalData.firstName,
                             email: finalData.email,
-                            photo: finalData.photo[0] ? finalData.photo[0].res : null,
+                            photo: finalData.photo[0] ? finalData.photo[0].res : "",
                             // relationshipSatus: finalData.relationshipSatus,
                             // Bio: finalData.Bio,
                             // hopingToFind: finalData.hopingToFind,

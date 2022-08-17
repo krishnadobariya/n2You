@@ -135,7 +135,7 @@ exports.allUserListWithUnreadCount = async (req, res, next) => {
                         lastMessage: lastValue.text,
                         createdAt: lastValue.createdAt,
                         name: userDetail[0].firstName,
-                        profile: userDetail[0].photo[0] == undefined ? null : userDetail[0].photo[0].res,
+                        profile: userDetail[0].photo[0] == undefined ? "" : userDetail[0].photo[0].res,
 
                     }
 

@@ -117,7 +117,7 @@ function socket(io) {
                                     sender: arg.sender_id,
                                     text: arg.text,
                                     name: findUser.name,
-                                    photo: findUser.photo[0] ? findUser.photo[0].res : null,
+                                    photo: findUser.photo[0] ? findUser.photo[0].res : "",
                                     createdAt: time
                                 }
                             });
@@ -179,7 +179,7 @@ function socket(io) {
                                     sender: arg.sender_id,
                                     text: arg.text,
                                     name: findUser.name,
-                                    photo: findUser.photo[0] ? findUser.photo[0].res : null,
+                                    photo: findUser.photo[0] ? findUser.photo[0].res : "",
                                     createdAt: time
                                 }
                             })
@@ -259,7 +259,7 @@ function socket(io) {
                                         sender: arg.sender_id,
                                         text: arg.text,
                                         name: findUser.name,
-                                        photo: findUser.photo[0] ? findUser.photo[0].res : null,
+                                        photo: findUser.photo[0] ? findUser.photo[0].res : "",
                                         createdAt: time
 
                                     }
@@ -315,7 +315,7 @@ function socket(io) {
                                     sender: arg.sender_id,
                                     text: arg.text,
                                     name: findUser.name,
-                                    photo: findUser.photo[0] ? findUser.photo[0].res : null,
+                                    photo: findUser.photo[0] ? findUser.photo[0].res : "",
                                     createdAt: time
                                 }
 
@@ -384,7 +384,7 @@ function socket(io) {
                                         sender: arg.sender_id,
                                         text: arg.text,
                                         name: findUser.name,
-                                        photo: findUser.photo[0] ? findUser.photo[0].res : null,
+                                        photo: findUser.photo[0] ? findUser.photo[0].res : "",
                                         createdAt: time
                                     }
                                 })
@@ -435,7 +435,7 @@ function socket(io) {
                                     sender: arg.sender_id,
                                     text: arg.text,
                                     name: findUser.name,
-                                    photo: findUser.photo[0] ? findUser.photo[0].res : null,
+                                    photo: findUser.photo[0] ? findUser.photo[0].res : "",
                                     createdAt: time
                                 }
 
@@ -1391,7 +1391,7 @@ function socket(io) {
                     })
                     const response = {
                         userIdWhichConflictUser: getGroup.conflictUserId,
-                        profileConflictUser: findUser.photo[0] ? findUser.photo[0].res : null,
+                        profileConflictUser: findUser.photo[0] ? findUser.photo[0].res : "",
                         nameOfConflictUser: findUser.firstName,
                         finalDesionForMySide: findFinalDisionUser.firstName,
                         countAgree: getGroup.aggreeCount,

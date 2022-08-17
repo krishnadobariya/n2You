@@ -97,7 +97,7 @@ exports.blockUserList = async (req, res, next) => {
                     _id: finalData.blockUserId,
                 })
                 const blockUser = {
-                    photo: findUser.photo[0] ? findUser.photo[0].res : null,
+                    photo: findUser.photo[0] ? findUser.photo[0].res : "",
                     name: findUser.firstName,
                     userId: finalData.blockUserId,
                     blockUnblock: 1

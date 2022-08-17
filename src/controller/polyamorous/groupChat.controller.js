@@ -44,7 +44,7 @@ exports.getGroupChat = async (req, res, next) => {
                         const response = {
                             _id: findUser._id,
                             text: finalChatUserWise.text,
-                            photo: findUser.photo[0] ? findUser.photo[0].res : null,
+                            photo: findUser.photo[0] ? findUser.photo[0].res : "",
                             name: findUser.firstName,
                             time: strTime
                         }
@@ -124,8 +124,8 @@ exports.groupList = async (req, res, next) => {
                                 createdAt: lastValue.createdAt,
                                 groupName: allRoom.groupName,
                                 profile: {
-                                    user1: userProfile1.photo[0] == undefined ? null : userProfile1.photo[0].res,
-                                    user2: userProfile2.photo[0] == undefined ? null : userProfile2.photo[0].res
+                                    user1: userProfile1.photo[0] == undefined ? "" : userProfile1.photo[0].res,
+                                    user2: userProfile2.photo[0] == undefined ? "" : userProfile2.photo[0].res
                                 }
                             }
 

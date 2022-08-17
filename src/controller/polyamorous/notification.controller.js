@@ -34,7 +34,7 @@ exports.getAllNotification = async (req, res, next) => {
                             _id: getNotification.userId,
                             notification: getNotification.notifications,
                             name: findUserDetail.firstName,
-                            profile: findUserDetail.photo[0] ? findUserDetail.photo[0].res : null
+                            profile: findUserDetail.photo[0] ? findUserDetail.photo[0].res : ""
                         }
                         allNotification.push(response)
 

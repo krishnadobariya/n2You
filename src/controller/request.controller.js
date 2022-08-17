@@ -174,7 +174,7 @@ exports.getRequestUserWise = async (req, res, next) => {
                         id: userDeatil._id,
                         requestUser: notAcceptedRequest.RequestEmail,
                         name: userDeatil.firstName,
-                        profile: userDeatil.photo[0] ? userDeatil.photo[0].res : null
+                        profile: userDeatil.photo[0] ? userDeatil.photo[0].res : ""
                     }
                     allNotAcceptedRequestes.push(response)
                 }
@@ -215,52 +215,103 @@ exports.userAcceptedRequesteOrNot = async (req, res, next) => {
                 new APIResponse("Request Not Found", "false", 404, "0")
             )
         } else {
-            const updatePosts = await requestModel.updateOne({ userId: req.params.user_id, "RequestedEmails.userId": reqestId },
-                {
-                    $set: {
-                        "RequestedEmails.$.accepted": 1
-                    }
+
+            if (req.body.accepted == 1) {
+                const updatePosts = await requestModel.updateOne({ userId: req.params.user_id, "RequestedEmails.userId": reqestId },
+                    {
+                        $set: {
+                            "RequestedEmails.$.accepted": req.body.accepted
+                        }
+                    })
+
+                const findUserWhichAcceptRequest = await userModel.findOne({
+                    _id: req.params.user_id
                 })
 
-            const findUserWhichAcceptRequest = await userModel.findOne({
-                _id: req.params.user_id
-            })
-
-            console.log(findUserWhichAcceptRequest);
-            const findUser = await userModel.findOne({
-                _id: reqestId
-            })
-            const findUserInNotiofication = await notificationModel.findOne({
-                userId: findUser._id
-            })
-
-            if (findUserInNotiofication) {
-                await notificationModel.updateOne({
+                console.log(findUserWhichAcceptRequest);
+                const findUser = await userModel.findOne({
+                    _id: reqestId
+                })
+                const findUserInNotiofication = await notificationModel.findOne({
                     userId: findUser._id
-                }, {
-                    $push: {
+                })
+
+                if (findUserInNotiofication) {
+                    await notificationModel.updateOne({
+                        userId: findUser._id
+                    }, {
+                        $push: {
+                            notifications: {
+                                notifications: `${findUserWhichAcceptRequest.firstName} accepted request`,
+                                userId: findUser._id,
+                                status: 3
+                            }
+                        }
+                    })
+                } else {
+                    const data = notificationModel({
+                        userId: findUser._id,
                         notifications: {
                             notifications: `${findUserWhichAcceptRequest.firstName} accepted request`,
                             userId: findUser._id,
                             status: 3
                         }
-                    }
-                })
+                    })
+
+                    await data.save();
+                }
+                res.status(status.OK).json(
+                    new APIResponse("request accepted successfully!", "true", 200, "1")
+                )
             } else {
-                const data = notificationModel({
-                    userId: findUser._id,
-                    notifications: {
-                        notifications: `${findUserWhichAcceptRequest.firstName} accepted request`,
-                        userId: findUser._id,
-                        status: 3
-                    }
+                const updatePosts = await requestModel.updateOne({ userId: req.params.user_id, "RequestedEmails.userId": reqestId },
+                    {
+                        $set: {
+                            "RequestedEmails.$.accepted": req.body.accepted
+                        }
+                    })
+
+                const findUserWhichAcceptRequest = await userModel.findOne({
+                    _id: req.params.user_id
                 })
 
-                await data.save();
+                console.log(findUserWhichAcceptRequest);
+                const findUser = await userModel.findOne({
+                    _id: reqestId
+                })
+                const findUserInNotiofication = await notificationModel.findOne({
+                    userId: findUser._id
+                })
+
+                if (findUserInNotiofication) {
+                    await notificationModel.updateOne({
+                        userId: findUser._id
+                    }, {
+                        $push: {
+                            notifications: {
+                                notifications: `${findUserWhichAcceptRequest.firstName} rejected request`,
+                                userId: findUser._id,
+                                status: 4
+                            }
+                        }
+                    })
+                } else {
+                    const data = notificationModel({
+                        userId: findUser._id,
+                        notifications: {
+                            notifications: `${findUserWhichAcceptRequest.firstName} rejected request`,
+                            userId: findUser._id,
+                            status: 4
+                        }
+                    })
+
+                    await data.save();
+                }
+                res.status(status.OK).json(
+                    new APIResponse("request rejected successfully!", "true", 200, "1")
+                )
             }
-            res.status(status.OK).json(
-                new APIResponse("request accepted successfully!", "true", 200, "1")
-            )
+
         }
 
     } catch (error) {
