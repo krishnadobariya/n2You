@@ -19,7 +19,7 @@ exports.sendRequest = async (req, res, next) => {
             const checkRequestedEmail = await userModel.findOne({ _id: req.params.requested_id, polyDating: 0 });
 
             if (checkRequestedEmail) {
-                const emailExitInRequestedModel = await requestModel.findOne({ userId: req.params.user_email })
+                const emailExitInRequestedModel = await requestModel.findOne({ userId: req.params.user_id })
 
                 if (!emailExitInRequestedModel) {
                     const request = requestModel({
@@ -53,7 +53,6 @@ exports.sendRequest = async (req, res, next) => {
                         })
                     } else {
 
-                        console.log("DWQAFWEAFG");
                         const data = notificationModel({
                             userId: checkUserExist._id,
                             notifications: {
@@ -66,10 +65,8 @@ exports.sendRequest = async (req, res, next) => {
                         await data.save();
                     }
 
-
-
                     res.status(status.CREATED).json(
-                        new APIResponse("Request Send successfully!", true, 201, 1, saveData)
+                        new APIResponse("Request Send successfully!", true, 201, 1)
                     )
                 } else {
                     const inRequested = [];
@@ -151,7 +148,7 @@ exports.sendRequest = async (req, res, next) => {
 exports.getRequestUserWise = async (req, res, next) => {
     try {
         const allNotAcceptedRequestes = [];
-        const findUserInRequestModel = await requestModel.findOne({ userEmail: req.params.user_email });
+        const findUserInRequestModel = await requestModel.findOne({ userId: req.params.user_id });
         if (findUserInRequestModel == null) {
             res.status(status.NOT_FOUND).json(
                 new APIResponse("User Not Found!", "false", 404, "0")
@@ -209,16 +206,16 @@ exports.userAcceptedRequesteOrNot = async (req, res, next) => {
 
 
         const reqConfirm = req.body.accepted;
-        const reqestEmail = req.params.email;
+        const reqestId = req.params.id;
 
 
-        const checkRequestEmail = await requestModel.findOne({ userId: req.params.user_id, "RequestedEmails.requestedEmail": reqestEmail });
+        const checkRequestEmail = await requestModel.findOne({ userId: req.params.user_id, "RequestedEmails.userId": reqestId });
         if (!checkRequestEmail) {
             res.status(status.NOT_FOUND).json(
                 new APIResponse("Request Not Found", "false", 404, "0")
             )
         } else {
-            const updatePosts = await requestModel.updateOne({ userId: req.params.user_id, "RequestedEmails.requestedEmail": reqestEmail },
+            const updatePosts = await requestModel.updateOne({ userId: req.params.user_id, "RequestedEmails.userId": reqestId },
                 {
                     $set: {
                         "RequestedEmails.$.accepted": 1
@@ -231,7 +228,7 @@ exports.userAcceptedRequesteOrNot = async (req, res, next) => {
 
             console.log(findUserWhichAcceptRequest);
             const findUser = await userModel.findOne({
-                email: reqestEmail
+                _id: reqestId
             })
             const findUserInNotiofication = await notificationModel.findOne({
                 userId: findUser._id
@@ -274,57 +271,57 @@ exports.userAcceptedRequesteOrNot = async (req, res, next) => {
     }
 }
 
-exports.showPostsOnalyAcceptedPerson = async (req, res, next) => {
-    try {
+// exports.showPostsOnalyAcceptedPerson = async (req, res, next) => {
+//     try {
 
-        const userFoundOrNot = await requestModel.findOne({ userEmail: req.params.user_email })
-        if (userFoundOrNot) {
-            const acceptedOrNot = await requestModel.find({ RequestedEmails: { $elemMatch: { requestedEmail: req.params.requested_email, accepted: 1 } } });
+//         const userFoundOrNot = await requestModel.findOne({ userEmail: req.params.user_email })
+//         if (userFoundOrNot) {
+//             const acceptedOrNot = await requestModel.find({ RequestedEmails: { $elemMatch: { requestedEmail: req.params.requested_email, accepted: 1 } } });
 
-            if (acceptedOrNot[0] == undefined) {
-                res.status(status.NOT_FOUND).json(
-                    new APIResponse("User not Found or Requested Email Not Found which is Accepted by user!", "false", 404, "0")
-                )
-            } else {
+//             if (acceptedOrNot[0] == undefined) {
+//                 res.status(status.NOT_FOUND).json(
+//                     new APIResponse("User not Found or Requested Email Not Found which is Accepted by user!", "false", 404, "0")
+//                 )
+//             } else {
 
-                const getAllPostData = await postModel.aggregate([
-                    {
-                        $match: {
-                            email: req.params.requested_email
-                        }
-                    }])
+//                 const getAllPostData = await postModel.aggregate([
+//                     {
+//                         $match: {
+//                             email: req.params.requested_email
+//                         }
+//                     }])
 
-                const showPost = getAllPostData;
+//                 const showPost = getAllPostData;
 
-                if (true) {
-                    const finalShowPost = [];
-                    showPost.map((result, index) => {
-                        finalShowPost.push(result)
-                    })
+//                 if (true) {
+//                     const finalShowPost = [];
+//                     showPost.map((result, index) => {
+//                         finalShowPost.push(result)
+//                     })
 
-                    if (finalShowPost[0] == undefined) {
-                        res.status(status.NOT_FOUND).json(
-                            new APIResponse("User not Posted Anything", "false", 404, "0")
-                        )
-                    } else {
-                        res.status(status.OK).json(
-                            new APIResponse("Show All posts", "true", 200, "1", finalShowPost)
-                        )
-                    }
-                }
+//                     if (finalShowPost[0] == undefined) {
+//                         res.status(status.NOT_FOUND).json(
+//                             new APIResponse("User not Posted Anything", "false", 404, "0")
+//                         )
+//                     } else {
+//                         res.status(status.OK).json(
+//                             new APIResponse("Show All posts", "true", 200, "1", finalShowPost)
+//                         )
+//                     }
+//                 }
 
-            }
+//             }
 
-        } else {
-            res.status(status.NOT_FOUND).json(
-                new APIResponse("User Not Found!", "false", 404, "0")
-            )
-        }
+//         } else {
+//             res.status(status.NOT_FOUND).json(
+//                 new APIResponse("User Not Found!", "false", 404, "0")
+//             )
+//         }
 
-    } catch (error) {
-        console.log("Error:", error);
-        res.status(status.INTERNAL_SERVER_ERROR).json(
-            new APIResponse("Something Went Wrong", "false", 500, "0", error.message)
-        )
-    }
-}
+//     } catch (error) {
+//         console.log("Error:", error);
+//         res.status(status.INTERNAL_SERVER_ERROR).json(
+//             new APIResponse("Something Went Wrong", "false", 500, "0", error.message)
+//         )
+//     }
+// }
