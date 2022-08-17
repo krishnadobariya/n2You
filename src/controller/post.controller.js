@@ -694,17 +694,16 @@ exports.userAllFriendPost = async (req, res, next) => {
             const allData = [];
 
             allRequestedEmail.map((result, next) => {
-                const resultEmail = result.requestedEmail;
+                const resultEmail = result.userId;
                 requestedEmailWitchIsInuserRequeted.push(resultEmail);
                 allData.push(resultEmail)
 
             });
-            allData.push(user.email)
-            console.log(requestedEmailWitchIsInuserRequeted);
+            allData.push(user._id)
 
             const meargAllTable = await userModal.aggregate([{
                 $match: {
-                    email: {
+                    _id: {
                         $in: requestedEmailWitchIsInuserRequeted
                     }
                 }
@@ -769,15 +768,13 @@ exports.userAllFriendPost = async (req, res, next) => {
 
                     for (const meargAllTableEmail of meargAllTable) {
 
-                        if (requestEmail.requestedEmail == meargAllTableEmail.email) {
+                        if (requestEmail.userId == meargAllTableEmail._id) {
 
                             if (requestEmail.accepted == 1) {
 
                                 const finalResponse = [];
 
                                 for (const allposts of meargAllTableEmail.posts) {
-
-
 
                                     for (const getallposts of allposts.posts) {
                                         const userPostDate = getallposts.createdAt;
@@ -1009,48 +1006,46 @@ exports.userAllFriendPost = async (req, res, next) => {
             for (const [key, finalData] of meargAllTable.entries()) {
                 for (const [key, final1Data] of statusByEmail.entries())
                     if (finalData.email === final1Data.email) {
-                        finalStatus.push(final1Data)
+                        for (const data of final1Data.posts) {
+
+                            const findUserInLike = await likeModel.findOne({
+                                postId: data.finalPosts[0]._id,
+                                userId: req.params.user_id
+                            })
+
+                            console.log(findUserInLike);
+
+                            if (findUserInLike) {
+                                finalStatus.push({ allposts: data.finalPosts[0], finalpostedtime: data.finalPostedTime, comment: data.commentData, postShowStatus: 1 })
+                            } else {
+                                finalStatus.push({ allposts: data.finalPosts[0], finalpostedtime: data.finalPostedTime, comment: data.commentData, postShowStatus: 0 })
+                            }
+
+                        }
                     }
             }
 
 
             for (const [key, finalData] of meargAllTable.entries()) {
 
-                const response = {
-                    data: finalStatus[key]
+                const findUser = await userModal.findOne({
+                    email: finalData.email
+                })
+
+
+
+
+                const data = {
+                    posts: {
+                        userId: findUser._id,
+                        email: finalData.email,
+                        userName: findUser.firstName,
+                        profile: findUser.photo[0] ? findUser.photo[0].res : "",
+                        finalPosts: finalStatus
+                    },
                 }
 
-
-                if (response.data == undefined) {
-
-                } else {
-
-                    const findUser = await userModal.findOne({
-                        email: response.data.email
-                    })
-
-
-                    const data = {
-                        posts: {
-                            userId: findUser._id,
-                            postId: response.data.posts[0].getallposts._id,
-                            email: response.data.email,
-                            userName: findUser.firstName,
-                            profile: findUser.photo[0] ? findUser.photo[0].res : "",
-                            posts_data: response.data.posts[0].getallposts.post,
-                            description: response.data.posts[0].getallposts.description,
-                            like: response.data.posts[0].getallposts.like,
-                            comment: response.data.posts[0].getallposts.comment,
-                            report: response.data.posts[0].getallposts.report,
-                        },
-                        finalPostedTime: response.data.posts[0].finalPostedTime,
-                        commentData: response.data.posts[0].commentData,
-                        userId: response.data.userId,
-
-                    }
-
-                    final_data.push(data);
-                }
+                final_data.push(data);
 
 
             }
@@ -1323,7 +1318,19 @@ exports.userAllFriendPost = async (req, res, next) => {
                 for (const [key, final1Data] of statusByEmail.entries())
                     if (finalData.email === final1Data.email) {
                         for (const data of final1Data.posts) {
-                            finalStatus1.push({ allposts: data.finalPosts[0], finalpostedtime: data.finalPostedTime, comment: data.commentData })
+
+                            const findUserInLike = await likeModel.findOne({
+                                postId: data.finalPosts[0]._id,
+                                userId: req.params.user_id
+                            })
+
+                            if (findUserInLike) {
+
+                                finalStatus1.push({ allposts: data.finalPosts[0], finalpostedtime: data.finalPostedTime, comment: data.commentData })
+                            } else {
+                                finalStatus1.push({ allposts: data.finalPosts[0], finalpostedtime: data.finalPostedTime, comment: data.commentData })
+
+                            }
                         }
 
                     }
@@ -1331,41 +1338,49 @@ exports.userAllFriendPost = async (req, res, next) => {
 
             for (const [key, finalData] of meargAllTable2.entries()) {
 
-                const response = {
-                    data: finalData.email
+                const findUser = await userModal.findOne({
+                    email: finalData.email
+                })
+
+                const data = {
+                    posts: {
+                        userId: findUser._id,
+                        email: finalData.email,
+                        userName: findUser.firstName,
+                        profile: findUser.photo[0] ? findUser.photo[0].res : "",
+                        finalPosts: finalStatus1
+                    },
                 }
+                // if (response.data == undefined) {
+
+                // } else {
+
+                // const findUser = await userModal.findOne({
+                //     email: response.data
+                // })
 
 
-                if (response.data == undefined) {
+                // const data = {
+                //     posts: {
+                //         userId: findUser._id,
+                //         postId: response.data.posts[0].getallposts._id,
+                //         email: response.data.email,
+                //         userName: findUser.firstName,
+                //         profile: findUser.photo[0] ? findUser.photo[0].res : "",
+                //         posts_data: response.data.posts[0].getallposts.post,
+                //         description: response.data.posts[0].getallposts.description,
+                //         like: response.data.posts[0].getallposts.like,
+                //         comment: response.data.posts[0].getallposts.comment,
+                //         report: response.data.posts[0].getallposts.report,
+                //     },
+                //     finalPostedTime: response.data.posts[0].finalPostedTime,
+                //     commentData: response.data.posts[0].commentData,
+                //     userId: response.data.userId,
 
-                } else {
+                // }
 
-                    const findUser = await userModal.findOne({
-                        email: response.data
-                    })
-
-
-                    const data = {
-                        posts: {
-                            userId: findUser._id,
-                            postId: response.data.posts[0].getallposts._id,
-                            email: response.data.email,
-                            userName: findUser.firstName,
-                            profile: findUser.photo[0] ? findUser.photo[0].res : "",
-                            posts_data: response.data.posts[0].getallposts.post,
-                            description: response.data.posts[0].getallposts.description,
-                            like: response.data.posts[0].getallposts.like,
-                            comment: response.data.posts[0].getallposts.comment,
-                            report: response.data.posts[0].getallposts.report,
-                        },
-                        finalPostedTime: response.data.posts[0].finalPostedTime,
-                        commentData: response.data.posts[0].commentData,
-                        userId: response.data.userId,
-
-                    }
-
-                    final_data1.push(data);
-                }
+                final_data1.push(data);
+                // }
 
 
             }

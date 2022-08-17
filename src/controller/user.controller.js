@@ -449,11 +449,11 @@ exports.userUpdate = async (req, res, next) => {
                         polyDating: 0
                     })
 
-                    const identity = findUser.identity
-                    const relationshipSatus = findUser.relationshipSatus
-                    const IntrestedIn = findUser.IntrestedIn
-                    const hopingToFind = findUser.hopingToFind
-                    const wantChildren = findUser.wantChildren
+                    const identity = findUsers.identity
+                    const relationshipSatus = findUsers.relationshipSatus
+                    const IntrestedIn = findUsers.IntrestedIn
+                    const hopingToFind = findUsers.hopingToFind
+                    const wantChildren = findUsers.wantChildren
 
 
                     for (const chechUser of matchUser) {
