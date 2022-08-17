@@ -579,11 +579,9 @@ exports.searchFriend = async (req, res, next) => {
     try {
 
         const id = await userModel.findOne({
-            email: req.params.user_email
+            _id: req.params.user_id
         }).select('_id')
 
-
-        console.log("id", id);
 
         const Regexname = new RegExp(req.body.search_key, 'i');
         const searchName = await userModel.find({ firstName: Regexname, polyDating: 0 }).maxTimeMS(10);
@@ -601,7 +599,7 @@ exports.searchFriend = async (req, res, next) => {
         } else {
             const RequestedEmailExiestInUser = await requestsModel.findOne(
                 {
-                    userEmail: req.params.user_email,
+                    userId: req.params.user_id,
                     RequestedEmails: {
                         $elemMatch: {
                             requestedEmail: {
@@ -620,7 +618,6 @@ exports.searchFriend = async (req, res, next) => {
                 console.log("RequestedEmailExiestInUser", RequestedEmailExiestInUser);
                 for (const allrequestedDataNotAcceptedRequestAndNotFriend of reaquestedAllEmail) {
 
-                    console.log();
                     const FindLocation = await userModel.find()
                     // .aggregate([
                     //     {
@@ -641,7 +638,6 @@ exports.searchFriend = async (req, res, next) => {
                     //         },
                     //     }]);
 
-                    console.log("FindLocation", FindLocation);
 
                     for (const uniqueDistance of FindLocation) {
 
@@ -672,9 +668,6 @@ exports.searchFriend = async (req, res, next) => {
                     }).select("_id")
 
 
-                    console.log("findAllUserWithIchat1", findAllUserWithIchat1);
-                    console.log("findAllUserWithIchat2", findAllUserWithIchat2);
-
                     if (findAllUserWithIchat1) {
                         chatRoomId.push(findAllUserWithIchat1._id)
                         const response = {
@@ -701,7 +694,7 @@ exports.searchFriend = async (req, res, next) => {
 
                         UniqueEmail.push(response);
                     } else {
-                        console.log("");
+
                         const response = {
                             _id: getOriginalData._id,
                             email: getOriginalData.email,
@@ -836,7 +829,7 @@ exports.searchFriend = async (req, res, next) => {
                         from: 'requests',
                         let: {
 
-                            userEmail: req.params.user_email,
+                            userId: mongoose.Types.ObjectId(req.params.user_id),
                             email: "$email"
                         },
                         pipeline: [
@@ -846,7 +839,7 @@ exports.searchFriend = async (req, res, next) => {
                                         $and: [
                                             {
                                                 $eq: [
-                                                    "$userEmail", "$$userEmail"
+                                                    "$userId", "$$userId"
                                                 ]
                                             },
                                             {
@@ -874,6 +867,7 @@ exports.searchFriend = async (req, res, next) => {
                         firstName: "$firstName",
                         relationshipSatus: "$relationshipSatus",
                         Bio: "$Bio",
+                        photo: "$photo",
                         hopingToFind: "$hopingToFind",
                         jobTitle: "$jobTitle",
                         wantChildren: "$wantChildren",
@@ -946,7 +940,7 @@ exports.searchFriend = async (req, res, next) => {
                         email: finalData.email,
                         relationshipSatus: finalData.relationshipSatus,
                         Bio: finalData.Bio,
-                        photo: finalData.photo,
+                        profile: finalData.photo[0] ? finalData.photo[0].res : null,
                         hopingToFind: finalData.hopingToFind,
                         jobTitle: finalData.jobTitle,
                         wantChildren: finalData.wantChildren,
@@ -992,7 +986,7 @@ exports.searchFriend = async (req, res, next) => {
                             _id: finalData._id,
                             firstName: finalData.firstName,
                             email: finalData.email,
-                            profile: finalData.photo ? finalData.photo[0] : null,
+                            profile: finalData.photo[0] ? finalData.photo[0].res : null,
                             status: finalStatus[key]
                         }
 
@@ -1004,7 +998,7 @@ exports.searchFriend = async (req, res, next) => {
                             _id: finalData._id,
                             firstName: finalData.firstName,
                             email: finalData.email,
-                            profile: finalData.photo ? finalData.photo[0] : null,
+                            profile: finalData.photo[0] ? finalData.photo[0].res : null,
                             status: finalStatus[key]
                         }
 
@@ -1144,7 +1138,6 @@ exports.getAllUser = async (req, res, next) => {
                             profile: getOriginalData.photo[0] ? getOriginalData.photo[0].res : null,
                             status: 3
                         }
-                        console.log(response);
                         UniqueEmail.push(response);
                     } else {
 
@@ -1155,7 +1148,6 @@ exports.getAllUser = async (req, res, next) => {
                             profile: getOriginalData.photo[0] ? getOriginalData.photo[0].res : null,
                             status: 3
                         }
-                        console.log(response);
                         UniqueEmail.push(response);
                     }
                 }
@@ -1301,8 +1293,7 @@ exports.getAllUser = async (req, res, next) => {
                     $lookup: {
                         from: 'requests',
                         let: {
-
-                            userEmail: req.params.user_id,
+                            userId: mongoose.Types.ObjectId(req.params.user_id),
                             email: "$email"
                         },
                         pipeline: [
@@ -1312,7 +1303,7 @@ exports.getAllUser = async (req, res, next) => {
                                         $and: [
                                             {
                                                 $eq: [
-                                                    "$userEmail", "$$userEmail"
+                                                    "$userId", "$$userId"
                                                 ]
                                             },
                                             {
@@ -1340,6 +1331,7 @@ exports.getAllUser = async (req, res, next) => {
                         firstName: "$firstName",
                         relationshipSatus: "$relationshipSatus",
                         Bio: "$Bio",
+                        photo: "$photo",
                         hopingToFind: "$hopingToFind",
                         jobTitle: "$jobTitle",
                         wantChildren: "$wantChildren",
@@ -1351,9 +1343,9 @@ exports.getAllUser = async (req, res, next) => {
                 const finalExistUser = [];
 
 
-
                 const emailDataDetail = meageAllTable;
                 for (const DataDetail of emailDataDetail) {
+
 
                     for (const reqEmail of reaquestedAllEmail) {
                         if (DataDetail.email == reqEmail) {
@@ -1362,6 +1354,7 @@ exports.getAllUser = async (req, res, next) => {
                     }
                 }
 
+                console.log("finalExistUser", finalExistUser);
                 for (const emailData of finalExistUser[0].result) {
 
                     for (const requestEmail of emailData) {
@@ -1370,7 +1363,7 @@ exports.getAllUser = async (req, res, next) => {
 
                             if (requestEmail.requestedEmail == meageAllTableEmail.email) {
 
-
+                                console.log("asfgvfsdgdhg", requestEmail.requestedEmail == meageAllTableEmail.email);
                                 if (requestEmail.accepted == 1) {
                                     var status1 = {
                                         status: 1,
@@ -1412,7 +1405,7 @@ exports.getAllUser = async (req, res, next) => {
                         email: finalData.email,
                         relationshipSatus: finalData.relationshipSatus,
                         Bio: finalData.Bio,
-                        photo: finalData.photo,
+                        profile: finalData.photo[0] ? finalData.photo[0].res : null,
                         hopingToFind: finalData.hopingToFind,
                         jobTitle: finalData.jobTitle,
                         wantChildren: finalData.wantChildren,
@@ -1420,6 +1413,7 @@ exports.getAllUser = async (req, res, next) => {
                         status: finalStatus[key]
                     }
 
+                    // console.log("response", response);
 
                     const chatRoomId = [];
                     const findAllUserWithIchat1 = await chatRoomModel.findOne({
@@ -1458,7 +1452,7 @@ exports.getAllUser = async (req, res, next) => {
                             _id: finalData._id,
                             firstName: finalData.firstName,
                             email: finalData.email,
-                            profile: finalData.photo ? finalData.photo[0] : null,
+                            profile: finalData.photo[0] ? finalData.photo[0].res : null,
                             status: finalStatus[key]
                         }
 
@@ -1470,7 +1464,7 @@ exports.getAllUser = async (req, res, next) => {
                             _id: finalData._id,
                             firstName: finalData.firstName,
                             email: finalData.email,
-                            profile: finalData.photo ? finalData.photo[0] : null,
+                            profile: finalData.photo[0] ? finalData.photo[0].res : null,
                             status: finalStatus[key]
                         }
 

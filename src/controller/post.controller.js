@@ -820,7 +820,8 @@ exports.userAllFriendPost = async (req, res, next) => {
                                                             profile: findUser.photo[0] ? findUser.photo[0].res : null,
                                                             firstName: findUser.firstName,
                                                             userId: findUser._id,
-                                                            replyId: commentId._id
+                                                            replyId: commentId._id,
+                                                            replyMessage: commentId.replyMessage
                                                         }
 
                                                         replyUser.push(response)
@@ -856,7 +857,8 @@ exports.userAllFriendPost = async (req, res, next) => {
                                                             profile: findUser.photo[0] ? findUser.photo[0].res : null,
                                                             firstName: findUser.firstName,
                                                             userId: findUser._id,
-                                                            replyId: commentId._id
+                                                            replyId: commentId._id,
+                                                            replyMessage: commentId.replyMessage
                                                         }
 
                                                         replyUser.push(response)
@@ -891,7 +893,8 @@ exports.userAllFriendPost = async (req, res, next) => {
                                                             profile: findUser.photo[0] ? findUser.photo[0].res : null,
                                                             firstName: findUser.firstName,
                                                             userId: findUser._id,
-                                                            replyId: commentId._id
+                                                            replyId: commentId._id,
+                                                            replyMessage: commentId.replyMessage
                                                         }
 
                                                         replyUser.push(response)
@@ -926,7 +929,8 @@ exports.userAllFriendPost = async (req, res, next) => {
                                                             profile: findUser.photo[0] ? findUser.photo[0].res : null,
                                                             firstName: findUser.firstName,
                                                             userId: findUser._id,
-                                                            replyId: commentId._id
+                                                            replyId: commentId._id,
+                                                            replyMessage: commentId.replyMessage
                                                         }
 
                                                         replyUser.push(response)
@@ -961,7 +965,8 @@ exports.userAllFriendPost = async (req, res, next) => {
                                                             profile: findUser.photo[0] ? findUser.photo[0].res : null,
                                                             firstName: findUser.firstName,
                                                             userId: findUser._id,
-                                                            replyId: commentId._id
+                                                            replyId: commentId._id,
+                                                            replyMessage: commentId.replyMessage
                                                         }
 
                                                         replyUser.push(response)
@@ -1119,7 +1124,8 @@ exports.userAllFriendPost = async (req, res, next) => {
                                             profile: findUser.photo[0] ? findUser.photo[0].res : null,
                                             firstName: findUser.firstName,
                                             userId: findUser._id,
-                                            replyId: commentId._id
+                                            replyId: commentId._id,
+                                            replyMessage: commentId.replyMessage
                                         }
 
                                         replyUser.push(response)
@@ -1155,7 +1161,8 @@ exports.userAllFriendPost = async (req, res, next) => {
                                             profile: findUser.photo[0] ? findUser.photo[0].res : null,
                                             firstName: findUser.firstName,
                                             userId: findUser._id,
-                                            replyId: commentId._id
+                                            replyId: commentId._id,
+                                            replyMessage: commentId.replyMessage
                                         }
 
                                         replyUser.push(response)
@@ -1190,7 +1197,8 @@ exports.userAllFriendPost = async (req, res, next) => {
                                             profile: findUser.photo[0] ? findUser.photo[0].res : null,
                                             firstName: findUser.firstName,
                                             userId: findUser._id,
-                                            replyId: commentId._id
+                                            replyId: commentId._id,
+                                            replyMessage: commentId.replyMessage
                                         }
 
                                         replyUser.push(response)
@@ -1224,7 +1232,8 @@ exports.userAllFriendPost = async (req, res, next) => {
                                             profile: findUser.photo[0] ? findUser.photo[0].res : null,
                                             firstName: findUser.firstName,
                                             userId: findUser._id,
-                                            replyId: commentId._id
+                                            replyId: commentId._id,
+                                            replyMessage: commentId.replyMessage
                                         }
 
                                         replyUser.push(response)
@@ -1236,7 +1245,8 @@ exports.userAllFriendPost = async (req, res, next) => {
                                         commentId: commnetData._id,
                                         photourl: user.photo[0] ? user.photo[0] : null,
                                         username: user.firstName,
-                                        replyUser: replyUser
+                                        replyUser: replyUser,
+
                                     }
                                     commentData.push(response)
                                 }
@@ -1261,7 +1271,8 @@ exports.userAllFriendPost = async (req, res, next) => {
                                             profile: findUser.photo[0] ? findUser.photo[0].res : null,
                                             firstName: findUser.firstName,
                                             userId: findUser._id,
-                                            replyId: commentId._id
+                                            replyId: commentId._id,
+                                            replyMessage: commentId.replyMessage
                                         }
 
                                         replyUser.push(response)
@@ -1438,7 +1449,8 @@ exports.userAllFriendPost = async (req, res, next) => {
                                             profile: findUser.photo[0] ? findUser.photo[0].res : null,
                                             firstName: findUser.firstName,
                                             userId: findUser._id,
-                                            replyId: commentId._id
+                                            replyId: commentId._id,
+                                            replyMessage: commentId.replyMessage
                                         }
 
                                         replyUser.push(response)
@@ -1475,7 +1487,8 @@ exports.userAllFriendPost = async (req, res, next) => {
                                             profile: findUser.photo[0] ? findUser.photo[0].res : null,
                                             firstName: findUser.firstName,
                                             userId: findUser._id,
-                                            replyId: commentId._id
+                                            replyId: commentId._id,
+                                            replyMessage: commentId.replyMessage
                                         }
 
                                         replyUser.push(response)
@@ -1505,12 +1518,14 @@ exports.userAllFriendPost = async (req, res, next) => {
                                             _id: commentId.userId
                                         })
 
+
                                         const response = {
                                             commentId: commnetData._id,
                                             profile: findUser.photo[0] ? findUser.photo[0].res : null,
                                             firstName: findUser.firstName,
                                             userId: findUser._id,
-                                            replyId: commentId._id
+                                            replyId: commentId._id,
+                                            replyMessage: commentId.replyMessage
                                         }
 
                                         replyUser.push(response)
@@ -1522,7 +1537,8 @@ exports.userAllFriendPost = async (req, res, next) => {
                                         commentId: commnetData._id,
                                         photourl: user.photo[0] ? user.photo[0] : null,
                                         username: user.firstName,
-                                        replyUser: replyUser
+                                        replyUser: replyUser,
+
                                     }
                                     commentData.push(response)
                                 }
@@ -1547,7 +1563,8 @@ exports.userAllFriendPost = async (req, res, next) => {
                                             profile: findUser.photo[0] ? findUser.photo[0].res : null,
                                             firstName: findUser.firstName,
                                             userId: findUser._id,
-                                            replyId: commentId._id
+                                            replyId: commentId._id,
+                                            replyMessage: commentId.replyMessage
                                         }
 
                                         replyUser.push(response)
@@ -1583,7 +1600,8 @@ exports.userAllFriendPost = async (req, res, next) => {
                                             profile: findUser.photo[0] ? findUser.photo[0].res : null,
                                             firstName: findUser.firstName,
                                             userId: findUser._id,
-                                            replyId: commentId._id
+                                            replyId: commentId._id,
+                                            replyMessage: commentId.replyMessage
                                         }
 
                                         replyUser.push(response)

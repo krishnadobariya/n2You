@@ -13,20 +13,20 @@ const notificationModel = require("../model/polyamorous/notification.model");
 exports.sendRequest = async (req, res, next) => {
     try {
 
-        const checkUserExist = await userModel.findOne({ email: req.params.user_email, polyDating: 0 });
+        const checkUserExist = await userModel.findOne({ _id: req.params.user_id, polyDating: 0 });
 
         if (checkUserExist) {
-            const checkRequestedEmail = await userModel.findOne({ email: req.params.requested_email, polyDating: 0 });
+            const checkRequestedEmail = await userModel.findOne({ _id: req.params.requested_id, polyDating: 0 });
 
             if (checkRequestedEmail) {
-                const emailExitInRequestedModel = await requestModel.findOne({ userEmail: req.params.user_email })
+                const emailExitInRequestedModel = await requestModel.findOne({ userId: req.params.user_email })
 
                 if (!emailExitInRequestedModel) {
                     const request = requestModel({
                         userId: checkUserExist._id,
-                        userEmail: req.params.user_email,
+                        userEmail: checkUserExist.email,
                         RequestedEmails: [{
-                            requestedEmail: req.params.requested_email,
+                            requestedEmail: checkRequestedEmail.email,
                             accepted: 2,
                             userId: checkRequestedEmail._id
                         }],
@@ -76,7 +76,7 @@ exports.sendRequest = async (req, res, next) => {
                     const allRequestedEmail = emailExitInRequestedModel.RequestedEmails
                     allRequestedEmail.map((result, index) => {
 
-                        if (result.requestedEmail == req.params.requested_email) {
+                        if (result.requestedEmail == checkRequestedEmail.email) {
                             inRequested.push(true)
                         }
                     })
@@ -85,11 +85,11 @@ exports.sendRequest = async (req, res, next) => {
                             new APIResponse("Already requesed!", "false", 208, "0")
                         )
                     } else {
-                        const updatePosts = await requestModel.updateOne({ userEmail: req.params.user_email },
+                        const updatePosts = await requestModel.updateOne({ userId: req.params.user_id },
                             {
                                 $push: {
                                     RequestedEmails: [{
-                                        requestedEmail: req.params.requested_email,
+                                        requestedEmail: checkRequestedEmail.email,
                                         accepted: 2,
                                         userId: checkRequestedEmail._id
                                     }]
