@@ -21,6 +21,10 @@ const commentSchema = mongoose.Schema({
             type: String,
             required: true
         },
+        date: {
+            type: String,
+            default: "0 second"
+        },
         replyUser: [{
             userId: {
                 type: mongoose.Schema.Types.ObjectId,
@@ -28,8 +32,12 @@ const commentSchema = mongoose.Schema({
             },
             replyMessage: {
                 type: String
+            },
+            date: {
+                type: String,
+                default: "0 second"
             }
-        }] 
+        }]
     }]
 }, {
     timestamps: true

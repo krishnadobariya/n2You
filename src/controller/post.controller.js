@@ -756,7 +756,6 @@ exports.userAllFriendPost = async (req, res, next) => {
                 }
             }])
 
-            console.log("meargAllTable", meargAllTable);
 
             const emailDataDetail = meargAllTable[0].result;
 
@@ -817,7 +816,9 @@ exports.userAllFriendPost = async (req, res, next) => {
                                                             firstName: findUser.firstName,
                                                             userId: findUser._id,
                                                             replyId: commentId._id,
-                                                            replyMessage: commentId.replyMessage
+                                                            replyMessage: commentId.replyMessage,
+                                                            date: commentId.date
+
                                                         }
 
                                                         replyUser.push(response)
@@ -828,7 +829,8 @@ exports.userAllFriendPost = async (req, res, next) => {
                                                         commentId: commnetData._id,
                                                         photourl: user.photo[0] ? user.photo[0].res : "",
                                                         username: user.firstName,
-                                                        replyUser: replyUser
+                                                        date: commnetData.date,
+                                                        replyUser: replyUser,
                                                     }
                                                     commentData.push(response)
                                                 }
@@ -854,7 +856,8 @@ exports.userAllFriendPost = async (req, res, next) => {
                                                             firstName: findUser.firstName,
                                                             userId: findUser._id,
                                                             replyId: commentId._id,
-                                                            replyMessage: commentId.replyMessage
+                                                            replyMessage: commentId.replyMessage,
+                                                            date: commentId.date
                                                         }
 
                                                         replyUser.push(response)
@@ -865,7 +868,8 @@ exports.userAllFriendPost = async (req, res, next) => {
                                                         commentId: commnetData._id,
                                                         photourl: user.photo[0] ? user.photo[0].res : "",
                                                         username: user.firstName,
-                                                        replyUser: replyUser
+                                                        date: commnetData.date,
+                                                        replyUser: replyUser,
                                                     }
                                                     commentData.push(response)
                                                 }
@@ -874,12 +878,14 @@ exports.userAllFriendPost = async (req, res, next) => {
                                         } else if (hours > 0 && days == 0) {
                                             const getComment = await commentModel.findOne({ postId: getallposts._id });
                                             finalPostedTime.push(`${hours} hours`);
+
                                             if (getComment == null) {
                                             } else {
                                                 for (const commnetData of getComment.comments) {
                                                     const user = await userModal.findOne({ _id: commnetData.userId })
                                                     const replyUser = []
                                                     for (const commentId of commnetData.replyUser) {
+
                                                         const findUser = await userModal.findOne({
                                                             _id: commentId.userId
                                                         })
@@ -890,7 +896,8 @@ exports.userAllFriendPost = async (req, res, next) => {
                                                             firstName: findUser.firstName,
                                                             userId: findUser._id,
                                                             replyId: commentId._id,
-                                                            replyMessage: commentId.replyMessage
+                                                            replyMessage: commentId.replyMessage,
+                                                            date: commentId.date
                                                         }
 
                                                         replyUser.push(response)
@@ -901,15 +908,20 @@ exports.userAllFriendPost = async (req, res, next) => {
                                                         commentId: commnetData._id,
                                                         photourl: user.photo[0] ? user.photo[0].res : "",
                                                         username: user.firstName,
-                                                        replyUser: replyUser
+                                                        date: commnetData.date,
+                                                        replyUser: replyUser,
                                                     }
                                                     commentData.push(response)
                                                 }
 
                                             }
                                         } else if (minutes > 0 && hours == 0) {
+
+
                                             const getComment = await commentModel.findOne({ postId: getallposts._id });
                                             finalPostedTime.push(`${minutes} minute`);
+
+                                            console.log("csdvfsdgverfdgerthrth");
                                             if (getComment == null) {
                                             } else {
                                                 for (const commnetData of getComment.comments) {
@@ -926,7 +938,8 @@ exports.userAllFriendPost = async (req, res, next) => {
                                                             firstName: findUser.firstName,
                                                             userId: findUser._id,
                                                             replyId: commentId._id,
-                                                            replyMessage: commentId.replyMessage
+                                                            replyMessage: commentId.replyMessage,
+                                                            date: commentId.date
                                                         }
 
                                                         replyUser.push(response)
@@ -937,7 +950,8 @@ exports.userAllFriendPost = async (req, res, next) => {
                                                         commentId: commnetData._id,
                                                         photourl: user.photo[0] ? user.photo[0].res : "",
                                                         username: user.firstName,
-                                                        replyUser: replyUser
+                                                        date: commnetData.date,
+                                                        replyUser: replyUser,
                                                     }
                                                     commentData.push(response)
                                                 }
@@ -962,7 +976,8 @@ exports.userAllFriendPost = async (req, res, next) => {
                                                             firstName: findUser.firstName,
                                                             userId: findUser._id,
                                                             replyId: commentId._id,
-                                                            replyMessage: commentId.replyMessage
+                                                            replyMessage: commentId.replyMessage,
+                                                            date: commentId.date
                                                         }
 
                                                         replyUser.push(response)
@@ -973,7 +988,8 @@ exports.userAllFriendPost = async (req, res, next) => {
                                                         commentId: commnetData._id,
                                                         photourl: user.photo[0] ? user.photo[0].res : "",
                                                         username: user.firstName,
-                                                        replyUser: replyUser
+                                                        date: commnetData.date,
+                                                        replyUser: replyUser,
                                                     }
                                                     commentData.push(response)
                                                 }
@@ -996,9 +1012,6 @@ exports.userAllFriendPost = async (req, res, next) => {
                                     }
                                 }
 
-
-
-                                console.log("requestEmailSDSD", requestEmail);
                                 var status1 = {
                                     id: requestEmail.userId,
                                     posts: finalResponse
@@ -1013,25 +1026,34 @@ exports.userAllFriendPost = async (req, res, next) => {
             }
 
             const final_data = [];
-            console.log("statusByEmail", statusByEmail);
             const finalStatus = [];
             for (const [key, finalData] of meargAllTable.entries()) {
                 for (const [key, final1Data] of statusByEmail.entries())
                     if ((finalData._id).toString() == (final1Data.id).toString()) {
                         for (const data of final1Data.posts) {
 
-                            console.log("ferdgergfgrf");
                             const findUserInLike = await likeModel.findOne({
                                 postId: data.finalPosts[0]._id,
                                 userId: req.params.user_id
                             })
 
-                            console.log(findUserInLike);
-
+                            const findUser = await userModal.findOne({
+                                email: finalData.email
+                            })
                             if (findUserInLike) {
-                                finalStatus.push({ allposts: data.finalPosts[0], finalpostedtime: data.finalPostedTime, comment: data.commentData, postShowStatus: 1 })
+                                finalStatus.push({
+                                    userId: findUser._id,
+                                    email: finalData.email,
+                                    profile: findUser.photo[0] ? findUser.photo[0].res : "",
+                                    userName: findUser.firstName, allposts: data.finalPosts[0], finalpostedtime: data.finalPostedTime, comment: data.commentData, postShowStatus: 1
+                                })
                             } else {
-                                finalStatus.push({ allposts: data.finalPosts[0], finalpostedtime: data.finalPostedTime, comment: data.commentData, postShowStatus: 0 })
+                                finalStatus.push({
+                                    userId: findUser._id,
+                                    email: finalData.email,
+                                    profile: findUser.photo[0] ? findUser.photo[0].res : "",
+                                    userName: findUser.firstName, allposts: data.finalPosts[0], finalpostedtime: data.finalPostedTime, comment: data.commentData, postShowStatus: 0
+                                })
                             }
 
                         }
@@ -1041,26 +1063,17 @@ exports.userAllFriendPost = async (req, res, next) => {
 
             for (const [key, finalData] of meargAllTable.entries()) {
 
-                const findUser = await userModal.findOne({
-                    email: finalData.email
-                })
+                // const data = {
+                //     posts: {
+                //         // userId: findUser._id,
+                //         // email: finalData.email,
+                //         // userName: findUser.firstName,
+                //         // profile: findUser.photo[0] ? findUser.photo[0].res : "",
+                //         finalPosts: finalStatus
+                //     },
+                // }
 
-
-
-
-                const data = {
-                    posts: {
-                        userId: findUser._id,
-                        email: finalData.email,
-                        userName: findUser.firstName,
-                        profile: findUser.photo[0] ? findUser.photo[0].res : "",
-                        finalPosts: finalStatus
-                    },
-                }
-
-                final_data.push(data);
-
-
+                final_data.push(...finalStatus);
             }
 
 
@@ -1133,7 +1146,8 @@ exports.userAllFriendPost = async (req, res, next) => {
                                             firstName: findUser.firstName,
                                             userId: findUser._id,
                                             replyId: commentId._id,
-                                            replyMessage: commentId.replyMessage
+                                            replyMessage: commentId.replyMessage,
+                                            date: commentId.date
                                         }
 
                                         replyUser.push(response)
@@ -1144,7 +1158,8 @@ exports.userAllFriendPost = async (req, res, next) => {
                                         commentId: commnetData._id,
                                         photourl: user.photo[0] ? user.photo[0].res : "",
                                         username: user.firstName,
-                                        replyUser: replyUser
+                                        date: commnetData.date,
+                                        replyUser: replyUser,
                                     }
                                     commentData.push(response)
                                 }
@@ -1170,7 +1185,8 @@ exports.userAllFriendPost = async (req, res, next) => {
                                             firstName: findUser.firstName,
                                             userId: findUser._id,
                                             replyId: commentId._id,
-                                            replyMessage: commentId.replyMessage
+                                            replyMessage: commentId.replyMessage,
+                                            date: commentId.date
                                         }
 
                                         replyUser.push(response)
@@ -1181,7 +1197,8 @@ exports.userAllFriendPost = async (req, res, next) => {
                                         commentId: commnetData._id,
                                         photourl: user.photo[0] ? user.photo[0].res : "",
                                         username: user.firstName,
-                                        replyUser: replyUser
+                                        date: commnetData.date,
+                                        replyUser: replyUser,
                                     }
                                     commentData.push(response)
                                 }
@@ -1190,12 +1207,15 @@ exports.userAllFriendPost = async (req, res, next) => {
                         } else if (hours > 0 && days == 0) {
                             const getComment = await commentModel.findOne({ postId: getallposts._id });
                             finalPostedTime.push(`${hours} hours`);
+
                             if (getComment == null) {
                             } else {
                                 for (const commnetData of getComment.comments) {
                                     const user = await userModal.findOne({ _id: commnetData.userId })
                                     const replyUser = []
                                     for (const commentId of commnetData.replyUser) {
+
+
                                         const findUser = await userModal.findOne({
                                             _id: commentId.userId
                                         })
@@ -1206,18 +1226,21 @@ exports.userAllFriendPost = async (req, res, next) => {
                                             firstName: findUser.firstName,
                                             userId: findUser._id,
                                             replyId: commentId._id,
-                                            replyMessage: commentId.replyMessage
+                                            replyMessage: commentId.replyMessage,
+                                            date: commentId.date
                                         }
 
                                         replyUser.push(response)
                                     }
+
                                     const response = {
                                         userId: user._id,
                                         comment: commnetData.comment,
                                         commentId: commnetData._id,
                                         photourl: user.photo[0] ? user.photo[0].res : "",
                                         username: user.firstName,
-                                        replyUser: replyUser
+                                        date: commnetData.date,
+                                        replyUser: replyUser,
                                     }
                                     commentData.push(response)
                                 }
@@ -1228,20 +1251,23 @@ exports.userAllFriendPost = async (req, res, next) => {
                             finalPostedTime.push(`${minutes} minute`);
                             if (getComment == null) {
                             } else {
+
+                                
                                 for (const commnetData of getComment.comments) {
                                     const replyUser = []
                                     for (const commentId of commnetData.replyUser) {
                                         const findUser = await userModal.findOne({
                                             _id: commentId.userId
                                         })
-
+                                        
                                         const response = {
                                             commentId: commnetData._id,
                                             profile: findUser.photo[0] ? findUser.photo[0].res : "",
                                             firstName: findUser.firstName,
                                             userId: findUser._id,
                                             replyId: commentId._id,
-                                            replyMessage: commentId.replyMessage
+                                            replyMessage: commentId.replyMessage,
+                                            date: commentId.date
                                         }
 
                                         replyUser.push(response)
@@ -1253,6 +1279,7 @@ exports.userAllFriendPost = async (req, res, next) => {
                                         commentId: commnetData._id,
                                         photourl: user.photo[0] ? user.photo[0].res : "",
                                         username: user.firstName,
+                                        date: commnetData.date,
                                         replyUser: replyUser,
 
                                     }
@@ -1280,7 +1307,8 @@ exports.userAllFriendPost = async (req, res, next) => {
                                             firstName: findUser.firstName,
                                             userId: findUser._id,
                                             replyId: commentId._id,
-                                            replyMessage: commentId.replyMessage
+                                            replyMessage: commentId.replyMessage,
+                                            date: commentId.date
                                         }
 
                                         replyUser.push(response)
@@ -1293,7 +1321,8 @@ exports.userAllFriendPost = async (req, res, next) => {
                                         commentId: commnetData._id,
                                         photourl: user.photo[0] ? user.photo[0].res : "",
                                         username: user.firstName,
-                                        replyUser: replyUser
+                                        date: commnetData.date,
+                                        replyUser: replyUser,
                                     }
                                     commentData.push(response)
                                 }
@@ -1337,11 +1366,24 @@ exports.userAllFriendPost = async (req, res, next) => {
                                 userId: req.params.user_id
                             })
 
+                            const findUser = await userModal.findOne({
+                                email: finalData.email
+                            })
                             if (findUserInLike) {
 
-                                finalStatus1.push({ allposts: data.finalPosts[0], finalpostedtime: data.finalPostedTime, comment: data.commentData })
+                                finalStatus1.push({
+                                    userId: findUser._id,
+                                    email: finalData.email,
+                                    profile: findUser.photo[0] ? findUser.photo[0].res : "",
+                                    allposts: data.finalPosts[0], finalpostedtime: data.finalPostedTime, comment: data.commentData, postShowStatus: 1
+                                })
                             } else {
-                                finalStatus1.push({ allposts: data.finalPosts[0], finalpostedtime: data.finalPostedTime, comment: data.commentData })
+                                finalStatus1.push({
+                                    userId: findUser._id,
+                                    email: finalData.email,
+                                    profile: findUser.photo[0] ? findUser.photo[0].res : "",
+                                    allposts: data.finalPosts[0], finalpostedtime: data.finalPostedTime, comment: data.commentData, postShowStatus: 0
+                                })
 
                             }
                         }
@@ -1355,54 +1397,18 @@ exports.userAllFriendPost = async (req, res, next) => {
                     email: finalData.email
                 })
 
-                const data = {
-                    posts: {
-                        userId: findUser._id,
-                        email: finalData.email,
-                        userName: findUser.firstName,
-                        profile: findUser.photo[0] ? findUser.photo[0].res : "",
-                        finalPosts: finalStatus1
-                    },
-                }
-                // if (response.data == undefined) {
-
-                // } else {
-
-                // const findUser = await userModal.findOne({
-                //     email: response.data
-                // })
 
 
-                // const data = {
-                //     posts: {
-                //         userId: findUser._id,
-                //         postId: response.data.posts[0].getallposts._id,
-                //         email: response.data.email,
-                //         userName: findUser.firstName,
-                //         profile: findUser.photo[0] ? findUser.photo[0].res : "",
-                //         posts_data: response.data.posts[0].getallposts.post,
-                //         description: response.data.posts[0].getallposts.description,
-                //         like: response.data.posts[0].getallposts.like,
-                //         comment: response.data.posts[0].getallposts.comment,
-                //         report: response.data.posts[0].getallposts.report,
-                //     },
-                //     finalPostedTime: response.data.posts[0].finalPostedTime,
-                //     commentData: response.data.posts[0].commentData,
-                //     userId: response.data.userId,
 
-                // }
+                final_data.push(...finalStatus1);
 
-                final_data1.push(data);
-                // }
 
 
             }
 
 
-            const allDatas = [...final_data1, ...final_data,]
-
             res.status(status.OK).json(
-                new APIResponse("show all post When accept by the user", "true", 201, "1", allDatas)
+                new APIResponse("show all post When accept by the user", "true", 201, "1", final_data)
             )
         } else if (user) {
 
@@ -1478,7 +1484,8 @@ exports.userAllFriendPost = async (req, res, next) => {
                                             firstName: findUser.firstName,
                                             userId: findUser._id,
                                             replyId: commentId._id,
-                                            replyMessage: commentId.replyMessage
+                                            replyMessage: commentId.replyMessage,
+                                            date: commentId.date
                                         }
 
                                         replyUser.push(response)
@@ -1490,7 +1497,8 @@ exports.userAllFriendPost = async (req, res, next) => {
                                         commentId: commnetData._id,
                                         photourl: user.photo[0] ? user.photo[0].res : "",
                                         username: user.firstName,
-                                        replyUser: replyUser
+                                        date: commnetData.date,
+                                        replyUser: replyUser,
                                     }
                                     commentData.push(response)
                                 }
@@ -1516,7 +1524,8 @@ exports.userAllFriendPost = async (req, res, next) => {
                                             firstName: findUser.firstName,
                                             userId: findUser._id,
                                             replyId: commentId._id,
-                                            replyMessage: commentId.replyMessage
+                                            replyMessage: commentId.replyMessage,
+                                            date: commentId.date
                                         }
 
                                         replyUser.push(response)
@@ -1527,7 +1536,8 @@ exports.userAllFriendPost = async (req, res, next) => {
                                         commentId: commnetData._id,
                                         photourl: user.photo[0] ? user.photo[0].res : "",
                                         username: user.firstName,
-                                        replyUser: replyUser
+                                        date: commnetData.date,
+                                        replyUser: replyUser,
                                     }
                                     commentData.push(response)
                                 }
@@ -1553,7 +1563,8 @@ exports.userAllFriendPost = async (req, res, next) => {
                                             firstName: findUser.firstName,
                                             userId: findUser._id,
                                             replyId: commentId._id,
-                                            replyMessage: commentId.replyMessage
+                                            replyMessage: commentId.replyMessage,
+                                            date: commentId.date
                                         }
 
                                         replyUser.push(response)
@@ -1565,6 +1576,7 @@ exports.userAllFriendPost = async (req, res, next) => {
                                         commentId: commnetData._id,
                                         photourl: user.photo[0] ? user.photo[0].res : "",
                                         username: user.firstName,
+                                        date: commnetData.date,
                                         replyUser: replyUser,
 
                                     }
@@ -1576,6 +1588,7 @@ exports.userAllFriendPost = async (req, res, next) => {
                         } else if (minutes > 0 && hours == 0) {
                             const getComment = await commentModel.findOne({ postId: getallposts._id });
                             finalPostedTime.push(`${minutes} minute`);
+
                             if (getComment == null) {
                             } else {
                                 for (const commnetData of getComment.comments) {
@@ -1592,7 +1605,8 @@ exports.userAllFriendPost = async (req, res, next) => {
                                             firstName: findUser.firstName,
                                             userId: findUser._id,
                                             replyId: commentId._id,
-                                            replyMessage: commentId.replyMessage
+                                            replyMessage: commentId.replyMessage,
+                                            date: commentId.date
                                         }
 
                                         replyUser.push(response)
@@ -1603,7 +1617,8 @@ exports.userAllFriendPost = async (req, res, next) => {
                                         commentId: commnetData._id,
                                         photourl: user.photo[0] ? user.photo[0].res : "",
                                         username: user.firstName,
-                                        replyUser: replyUser
+                                        date: commnetData.date,
+                                        replyUser: replyUser,
                                     }
                                     commentData.push(response)
                                 }
@@ -1629,7 +1644,8 @@ exports.userAllFriendPost = async (req, res, next) => {
                                             firstName: findUser.firstName,
                                             userId: findUser._id,
                                             replyId: commentId._id,
-                                            replyMessage: commentId.replyMessage
+                                            replyMessage: commentId.replyMessage,
+                                            date: commentId.date
                                         }
 
                                         replyUser.push(response)
@@ -1641,7 +1657,8 @@ exports.userAllFriendPost = async (req, res, next) => {
                                         commentId: commnetData._id,
                                         photourl: user.photo[0] ? user.photo[0].res : "",
                                         username: user.firstName,
-                                        replyUser: replyUser
+                                        date: commnetData.date,
+                                        replyUser: replyUser,
                                     }
                                     commentData.push(response)
                                 }
@@ -1686,12 +1703,25 @@ exports.userAllFriendPost = async (req, res, next) => {
                                 userId: req.params.user_id
                             })
 
-                            console.log(findUserInLike);
+                            const findUser = await userModal.findOne({
+                                email: finalData.email
+                            })
+
 
                             if (findUserInLike) {
-                                finalStatus.push({ allposts: data.finalPosts[0], finalpostedtime: data.finalPostedTime, comment: data.commentData, postShowStatus: 1 })
+                                finalStatus.push({
+                                    userId: findUser._id,
+                                    email: finalData.email,
+                                    profile: findUser.photo[0] ? findUser.photo[0].res : "",
+                                    allposts: data.finalPosts[0], finalpostedtime: data.finalPostedTime, comment: data.commentData, postShowStatus: 1
+                                })
                             } else {
-                                finalStatus.push({ allposts: data.finalPosts[0], finalpostedtime: data.finalPostedTime, comment: data.commentData, postShowStatus: 0 })
+                                finalStatus.push({
+                                    userId: findUser._id,
+                                    email: finalData.email,
+                                    profile: findUser.photo[0] ? findUser.photo[0].res : "",
+                                    allposts: data.finalPosts[0], finalpostedtime: data.finalPostedTime, comment: data.commentData, postShowStatus: 0
+                                })
                             }
 
                         }
@@ -1706,17 +1736,17 @@ exports.userAllFriendPost = async (req, res, next) => {
                 })
 
 
-                const data = {
-                    posts: {
-                        userId: findUser._id,
-                        email: finalData.email,
-                        userName: findUser.firstName,
-                        profile: findUser.photo[0] ? findUser.photo[0].res : "",
-                        finalPosts: finalStatus
-                    },
-                }
+                // const data = {
+                //     // posts: {
+                //     //     userId: findUser._id,
+                //     //     email: finalData.email,
+                //     //     userName: findUser.firstName,
+                //     //     profile: findUser.photo[0] ? findUser.photo[0].res : "",
+                //         finalPosts: finalStatus
+                //     },
+                // }
 
-                final_data.push(data);
+                final_data.push(finalStatus);
 
             }
             res.status(status.OK).json(
@@ -1725,7 +1755,6 @@ exports.userAllFriendPost = async (req, res, next) => {
         }
 
     } catch (error) {
-        console.log("Error:", error);
         res.status(status.INTERNAL_SERVER_ERROR).json(
             new APIResponse("Something Went Wrong", "false", 500, "0", error.message)
         )

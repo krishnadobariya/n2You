@@ -29,7 +29,8 @@ exports.CommetInsert = async (req, res, next) => {
 
                     const finalData = {
                         userId: req.params.user_id,
-                        comment: req.body.comment
+                        comment: req.body.comment,
+                        date: new Date(Date.now()).toDateString()
                     }
 
                     await commentModel.updateOne({ postId: req.params.post_id }, { $push: { comments: finalData } });
@@ -44,7 +45,8 @@ exports.CommetInsert = async (req, res, next) => {
                         postId: req.params.post_id,
                         comments: {
                             userId: req.params.user_id,
-                            comment: req.body.comment
+                            comment: req.body.comment,
+                            date: new Date(Date.now()).toDateString()
                         }
                     })
 
@@ -99,7 +101,8 @@ exports.replyComment = async (req, res, next) => {
                     } else {
                         const finalData = {
                             userId: req.params.user_id,
-                            replyMessage: req.body.reply_message
+                            replyMessage: req.body.reply_message,
+                            date: new Date(Date.now()).toDateString()
                         }
 
                         await commentModel.updateOne({ postId: req.params.post_id, "comments._id": req.params.comment_id }, { $push: { "comments.$.replyUser": finalData } });
@@ -147,7 +150,7 @@ exports.editComment = async (req, res, next) => {
                     new APIResponse("No Have any access", "false", 401, "0")
                 );
             } else {
-                await commentModel.updateOne({ postId: req.params.post_id, "comments._id": req.params.comment_id }, { "comments.$.comment": req.body.comment });
+                await commentModel.updateOne({ postId: req.params.post_id, "comments._id": req.params.comment_id }, { "comments.$.comment": req.body.comment, "comments.$.date": new Date(Date.now()).toDateString() });
 
                 res.status(status.OK).json(
                     new APIResponse("Reply updated Successfully", "true", 200, "1")
@@ -266,7 +269,8 @@ exports.replyCommentEdit = async (req, res, next) => {
                     },
                     {
                         $set: {
-                            "comments.$.replyUser.$[i].replyMessage": req.body.reply_message
+                            "comments.$.replyUser.$[i].replyMessage": req.body.reply_message,
+                            "comments.$.replyUser.$[i].date": new Date(Date.now()).toDateString()
                         },
 
                     },
