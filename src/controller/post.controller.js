@@ -767,8 +767,7 @@ exports.userAllFriendPost = async (req, res, next) => {
                 for (const requestEmail of emailData) {
 
                     for (const meargAllTableEmail of meargAllTable) {
-
-                        if (requestEmail.userId == meargAllTableEmail._id) {
+                        if ((requestEmail.userId).toString() == (meargAllTableEmail._id).toString()) {
 
                             if (requestEmail.accepted == 1) {
 
@@ -982,14 +981,27 @@ exports.userAllFriendPost = async (req, res, next) => {
                                             }
                                         }
 
+                                        const allPosts = [];
+                                        allPosts.push(getallposts)
+
+                                        const finalPosts = [...allPosts, ...allPosts]
+                                        const response = {
+                                            userId: allposts.userId,
+                                            finalPosts,
+                                            finalPostedTime,
+                                            commentData: commentData[0] == null ? [] : commentData
+                                        }
+                                        finalResponse.push(response);
+
                                     }
                                 }
 
 
 
+                                console.log("requestEmailSDSD", requestEmail);
                                 var status1 = {
-                                    email: requestEmail.requestedEmail,
-                                    posts: finalResponse.slice(req.query.skip, req.query.limit)
+                                    id: requestEmail.userId,
+                                    posts: finalResponse
                                 }
                                 statusByEmail.push(status1)
                             } else {
@@ -1001,13 +1013,14 @@ exports.userAllFriendPost = async (req, res, next) => {
             }
 
             const final_data = [];
-
+            console.log("statusByEmail", statusByEmail);
             const finalStatus = [];
             for (const [key, finalData] of meargAllTable.entries()) {
                 for (const [key, final1Data] of statusByEmail.entries())
-                    if (finalData.email === final1Data.email) {
+                    if ((finalData._id).toString() == (final1Data.id).toString()) {
                         for (const data of final1Data.posts) {
 
+                            console.log("ferdgergfgrf");
                             const findUserInLike = await likeModel.findOne({
                                 postId: data.finalPosts[0]._id,
                                 userId: req.params.user_id
