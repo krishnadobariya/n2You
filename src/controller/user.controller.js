@@ -1636,7 +1636,8 @@ exports.getDataUserWise = async (req, res, next) => {
                 hopingToFind: data[0].hopingToFind,
                 jobTitle: data[0].jobTitle,
                 wantChildren: data[0].wantChildren,
-                phoneNumber: data[0].phoneNumber,
+                countryCode: (data[0].phoneNumber).slice(0, 3),
+                phoneNumber: (data[0].phoneNumber).slice(3, 13),
                 extraAtrribute: data[0].extraAtrribute,
                 Posts: getAllPosts
             }

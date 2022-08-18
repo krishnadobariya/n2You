@@ -1252,14 +1252,14 @@ exports.userAllFriendPost = async (req, res, next) => {
                             if (getComment == null) {
                             } else {
 
-                                
+
                                 for (const commnetData of getComment.comments) {
                                     const replyUser = []
                                     for (const commentId of commnetData.replyUser) {
                                         const findUser = await userModal.findOne({
                                             _id: commentId.userId
                                         })
-                                        
+
                                         const response = {
                                             commentId: commnetData._id,
                                             profile: findUser.photo[0] ? findUser.photo[0].res : "",
@@ -1375,6 +1375,7 @@ exports.userAllFriendPost = async (req, res, next) => {
                                     userId: findUser._id,
                                     email: finalData.email,
                                     profile: findUser.photo[0] ? findUser.photo[0].res : "",
+                                    userName: findUser.firstName,
                                     allposts: data.finalPosts[0], finalpostedtime: data.finalPostedTime, comment: data.commentData, postShowStatus: 1
                                 })
                             } else {
@@ -1382,6 +1383,7 @@ exports.userAllFriendPost = async (req, res, next) => {
                                     userId: findUser._id,
                                     email: finalData.email,
                                     profile: findUser.photo[0] ? findUser.photo[0].res : "",
+                                    userName: findUser.firstName,
                                     allposts: data.finalPosts[0], finalpostedtime: data.finalPostedTime, comment: data.commentData, postShowStatus: 0
                                 })
 
@@ -1713,6 +1715,7 @@ exports.userAllFriendPost = async (req, res, next) => {
                                     userId: findUser._id,
                                     email: finalData.email,
                                     profile: findUser.photo[0] ? findUser.photo[0].res : "",
+                                    userName: findUser.firstName,
                                     allposts: data.finalPosts[0], finalpostedtime: data.finalPostedTime, comment: data.commentData, postShowStatus: 1
                                 })
                             } else {
@@ -1720,6 +1723,7 @@ exports.userAllFriendPost = async (req, res, next) => {
                                     userId: findUser._id,
                                     email: finalData.email,
                                     profile: findUser.photo[0] ? findUser.photo[0].res : "",
+                                    userName: findUser.firstName,
                                     allposts: data.finalPosts[0], finalpostedtime: data.finalPostedTime, comment: data.commentData, postShowStatus: 0
                                 })
                             }
