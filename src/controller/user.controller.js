@@ -2395,19 +2395,19 @@ exports.yesBasket = async (req, res, next) => {
         } else {
 
 
-            const findUserInBasket = await basketModel.findOne({
-                userId: req.params.request_user_id
-            })
+            // const findUserInBasket = await basketModel.findOne({
+            //     userId: req.params.request_user_id
+            // })
 
-            if (findUserInBasket == null) {
-                res.status(status.NOT_FOUND).json(
-                    new APIResponse("Not In Basket", "false", 404, "0")
-                )
-            } else {
+            // if (findUserInBasket == null) {
+            //     res.status(status.NOT_FOUND).json(
+            //         new APIResponse("Not In Basket", "false", 404, "0")
+            //     )
+            // } else {
 
-                const accessBasket = findUserInBasket.fullAccess
+                // const accessBasket = findUserInBasket.fullAccess
 
-                if (accessBasket == true) {
+                // if (accessBasket == true) {
                     const findUser = await userModel.findOne({
                         _id: req.params.request_user_id,
                         polyDating: 0
@@ -2745,12 +2745,12 @@ exports.yesBasket = async (req, res, next) => {
                         }
 
                     }
-                } else {
-                    res.status(status.NOT_ACCEPTABLE).json(
-                        new APIResponse("Not have Any Access, All Access Lock By User", "false", 406, "0")
-                    );
-                }
-            }
+                // } else {
+                //     res.status(status.NOT_ACCEPTABLE).json(
+                //         new APIResponse("Not have Any Access, All Access Lock By User", "false", 406, "0")
+                //     );
+                // }
+            // }
         }
     } catch (error) {
         console.log("error", error);
@@ -3144,19 +3144,19 @@ exports.noBasket = async (req, res, next) => {
         } else {
 
 
-            const findUserInBasket = await basketModel.findOne({
-                userId: req.params.request_user_id
-            })
+            // const findUserInBasket = await basketModel.findOne({
+            //     userId: req.params.request_user_id
+            // })
 
-            if (findUserInBasket == null) {
-                res.status(status.NOT_FOUND).json(
-                    new APIResponse("Not In Basket", "false", 404, "0")
-                )
-            } else {
+            // if (findUserInBasket == null) {
+            //     res.status(status.NOT_FOUND).json(
+            //         new APIResponse("Not In Basket", "false", 404, "0")
+            //     )
+            // } else {
 
-                const accessBasket = findUserInBasket.fullAccess
+                // const accessBasket = findUserInBasket.fullAccess
 
-                if (accessBasket == true) {
+                // if (accessBasket == true) {
                     const findUser = await userModel.findOne({
                         _id: req.params.request_user_id,
                         polyDating: 0
@@ -3494,13 +3494,13 @@ exports.noBasket = async (req, res, next) => {
                         }
 
                     }
-                } else {
-                    res.status(status.NOT_ACCEPTABLE).json(
-                        new APIResponse("Not have Any Access, All Access Lock By User", "false", 406, "0")
-                    );
-                }
+                // } else {
+                //     res.status(status.NOT_ACCEPTABLE).json(
+                //         new APIResponse("Not have Any Access, All Access Lock By User", "false", 406, "0")
+                //     );
+                // }
             }
-        }
+        // }
     } catch (error) {
         console.log("error", error);
         res.status(status.INTERNAL_SERVER_ERROR).json(
