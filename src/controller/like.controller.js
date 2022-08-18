@@ -135,7 +135,7 @@ exports.showAllUserWhichIsLikePost = async (req, res, next) => {
                             _id: allrequestedDataNotAcceptedRequestAndNotFriend,
                             email: userDetail.email,
                             firstName: userDetail.firstName,
-                            profile: userDetail.photo ? userDetail.photo[0].res : "",
+                            profile: userDetail.photo[0] ? userDetail.photo[0].res : "",
                             status: 3
                         }
 
@@ -145,7 +145,7 @@ exports.showAllUserWhichIsLikePost = async (req, res, next) => {
                         new APIResponse("not user friend and not requested", "true", 200, "1", responseData)
                     )
                 }
-               
+
             } else {
                 const emailGet = [];
 
@@ -166,7 +166,7 @@ exports.showAllUserWhichIsLikePost = async (req, res, next) => {
                         _id: uniqueId,
                         email: userDetail.email,
                         firstName: userDetail.firstName,
-                        profile: userDetail.photo ? userDetail.photo[0].res : "",
+                        profile: userDetail.photo[0] ? userDetail.photo[0].res : "",
                         status: 3
                     }
 
@@ -182,7 +182,7 @@ exports.showAllUserWhichIsLikePost = async (req, res, next) => {
                             _id: allrequestedDataNotAcceptedRequestAndNotFriend,
                             email: userDetail.email,
                             firstName: userDetail.firstName,
-                            profile: userDetail.photo ? userDetail.photo[0].res : "",
+                            profile: userDetail.photo[0] ? userDetail.photo[0].res : "",
                             status: 3
                         }
 
