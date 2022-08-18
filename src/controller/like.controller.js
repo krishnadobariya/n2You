@@ -325,7 +325,7 @@ exports.showAllUserWhichIsLikePost = async (req, res, next) => {
                             // polyRelationship: finalData.polyRelationship,
                             firstName: finalData.firstName,
                             email: finalData.email,
-                            photo: finalData.photo[0] ? finalData.photo[0].res : "",
+                            profile: finalData.photo[0] ? finalData.photo[0].res : "",
                             // relationshipSatus: finalData.relationshipSatus,
                             // Bio: finalData.Bio,
                             // hopingToFind: finalData.hopingToFind,

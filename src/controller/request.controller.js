@@ -45,9 +45,9 @@ exports.sendRequest = async (req, res, next) => {
                         }, {
                             $push: {
                                 notifications: {
-                                    notifications: `${checkRequestedEmail.firstName} added you as a friend`,
+                                    notifications: `${checkRequestedEmail.firstName} request to folloe you`,
                                     userId: checkRequestedEmail._id,
-                                    status: 2
+                                    status: 1
                                 }
                             }
                         })
@@ -56,9 +56,9 @@ exports.sendRequest = async (req, res, next) => {
                         const data = notificationModel({
                             userId: checkUserExist._id,
                             notifications: {
-                                notifications: `${checkRequestedEmail.firstName} added you as a friend`,
+                                notifications: `${checkRequestedEmail.firstName} request to folloe you`,
                                 userId: checkRequestedEmail._id,
-                                status: 2
+                                status: 1
                             }
                         })
 
@@ -101,9 +101,9 @@ exports.sendRequest = async (req, res, next) => {
                             }, {
                                 $push: {
                                     notifications: {
-                                        notifications: `${checkUserExist.firstName} added you as a friend`,
+                                        notifications: `${checkUserExist.firstName} request to folloe you`,
                                         userId: checkUserExist._id,
-                                        status: 2
+                                        status: 1
                                     }
                                 }
                             })
@@ -111,9 +111,9 @@ exports.sendRequest = async (req, res, next) => {
                             const data = notificationModel({
                                 userId: checkRequestedEmail._id,
                                 notifications: {
-                                    notifications: `${checkUserExist.firstName} added you as a friend`,
+                                    notifications: `${checkUserExist.firstName} request to folloe you`,
                                     userId: checkUserExist._id,
-                                    status: 2
+                                    status: 1
                                 }
                             })
 
