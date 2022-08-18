@@ -173,9 +173,9 @@ exports.addPostImages = async (req, res, next) => {
 exports.getPostById = async (req, res, next) => {
     try {
 
-        const id = req.params.id;
+        const id = req.params.post_id;
         const finalResponse = [];
-        const userFindInPosts = await postModal.findOne({ userId: req.params.user_id, postId: id });
+        const userFindInPosts = await postModal.findOne({ userId: req.params.user_id, "posts._id": id });
 
         const findUser = await userModal.findOne({
             _id: userFindInPosts.userId
