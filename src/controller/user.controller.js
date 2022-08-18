@@ -618,15 +618,15 @@ exports.searchFriend = async (req, res, next) => {
                 for (const allrequestedDataNotAcceptedRequestAndNotFriend of reaquestedAllEmail) {
 
                     const FindLocation = await userModel.find()
-                    // .aggregate([
-                    //     {
-                    //         $geoNear: {
-                    //             near: {
-                    //                 type: "Point",
-                    //                 coordinates: [
-                    //                     parseFloat(req.query.lat),
-                    //                     parseFloat(req.query.long)
-
+                        // .aggregate([
+                        //     {
+                        //         $geoNear: {
+                        //             near: {
+                        //                 type: "Point",
+                        //                 coordinates: [
+                        //                     parseFloat(req.query.lat),
+                        //                     parseFloat(req.query.long) ||  parseFloat(req.query.long) == 0
+                        || parseFloat(req.query.long) == 0
                     //                 ],
                     //             },
                     //             distanceField: "distanceFrom",
@@ -1072,8 +1072,8 @@ exports.getAllUser = async (req, res, next) => {
                                     near: {
                                         type: "Point",
                                         coordinates: [
-                                            parseFloat(req.query.long),
-                                            parseFloat(req.query.lat)
+                                            parseFloat(req.query.long) || 0,
+                                            parseFloat(req.query.lat) || 0
                                         ]
                                     },
                                     distanceField: "distance",
@@ -1124,7 +1124,7 @@ exports.getAllUser = async (req, res, next) => {
                             email: getOriginalData.email,
                             firstName: getOriginalData.firstName,
                             profile: getOriginalData.photo[0] ? getOriginalData.photo[0].res : "",
-                            distance: distance,
+                            distance: (req.query.long && req.query.lat) == undefined ? "no distance found" : distance,
                             status: 3
                         }
 
@@ -1140,7 +1140,7 @@ exports.getAllUser = async (req, res, next) => {
                             email: getOriginalData.email,
                             firstName: getOriginalData.firstName,
                             profile: getOriginalData.photo[0] ? getOriginalData.photo[0].res : "",
-                            distance: distance,
+                            distance: (req.query.long && req.query.lat) == undefined ? "no distance found" : distance,
                             status: 3
                         }
                         UniqueEmail.push(response);
@@ -1152,7 +1152,7 @@ exports.getAllUser = async (req, res, next) => {
                             email: getOriginalData.email,
                             firstName: getOriginalData.firstName,
                             profile: getOriginalData.photo[0] ? getOriginalData.photo[0].res : "",
-                            distance: distance,
+                            distance: (req.query.long && req.query.lat) == undefined ? "no distance found" : distance,
                             status: 3
                         }
                         UniqueEmail.push(response);
@@ -1190,8 +1190,8 @@ exports.getAllUser = async (req, res, next) => {
                                     near: {
                                         type: "Point",
                                         coordinates: [
-                                            parseFloat(req.query.long),
-                                            parseFloat(req.query.lat)
+                                            parseFloat(req.query.long) || 0,
+                                            parseFloat(req.query.lat) || 0
                                         ]
                                     },
                                     distanceField: "distance",
@@ -1199,6 +1199,7 @@ exports.getAllUser = async (req, res, next) => {
                                 }
                             }
                         ]);
+
 
                     for (const uniqueUser of FindUser) {
 
@@ -1240,13 +1241,12 @@ exports.getAllUser = async (req, res, next) => {
                             email: getOriginalData.email,
                             firstName: getOriginalData.firstName,
                             profile: getOriginalData.photo[0] ? getOriginalData.photo[0].res : "",
-                            distance: distance,
+                            distance: (req.query.long && req.query.lat) == undefined ? "no distance found" : distance,
                             status: 3
                         }
 
                         UniqueEmail.push(response);
 
-                        console.log(chatRoomId[0]);
                     } else if (findAllUserWithIchat2) {
                         chatRoomId.push(findAllUserWithIchat2._id)
                         const km = getOriginalData.distance / 1000;
@@ -1257,7 +1257,7 @@ exports.getAllUser = async (req, res, next) => {
                             email: getOriginalData.email,
                             firstName: getOriginalData.firstName,
                             profile: getOriginalData.photo[0] ? getOriginalData.photo[0].res : "",
-                            distance: distance,
+                            distance: (req.query.long && req.query.lat) == undefined ? "no distance found" : distance,
                             status: 3
                         }
 
@@ -1270,7 +1270,7 @@ exports.getAllUser = async (req, res, next) => {
                             email: getOriginalData.email,
                             firstName: getOriginalData.firstName,
                             profile: getOriginalData.photo[0] ? getOriginalData.photo[0].res : "",
-                            distance: distance,
+                            distance: (req.query.long && req.query.lat) == undefined ? "no distance found" : distance,
                             status: 3
                         }
 
@@ -1293,8 +1293,8 @@ exports.getAllUser = async (req, res, next) => {
                             near: {
                                 type: "Point",
                                 coordinates: [
-                                    parseFloat(req.query.long),
-                                    parseFloat(req.query.lat)
+                                    parseFloat(req.query.long) || 0,
+                                    parseFloat(req.query.lat) || 0
                                 ]
                             },
                             distanceField: "distance",
@@ -1437,11 +1437,11 @@ exports.getAllUser = async (req, res, next) => {
                         jobTitle: finalData.jobTitle,
                         wantChildren: finalData.wantChildren,
                         posts: finalData.posts,
-                        distance: distance,
+                        distance: (req.query.long && req.query.lat) == undefined ? "no distance found" : distance,
                         status: finalStatus[key]
                     }
 
-                    // console.log("response", response);
+                  
 
                     const chatRoomId = [];
                     const findAllUserWithIchat1 = await chatRoomModel.findOne({
@@ -1470,7 +1470,7 @@ exports.getAllUser = async (req, res, next) => {
                             firstName: finalData.firstName,
                             email: finalData.email,
                             profile: finalData.photo[0] ? finalData.photo[0] : "",
-                            distance: distance,
+                            distance: (req.query.long && req.query.lat) == undefined ? "no distance found" : distance,
                             status: finalStatus[key]
                         }
 
@@ -1485,7 +1485,7 @@ exports.getAllUser = async (req, res, next) => {
                             firstName: finalData.firstName,
                             email: finalData.email,
                             profile: finalData.photo[0] ? finalData.photo[0].res : "",
-                            distance: distance,
+                            distance: (req.query.long && req.query.lat) == undefined ? "no distance found" : distance,
                             status: finalStatus[key]
                         }
 
@@ -1499,7 +1499,7 @@ exports.getAllUser = async (req, res, next) => {
                             firstName: finalData.firstName,
                             email: finalData.email,
                             profile: finalData.photo[0] ? finalData.photo[0].res : "",
-                            distance: distance,
+                            distance: (req.query.long && req.query.lat) == undefined ? "no distance found" : distance,
                             status: finalStatus[key]
                         }
 
