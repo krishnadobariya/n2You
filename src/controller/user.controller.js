@@ -1067,24 +1067,24 @@ exports.getAllUser = async (req, res, next) => {
                 const UniqueEmail = [];
                 for (const allrequestedDataNotAcceptedRequestAndNotFriend of reaquestedAllEmail) {
 
-                    const FindUser = await userModel.find()
-                    // .aggregate([
-                    //     {
-                    //         $geoNear: {
-                    //             near: {
-                    //                 type: "Point",
-                    //                 coordinates: [
-                    //                     parseFloat(req.query.long),
-                    //                     parseFloat(req.query.lat)
-                    //                 ]
-                    //             },
-                    //             distanceField: "distance",
-                    //             maxDistance: 1000,
-                    //             minDistance: 0,
-                    //             spherical: true
-                    //         }
-                    //     }
-                    // ]);
+                    const FindUser = await userModel
+                        .aggregate([
+                            {
+                                $geoNear: {
+                                    near: {
+                                        type: "Point",
+                                        coordinates: [
+                                            parseFloat(req.query.long),
+                                            parseFloat(req.query.lat)
+                                        ]
+                                    },
+                                    distanceField: "distance",
+                                    spherical: true
+                                }
+                            }
+                        ]);
+
+                    console.log("FindUser1", FindUser);
 
                     for (const uniqueUser of FindUser) {
 
@@ -1118,12 +1118,15 @@ exports.getAllUser = async (req, res, next) => {
 
                     if (findAllUserWithIchat1) {
                         chatRoomId.push(findAllUserWithIchat1._id)
+                        const km = getOriginalData.distance / 1000;
+                        const distance = km.toFixed(2) + " km";
                         const response = {
                             chatRoomId: chatRoomId[0],
                             _id: getOriginalData._id,
                             email: getOriginalData.email,
                             firstName: getOriginalData.firstName,
                             profile: getOriginalData.photo[0] ? getOriginalData.photo[0].res : "",
+                            distance: distance,
                             status: 3
                         }
 
@@ -1131,22 +1134,27 @@ exports.getAllUser = async (req, res, next) => {
 
                     } else if (findAllUserWithIchat2) {
                         chatRoomId.push(findAllUserWithIchat2._id)
+                        const km = getOriginalData.distance / 1000;
+                        const distance = km.toFixed(2) + " km";
                         const response = {
                             chatRoomId: chatRoomId[0],
                             _id: getOriginalData._id,
                             email: getOriginalData.email,
                             firstName: getOriginalData.firstName,
                             profile: getOriginalData.photo[0] ? getOriginalData.photo[0].res : "",
+                            distance: distance,
                             status: 3
                         }
                         UniqueEmail.push(response);
                     } else {
-
+                        const km = getOriginalData.distance / 1000;
+                        const distance = km.toFixed(2) + " km";
                         const response = {
                             _id: getOriginalData._id,
                             email: getOriginalData.email,
                             firstName: getOriginalData.firstName,
                             profile: getOriginalData.photo[0] ? getOriginalData.photo[0].res : "",
+                            distance: distance,
                             status: 3
                         }
                         UniqueEmail.push(response);
@@ -1177,24 +1185,22 @@ exports.getAllUser = async (req, res, next) => {
 
                 const UniqueEmail = [];
                 for (const uniqueEmail of difference) {
-                    const FindUser = await userModel.find()
-                    // .aggregate([
-                    //     {
-                    //         $geoNear: {
-                    //             near: {
-                    //                 type: "Point",
-                    //                 coordinates: [
-                    //                     parseFloat(req.query.long),
-                    //                     parseFloat(req.query.lat)
-                    //                 ]
-                    //             },
-                    //             distanceField: "distance",
-                    //             maxDistance: 1000,
-                    //             minDistance: 0,
-                    //             spherical: true
-                    //         }
-                    //     }
-                    // ]);
+                    const FindUser = await userModel
+                        .aggregate([
+                            {
+                                $geoNear: {
+                                    near: {
+                                        type: "Point",
+                                        coordinates: [
+                                            parseFloat(req.query.long),
+                                            parseFloat(req.query.lat)
+                                        ]
+                                    },
+                                    distanceField: "distance",
+                                    spherical: true
+                                }
+                            }
+                        ]);
 
                     for (const uniqueUser of FindUser) {
 
@@ -1228,12 +1234,15 @@ exports.getAllUser = async (req, res, next) => {
 
                     if (findAllUserWithIchat1) {
                         chatRoomId.push(findAllUserWithIchat1._id)
+                        const km = getOriginalData.distance / 1000;
+                        const distance = km.toFixed(2) + " km";
                         const response = {
                             chatRoomId: chatRoomId[0],
                             _id: getOriginalData._id,
                             email: getOriginalData.email,
                             firstName: getOriginalData.firstName,
                             profile: getOriginalData.photo[0] ? getOriginalData.photo[0].res : "",
+                            distance: distance,
                             status: 3
                         }
 
@@ -1242,23 +1251,28 @@ exports.getAllUser = async (req, res, next) => {
                         console.log(chatRoomId[0]);
                     } else if (findAllUserWithIchat2) {
                         chatRoomId.push(findAllUserWithIchat2._id)
+                        const km = getOriginalData.distance / 1000;
+                        const distance = km.toFixed(2) + " km";
                         const response = {
                             chatRoomId: chatRoomId[0],
                             _id: getOriginalData._id,
                             email: getOriginalData.email,
                             firstName: getOriginalData.firstName,
                             profile: getOriginalData.photo[0] ? getOriginalData.photo[0].res : "",
+                            distance: distance,
                             status: 3
                         }
 
                         UniqueEmail.push(response);
                     } else {
-
+                        const km = getOriginalData.distance / 1000;
+                        const distance = km.toFixed(2) + " km";
                         const response = {
                             _id: getOriginalData._id,
                             email: getOriginalData.email,
                             firstName: getOriginalData.firstName,
                             profile: getOriginalData.photo[0] ? getOriginalData.photo[0].res : "",
+                            distance: distance,
                             status: 3
                         }
 
@@ -1275,71 +1289,88 @@ exports.getAllUser = async (req, res, next) => {
                     requestedEmailWitchIsInuserRequeted.push(resultEmail);
                 })
 
-                const meageAllTable = await userModel.aggregate([{
-                    $match: {
-                        email: {
-                            $in: requestedEmailWitchIsInuserRequeted
-                        }
-                    }
-                },
-                {
-                    $lookup: {
-                        from: 'posts',
-                        localField: 'email',
-                        foreignField: 'email',
-                        as: 'req_data'
-                    }
-                },
-                {
-                    $lookup: {
-                        from: 'requests',
-                        let: {
-                            userId: mongoose.Types.ObjectId(req.params.user_id),
-                            email: "$email"
-                        },
-                        pipeline: [
-                            {
-                                $match: {
-                                    $expr: {
-                                        $and: [
-                                            {
-                                                $eq: [
-                                                    "$userId", "$$userId"
-                                                ]
-                                            },
-                                            {
-                                                $in:
-                                                    [
-                                                        "$$email", "$RequestedEmails.requestedEmail"
-                                                    ]
-                                            }
-                                        ]
-                                    }
-                                }
+                const meageAllTable = await userModel.aggregate([
+                    {
+                        $geoNear: {
+                            near: {
+                                type: "Point",
+                                coordinates: [
+                                    parseFloat(req.query.long),
+                                    parseFloat(req.query.lat)
+                                ]
                             },
-                        ],
-                        as: 'form_data'
-                    }
-                },
-                {
-                    $project: {
-                        polyDating: "$polyDating",
-                        HowDoYouPoly: "$HowDoYouPoly",
-                        loveToGive: "$loveToGive",
-                        polyRelationship: "$polyRelationship",
-                        firstName: "$firstName",
-                        email: "$email",
-                        firstName: "$firstName",
-                        relationshipSatus: "$relationshipSatus",
-                        Bio: "$Bio",
-                        photo: "$photo",
-                        hopingToFind: "$hopingToFind",
-                        jobTitle: "$jobTitle",
-                        wantChildren: "$wantChildren",
-                        posts: "$req_data",
-                        result: "$form_data.RequestedEmails",
-                    }
-                }])
+                            distanceField: "distance",
+                            spherical: true
+                        }
+                    },
+                    {
+                        $match: {
+                            email: {
+                                $in: requestedEmailWitchIsInuserRequeted
+                            }
+                        }
+                    },
+                    {
+                        $lookup: {
+                            from: 'posts',
+                            localField: 'email',
+                            foreignField: 'email',
+                            as: 'req_data'
+                        }
+                    },
+                    {
+                        $lookup: {
+                            from: 'requests',
+                            let: {
+                                userId: mongoose.Types.ObjectId(req.params.user_id),
+                                email: "$email"
+                            },
+                            pipeline: [
+                                {
+                                    $match: {
+                                        $expr: {
+                                            $and: [
+                                                {
+                                                    $eq: [
+                                                        "$userId", "$$userId"
+                                                    ]
+                                                },
+                                                {
+                                                    $in:
+                                                        [
+                                                            "$$email", "$RequestedEmails.requestedEmail"
+                                                        ]
+                                                }
+                                            ]
+                                        }
+                                    }
+                                },
+                            ],
+                            as: 'form_data'
+                        }
+                    },
+                    {
+                        $project: {
+                            polyDating: "$polyDating",
+                            HowDoYouPoly: "$HowDoYouPoly",
+                            loveToGive: "$loveToGive",
+                            polyRelationship: "$polyRelationship",
+                            firstName: "$firstName",
+                            email: "$email",
+                            firstName: "$firstName",
+                            relationshipSatus: "$relationshipSatus",
+                            Bio: "$Bio",
+                            photo: "$photo",
+                            hopingToFind: "$hopingToFind",
+                            jobTitle: "$jobTitle",
+                            wantChildren: "$wantChildren",
+                            distance: "$distance",
+                            posts: "$req_data",
+                            result: "$form_data.RequestedEmails",
+                        }
+                    }])
+
+
 
                 const finalExistUser = [];
 
@@ -1355,7 +1386,6 @@ exports.getAllUser = async (req, res, next) => {
                     }
                 }
 
-                console.log("finalExistUser", finalExistUser);
                 for (const emailData of finalExistUser[0].result) {
 
                     for (const requestEmail of emailData) {
@@ -1363,8 +1393,6 @@ exports.getAllUser = async (req, res, next) => {
                         for (const meageAllTableEmail of finalExistUser) {
 
                             if (requestEmail.requestedEmail == meageAllTableEmail.email) {
-
-                                console.log("asfgvfsdgdhg", requestEmail.requestedEmail == meageAllTableEmail.email);
                                 if (requestEmail.accepted == 1) {
                                     var status1 = {
                                         status: 1,
@@ -1394,8 +1422,8 @@ exports.getAllUser = async (req, res, next) => {
                 }
                 for (const [key, finalData] of finalExistUser.entries()) {
 
-                    // console.log("finalData", finalData);
-
+                    const km = finalData.distance / 1000;
+                    const distance = km.toFixed(2) + " km";
                     const response = {
                         _id: finalData._id,
                         polyDating: finalData.polyDating,
@@ -1411,6 +1439,7 @@ exports.getAllUser = async (req, res, next) => {
                         jobTitle: finalData.jobTitle,
                         wantChildren: finalData.wantChildren,
                         posts: finalData.posts,
+                        distance: distance,
                         status: finalStatus[key]
                     }
 
@@ -1436,36 +1465,43 @@ exports.getAllUser = async (req, res, next) => {
 
                     if (findAllUserWithIchat1) {
                         chatRoomId.push(findAllUserWithIchat1._id)
-
+                        const km = finalData.distance / 1000;
+                        const distance = km.toFixed(2) + " km";
                         const getDetail = {
                             _id: finalData._id,
                             firstName: finalData.firstName,
                             email: finalData.email,
                             profile: finalData.photo ? finalData.photo[0] : "",
+                            distance: distance,
                             status: finalStatus[key]
                         }
 
                         final_data.push(getDetail);
                     } else if (findAllUserWithIchat2) {
                         chatRoomId.push(findAllUserWithIchat2._id)
+                        const km = finalData.distance / 1000;
+                        const distance = km.toFixed(2) + " km";
                         const getDetail = {
                             chatRoomId: chatRoomId[0],
                             _id: finalData._id,
                             firstName: finalData.firstName,
                             email: finalData.email,
                             profile: finalData.photo[0] ? finalData.photo[0].res : "",
+                            distance: distance,
                             status: finalStatus[key]
                         }
 
                         final_data.push(getDetail);
                     } else {
-
+                        const km = finalData.distance / 1000;
+                        const distance = km.toFixed(2) + " km";
                         const getDetail = {
                             chatRoomId: chatRoomId[0],
                             _id: finalData._id,
                             firstName: finalData.firstName,
                             email: finalData.email,
                             profile: finalData.photo[0] ? finalData.photo[0].res : "",
+                            distance: distance,
                             status: finalStatus[key]
                         }
 
@@ -1591,25 +1627,200 @@ exports.getDataUserWise = async (req, res, next) => {
                             let whenUserPosted = userPostedDate;
                             const fullDate = new Date(whenUserPosted).toDateString()
                             finalPostedTime.push(`${fullDate}`);
-                            commentData.push(getComment)
+                            if (getComment == null) {
+                            } else {
+                                for (const commnetData of getComment.comments) {
+                                    const user = await userModel.findOne({ _id: commnetData.userId })
+                                    const replyUser = []
+                                    for (const commentId of commnetData.replyUser) {
+                                        const findUser = await userModel.findOne({
+                                            _id: commentId.userId
+                                        })
+
+                                        const response = {
+                                            commentId: commnetData._id,
+                                            profile: findUser.photo[0] ? findUser.photo[0].res : "",
+                                            firstName: findUser.firstName,
+                                            userId: findUser._id,
+                                            replyId: commentId._id,
+                                            replyMessage: commentId.replyMessage,
+                                            date: commentId.date
+
+                                        }
+
+                                        replyUser.push(response)
+                                    }
+                                    const response = {
+                                        userId: user._id,
+                                        comment: commnetData.comment,
+                                        commentId: commnetData._id,
+                                        photourl: user.photo[0] ? user.photo[0].res : "",
+                                        username: user.firstName,
+                                        date: commnetData.date,
+                                        replyUser: replyUser,
+                                    }
+                                    commentData.push(response)
+                                }
+
+                            }
                         }
                         if (days > 0 && days < 30) {
                             const getComment = await commentModel.findOne({ postId: getPost._id });
                             finalPostedTime.push(`${days} days`);
-                            commentData.push(getComment)
+                            if (getComment == null) {
+                            } else {
+                                for (const commnetData of getComment.comments) {
+                                    const user = await userModel.findOne({ _id: commnetData.userId })
+                                    const replyUser = []
+                                    for (const commentId of commnetData.replyUser) {
+                                        const findUser = await userModel.findOne({
+                                            _id: commentId.userId
+                                        })
+
+                                        const response = {
+                                            commentId: commnetData._id,
+                                            profile: findUser.photo[0] ? findUser.photo[0].res : "",
+                                            firstName: findUser.firstName,
+                                            userId: findUser._id,
+                                            replyId: commentId._id,
+                                            replyMessage: commentId.replyMessage,
+                                            date: commentId.date
+
+                                        }
+
+                                        replyUser.push(response)
+                                    }
+                                    const response = {
+                                        userId: user._id,
+                                        comment: commnetData.comment,
+                                        commentId: commnetData._id,
+                                        photourl: user.photo[0] ? user.photo[0].res : "",
+                                        username: user.firstName,
+                                        date: commnetData.date,
+                                        replyUser: replyUser,
+                                    }
+                                    commentData.push(response)
+                                }
+
+                            }
                         } else if (hours > 0 && days == 0) {
                             const getComment = await commentModel.findOne({ postId: getPost._id });
                             finalPostedTime.push(`${hours} hours`);
-                            commentData.push(getComment)
+                            if (getComment == null) {
+                            } else {
+                                for (const commnetData of getComment.comments) {
+                                    const user = await userModel.findOne({ _id: commnetData.userId })
+                                    const replyUser = []
+                                    for (const commentId of commnetData.replyUser) {
+                                        const findUser = await userModel.findOne({
+                                            _id: commentId.userId
+                                        })
+
+                                        const response = {
+                                            commentId: commnetData._id,
+                                            profile: findUser.photo[0] ? findUser.photo[0].res : "",
+                                            firstName: findUser.firstName,
+                                            userId: findUser._id,
+                                            replyId: commentId._id,
+                                            replyMessage: commentId.replyMessage,
+                                            date: commentId.date
+
+                                        }
+
+                                        replyUser.push(response)
+                                    }
+                                    const response = {
+                                        userId: user._id,
+                                        comment: commnetData.comment,
+                                        commentId: commnetData._id,
+                                        photourl: user.photo[0] ? user.photo[0].res : "",
+                                        username: user.firstName,
+                                        date: commnetData.date,
+                                        replyUser: replyUser,
+                                    }
+                                    commentData.push(response)
+                                }
+
+                            }
                         } else if (minutes > 0 && hours == 0) {
                             const getComment = await commentModel.findOne({ postId: getPost._id });
                             finalPostedTime.push(`${minutes} minute`);
-                            commentData.push(getComment)
+                            if (getComment == null) {
+                            } else {
+                                for (const commnetData of getComment.comments) {
+                                    const user = await userModel.findOne({ _id: commnetData.userId })
+                                    const replyUser = []
+                                    for (const commentId of commnetData.replyUser) {
+                                        const findUser = await userModel.findOne({
+                                            _id: commentId.userId
+                                        })
+
+                                        const response = {
+                                            commentId: commnetData._id,
+                                            profile: findUser.photo[0] ? findUser.photo[0].res : "",
+                                            firstName: findUser.firstName,
+                                            userId: findUser._id,
+                                            replyId: commentId._id,
+                                            replyMessage: commentId.replyMessage,
+                                            date: commentId.date
+
+                                        }
+
+                                        replyUser.push(response)
+                                    }
+                                    const response = {
+                                        userId: user._id,
+                                        comment: commnetData.comment,
+                                        commentId: commnetData._id,
+                                        photourl: user.photo[0] ? user.photo[0].res : "",
+                                        username: user.firstName,
+                                        date: commnetData.date,
+                                        replyUser: replyUser,
+                                    }
+                                    commentData.push(response)
+                                }
+
+                            }
                         } else if (seconds > 0 && minutes == 0 && hours == 0 && days === 0) {
                             const getComment = await commentModel.findOne({ postId: getPost._id });
                             finalPostedTime.push(`${seconds} second`);
 
-                            commentData.push(getComment)
+                            if (getComment == null) {
+                            } else {
+                                for (const commnetData of getComment.comments) {
+                                    const user = await userModel.findOne({ _id: commnetData.userId })
+                                    const replyUser = []
+                                    for (const commentId of commnetData.replyUser) {
+                                        const findUser = await userModel.findOne({
+                                            _id: commentId.userId
+                                        })
+
+                                        const response = {
+                                            commentId: commnetData._id,
+                                            profile: findUser.photo[0] ? findUser.photo[0].res : "",
+                                            firstName: findUser.firstName,
+                                            userId: findUser._id,
+                                            replyId: commentId._id,
+                                            replyMessage: commentId.replyMessage,
+                                            date: commentId.date
+
+                                        }
+
+                                        replyUser.push(response)
+                                    }
+                                    const response = {
+                                        userId: user._id,
+                                        comment: commnetData.comment,
+                                        commentId: commnetData._id,
+                                        photourl: user.photo[0] ? user.photo[0].res : "",
+                                        username: user.firstName,
+                                        date: commnetData.date,
+                                        replyUser: replyUser,
+                                    }
+                                    commentData.push(response)
+                                }
+
+                            }
                         }
 
                         const response = {
@@ -1624,6 +1835,7 @@ exports.getDataUserWise = async (req, res, next) => {
             }
 
             const response = {
+                userId: data[0]._id,
                 polyDating: data[0].polyDating,
                 email: data[0].email,
                 loveToGive: data[0].loveToGive,
