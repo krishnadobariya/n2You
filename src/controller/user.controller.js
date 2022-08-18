@@ -44,9 +44,7 @@ exports.userRegister = async (req, res, next) => {
         } else {
             const phoneNum = req.body.phone_num;
 
-            const countryCode = req.body.country_code
-
-            const findNumber = await userModel.findOne({ phoneNumber: `${countryCode}${phoneNum}` });
+            const findNumber = await userModel.findOne({ phoneNumber: `${phoneNum}` });
 
 
             if (findNumber) {
@@ -85,7 +83,8 @@ exports.userRegister = async (req, res, next) => {
                         drinking: req.body.drinking,
                         hobbies: req.body.hobbies
                     },
-                    phoneNumber: `${countryCode}${phoneNum}`
+                    phoneNumber: phoneNum,
+                    countryCode: req.body.country_code
                 })
 
                 const saveData = await user.save();
@@ -119,7 +118,8 @@ exports.userRegister = async (req, res, next) => {
                     smoking: req.body.smoking,
                     drinking: req.body.drinking,
                     hobbies: req.body.hobbies,
-                    phoneNumber: `${countryCode}${phoneNum}`
+                    phoneNumber: phoneNum,
+                    countryCode: req.body.country_code
                 }
 
                 if (findUser.polyDating == 1) {
@@ -302,7 +302,7 @@ exports.userUpdate = async (req, res, next) => {
             const findNumberUnique = [];
             for (const findvalidNumber of findNumber) {
 
-                if (findvalidNumber.phoneNumber == `${countryCode}${phoneNum}`) {
+                if (findvalidNumber.phoneNumber == phoneNum) {
                     findNumberUnique.push("yes")
                 } else {
                     findNumberUnique.push("no")
@@ -378,7 +378,8 @@ exports.userUpdate = async (req, res, next) => {
                             drinking: req.body.drinking,
                             hobbies: req.body.hobbies
                         },
-                        phoneNumber: `${countryCode}${phoneNum}`
+                        phoneNumber: phoneNum,
+                        countryCode: req.body.country_code
                     }
                 })
 
@@ -413,7 +414,8 @@ exports.userUpdate = async (req, res, next) => {
                     smoking: req.body.smoking,
                     drinking: req.body.drinking,
                     hobbies: req.body.hobbies,
-                    phoneNumber: `${countryCode}${phoneNum}`
+                    phoneNumber: phoneNum,
+                    countryCode: req.body.country_code
                 }
 
 
@@ -1538,6 +1540,7 @@ exports.getDataUserWise = async (req, res, next) => {
                         jobTitle: 'jobTitle',
                         wantChildren: '$wantChildren',
                         phoneNumber: '$phoneNumber',
+                        countryCode: '$countryCode',
                         extraAtrribute: '$extraAtrribute',
                         posts: '$datas',
                         fcm_token: '$fcm_token'
@@ -1636,8 +1639,8 @@ exports.getDataUserWise = async (req, res, next) => {
                 hopingToFind: data[0].hopingToFind,
                 jobTitle: data[0].jobTitle,
                 wantChildren: data[0].wantChildren,
-                countryCode: (data[0].phoneNumber).slice(0, 3),
-                phoneNumber: (data[0].phoneNumber).slice(3, 13),
+                countryCode: data[0].countryCode,
+                phoneNumber: data[0].phoneNumber,
                 extraAtrribute: data[0].extraAtrribute,
                 Posts: getAllPosts
             }

@@ -620,6 +620,7 @@ exports.getPolyamorousUser = async (req, res, next) => {
                     jobTitle: findPolyamorousUser.jobTitle,
                     wantChildren: findPolyamorousUser.wantChildren,
                     phoneNumber: findPolyamorousUser.phoneNumber,
+                    countryCode: findPolyamorousUser.countryCode,
                     bodyType: findPolyamorousUser.extraAtrribute.bodyType,
                     height: findPolyamorousUser.extraAtrribute.height,
                     smoking: findPolyamorousUser.extraAtrribute.smoking,
