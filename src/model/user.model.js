@@ -73,12 +73,29 @@ const userSchema = mongoose.Schema({
     countryCode: {
         type: String,
         required: true,
-        unique: true
     },
     fcm_token: {
         type: String
     },
-    basket: [
+    yesBasket: [
+        {
+            match: {
+                type: Number
+            },
+            userId: {
+                type: mongoose.Schema.Types.ObjectId
+            },
+            thumbUp: {
+                type: Number,
+                default: 0
+            },
+            thumbDown: {
+                type: Number,
+                default: 0
+            }
+        }
+    ],
+    noBasket: [
         {
             match: {
                 type: Number
@@ -144,6 +161,10 @@ const userSchema = mongoose.Schema({
         }
 
     },
+    password: {
+        type: String,
+        required: true
+    }
 
 }, {
     timestamps: true

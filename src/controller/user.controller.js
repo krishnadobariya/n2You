@@ -84,7 +84,8 @@ exports.userRegister = async (req, res, next) => {
                         hobbies: req.body.hobbies
                     },
                     phoneNumber: phoneNum,
-                    countryCode: req.body.country_code
+                    countryCode: req.body.country_code,
+                    password: req.body.password
                 })
 
                 const saveData = await user.save();
@@ -119,7 +120,8 @@ exports.userRegister = async (req, res, next) => {
                     drinking: req.body.drinking,
                     hobbies: req.body.hobbies,
                     phoneNumber: phoneNum,
-                    countryCode: req.body.country_code
+                    countryCode: req.body.country_code,
+                    password: req.body.password
                 }
 
                 if (findUser.polyDating == 1) {
@@ -209,33 +211,56 @@ exports.userRegister = async (req, res, next) => {
                         const matchProfile = local / 5 * 100;
 
                         const profileMatch = `${parseInt(matchProfile)}`
-                        const findUser = await userModel.findOne({
-                            _id: findUsers._id,
-                            "basket.userId": chechUser._id
-                        })
 
-                        const addInUser = await userModel.updateOne({
-                            _id: findUsers._id
-                        }, {
-                            $push: {
-                                basket: {
-                                    match: profileMatch,
-                                    userId: chechUser._id
+
+                        if (matchProfile >= 50 && matchProfile <= 100) {
+                            const addInUser = await userModel.updateOne({
+                                _id: findUsers._id
+                            }, {
+                                $push: {
+                                    yesBasket: {
+                                        match: profileMatch,
+                                        userId: chechUser._id
+                                    }
                                 }
-                            }
-                        })
+                            })
 
 
-                        const updateINExistUser = await userModel.updateOne({
-                            _id: chechUser._id
-                        }, {
-                            $push: {
-                                basket: {
-                                    match: profileMatch,
-                                    userId: findUsers._id
+                            const updateINExistUser = await userModel.updateOne({
+                                _id: chechUser._id
+                            }, {
+                                $push: {
+                                    yesBasket: {
+                                        match: profileMatch,
+                                        userId: findUsers._id
+                                    }
                                 }
-                            }
-                        })
+                            })
+                        } else {
+                            const addInUser = await userModel.updateOne({
+                                _id: findUsers._id
+                            }, {
+                                $push: {
+                                    noBasket: {
+                                        match: profileMatch,
+                                        userId: chechUser._id
+                                    }
+                                }
+                            })
+
+
+                            const updateINExistUser = await userModel.updateOne({
+                                _id: chechUser._id
+                            }, {
+                                $push: {
+                                    noBasket: {
+                                        match: profileMatch,
+                                        userId: findUsers._id
+                                    }
+                                }
+                            })
+                        }
+
                     }
                 }
             }
@@ -441,15 +466,18 @@ exports.userUpdate = async (req, res, next) => {
 
                 } else {
 
+
                     const findUsers = await userModel.findOne({
                         email: req.body.email
                     })
+
                     var matchUser = await userModel.find({
                         _id: {
                             $ne: findUsers._id
                         },
                         polyDating: 0
                     })
+
 
                     const identity = findUsers.identity
                     const relationshipSatus = findUsers.relationshipSatus
@@ -496,29 +524,210 @@ exports.userUpdate = async (req, res, next) => {
                         const matchProfile = local / 5 * 100;
 
                         const profileMatch = `${parseInt(matchProfile)}`
-                        const findUser = await userModel.findOne({
-                            _id: findUsers._id,
-                            "basket.userId": chechUser._id
-                        })
 
-                        const addInUser = await userModel.updateOne({
-                            _id: findUsers._id,
-                            "basket.userId": chechUser._id
-                        }, {
-                            $set: {
-                                "basket.$.match": profileMatch
+
+
+                        if (matchProfile >= 50 && matchProfile <= 100) {
+
+                            const findInNoBasket1 = await userModel.findOne({
+                                _id: findUsers._id,
+                                "noBasket.userId": chechUser._id
+                            })
+
+
+                            const findInNoBasket2 = await userModel.findOne({
+                                _id: chechUser._id,
+                                "noBasket.userId": findUsers._id
+                            })
+
+                            console.log("findInNoBasket1", findInNoBasket1);
+                            console.log("findInNoBasket1", findInNoBasket1);
+                            if (findInNoBasket1) {
+                                await userModel.updateOne({
+                                    _id: findUsers._id,
+                                }, {
+                                    $pull: {
+                                        noBasket: {
+                                            userId: chechUser._id
+                                        }
+                                    }
+                                })
+                            } else {
+
+                                const findInYesBasket1 = await userModel.findOne({
+                                    _id: findUsers._id,
+                                    "noBasket.userId": chechUser._id
+                                })
+
+                                if (findInYesBasket1) {
+                                    const addInUser = await userModel.updateOne({
+                                        _id: findUsers._id,
+                                        "yesBasket.userId": chechUser._id
+                                    }, {
+                                        $set: {
+                                            "yesBasket.$.match": profileMatch
+                                        }
+                                    })
+
+                                } else {
+                                    const addInUser = await userModel.updateOne({
+                                        _id: findUsers._id
+                                    }, {
+                                        $push: {
+                                            yesBasket: {
+                                                match: profileMatch,
+                                                userId: chechUser._id
+                                            }
+                                        }
+                                    })
+                                }
                             }
-                        })
 
+                            if (findInNoBasket2) {
+                                await userModel.updateOne({
+                                    _id: chechUser._id,
+                                }, {
+                                    $pull: {
+                                        noBasket: {
+                                            userId: findUsers._id
+                                        }
+                                    }
+                                })
+                            } else {
 
-                        const updateINExistUser = await userModel.updateOne({
-                            _id: chechUser._id,
-                            "basket.userId": findUsers._id
-                        }, {
-                            $set: {
-                                "basket.$.match": profileMatch
+                                const findInYesBasket1 = await userModel.findOne({
+                                    _id: chechUser._id,
+                                    "noBasket.userId": findUsers._id
+                                })
+
+                                if (findInYesBasket1) {
+                                    const addInUser = await userModel.updateOne({
+                                        _id: chechUser._id,
+                                        "yesBasket.userId": findUsers._id
+                                    }, {
+                                        $set: {
+                                            "yesBasket.$.match": profileMatch
+                                        }
+                                    })
+
+                                } else {
+                                    const addInUser = await userModel.updateOne({
+                                        _id: chechUser._id
+                                    }, {
+                                        $push: {
+                                            yesBasket: {
+                                                match: profileMatch,
+                                                userId: findUsers._id
+                                            }
+                                        }
+                                    })
+                                }
                             }
-                        })
+
+                        } else {
+
+
+
+                            const findInYesBasket1 = await userModel.findOne({
+                                _id: findUsers._id,
+                                "yesBasket.userId": chechUser._id
+                            })
+
+
+                            const findInYesBasket2 = await userModel.findOne({
+                                _id: chechUser._id,
+                                "yesBasket.userId": findUsers._id
+                            })
+
+
+                            if (findInYesBasket1) {
+
+                                await userModel.updateOne({
+                                    _id: findUsers._id,
+                                }, {
+                                    $pull: {
+                                        yesBasket: {
+                                            userId: chechUser._id
+                                        }
+                                    }
+                                })
+                            } else {
+                                const findInNoBasket1 = await userModel.findOne({
+                                    _id: findUsers._id,
+                                    "noBasket.userId": chechUser._id
+                                })
+
+
+                                if (findInNoBasket1) {
+                                    const addInUser = await userModel.updateOne({
+                                        _id: findUsers._id,
+                                        "noBasket.userId": chechUser._id
+                                    }, {
+                                        $set: {
+                                            "noBasket.$.match": profileMatch
+                                        }
+                                    })
+
+                                } else {
+
+                                    const addInUser = await userModel.updateOne({
+                                        _id: findUsers._id
+                                    }, {
+                                        $push: {
+                                            noBasket: {
+                                                match: profileMatch,
+                                                userId: chechUser._id
+                                            }
+                                        }
+                                    })
+                                }
+                            }
+
+
+                            if (findInYesBasket2) {
+
+                                await userModel.updateOne({
+                                    _id: chechUser._id,
+                                }, {
+                                    $pull: {
+                                        yesBasket: {
+                                            userId: findUsers._id
+                                        }
+                                    }
+                                })
+                            } else {
+                                const findInNoBasket1 = await userModel.findOne({
+                                    _id: chechUser._id,
+                                    "noBasket.userId": findUsers._id
+                                })
+
+                                if (findInNoBasket1) {
+                                    const addInUser = await userModel.updateOne({
+                                        _id: chechUser._id,
+                                        "noBasket.userId": findUsers._id
+                                    }, {
+                                        $set: {
+                                            "noBasket.$.match": profileMatch
+                                        }
+                                    })
+                                } else {
+                                    const addInUser = await userModel.updateOne({
+                                        _id: chechUser._id
+                                    }, {
+                                        $push: {
+                                            noBasket: {
+                                                match: profileMatch,
+                                                userId: findUsers._id
+                                            }
+                                        }
+                                    })
+
+                                }
+                            }
+
+
+                        }
+
                     }
                 }
             }
@@ -584,7 +793,7 @@ exports.searchFriend = async (req, res, next) => {
 
         const Regexname = new RegExp(req.body.search_key, 'i');
         const searchName = await userModel.find({ firstName: Regexname, polyDating: 0 }).maxTimeMS(10);
-        console.log("searchName", searchName);
+        // console.log("searchName", searchName);
         const reaquestedAllEmail = [];
         searchName.map((result, index) => {
             reaquestedAllEmail.push(result.email)
@@ -613,8 +822,8 @@ exports.searchFriend = async (req, res, next) => {
             if (reaquestedAllEmail && RequestedEmailExiestInUser == null) {
                 const finalData = [];
                 const responseData = [];
-                console.log("reaquestedAllEmail", reaquestedAllEmail);
-                console.log("RequestedEmailExiestInUser", RequestedEmailExiestInUser);
+                // console.log("reaquestedAllEmail", reaquestedAllEmail);
+                // console.log("RequestedEmailExiestInUser", RequestedEmailExiestInUser);
                 for (const allrequestedDataNotAcceptedRequestAndNotFriend of reaquestedAllEmail) {
 
                     const FindLocation = await userModel.find()
@@ -772,7 +981,7 @@ exports.searchFriend = async (req, res, next) => {
 
                         UniqueEmail.push(response);
 
-                        console.log(chatRoomId[0]);
+                        // console.log(chatRoomId[0]);
                     } else if (findAllUserWithIchat2) {
                         chatRoomId.push(findAllUserWithIchat2._id)
                         const response = {
@@ -1082,7 +1291,6 @@ exports.getAllUser = async (req, res, next) => {
                             }
                         ]);
 
-                    console.log("FindUser1", FindUser);
 
                     for (const uniqueUser of FindUser) {
 
@@ -1441,7 +1649,7 @@ exports.getAllUser = async (req, res, next) => {
                         status: finalStatus[key]
                     }
 
-                  
+
 
                     const chatRoomId = [];
                     const findAllUserWithIchat1 = await chatRoomModel.findOne({
@@ -1922,7 +2130,6 @@ exports.storeBasketValue = async (req, res, next) => {
 
             for (const chechUser of matchUser) {
 
-                console.log(chechUser._id);
 
                 var local = 0;
 
@@ -1966,20 +2173,35 @@ exports.storeBasketValue = async (req, res, next) => {
 
                 const findUser = await userModel.findOne({
                     _id: req.params.user_id,
-                    "basket.userId": chechUser._id
+                    "yesBasket.userId": chechUser._id
                 })
 
                 // if (findUser == null) {
-                const addInUser = await userModel.updateOne({
-                    _id: req.params.user_id
-                }, {
-                    $push: {
-                        basket: {
-                            match: profileMatch,
-                            userId: chechUser._id
+
+                if (profileMatch > 50 && profileMatch < 100) {
+                    const addInUser = await userModel.updateOne({
+                        _id: req.params.user_id
+                    }, {
+                        $push: {
+                            yesBasket: {
+                                match: profileMatch,
+                                userId: chechUser._id
+                            }
                         }
-                    }
-                })
+                    })
+                } else {
+                    const addInUser = await userModel.updateOne({
+                        _id: req.params.user_id
+                    }, {
+                        $push: {
+                            noBasket: {
+                                match: profileMatch,
+                                userId: chechUser._id
+                            }
+                        }
+                    })
+                }
+
                 // } else {
                 //     const updateUser = await userModel.updateOne({
                 //         _id: req.params.user_id,
@@ -2036,12 +2258,9 @@ exports.yesBasket = async (req, res, next) => {
                 const reaquestedAllEmail = [];
                 const allMeargeData = [];
                 const YesBasketData = [];
-                for (const allBakest of findUser.basket) {
+                for (const allBakest of findUser.yesBasket) {
 
-                    if (allBakest.match > 50) {
-                        YesBasketData.push(allBakest.userId)
-
-                    }
+                    YesBasketData.push(allBakest.userId)
                 }
 
                 for (const allyesBasketData of YesBasketData) {
@@ -2082,7 +2301,7 @@ exports.yesBasket = async (req, res, next) => {
                         const finalData = [];
                         const responseData = [];
                         for (const allrequestedDataNotAcceptedRequestAndNotFriend of reaquestedAllEmail) {
-                            console.log("allrequestedDataNotAcceptedRequestAndNotFriend", allrequestedDataNotAcceptedRequestAndNotFriend);
+                            // console.log("allrequestedDataNotAcceptedRequestAndNotFriend", allrequestedDataNotAcceptedRequestAndNotFriend);
                             const userDetail = await userModel.findOne({ email: allrequestedDataNotAcceptedRequestAndNotFriend });
                             finalData.push(userDetail)
                         }
@@ -2095,7 +2314,7 @@ exports.yesBasket = async (req, res, next) => {
 
                         for (const getOriginalData of finalData) {
 
-                            for (const findThumb of findThumbUp.basket) {
+                            for (const findThumb of findThumbUp.yesBasket) {
                                 const findThumbData = findThumb.userId
                                 const orginalData = getOriginalData._id
 
@@ -2152,7 +2371,7 @@ exports.yesBasket = async (req, res, next) => {
 
                         for (const getOriginalData of finalData) {
 
-                            for (const findThumb of findThumbUp.basket) {
+                            for (const findThumb of findThumbUp.yesBasket) {
                                 const findThumbData = findThumb.userId
                                 const orginalData = getOriginalData._id
 
@@ -2287,7 +2506,7 @@ exports.yesBasket = async (req, res, next) => {
                                         })
 
 
-                                        for (const findThumb of findThumbUp.basket) {
+                                        for (const findThumb of findThumbUp.yesBasket) {
 
                                             const findThumbData = findThumb.userId
                                             const originalData = requestEmail.userId
@@ -2421,12 +2640,10 @@ exports.yesBasket = async (req, res, next) => {
                 const reaquestedAllEmail = [];
                 const allMeargeData = [];
                 const YesBasketData = [];
-                for (const allBakest of findUser.basket) {
+                for (const allBakest of findUser.yesBasket) {
 
-                    if (allBakest.match > 50) {
-                        YesBasketData.push(allBakest.userId)
+                    YesBasketData.push(allBakest.userId)
 
-                    }
 
                 }
 
@@ -2480,7 +2697,7 @@ exports.yesBasket = async (req, res, next) => {
 
                         for (const getOriginalData of finalData) {
 
-                            for (const findThumb of findThumbUp.basket) {
+                            for (const findThumb of findThumbUp.yesBasket) {
                                 const findThumbData = findThumb.userId
                                 const orginalData = getOriginalData._id
 
@@ -2529,7 +2746,7 @@ exports.yesBasket = async (req, res, next) => {
 
                         for (const getOriginalData of finalData) {
 
-                            for (const findThumb of findThumbUp.basket) {
+                            for (const findThumb of findThumbUp.yesBasket) {
                                 const findThumbData = findThumb.userId
                                 const orginalData = getOriginalData._id
 
@@ -2648,7 +2865,7 @@ exports.yesBasket = async (req, res, next) => {
                                             polyDating: 0
                                         })
 
-                                        for (const findThumb of findThumbUp.basket) {
+                                        for (const findThumb of findThumbUp.yesBasket) {
                                             const findThumbData = findThumb.userId
                                             const originalData = requestEmail.userId
 
@@ -2785,12 +3002,8 @@ exports.noBasket = async (req, res, next) => {
                 const reaquestedAllEmail = [];
                 const allMeargeData = [];
                 const NoBasketData = [];
-                for (const allBakest of findUser.basket) {
-
-                    if (allBakest.match < 50 || allBakest.match > 100) {
-                        NoBasketData.push(allBakest.userId)
-
-                    }
+                for (const allBakest of findUser.noBasket) {
+                    NoBasketData.push(allBakest.userId)
                 }
 
                 for (const allNoBasketData of NoBasketData) {
@@ -2809,7 +3022,7 @@ exports.noBasket = async (req, res, next) => {
 
                 if (reaquestedAllEmail[0] == undefined) {
                     res.status(status.NOT_FOUND).json(
-                        new APIResponse("No User Found", 'false', 404, '0')
+                        new APIResponse("No User Found", 'true', 200, '1', [])
                     )
                 } else {
 
@@ -2831,7 +3044,7 @@ exports.noBasket = async (req, res, next) => {
                         const finalData = [];
                         const responseData = [];
                         for (const allrequestedDataNotAcceptedRequestAndNotFriend of reaquestedAllEmail) {
-                            console.log("allrequestedDataNotAcceptedRequestAndNotFriend", allrequestedDataNotAcceptedRequestAndNotFriend);
+                            // console.log("allrequestedDataNotAcceptedRequestAndNotFriend", allrequestedDataNotAcceptedRequestAndNotFriend);
                             const userDetail = await userModel.findOne({ email: allrequestedDataNotAcceptedRequestAndNotFriend });
                             finalData.push(userDetail)
                         }
@@ -2844,7 +3057,7 @@ exports.noBasket = async (req, res, next) => {
 
                         for (const getOriginalData of finalData) {
 
-                            for (const findThumb of findThumbUp.basket) {
+                            for (const findThumb of findThumbUp.noBasket) {
                                 const findThumbData = findThumb.userId
                                 const orginalData = getOriginalData._id
 
@@ -2901,7 +3114,7 @@ exports.noBasket = async (req, res, next) => {
 
                         for (const getOriginalData of finalData) {
 
-                            for (const findThumb of findThumbUp.basket) {
+                            for (const findThumb of findThumbUp.noBasket) {
                                 const findThumbData = findThumb.userId
                                 const orginalData = getOriginalData._id
 
@@ -3036,7 +3249,7 @@ exports.noBasket = async (req, res, next) => {
                                         })
 
 
-                                        for (const findThumb of findThumbUp.basket) {
+                                        for (const findThumb of findThumbUp.noBasket) {
 
                                             const findThumbData = findThumb.userId
                                             const originalData = requestEmail.userId
@@ -3170,12 +3383,10 @@ exports.noBasket = async (req, res, next) => {
                 const reaquestedAllEmail = [];
                 const allMeargeData = [];
                 const NoBasketData = [];
-                for (const allBakest of findUser.basket) {
+                for (const allBakest of findUser.noBasket) {
 
-                    if (allBakest.match < 50 || allBakest.match > 100) {
-                        NoBasketData.push(allBakest.userId)
+                    NoBasketData.push(allBakest.userId)
 
-                    }
 
                 }
 
@@ -3229,7 +3440,7 @@ exports.noBasket = async (req, res, next) => {
 
                         for (const getOriginalData of finalData) {
 
-                            for (const findThumb of findThumbUp.basket) {
+                            for (const findThumb of findThumbUp.noBasket) {
                                 const findThumbData = findThumb.userId
                                 const orginalData = getOriginalData._id
 
@@ -3278,7 +3489,7 @@ exports.noBasket = async (req, res, next) => {
 
                         for (const getOriginalData of finalData) {
 
-                            for (const findThumb of findThumbUp.basket) {
+                            for (const findThumb of findThumbUp.noBasket) {
                                 const findThumbData = findThumb.userId
                                 const orginalData = getOriginalData._id
 
@@ -3397,7 +3608,7 @@ exports.noBasket = async (req, res, next) => {
                                             polyDating: 0
                                         })
 
-                                        for (const findThumb of findThumbUp.basket) {
+                                        for (const findThumb of findThumbUp.noBasket) {
                                             const findThumbData = findThumb.userId
                                             const originalData = requestEmail.userId
 
