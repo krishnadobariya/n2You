@@ -1,3 +1,7 @@
+notification status in sociacl media side
+-> 1 = request to follow You
+-> 2 = accepted request
+
 --> createdChat
 
 =============================================

@@ -3542,7 +3542,7 @@ exports.getAllNotification = async (req, res, next) => {
                             _id: getNotification.userId,
                             notification: getNotification.notifications,
                             name: findUserDetail.firstName,
-                            profile: finduserDetail.photo[0] ? findUserDetail.photo[0].res : "",
+                            profile: findUserDetail.photo[0] ? findUserDetail.photo[0].res : "",
                             status: getNotification.status
                         }
                         allNotification.push(response)

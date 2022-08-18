@@ -45,7 +45,7 @@ exports.sendRequest = async (req, res, next) => {
                         }, {
                             $push: {
                                 notifications: {
-                                    notifications: `${checkRequestedEmail.firstName} request to folloe you`,
+                                    notifications: `${checkRequestedEmail.firstName} request to follow you`,
                                     userId: checkRequestedEmail._id,
                                     status: 1
                                 }
@@ -56,7 +56,7 @@ exports.sendRequest = async (req, res, next) => {
                         const data = notificationModel({
                             userId: checkUserExist._id,
                             notifications: {
-                                notifications: `${checkRequestedEmail.firstName} request to folloe you`,
+                                notifications: `${checkRequestedEmail.firstName} request to follow you`,
                                 userId: checkRequestedEmail._id,
                                 status: 1
                             }
@@ -101,7 +101,7 @@ exports.sendRequest = async (req, res, next) => {
                             }, {
                                 $push: {
                                     notifications: {
-                                        notifications: `${checkUserExist.firstName} request to folloe you`,
+                                        notifications: `${checkUserExist.firstName} request to follow you`,
                                         userId: checkUserExist._id,
                                         status: 1
                                     }
@@ -111,7 +111,7 @@ exports.sendRequest = async (req, res, next) => {
                             const data = notificationModel({
                                 userId: checkRequestedEmail._id,
                                 notifications: {
-                                    notifications: `${checkUserExist.firstName} request to folloe you`,
+                                    notifications: `${checkUserExist.firstName} request to follow you`,
                                     userId: checkUserExist._id,
                                     status: 1
                                 }
@@ -244,7 +244,19 @@ exports.userAcceptedRequesteOrNot = async (req, res, next) => {
                             notifications: {
                                 notifications: `${findUserWhichAcceptRequest.firstName} accepted request`,
                                 userId: findUser._id,
-                                status: 3
+                                status: 2
+                            }
+                        }
+                    })
+
+                    await notificationModel.updateOne({
+                        userId: findUser._id
+                    }, {
+                        $push: {
+                            notifications: {
+                                notifications: `${findUserWhichAcceptRequest.firstName} accepted request`,
+                                userId: findUser._id,
+                                status: 2
                             }
                         }
                     })
@@ -254,7 +266,7 @@ exports.userAcceptedRequesteOrNot = async (req, res, next) => {
                         notifications: {
                             notifications: `${findUserWhichAcceptRequest.firstName} accepted request`,
                             userId: findUser._id,
-                            status: 3
+                            status: 2
                         }
                     })
 
