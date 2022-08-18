@@ -461,8 +461,6 @@ exports.userUpdate = async (req, res, next) => {
                     for (const chechUser of matchUser) {
 
                         var local = 0;
-                        console.log(chechUser.identity);
-                        console.log(identity);
                         if (chechUser.identity == identity) {
                             var local = local + 1
                         } else {
@@ -508,7 +506,7 @@ exports.userUpdate = async (req, res, next) => {
                             "basket.userId": chechUser._id
                         }, {
                             $set: {
-                                "basket.match": profileMatch
+                                "basket.$.match": profileMatch
                             }
                         })
 
@@ -518,7 +516,7 @@ exports.userUpdate = async (req, res, next) => {
                             "basket.userId": findUsers._id
                         }, {
                             $set: {
-                                "basket.match": profileMatch
+                                "basket.$.match": profileMatch
                             }
                         })
                     }
