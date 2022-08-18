@@ -1408,6 +1408,7 @@ exports.userAllFriendPost = async (req, res, next) => {
 
             }
 
+            console.log("final_data", final_data);
 
             res.status(status.OK).json(
                 new APIResponse("show all post When accept by the user", "true", 201, "1", final_data)
@@ -1750,9 +1751,11 @@ exports.userAllFriendPost = async (req, res, next) => {
                 //     },
                 // }
 
-                final_data.push(finalStatus);
+                final_data.push(...finalStatus);
 
             }
+
+
             res.status(status.OK).json(
                 new APIResponse("show all post When accept by the user", "true", 201, "1", final_data)
             )
