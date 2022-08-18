@@ -674,7 +674,7 @@ exports.searchFriend = async (req, res, next) => {
                             _id: getOriginalData._id,
                             email: getOriginalData.email,
                             firstName: getOriginalData.firstName,
-                            profile: getOriginalData.photo[0] ? getOriginalData.photo[0].res : "",
+                            profile: getOriginalData.photo ? getOriginalData.photo[0].res : "",
                             status: 3
                         }
 
@@ -687,7 +687,7 @@ exports.searchFriend = async (req, res, next) => {
                             _id: getOriginalData._id,
                             email: getOriginalData.email,
                             firstName: getOriginalData.firstName,
-                            profile: getOriginalData.photo[0] ? getOriginalData.photo[0].res : "",
+                            profile: getOriginalData.photo ? getOriginalData.photo[0].res : "",
                             status: 3
                         }
 
@@ -698,7 +698,7 @@ exports.searchFriend = async (req, res, next) => {
                             _id: getOriginalData._id,
                             email: getOriginalData.email,
                             firstName: getOriginalData.firstName,
-                            profile: getOriginalData.photo[0] ? getOriginalData.photo[0].res : "",
+                            profile: getOriginalData.photo ? getOriginalData.photo[0].res : "",
                             status: 3
                         }
 
@@ -766,7 +766,7 @@ exports.searchFriend = async (req, res, next) => {
                             _id: getOriginalData._id,
                             email: getOriginalData.email,
                             firstName: getOriginalData.firstName,
-                            profile: getOriginalData.photo[0] ? getOriginalData.photo[0].res : "",
+                            profile: getOriginalData.photo ? getOriginalData.photo[0].res : "",
                             status: 3
                         }
 
@@ -780,7 +780,7 @@ exports.searchFriend = async (req, res, next) => {
                             _id: getOriginalData._id,
                             email: getOriginalData.email,
                             firstName: getOriginalData.firstName,
-                            profile: getOriginalData.photo[0] ? getOriginalData.photo[0].res : "",
+                            profile: getOriginalData.photo ? getOriginalData.photo[0].res : "",
                             status: 3
                         }
 
@@ -791,7 +791,7 @@ exports.searchFriend = async (req, res, next) => {
                             _id: getOriginalData._id,
                             email: getOriginalData.email,
                             firstName: getOriginalData.firstName,
-                            profile: getOriginalData.photo[0] ? getOriginalData.photo[0].res : "",
+                            profile: getOriginalData.photo ? getOriginalData.photo[0].res : "",
                             status: 3
                         }
 
@@ -973,7 +973,7 @@ exports.searchFriend = async (req, res, next) => {
                             _id: finalData._id,
                             firstName: finalData.firstName,
                             email: finalData.email,
-                            profile: finalData.photo ? finalData.photo[0] : "",
+                            profile: finalData.photo[0] ? finalData.photo[0] : "",
                             status: finalStatus[key]
                         }
 
@@ -1123,7 +1123,7 @@ exports.getAllUser = async (req, res, next) => {
                             _id: getOriginalData._id,
                             email: getOriginalData.email,
                             firstName: getOriginalData.firstName,
-                            profile: getOriginalData.photo[0] ? getOriginalData.photo[0].res : "",
+                            profile: getOriginalData.photo ? getOriginalData.photo[0].res : "",
                             distance: distance,
                             status: 3
                         }
@@ -1139,7 +1139,7 @@ exports.getAllUser = async (req, res, next) => {
                             _id: getOriginalData._id,
                             email: getOriginalData.email,
                             firstName: getOriginalData.firstName,
-                            profile: getOriginalData.photo[0] ? getOriginalData.photo[0].res : "",
+                            profile: getOriginalData.photo ? getOriginalData.photo[0].res : "",
                             distance: distance,
                             status: 3
                         }
@@ -1151,7 +1151,7 @@ exports.getAllUser = async (req, res, next) => {
                             _id: getOriginalData._id,
                             email: getOriginalData.email,
                             firstName: getOriginalData.firstName,
-                            profile: getOriginalData.photo[0] ? getOriginalData.photo[0].res : "",
+                            profile: getOriginalData.photo ? getOriginalData.photo[0].res : "",
                             distance: distance,
                             status: 3
                         }
@@ -1239,7 +1239,7 @@ exports.getAllUser = async (req, res, next) => {
                             _id: getOriginalData._id,
                             email: getOriginalData.email,
                             firstName: getOriginalData.firstName,
-                            profile: getOriginalData.photo[0] ? getOriginalData.photo[0].res : "",
+                            profile: getOriginalData.photo ? getOriginalData.photo[0].res : "",
                             distance: distance,
                             status: 3
                         }
@@ -1256,7 +1256,7 @@ exports.getAllUser = async (req, res, next) => {
                             _id: getOriginalData._id,
                             email: getOriginalData.email,
                             firstName: getOriginalData.firstName,
-                            profile: getOriginalData.photo[0] ? getOriginalData.photo[0].res : "",
+                            profile: getOriginalData.photo ? getOriginalData.photo[0].res : "",
                             distance: distance,
                             status: 3
                         }
@@ -1269,7 +1269,7 @@ exports.getAllUser = async (req, res, next) => {
                             _id: getOriginalData._id,
                             email: getOriginalData.email,
                             firstName: getOriginalData.firstName,
-                            profile: getOriginalData.photo[0] ? getOriginalData.photo[0].res : "",
+                            profile: getOriginalData.photo ? getOriginalData.photo[0].res : "",
                             distance: distance,
                             status: 3
                         }
@@ -1469,7 +1469,7 @@ exports.getAllUser = async (req, res, next) => {
                             _id: finalData._id,
                             firstName: finalData.firstName,
                             email: finalData.email,
-                            profile: finalData.photo ? finalData.photo[0] : "",
+                            profile: finalData.photo[0] ? finalData.photo[0] : "",
                             distance: distance,
                             status: finalStatus[key]
                         }
@@ -2045,7 +2045,6 @@ exports.yesBasket = async (req, res, next) => {
                     }
                 }
 
-                console.log("reaquestedAllEmail", YesBasketData);
 
                 for (const allYesBasketData of YesBasketData) {
                     const meargeData = await userModel.findOne({
@@ -2103,7 +2102,7 @@ exports.yesBasket = async (req, res, next) => {
                                         const response = {
                                             _id: getOriginalData._id,
                                             email: getOriginalData.email,
-                                            profile: getOriginalData.photo[0] ? getOriginalData.photo[0].res : "",
+                                            profile: getOriginalData.photo ? getOriginalData.photo[0].res : "",
                                             firstName: getOriginalData.firstName,
                                             status: 3,
                                             thumbUp: findThumb.thumbUp,
@@ -2122,7 +2121,8 @@ exports.yesBasket = async (req, res, next) => {
                                 new APIResponse("show all yes basket Record", true, 201, 1, uniqueObjArray)
                             )
 
-                        } else {
+                        }
+                        else {
 
                             const emailGet = [];
                             const finalData = [];
@@ -2157,7 +2157,7 @@ exports.yesBasket = async (req, res, next) => {
                                         const response = {
                                             _id: getOriginalData._id,
                                             email: getOriginalData.email,
-                                            profile: getOriginalData.photo[0] ? getOriginalData.photo[0].res : "",
+                                            profile: getOriginalData.photo ? getOriginalData.photo[0].res : "",
                                             firstName: getOriginalData.firstName,
                                             status: 3,
                                             thumbUp: findThumb.thumbUp,
@@ -2283,7 +2283,7 @@ exports.yesBasket = async (req, res, next) => {
                                                     if (requestEmail.accepted == 1) {
                                                         var status1 = {
                                                             status: 1,
-                                                            profile: findThumbUp.photo[0] ? findThumbUp.photo[0].res : "",
+                                                            profile: findThumbUp.photo ? findThumbUp.photo[0].res : "",
                                                             firstName: findThumbUp.firstName,
                                                             email: requestEmail.requestedEmail,
                                                             thumbUp: findThumb.thumbUp,
@@ -2293,7 +2293,7 @@ exports.yesBasket = async (req, res, next) => {
                                                     } else {
                                                         var status2 = {
                                                             status: 2,
-                                                            profile: findThumbUp.photo[0] ? findThumbUp.photo[0].res : "",
+                                                            profile: findThumbUp.photo ? findThumbUp.photo[0].res : "",
                                                             firstName: findThumbUp.firstName,
                                                             email: requestEmail.requestedEmail,
                                                             thumbUp: findThumb.thumbUp,
@@ -2334,7 +2334,7 @@ exports.yesBasket = async (req, res, next) => {
                                     polyRelationship: finalData.polyRelationship,
                                     firstName: finalData.firstName,
                                     email: finalData.email,
-                                    profile: finalData.photo ? finalData.photo[0].res : "",
+                                    profile: finalData.photo[0] ? finalData.photo[0].res : "",
                                     relationshipSatus: finalData.relationshipSatus,
                                     Bio: finalData.Bio,
                                     hopingToFind: finalData.hopingToFind,
@@ -2460,7 +2460,7 @@ exports.yesBasket = async (req, res, next) => {
 
                                                 _id: getOriginalData._id,
                                                 email: getOriginalData.email,
-                                                profile: getOriginalData.photo[0] ? getOriginalData.photo[0].res : "",
+                                                profile: getOriginalData.photo ? getOriginalData.photo[0].res : "",
                                                 firstName: getOriginalData.firstName,
                                                 status: 3,
                                                 thumbUp: findThumb.thumbUp
@@ -2514,7 +2514,7 @@ exports.yesBasket = async (req, res, next) => {
                                             const response = {
                                                 _id: getOriginalData._id,
                                                 email: getOriginalData.email,
-                                                profile: getOriginalData.photo[0] ? getOriginalData.photo[0].res : "",
+                                                profile: getOriginalData.photo ? getOriginalData.photo[0].res : "",
                                                 firstName: getOriginalData.firstName,
                                                 status: 3,
                                                 thumbUp: findThumb.thumbUp
@@ -2646,7 +2646,7 @@ exports.yesBasket = async (req, res, next) => {
                                                                 status: 1,
                                                                 email: requestEmail.requestedEmail,
                                                                 firstName: findThumbUp.firstName,
-                                                                profile: findThumbUp.photo[0] ? findThumb.photo[0].res : "",
+                                                                profile: findThumbUp.photo ? findThumb.photo[0].res : "",
                                                                 thumbUp: findThumb.thumbUp
                                                             }
                                                             statusByEmail.push(status1)
@@ -2656,7 +2656,7 @@ exports.yesBasket = async (req, res, next) => {
                                                             var status2 = {
                                                                 status: 2,
                                                                 firstName: findThumbUp.firstName,
-                                                                profile: findThumbUp.photo[0] ? findThumbUp.photo[0].res : "",
+                                                                profile: findThumbUp.photo ? findThumbUp.photo[0].res : "",
                                                                 email: requestEmail.requestedEmail,
                                                                 thumbUp: findThumb.thumbUp
                                                             }
@@ -2834,7 +2834,7 @@ exports.noBasket = async (req, res, next) => {
                                     const response = {
                                         _id: getOriginalData._id,
                                         email: getOriginalData.email,
-                                        profile: getOriginalData.photo[0] ? getOriginalData.photo[0].res : "",
+                                        profile: getOriginalData.photo ? getOriginalData.photo[0].res : "",
                                         firstName: getOriginalData.firstName,
                                         status: 3,
                                         thumbUp: findThumb.thumbUp,
@@ -2892,7 +2892,7 @@ exports.noBasket = async (req, res, next) => {
                                         _id: getOriginalData._id,
                                         email: getOriginalData.email,
                                         firstName: getOriginalData.firstName,
-                                        profile: getOriginalData.photo[0] ? getOriginalData.photo[0].res : "",
+                                        profile: getOriginalData.photo ? getOriginalData.photo[0].res : "",
                                         status: 3,
                                         thumbUp: findThumb.thumbUp,
                                         thumbDown: findThumb.thumbDown
@@ -3029,7 +3029,7 @@ exports.noBasket = async (req, res, next) => {
                                                         status: 1,
                                                         email: requestEmail.requestedEmail,
                                                         firstName: findThumbUp.firstName,
-                                                        profile: findThumbUp.photo[0] ? findThumbUp.photo[0].res : "",
+                                                        profile: findThumbUp.photo ? findThumbUp.photo[0].res : "",
                                                         thumbUp: findThumb.thumbUp,
                                                         thumbDown: findThumb.thumbDown
                                                     }
@@ -3039,7 +3039,7 @@ exports.noBasket = async (req, res, next) => {
                                                         status: 2,
                                                         email: requestEmail.requestedEmail,
                                                         firstName: findThumbUp.firstName,
-                                                        profile: findThumbUp.photo[0] ? findThumbUp.photo[0].res : "",
+                                                        profile: findThumbUp.photo ? findThumbUp.photo[0].res : "",
                                                         thumbUp: findThumb.thumbUp,
                                                         thumbDown: findThumb.thumbDown
                                                     }
@@ -3200,7 +3200,7 @@ exports.noBasket = async (req, res, next) => {
                                                 _id: getOriginalData._id,
                                                 email: getOriginalData.email,
                                                 firstName: getOriginalData.firstName,
-                                                profile: getOriginalData.photo[0] ? getOriginalData.photo[0].res : "",
+                                                profile: getOriginalData.photo ? getOriginalData.photo[0].res : "",
                                                 status: 3,
                                                 thumbUp: findThumb.thumbUp
                                             }
@@ -3249,7 +3249,7 @@ exports.noBasket = async (req, res, next) => {
                                                 _id: getOriginalData._id,
                                                 email: getOriginalData.email,
                                                 firstName: getOriginalData.firstName,
-                                                profile: getOriginalData.photo[0] ? getOriginalData.photo[0].res : "",
+                                                profile: getOriginalData.photo ? getOriginalData.photo[0].res : "",
                                                 status: 3,
                                                 thumbUp: findThumb.thumbUp
                                             }
@@ -3368,7 +3368,7 @@ exports.noBasket = async (req, res, next) => {
                                                             var status1 = {
                                                                 status: 1,
                                                                 firstName: findThumbUp.firstName,
-                                                                profile: findThumbUp.photo[0] ? findThumbUp.photo[0].res : "",
+                                                                profile: findThumbUp.photo ? findThumbUp.photo[0].res : "",
                                                                 email: requestEmail.requestedEmail,
                                                                 thumbUp: findThumb.thumbUp
                                                             }
@@ -3378,7 +3378,7 @@ exports.noBasket = async (req, res, next) => {
                                                                 status: 2,
                                                                 email: requestEmail.requestedEmail,
                                                                 firstName: findThumbUp.firstName,
-                                                                profile: findThumbUp.photo[0] ? findThumbUp.photo[0].res : "",
+                                                                profile: findThumbUp.photo ? findThumbUp.photo[0].res : "",
                                                                 thumbUp: findThumb.thumbUp
                                                             }
                                                             statusByEmail.push(status2)
@@ -3483,7 +3483,7 @@ exports.getAllNotification = async (req, res, next) => {
                             _id: getNotification.userId,
                             notification: getNotification.notifications,
                             name: findUserDetail.firstName,
-                            profile: findUserDetail.photo[0] ? findUserDetail.photo[0].res : "",
+                            profile: findUserDetail.photo ? findUserDetail.photo[0].res : "",
                             status: getNotification.status
                         }
                         allNotification.push(response)

@@ -174,7 +174,7 @@ exports.getRequestUserWise = async (req, res, next) => {
                         id: userDeatil._id,
                         requestUser: notAcceptedRequest.RequestEmail,
                         name: userDeatil.firstName,
-                        profile: userDeatil.photo[0] ? userDeatil.photo[0].res : ""
+                        profile: userDeatil.photo ? userDeatil.photo[0].res : ""
                     }
                     allNotAcceptedRequestes.push(response)
                 }

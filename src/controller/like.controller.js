@@ -149,7 +149,7 @@ exports.showAllUserWhichIsLikePost = async (req, res, next) => {
                         _id: uniqueId,
                         email: userDetail.email,
                         firstName: userDetail.firstName,
-                        profile: userDetail.photo[0] ? userDetail.photo[0].res : "",
+                        profile: userDetail.photo ? userDetail.photo[0].res : "",
                         status: 3
                     }
 
@@ -165,7 +165,7 @@ exports.showAllUserWhichIsLikePost = async (req, res, next) => {
                             _id: allrequestedDataNotAcceptedRequestAndNotFriend,
                             email: userDetail.email,
                             firstName: userDetail.firstName,
-                            profile: userDetail.photo[0] ? userDetail.photo[0].res : "",
+                            profile: userDetail.photo ? userDetail.photo[0].res : "",
                             status: 3
                         }
 

@@ -89,14 +89,14 @@ exports.getUserWhichNotChoiceForLikeOrDislike = async (req, res, next) => {
                                         name: user1.firstName,
                                         gender: user1.identity,
                                         age: age1,
-                                        photo: user1.photo[0] ? user1.photo[0].res : ""
+                                        photo: user1.photo ? user1.photo[0].res : ""
                                     },
                                     user2: {
                                         _id: user2._id,
                                         name: user2.firstName,
                                         gender: user2.identity,
                                         age: age2,
-                                        photo: user2.photo[0] ? user2.photo[0].res : ""
+                                        photo: user2.photo ? user2.photo[0].res : ""
                                     }
                                 }
                                 response.push(userDetail)
@@ -140,21 +140,21 @@ exports.getUserWhichNotChoiceForLikeOrDislike = async (req, res, next) => {
                                         name: user1.firstName,
                                         gender: user1.identity,
                                         age: age1,
-                                        photo: user1.photo[0] ? user1.photo[0].res : ""
+                                        photo: user1.photo ? user1.photo[0].res : ""
                                     },
                                     user2: {
                                         _id: user2._id,
                                         name: user2.firstName,
                                         gender: user2.identity,
                                         age: age2,
-                                        photo: user2.photo[0] ? user2.photo[0].res : ""
+                                        photo: user2.photo ? user2.photo[0].res : ""
                                     },
                                     user3: {
                                         _id: user3._id,
                                         name: user3.firstName,
                                         gender: user3.identity,
                                         age: age3,
-                                        photo: user3.photo[0] ? user3.photo[0].res : ""
+                                        photo: user3.photo ? user3.photo[0].res : ""
                                     }
                                 }
                                 response.push(userDetail)
@@ -208,28 +208,28 @@ exports.getUserWhichNotChoiceForLikeOrDislike = async (req, res, next) => {
                                         name: user1.firstName,
                                         gender: user1.identity,
                                         age: age1,
-                                        photo: user1.photo[0] ? user1.photo[0].res : ""
+                                        photo: user1.photo ? user1.photo[0].res : ""
                                     },
                                     user2: {
                                         _id: user2._id,
                                         name: user2.firstName,
                                         gender: user2.identity,
                                         age: age2,
-                                        photo: user2.photo[0] ? user2.photo[0].res : ""
+                                        photo: user2.photo ? user2.photo[0].res : ""
                                     },
                                     user3: {
                                         _id: user3._id,
                                         name: user3.firstName,
                                         gender: user3.identity,
                                         age: age3,
-                                        photo: user3.photo[0] ? user3.photo[0].res : ""
+                                        photo: user3.photo ? user3.photo[0].res : ""
                                     },
                                     user4: {
                                         _id: user4._id,
                                         name: user4.firstName,
                                         gender: user4.identity,
                                         age: age4,
-                                        photo: user4.photo[0] ? user4.photo[0].res : ""
+                                        photo: user4.photo ? user4.photo[0].res : ""
                                     }
                                 }
 
@@ -516,7 +516,7 @@ exports.matchUsers = async (req, res, next) => {
                 const response = {
                     _id: data._id,
                     name: data.firstName,
-                    profile: data.photo[0] ? data.photo[0].res : "",
+                    profile: data.photo ? data.photo[0].res : "",
                     age: age
                 }
 
@@ -668,7 +668,7 @@ exports.listLinkProfile = async (req, res, next) => {
 
                 const response = {
                     id: findInUserModel._id,
-                    photo: findInUserModel.photo[0] ? findInUserModel.photo[0].res : "",
+                    photo: findInUserModel.photo ? findInUserModel.photo[0].res : "",
                     name: findInUserModel.firstName
                 }
                 allRequestList.push(response)
