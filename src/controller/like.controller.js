@@ -126,9 +126,26 @@ exports.showAllUserWhichIsLikePost = async (req, res, next) => {
 
 
             if (RequestedEmailExiestInUser == null) {
-                res.status(status.NOT_FOUND).json(
-                    new APIResponse("Requested Email Not Exiest In User or User not Found", "false", 404, "0")
-                )
+
+                if (RequestedEmailExiestInUser == null) {
+                    const responseData = [];
+                    for (const allrequestedDataNotAcceptedRequestAndNotFriend of allRequestedId) {
+                        const userDetail = await userModel.findOne({ _id: mongoose.Types.ObjectId(allrequestedDataNotAcceptedRequestAndNotFriend) });
+                        const response = {
+                            _id: allrequestedDataNotAcceptedRequestAndNotFriend,
+                            email: userDetail.email,
+                            firstName: userDetail.firstName,
+                            profile: userDetail.photo ? userDetail.photo[0].res : "",
+                            status: 3
+                        }
+
+                        responseData.push(response);
+                    }
+                    res.status(status.OK).json(
+                        new APIResponse("not user friend and not requested", "true", 200, "1", responseData)
+                    )
+                }
+               
             } else {
                 const emailGet = [];
 
