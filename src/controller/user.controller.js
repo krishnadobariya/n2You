@@ -2120,7 +2120,7 @@ exports.yesBasket = async (req, res, next) => {
                         let uniqueObjArray = [...new Map(responseData.map((item) => [item["_id"], item])).values()];
 
                         res.status(status.OK).json(
-                            new APIResponse("show all no basket record", true, 201, 1, uniqueObjArray)
+                            new APIResponse("show all yes basket record", true, 201, 1, uniqueObjArray)
                         )
 
                     } else {
@@ -2385,7 +2385,7 @@ exports.yesBasket = async (req, res, next) => {
                         let uniqueObjArray = [...new Map(final_response.map((item) => [item["_id"], item])).values()];
 
                         res.status(status.OK).json(
-                            new APIResponse("show all no basket record", true, 201, 1, uniqueObjArray)
+                            new APIResponse("show all yes basket record", true, 201, 1, uniqueObjArray)
                         )
                     }
                 }
@@ -2502,7 +2502,7 @@ exports.yesBasket = async (req, res, next) => {
 
                         let uniqueObjArray = [...new Map(responseData.map((item) => [item["_id"], item])).values()];
                         res.status(status.OK).json(
-                            new APIResponse("show all No Basket Record", true, 201, 1, uniqueObjArray)
+                            new APIResponse("show all yes Basket Record", true, 201, 1, uniqueObjArray)
                         )
 
                     } else {
@@ -2739,7 +2739,7 @@ exports.yesBasket = async (req, res, next) => {
                         let uniqueObjArray = [...new Map(final_response.map((item) => [item["_id"], item])).values()];
 
                         res.status(status.OK).json(
-                            new APIResponse("show all No Basket Record", true, 201, 1, uniqueObjArray)
+                            new APIResponse("show all yes Basket Record", true, 201, 1, uniqueObjArray)
                         )
                     }
                 }
@@ -2779,7 +2779,7 @@ exports.noBasket = async (req, res, next) => {
 
             if (findUser == null) {
                 res.status(status.NOT_FOUND).json(
-                    new APIResponse("user not Found and not Social Meida & Dating type user", "false", 404, "0")
+                    new APIResponse("User not Found and not Social Meida & Dating type user", "false", 404, "0")
                 )
             } else {
                 const reaquestedAllEmail = [];

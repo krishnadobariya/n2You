@@ -5,11 +5,6 @@ const APIResponse = require("../helper/APIResponse");
 const postModel = require("../model/post.model");
 const notificationModel = require("../model/polyamorous/notification.model");
 
-
-
-
-
-
 exports.sendRequest = async (req, res, next) => {
     try {
 
@@ -228,9 +223,12 @@ exports.userAcceptedRequesteOrNot = async (req, res, next) => {
                     _id: req.params.user_id
                 })
 
-                console.log(findUserWhichAcceptRequest);
                 const findUser = await userModel.findOne({
                     _id: reqestId
+                })
+
+                const findUser1InNotiofication = await notificationModel.findOne({
+                    userId: findUserWhichAcceptRequest._id
                 })
                 const findUserInNotiofication = await notificationModel.findOne({
                     userId: findUser._id
@@ -242,19 +240,7 @@ exports.userAcceptedRequesteOrNot = async (req, res, next) => {
                     }, {
                         $push: {
                             notifications: {
-                                notifications: `${findUserWhichAcceptRequest.firstName} accepted request`,
-                                userId: findUser._id,
-                                status: 2
-                            }
-                        }
-                    })
-
-                    await notificationModel.updateOne({
-                        userId: findUser._id
-                    }, {
-                        $push: {
-                            notifications: {
-                                notifications: `${findUserWhichAcceptRequest.firstName} accepted request`,
+                                notifications: `${findUserWhichAcceptRequest.firstName}, ${findUser.firstName} both are become friend`,
                                 userId: findUser._id,
                                 status: 2
                             }
@@ -272,6 +258,34 @@ exports.userAcceptedRequesteOrNot = async (req, res, next) => {
 
                     await data.save();
                 }
+
+                if (findUser1InNotiofication) {
+                    await notificationModel.updateOne({
+                        userId: findUserWhichAcceptRequest._id
+                    }, {
+                        $push: {
+                            notifications: {
+                                notifications: `${findUser.firstName}, ${findUserWhichAcceptRequest.firstName} both are become friend`,
+                                userId: findUserWhichAcceptRequest._id,
+                                status: 2
+                            }
+                        }
+                    })
+                } else {
+                    const data = notificationModel({
+                        userId: findUser._id,
+                        notifications: {
+                            notifications: `${findUser.firstName}, ${findUserWhichAcceptRequest.firstName}  both are become friend`,
+                            userId: findUserWhichAcceptRequest._id,
+                            status: 2
+                        }
+                    })
+
+                    await data.save();
+                }
+
+
+
                 res.status(status.OK).json(
                     new APIResponse("request accepted successfully!", "true", 200, "1")
                 )
@@ -287,9 +301,12 @@ exports.userAcceptedRequesteOrNot = async (req, res, next) => {
                     _id: req.params.user_id
                 })
 
-                console.log(findUserWhichAcceptRequest);
                 const findUser = await userModel.findOne({
                     _id: reqestId
+                })
+
+                const findUser1InNotiofication = await notificationModel.findOne({
+                    userId: findUserWhichAcceptRequest._id
                 })
                 const findUserInNotiofication = await notificationModel.findOne({
                     userId: findUser._id
@@ -301,9 +318,9 @@ exports.userAcceptedRequesteOrNot = async (req, res, next) => {
                     }, {
                         $push: {
                             notifications: {
-                                notifications: `${findUserWhichAcceptRequest.firstName} rejected request`,
+                                notifications: `${findUser.firstName}, ${findUserWhichAcceptRequest.firstName} bot are not become friend`,
                                 userId: findUser._id,
-                                status: 4
+                                status: 3
                             }
                         }
                     })
@@ -311,9 +328,35 @@ exports.userAcceptedRequesteOrNot = async (req, res, next) => {
                     const data = notificationModel({
                         userId: findUser._id,
                         notifications: {
-                            notifications: `${findUserWhichAcceptRequest.firstName} rejected request`,
+                            notifications: `${findUser.firstName}, ${findUserWhichAcceptRequest.firstName} bot are not become friend`,
                             userId: findUser._id,
-                            status: 4
+                            status: 3
+                        }
+                    })
+
+                    await data.save();
+                }
+
+
+                if (findUser1InNotiofication) {
+                    await notificationModel.updateOne({
+                        userId: findUserWhichAcceptRequest._id
+                    }, {
+                        $push: {
+                            notifications: {
+                                notifications: `${findUser.firstName}, ${findUserWhichAcceptRequest.firstName} bot are not become friend`,
+                                userId: findUserWhichAcceptRequest._id,
+                                status: 3
+                            }
+                        }
+                    })
+                } else {
+                    const data = notificationModel({
+                        userId: findUserWhichAcceptRequest._id,
+                        notifications: {
+                            notifications: `${findUser.firstName}, ${findUserWhichAcceptRequest.firstName} bot are not become friend`,
+                            userId: findUserWhichAcceptRequest._id,
+                            status: 3
                         }
                     })
 
