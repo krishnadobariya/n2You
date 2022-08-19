@@ -273,6 +273,41 @@ exports.userRegister = async (req, res, next) => {
     }
 }
 
+
+exports.userLogin = async (req, res, next) => {
+    try {
+
+        const findUser = await userModel.findOne({
+            email: req.body.email
+        }).select("_id , email , password")
+
+        if (findUser) {
+
+            if (req.body.password == findUser.password) {
+                res.status(status.OK).json(
+
+                    new APIResponse("login success", "true", 200, "1")
+                )
+            } else {
+                res.status(status.NOT_FOUND).json(
+                    new APIResponse("not match credential", "false", 404, "0")
+                )
+            }
+
+        } else {
+            res.status(status.NOT_FOUND).json(
+                new APIResponse("User not Found", "false", 404, "0")
+            )
+        }
+
+    } catch (error) {
+        console.log("Error:", error);
+        res.status(status.INTERNAL_SERVER_ERROR).json(
+            new APIResponse("Something Went Wrong", "false", 500, "0", error.message)
+        )
+    }
+}
+
 // user profile update
 exports.userUpdate = async (req, res, next) => {
     try {
