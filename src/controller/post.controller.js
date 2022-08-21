@@ -186,8 +186,6 @@ exports.getPostById = async (req, res, next) => {
             const userWisePosts = await postModal.findOne({ userId: userFindInPosts.userId, "posts._id": id });
 
             const getOnePost = [];
-
-            console.log("userWisePosts", userWisePosts);
             if (userWisePosts == null) {
                 res.status(status.OK).json(
                     new APIResponse("get post by post id", "true", 200, "1", [])
@@ -212,7 +210,26 @@ exports.getPostById = async (req, res, next) => {
                     })
 
                     for (const createResponse of storeAllpostsUserWise) {
+                        const post = [];
+                        for (const postwithType of createResponse.post) {
+                            const getExt1Name = postwithType ? postwithType.res : null;
+                            if (getExt1Name == null) {
 
+                            } else {
+                                const getExt1Name = path.extname(postwithType.res);
+                                if (getExt1Name != ".mp4") {
+                                    post.push({
+                                        res: postwithType.res,
+                                        type: "image"
+                                    })
+                                } else {
+                                    post.push({
+                                        res: postwithType.res,
+                                        type: "video"
+                                    })
+                                }
+                            }
+                        }
                         datetime = createResponse.createdAt;
 
                         var userPostedDate = new Date(datetime);
@@ -432,7 +449,7 @@ exports.getPostById = async (req, res, next) => {
                             email: findUser.email,
                             profile: findUser.photo[0] ? findUser.photo[0].res : "",
                             postId: createResponse._id,
-                            post_data: createResponse.post,
+                            post_data: post,
                             description: createResponse.description,
                             like: createResponse.like,
                             comment: createResponse.comment,
@@ -845,7 +862,21 @@ exports.getPostsVideobyUseId = async (req, res, next) => {
                 })
 
                 for (const createResponse of storeAllpostsUserWise) {
+                    const post = [];
+                    for (const postwithType of createResponse.post) {
+                        const getExt1Name = postwithType ? postwithType.res : null;
+                        if (getExt1Name == null) {
 
+                        } else {
+                            const getExt1Name = path.extname(postwithType.res);
+                            if (getExt1Name == ".mp4") {
+                                post.push({
+                                    res: postwithType.res,
+                                    type: "video"
+                                })
+                            }
+                        }
+                    }
 
                     const getExtName = path.extname(createResponse.post[0] ? createResponse.post[0].res : "");
 
@@ -1068,7 +1099,7 @@ exports.getPostsVideobyUseId = async (req, res, next) => {
                             email: findUser.email,
                             profile: findUser.photo[0] ? findUser.photo[0].res : "",
                             postId: createResponse._id,
-                            post_data: createResponse.post,
+                            post_data: post,
                             description: createResponse.description,
                             like: createResponse.like,
                             comment: createResponse.comment,
@@ -1165,8 +1196,21 @@ exports.getPostsImagesbyUseId = async (req, res, next) => {
                 })
 
                 for (const createResponse of storeAllpostsUserWise) {
+                    const post = [];
+                    for (const postwithType of createResponse.post) {
+                        const getExt1Name = postwithType ? postwithType.res : null;
+                        if (getExt1Name == null) {
 
-
+                        } else {
+                            const getExt1Name = path.extname(postwithType.res);
+                            if (getExt1Name != ".mp4") {
+                                post.push({
+                                    res: postwithType.res,
+                                    type: "image"
+                                })
+                            }
+                        }
+                    }
                     const getExtName = createResponse.post[0] ? createResponse.post[0].res : null;
                     if (getExtName == null) {
 
@@ -1393,7 +1437,7 @@ exports.getPostsImagesbyUseId = async (req, res, next) => {
                                 email: findUser.email,
                                 profile: findUser.photo[0] ? findUser.photo[0].res : "",
                                 postId: createResponse._id,
-                                post_data: createResponse.post,
+                                post_data: post,
                                 description: createResponse.description,
                                 like: createResponse.like,
                                 comment: createResponse.comment,
@@ -1408,7 +1452,7 @@ exports.getPostsImagesbyUseId = async (req, res, next) => {
                                 const response = {
                                     posts,
                                     finalPostedTime,
-                                    commentData: commentData[0] == null ? [] : commentData,
+                                    commentData: commentData[0] == null ? "" : commentData,
                                     postShowStatus: 1
                                 }
 
@@ -1418,7 +1462,7 @@ exports.getPostsImagesbyUseId = async (req, res, next) => {
                                 const response = {
                                     posts,
                                     finalPostedTime,
-                                    commentData: commentData[0] == null ? [] : commentData,
+                                    commentData: commentData[0] == null ? "" : commentData,
                                     postShowStatus: 0
                                 }
 
@@ -1676,7 +1720,31 @@ exports.userAllFriendPost = async (req, res, next) => {
 
                                 for (const allposts of meargAllTableEmail.posts) {
 
+
+
                                     for (const getallposts of allposts.posts) {
+
+                                        const post = [];
+                                        for (const postwithType of getallposts.post) {
+                                            const getExt1Name = postwithType ? postwithType.res : null;
+                                            if (getExt1Name == null) {
+
+                                            } else {
+                                                const getExt1Name = path.extname(postwithType.res);
+                                                if (getExt1Name != ".mp4") {
+                                                    post.push({
+                                                        res: postwithType.res,
+                                                        type: "image"
+                                                    })
+                                                } else {
+                                                    post.push({
+                                                        res: postwithType.res,
+                                                        type: "video"
+                                                    })
+                                                }
+                                            }
+                                        }
+
                                         const userPostDate = getallposts.createdAt;
 
                                         datetime = userPostDate;
@@ -1900,7 +1968,7 @@ exports.userAllFriendPost = async (req, res, next) => {
                                         }
 
                                         const allPosts = [];
-                                        allPosts.push(getallposts)
+                                        allPosts.push(post)
 
                                         const finalPosts = [...allPosts, ...allPosts]
                                         const response = {
@@ -2007,6 +2075,28 @@ exports.userAllFriendPost = async (req, res, next) => {
                 for (const allposts of meargAllTableEmail.posts) {
 
                     for (const getallposts of allposts.posts) {
+                        const post = [];
+                        for (const postwithType of getallposts.post) {
+                            const getExt1Name = postwithType ? postwithType.res : null;
+                            if (getExt1Name == null) {
+
+                            } else {
+                                const getExt1Name = path.extname(postwithType.res);
+                                if (getExt1Name != ".mp4") {
+                                    post.push({
+                                        res: postwithType.res,
+                                        type: "image"
+                                    })
+                                } else {
+                                    post.push({
+                                        res: postwithType.res,
+                                        type: "video"
+                                    })
+                                }
+                            }
+                        }
+
+
                         const userPostDate = getallposts.createdAt;
 
                         datetime = userPostDate;
@@ -2233,7 +2323,7 @@ exports.userAllFriendPost = async (req, res, next) => {
                         }
 
                         const allPosts = [];
-                        allPosts.push(getallposts)
+                        allPosts.push(post)
 
                         const finalPosts = [...allPosts, ...allPosts]
 
@@ -2310,7 +2400,6 @@ exports.userAllFriendPost = async (req, res, next) => {
 
             }
 
-            console.log("final_data", final_data);
 
             res.status(status.OK).json(
                 new APIResponse("show all post When accept by the user", "true", 201, "1", final_data)
@@ -2344,9 +2433,28 @@ exports.userAllFriendPost = async (req, res, next) => {
 
                 for (const allposts of meargAllTableEmail.posts) {
 
-
-
                     for (const getallposts of allposts.posts) {
+
+                        const post = [];
+                        for (const postwithType of getallposts.post) {
+                            const getExt1Name = postwithType ? postwithType.res : null;
+                            if (getExt1Name == null) {
+
+                            } else {
+                                const getExt1Name = path.extname(postwithType.res);
+                                if (getExt1Name != ".mp4") {
+                                    post.push({
+                                        res: postwithType.res,
+                                        type: "image"
+                                    })
+                                } else {
+                                    post.push({
+                                        res: postwithType.res,
+                                        type: "video"
+                                    })
+                                }
+                            }
+                        }
 
                         const userPostDate = getallposts.createdAt;
 
@@ -2573,7 +2681,7 @@ exports.userAllFriendPost = async (req, res, next) => {
                         }
 
                         const allPosts = [];
-                        allPosts.push(getallposts)
+                        allPosts.push(post)
 
                         const finalPosts = [...allPosts, ...allPosts]
                         const response = {
