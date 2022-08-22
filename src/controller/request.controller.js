@@ -31,17 +31,17 @@ exports.sendRequest = async (req, res, next) => {
                     const saveData = await request.save();
 
                     const findUserInNotification = await notificationModel.findOne({
-                        userId: checkUserExist._id
+                        userId: checkRequestedEmail._id
                     })
 
                     if (findUserInNotification) {
                         await notificationModel.updateOne({
-                            userId: checkUserExist._id
+                            userId: checkRequestedEmail._id
                         }, {
                             $push: {
                                 notifications: {
-                                    notifications: `${checkRequestedEmail.firstName} request to follow you`,
-                                    userId: checkRequestedEmail._id,
+                                    notifications: `${checkUserExist.firstName} request to follow you`,
+                                    userId: checkUserExist._id,
                                     status: 1
                                 }
                             }
@@ -49,10 +49,10 @@ exports.sendRequest = async (req, res, next) => {
                     } else {
 
                         const data = notificationModel({
-                            userId: checkUserExist._id,
+                            userId: checkRequestedEmail._id,
                             notifications: {
-                                notifications: `${checkRequestedEmail.firstName} request to follow you`,
-                                userId: checkRequestedEmail._id,
+                                notifications: `${checkUserExist.firstName} request to follow you`,
+                                userId: checkUserExist._id,
                                 status: 1
                             }
                         })
