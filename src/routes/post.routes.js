@@ -14,4 +14,4 @@ router.put('/reportAdd/:user_id/:post_id', postController.reportAdd);
 router.get('/videos/:id', postController.getPostsVideobyUseId);
 router.get('/images/:id', postController.getPostsImagesbyUseId);
 
-module.exports = router;
+module.exports = router;    

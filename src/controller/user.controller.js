@@ -484,287 +484,310 @@ exports.userUpdate = async (req, res, next) => {
                 )
 
 
-                next();
+                // next();
 
-                const find_User = await userModel.findOne({
-                    email: req.body.email
-                })
-
-
-                const findUsers = await userModel.findOne({
-                    _id: find_User._id,
-                    polyDating: 0
-                })
+                // const find_User = await userModel.findOne({
+                //     email: req.body.email
+                // })
 
 
-                if (findUsers == null) {
-
-                } else {
-
-
-                    const findUsers = await userModel.findOne({
-                        email: req.body.email
-                    })
-
-                    var matchUser = await userModel.find({
-                        _id: {
-                            $ne: findUsers._id
-                        },
-                        polyDating: 0
-                    })
+                // const findUsers = await userModel.findOne({
+                //     _id: find_User._id,
+                //     polyDating: 0
+                // })
 
 
-                    const identity = findUsers.identity
-                    const relationshipSatus = findUsers.relationshipSatus
-                    const IntrestedIn = findUsers.IntrestedIn
-                    const hopingToFind = findUsers.hopingToFind
-                    const wantChildren = findUsers.wantChildren
+                // if (findUsers == null) {
+
+                // } else {
 
 
-                    for (const chechUser of matchUser) {
+                //     const findUsers = await userModel.findOne({
+                //         email: req.body.email
+                //     })
 
-                        var local = 0;
-                        if (chechUser.identity == identity) {
-                            var local = local + 1
-                        } else {
-                            var local = local + 0
-                        }
-
-                        if (chechUser.relationshipSatus == relationshipSatus) {
-                            var local = local + 1
-                        } else {
-                            var local = local + 0
-                        }
+                //     var matchUser = await userModel.find({
+                //         _id: {
+                //             $ne: findUsers._id
+                //         },
+                //         polyDating: 0
+                //     })
 
 
-                        if (chechUser.IntrestedIn == IntrestedIn) {
-                            var local = local + 1
-                        } else {
-                            var local = local + 0
-                        }
-
-                        if (chechUser.hopingToFind == hopingToFind) {
-                            var local = local + 1
-                        } else {
-                            var local = local + 0
-                        }
-
-                        if (chechUser.wantChildren == wantChildren) {
-                            var local = local + 1
-                        } else {
-                            var local = local + 0
-                        }
+                //     const identity = findUsers.identity
+                //     const relationshipSatus = findUsers.relationshipSatus
+                //     const IntrestedIn = findUsers.IntrestedIn
+                //     const hopingToFind = findUsers.hopingToFind
+                //     const wantChildren = findUsers.wantChildren
 
 
-                        const matchProfile = local / 5 * 100;
+                //     for (const chechUser of matchUser) {
 
-                        const profileMatch = `${parseInt(matchProfile)}`
+                //         console.log("chechUser", chechUser._id);
+                //         var local = 0;
+                //         if (chechUser.identity == identity) {
+                //             var local = local + 1
+                //         } else {
+                //             var local = local + 0
+                //         }
+
+                //         if (chechUser.relationshipSatus == relationshipSatus) {
+                //             var local = local + 1
+                //         } else {
+                //             var local = local + 0
+                //         }
 
 
+                //         if (chechUser.IntrestedIn == IntrestedIn) {
+                //             var local = local + 1
+                //         } else {
+                //             var local = local + 0
+                //         }
 
-                        if (matchProfile >= 50 && matchProfile <= 100) {
+                //         if (chechUser.hopingToFind == hopingToFind) {
+                //             var local = local + 1
+                //         } else {
+                //             var local = local + 0
+                //         }
 
-                            const findInNoBasket1 = await userModel.findOne({
-                                _id: findUsers._id,
-                                "noBasket.userId": chechUser._id
-                            })
+                //         if (chechUser.wantChildren == wantChildren) {
+                //             var local = local + 1
+                //         } else {
+                //             var local = local + 0
+                //         }
 
 
-                            const findInNoBasket2 = await userModel.findOne({
-                                _id: chechUser._id,
-                                "noBasket.userId": findUsers._id
-                            })
+                //         const matchProfile = local / 5 * 100;
 
-                            console.log("findInNoBasket1", findInNoBasket1);
-                            console.log("findInNoBasket1", findInNoBasket1);
-                            if (findInNoBasket1) {
-                                await userModel.updateOne({
-                                    _id: findUsers._id,
-                                }, {
-                                    $pull: {
-                                        noBasket: {
-                                            userId: chechUser._id
-                                        }
-                                    }
-                                })
-                            } else {
-
-                                const findInYesBasket1 = await userModel.findOne({
-                                    _id: findUsers._id,
-                                    "noBasket.userId": chechUser._id
-                                })
-
-                                if (findInYesBasket1) {
-                                    const addInUser = await userModel.updateOne({
-                                        _id: findUsers._id,
-                                        "yesBasket.userId": chechUser._id
-                                    }, {
-                                        $set: {
-                                            "yesBasket.$.match": profileMatch
-                                        }
-                                    })
-
-                                } else {
-                                    const addInUser = await userModel.updateOne({
-                                        _id: findUsers._id
-                                    }, {
-                                        $push: {
-                                            yesBasket: {
-                                                match: profileMatch,
-                                                userId: chechUser._id
-                                            }
-                                        }
-                                    })
-                                }
-                            }
-
-                            if (findInNoBasket2) {
-                                await userModel.updateOne({
-                                    _id: chechUser._id,
-                                }, {
-                                    $pull: {
-                                        noBasket: {
-                                            userId: findUsers._id
-                                        }
-                                    }
-                                })
-                            } else {
-
-                                const findInYesBasket1 = await userModel.findOne({
-                                    _id: chechUser._id,
-                                    "noBasket.userId": findUsers._id
-                                })
-
-                                if (findInYesBasket1) {
-                                    const addInUser = await userModel.updateOne({
-                                        _id: chechUser._id,
-                                        "yesBasket.userId": findUsers._id
-                                    }, {
-                                        $set: {
-                                            "yesBasket.$.match": profileMatch
-                                        }
-                                    })
-
-                                } else {
-                                    const addInUser = await userModel.updateOne({
-                                        _id: chechUser._id
-                                    }, {
-                                        $push: {
-                                            yesBasket: {
-                                                match: profileMatch,
-                                                userId: findUsers._id
-                                            }
-                                        }
-                                    })
-                                }
-                            }
-
-                        } else {
+                //         const profileMatch = `${parseInt(matchProfile)}`
 
 
 
-                            const findInYesBasket1 = await userModel.findOne({
-                                _id: findUsers._id,
-                                "yesBasket.userId": chechUser._id
-                            })
+                //         if (matchProfile >= 50 && matchProfile <= 100) {
+
+                //             const findInNoBasket1 = await userModel.findOne({
+                //                 _id: findUsers._id,
+                //                 "noBasket.userId": chechUser._id
+                //             })
+
+                //             const findInNoBasket2 = await userModel.findOne({
+                //                 _id: chechUser._id,
+                //                 "noBasket.userId": findUsers._id
+                //             })
+
+                //             if (findInNoBasket1) {
+                //                 await userModel.updateOne({
+                //                     _id: findUsers._id,
+                //                 }, {
+                //                     $pull: {
+                //                         noBasket: {
+                //                             userId: chechUser._id
+                //                         }
+                //                     }
+                //                 })
+
+                //                 await userModel.updateOne({
+                //                     _id: findUsers._id,
+                //                     "yesBasket.userId": chechUser._id
+                //                 },
+                //                     {
+                //                         $set: {
+                //                             "yesBasket.$.match": profileMatch
+                //                         }
+                //                     })
+
+                //             } else {
+
+                //                 const findInYesBasket1 = await userModel.findOne({
+                //                     _id: findUsers._id,
+                //                     "yesBasket.userId": chechUser._id
+                //                 })
 
 
-                            const findInYesBasket2 = await userModel.findOne({
-                                _id: chechUser._id,
-                                "yesBasket.userId": findUsers._id
-                            })
+                //                 if (findInYesBasket1) {
+
+                //                     const addInUser = await userModel.updateOne({
+                //                         _id: findUsers._id,
+                //                         "yesBasket.userId": req.body.id
+                //                     }, {
+                //                         $set: {
+                //                             "yesBasket.$.match": profileMatch
+                //                         }
+                //                     })
+
+                //                 } else {
+                //                     const addInUser = await userModel.updateOne({
+                //                         _id: findUsers._id
+                //                     }, {
+                //                         $push: {
+                //                             yesBasket: {
+                //                                 match: profileMatch,
+                //                                 userId: chechUser._id
+                //                             }
+                //                         }
+                //                     })
+                //                 }
+                //             }
+
+                //             if (findInNoBasket2) {
+
+                //                 await userModel.updateOne({
+                //                     _id: chechUser._id,
+                //                 }, {
+                //                     $pull: {
+                //                         noBasket: {
+                //                             userId: findUsers._id
+                //                         }
+                //                     }
+                //                 })
+                //             } else {
+
+                //                 const findInYesBasket1 = await userModel.findOne({
+                //                     _id: chechUser._id,
+                //                     "yesBasket.userId": findUsers._id
+                //                 })
+
+                //                 if (findInYesBasket1) {
+                //                     const addInUser = await userModel.updateOne({
+                //                         _id: chechUser._id,
+                //                         "yesBasket.userId": findUsers._id
+                //                     }, {
+                //                         $set: {
+                //                             "yesBasket.$.match": profileMatch
+                //                         }
+                //                     })
+
+                //                 } else {
+
+                //                     const addInUser = await userModel.updateOne({
+                //                         _id: chechUser._id
+                //                     }, {
+                //                         $push: {
+                //                             yesBasket: {
+                //                                 match: profileMatch,
+                //                                 userId: findUsers._id
+                //                             }
+                //                         }
+                //                     })
+                //                 }
+                //             }
+
+                //         } else {
+
+                //             const findInYesBasket1 = await userModel.findOne({
+                //                 _id: findUsers._id,
+                //                 "yesBasket.userId": chechUser._id
+                //             })
 
 
-                            if (findInYesBasket1) {
-
-                                await userModel.updateOne({
-                                    _id: findUsers._id,
-                                }, {
-                                    $pull: {
-                                        yesBasket: {
-                                            userId: chechUser._id
-                                        }
-                                    }
-                                })
-                            } else {
-                                const findInNoBasket1 = await userModel.findOne({
-                                    _id: findUsers._id,
-                                    "noBasket.userId": chechUser._id
-                                })
+                //             const findInYesBasket2 = await userModel.findOne({
+                //                 _id: chechUser._id,
+                //                 "yesBasket.userId": findUsers._id
+                //             })
 
 
-                                if (findInNoBasket1) {
-                                    const addInUser = await userModel.updateOne({
-                                        _id: findUsers._id,
-                                        "noBasket.userId": chechUser._id
-                                    }, {
-                                        $set: {
-                                            "noBasket.$.match": profileMatch
-                                        }
-                                    })
+                //             if (findInYesBasket1) {
 
-                                } else {
-
-                                    const addInUser = await userModel.updateOne({
-                                        _id: findUsers._id
-                                    }, {
-                                        $push: {
-                                            noBasket: {
-                                                match: profileMatch,
-                                                userId: chechUser._id
-                                            }
-                                        }
-                                    })
-                                }
-                            }
+                //                 await userModel.updateOne({
+                //                     _id: findUsers._id,
+                //                 }, {
+                //                     $pull: {
+                //                         yesBasket: {
+                //                             userId: chechUser._id
+                //                         }
+                //                     }
+                //                 })
 
 
-                            if (findInYesBasket2) {
+                //                 await userModel.updateOne({
+                //                     _id: findUsers._id,
+                //                     "noBasket.userId": chechUser._id
+                //                 },
+                //                     {
+                //                         $set: {
+                //                             "noBasket.$.match": profileMatch
+                //                         }
+                //                     })
 
-                                await userModel.updateOne({
-                                    _id: chechUser._id,
-                                }, {
-                                    $pull: {
-                                        yesBasket: {
-                                            userId: findUsers._id
-                                        }
-                                    }
-                                })
-                            } else {
-                                const findInNoBasket1 = await userModel.findOne({
-                                    _id: chechUser._id,
-                                    "noBasket.userId": findUsers._id
-                                })
-
-                                if (findInNoBasket1) {
-                                    const addInUser = await userModel.updateOne({
-                                        _id: chechUser._id,
-                                        "noBasket.userId": findUsers._id
-                                    }, {
-                                        $set: {
-                                            "noBasket.$.match": profileMatch
-                                        }
-                                    })
-                                } else {
-                                    const addInUser = await userModel.updateOne({
-                                        _id: chechUser._id
-                                    }, {
-                                        $push: {
-                                            noBasket: {
-                                                match: profileMatch,
-                                                userId: findUsers._id
-                                            }
-                                        }
-                                    })
-
-                                }
-                            }
+                //             } else {
+                //                 const findInNoBasket1 = await userModel.findOne({
+                //                     _id: findUsers._id,
+                //                     "noBasket.userId": chechUser._id
+                //                 })
 
 
-                        }
+                //                 if (findInNoBasket1) {
+                //                     const addInUser = await userModel.updateOne({
+                //                         _id: findUsers._id,
+                //                         "noBasket.userId": chechUser._id
+                //                     }, {
+                //                         $set: {
+                //                             "noBasket.$.match": profileMatch
+                //                         }
+                //                     })
 
-                    }
-                }
+                //                 } else {
+
+                //                     const addInUser = await userModel.updateOne({
+                //                         _id: findUsers._id
+                //                     }, {
+                //                         $push: {
+                //                             noBasket: {
+                //                                 match: profileMatch,
+                //                                 userId: chechUser._id
+                //                             }
+                //                         }
+                //                     })
+                //                 }
+                //             }
+
+
+                //             if (findInYesBasket2) {
+
+                //                 await userModel.updateOne({
+                //                     _id: chechUser._id,
+                //                 }, {
+                //                     $pull: {
+                //                         yesBasket: {
+                //                             userId: findUsers._id
+                //                         }
+                //                     }
+                //                 })
+                //             } else {
+                //                 const findInNoBasket1 = await userModel.findOne({
+                //                     _id: chechUser._id,
+                //                     "noBasket.userId": findUsers._id
+                //                 })
+
+                //                 if (findInNoBasket1) {
+                //                     const addInUser = await userModel.updateOne({
+                //                         _id: chechUser._id,
+                //                         "noBasket.userId": findUsers._id
+                //                     }, {
+                //                         $set: {
+                //                             "noBasket.$.match": profileMatch
+                //                         }
+                //                     })
+                //                 } else {
+                //                     const addInUser = await userModel.updateOne({
+                //                         _id: chechUser._id
+                //                     }, {
+                //                         $push: {
+                //                             noBasket: {
+                //                                 match: profileMatch,
+                //                                 userId: findUsers._id
+                //                             }
+                //                         }
+                //                     })
+
+                //                 }
+                //             }
+
+
+                //         }
+
+                //     }
+                // }
             }
         }
 

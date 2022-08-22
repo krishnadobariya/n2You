@@ -844,12 +844,10 @@ exports.getPostsVideobyUseId = async (req, res, next) => {
         const finalResponse = [];
         const userFindInPosts = await postModal.findOne({ userId: id });
 
-        console.log("finalResponse", userFindInPosts);
-        const findUser = await userModal.findOne({
-            _id: userFindInPosts.userId
-        })
-
         if (userFindInPosts) {
+            const findUser = await userModal.findOne({
+                _id: userFindInPosts.userId
+            })
 
             const userWisePosts = await postModal.findOne({ userId: id });
             if (userWisePosts.posts) {
@@ -1143,7 +1141,7 @@ exports.getPostsVideobyUseId = async (req, res, next) => {
 
                 if (finalResponse[0] == undefined) {
                     res.status(status.OK).json(
-                        new APIResponse("Not have any Video Posted!", "true", 200, "1", [])
+                        new APIResponse("all Video!", "true", 200, "1", [])
                     )
                 } else {
                     res.status(status.OK).json(
@@ -1157,8 +1155,8 @@ exports.getPostsVideobyUseId = async (req, res, next) => {
                 )
             }
         } else {
-            res.status(status.NOT_FOUND).json(
-                new APIResponse("User Not Found and not Social Meida & Dating type user!", "false", 404, "0")
+            res.status(status.OK).json(
+                new APIResponse("all Video!", "true", 200, "1", [])
             )
         }
 
@@ -1179,11 +1177,13 @@ exports.getPostsImagesbyUseId = async (req, res, next) => {
         const finalResponse = [];
         const userFindInPosts = await postModal.findOne({ userId: id });
 
-        const findUser = await userModal.findOne({
-            _id: userFindInPosts.userId
-        })
 
         if (userFindInPosts) {
+
+            const findUser = await userModal.findOne({
+                _id: userFindInPosts.userId
+            })
+
 
             const userWisePosts = await postModal.findOne({ userId: id });
             if (userWisePosts.posts) {
@@ -1480,11 +1480,11 @@ exports.getPostsImagesbyUseId = async (req, res, next) => {
 
                 if (finalResponse[0] == undefined) {
                     res.status(status.OK).json(
-                        new APIResponse("Not have any Images Posted!", "true", 200, "1")
+                        new APIResponse("all Images!", "true", 200, "1", [])
                     )
                 } else {
                     res.status(status.OK).json(
-                        new APIResponse("all video!", "true", 200, "1", finalResponse)
+                        new APIResponse("all Images!", "true", 200, "1", finalResponse)
                     )
                 }
 
@@ -1494,8 +1494,8 @@ exports.getPostsImagesbyUseId = async (req, res, next) => {
                 )
             }
         } else {
-            res.status(status.NOT_FOUND).json(
-                new APIResponse("User Not Found in post Table and not Social Meida & Dating type user!", "false", 404, "0")
+            res.status(status.OK).json(
+                new APIResponse("all Images!", "true", 200, "1", [])
             )
         }
 
@@ -1724,6 +1724,8 @@ exports.userAllFriendPost = async (req, res, next) => {
 
                                     for (const getallposts of allposts.posts) {
 
+
+
                                         const post = [];
                                         for (const postwithType of getallposts.post) {
                                             const getExt1Name = postwithType ? postwithType.res : null;
@@ -1733,13 +1735,33 @@ exports.userAllFriendPost = async (req, res, next) => {
                                                 const getExt1Name = path.extname(postwithType.res);
                                                 if (getExt1Name != ".mp4") {
                                                     post.push({
-                                                        res: postwithType.res,
-                                                        type: "image"
+                                                        post: [
+                                                            {
+                                                                res: postwithType.res,
+                                                                type: "image"
+                                                            }
+                                                        ],
+                                                        description: getallposts.description,
+                                                        like: getallposts.like,
+                                                        comment: getallposts.comment,
+                                                        report: getallposts.report,
+                                                        _id: getallposts._id,
+                                                        createdAt: getallposts.createdAt
                                                     })
                                                 } else {
                                                     post.push({
-                                                        res: postwithType.res,
-                                                        type: "video"
+                                                        post: [
+                                                            {
+                                                                res: postwithType.res,
+                                                                type: "video"
+                                                            }
+                                                        ],
+                                                        description: getallposts.description,
+                                                        like: getallposts.like,
+                                                        comment: getallposts.comment,
+                                                        report: getallposts.report,
+                                                        _id: getallposts._id,
+                                                        createdAt: getallposts.createdAt
                                                     })
                                                 }
                                             }
@@ -2084,13 +2106,33 @@ exports.userAllFriendPost = async (req, res, next) => {
                                 const getExt1Name = path.extname(postwithType.res);
                                 if (getExt1Name != ".mp4") {
                                     post.push({
-                                        res: postwithType.res,
-                                        type: "image"
+                                        post: [
+                                            {
+                                                res: postwithType.res,
+                                                type: "image"
+                                            }
+                                        ],
+                                        description: getallposts.description,
+                                        like: getallposts.like,
+                                        comment: getallposts.comment,
+                                        report: getallposts.report,
+                                        _id: getallposts._id,
+                                        createdAt: getallposts.createdAt
                                     })
                                 } else {
                                     post.push({
-                                        res: postwithType.res,
-                                        type: "video"
+                                        post: [
+                                            {
+                                                res: postwithType.res,
+                                                type: "video"
+                                            }
+                                        ],
+                                        description: getallposts.description,
+                                        like: getallposts.like,
+                                        comment: getallposts.comment,
+                                        report: getallposts.report,
+                                        _id: getallposts._id,
+                                        createdAt: getallposts.createdAt
                                     })
                                 }
                             }
@@ -2323,8 +2365,8 @@ exports.userAllFriendPost = async (req, res, next) => {
                         }
 
                         const allPosts = [];
+                        console.log(getallposts);
                         allPosts.push(post)
-
                         const finalPosts = [...allPosts, ...allPosts]
 
                         const response = {
@@ -2444,13 +2486,33 @@ exports.userAllFriendPost = async (req, res, next) => {
                                 const getExt1Name = path.extname(postwithType.res);
                                 if (getExt1Name != ".mp4") {
                                     post.push({
-                                        res: postwithType.res,
-                                        type: "image"
+                                        post: [
+                                            {
+                                                res: postwithType.res,
+                                                type: "image"
+                                            }
+                                        ],
+                                        description: getallposts.description,
+                                        like: getallposts.like,
+                                        comment: getallposts.comment,
+                                        report: getallposts.report,
+                                        _id: getallposts._id,
+                                        createdAt: getallposts.createdAt
                                     })
                                 } else {
                                     post.push({
-                                        res: postwithType.res,
-                                        type: "video"
+                                        post: [
+                                            {
+                                                res: postwithType.res,
+                                                type: "video"
+                                            }
+                                        ],
+                                        description: getallposts.description,
+                                        like: getallposts.like,
+                                        comment: getallposts.comment,
+                                        report: getallposts.report,
+                                        _id: getallposts._id,
+                                        createdAt: getallposts.createdAt
                                     })
                                 }
                             }
