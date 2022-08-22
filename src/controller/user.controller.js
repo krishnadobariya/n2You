@@ -849,437 +849,445 @@ exports.searchFriend = async (req, res, next) => {
         }).select('_id')
 
 
-        const Regexname = new RegExp(req.body.search_key, 'i');
-        const searchName = await userModel.find({ firstName: Regexname, polyDating: 0 }).maxTimeMS(10);
-        // console.log("searchName", searchName);
-        const reaquestedAllEmail = [];
-        searchName.map((result, index) => {
-            reaquestedAllEmail.push(result.email)
-        })
-
-
-        if (reaquestedAllEmail[0] == undefined) {
-            res.status(status.NOT_FOUND).json(
-                new APIResponse("No User Found", 'false', 404, '0')
+        if (id == null) {
+            res.status(status.OK).json(
+                new APIResponse("all friend!", "true", 201, "1", [])
             )
         } else {
-            const RequestedEmailExiestInUser = await requestsModel.findOne(
-                {
-                    userId: req.params.user_id,
-                    RequestedEmails: {
-                        $elemMatch: {
-                            requestedEmail: {
-                                $in: reaquestedAllEmail
-                            }
-                        }
-                    }
-                }
-            ).maxTimeMS(10)
+
+            const Regexname = new RegExp(req.body.search_key, 'i');
+            const searchName = await userModel.find({ firstName: Regexname, polyDating: 0 }).maxTimeMS(10);
+            // console.log("searchName", searchName);
+            const reaquestedAllEmail = [];
+            searchName.map((result, index) => {
+                reaquestedAllEmail.push(result.email)
+            })
 
 
-            if (reaquestedAllEmail && RequestedEmailExiestInUser == null) {
-                const finalData = [];
-                const responseData = [];
-                // console.log("reaquestedAllEmail", reaquestedAllEmail);
-                // console.log("RequestedEmailExiestInUser", RequestedEmailExiestInUser);
-                for (const allrequestedDataNotAcceptedRequestAndNotFriend of reaquestedAllEmail) {
-
-                    const FindLocation = await userModel.find()
-                        // .aggregate([
-                        //     {
-                        //         $geoNear: {
-                        //             near: {
-                        //                 type: "Point",
-                        //                 coordinates: [
-                        //                     parseFloat(req.query.lat),
-                        //                     parseFloat(req.query.long) ||  parseFloat(req.query.long) == 0
-                        || parseFloat(req.query.long) == 0
-                    //                 ],
-                    //             },
-                    //             distanceField: "distanceFrom",
-                    //             maxDistance: 10000,
-                    //             minDistance: 0,
-                    //             uniqueDoc: true,
-                    //             spherical: true
-                    //         },
-                    //     }]);
-
-
-                    for (const uniqueDistance of FindLocation) {
-
-                        if (uniqueDistance.email == allrequestedDataNotAcceptedRequestAndNotFriend) {
-                            finalData.push(uniqueDistance)
-                        }
-                    }
-                }
-                const UniqueEmail = [];
-                const chatRoomId = [];
-                for (const getOriginalData of finalData) {
-
-                    const findAllUserWithIchat1 = await chatRoomModel.findOne({
-                        $and: [{
-                            user1: getOriginalData._id
-                        }, {
-                            user2: id._id
-                        }]
-                    }).select("_id")
-
-
-                    const findAllUserWithIchat2 = await chatRoomModel.findOne({
-                        $and: [{
-                            user1: id._id
-                        }, {
-                            user2: getOriginalData._id
-                        }]
-                    }).select("_id")
-
-
-                    if (findAllUserWithIchat1) {
-                        chatRoomId.push(findAllUserWithIchat1._id)
-                        const response = {
-                            chatRoomId: chatRoomId[0],
-                            _id: getOriginalData._id,
-                            email: getOriginalData.email,
-                            firstName: getOriginalData.firstName,
-                            profile: getOriginalData.photo[0] ? getOriginalData.photo[0].res : "",
-                            status: 3
-                        }
-
-                        UniqueEmail.push(response);
-
-                    } else if (findAllUserWithIchat2) {
-                        chatRoomId.push(findAllUserWithIchat2._id)
-                        const response = {
-                            chatRoomId: chatRoomId[0],
-                            _id: getOriginalData._id,
-                            email: getOriginalData.email,
-                            firstName: getOriginalData.firstName,
-                            profile: getOriginalData.photo[0] ? getOriginalData.photo[0].res : "",
-                            status: 3
-                        }
-
-                        UniqueEmail.push(response);
-                    } else {
-
-                        const response = {
-                            _id: getOriginalData._id,
-                            email: getOriginalData.email,
-                            firstName: getOriginalData.firstName,
-                            profile: getOriginalData.photo[0] ? getOriginalData.photo[0].res : "",
-                            status: 3
-                        }
-
-                        UniqueEmail.push(response);
-                    }
-
-                }
-
-                res.status(status.OK).json(
-                    new APIResponse("show all record searchwise", true, 201, 1, UniqueEmail)
+            if (reaquestedAllEmail[0] == undefined) {
+                res.status(status.NOT_FOUND).json(
+                    new APIResponse("No User Found", 'false', 404, '0')
                 )
-
-
             } else {
-
-                const emailGet = [];
-                const finalData = [];
-                for (const getEmail of RequestedEmailExiestInUser.RequestedEmails) {
-                    emailGet.push(getEmail.requestedEmail)
-                }
-
-                var difference = reaquestedAllEmail.filter(x => emailGet.indexOf(x) === -1);
-
-
-                const UniqueEmail = [];
-                for (const uniqueEmail of difference) {
-                    const FindLocation = await userModel.find()
-
-
-
-                    for (const uniqueDistance of FindLocation) {
-
-                        if (uniqueDistance.email == uniqueEmail) {
-                            finalData.push(uniqueDistance)
-                        }
-                    }
-
-                }
-                const chatRoomId = [];
-                for (const getOriginalData of finalData) {
-                    const findAllUserWithIchat1 = await chatRoomModel.findOne({
-                        $and: [{
-                            user1: getOriginalData._id
-                        }, {
-                            user2: id._id
-                        }]
-                    }).select("_id")
-
-
-                    const findAllUserWithIchat2 = await chatRoomModel.findOne({
-                        $and: [{
-                            user1: id._id
-                        }, {
-                            user2: getOriginalData._id
-                        }]
-                    }).select("_id")
-
-
-
-
-                    if (findAllUserWithIchat1) {
-                        chatRoomId.push(findAllUserWithIchat1._id)
-                        const response = {
-                            chatRoomId: chatRoomId[0],
-                            _id: getOriginalData._id,
-                            email: getOriginalData.email,
-                            firstName: getOriginalData.firstName,
-                            profile: getOriginalData.photo[0] ? getOriginalData.photo[0].res : "",
-                            status: 3
-                        }
-
-                        UniqueEmail.push(response);
-
-                        // console.log(chatRoomId[0]);
-                    } else if (findAllUserWithIchat2) {
-                        chatRoomId.push(findAllUserWithIchat2._id)
-                        const response = {
-                            chatRoomId: chatRoomId[0],
-                            _id: getOriginalData._id,
-                            email: getOriginalData.email,
-                            firstName: getOriginalData.firstName,
-                            profile: getOriginalData.photo[0] ? getOriginalData.photo[0].res : "",
-                            status: 3
-                        }
-
-                        UniqueEmail.push(response);
-                    } else {
-
-                        const response = {
-                            _id: getOriginalData._id,
-                            email: getOriginalData.email,
-                            firstName: getOriginalData.firstName,
-                            profile: getOriginalData.photo[0] ? getOriginalData.photo[0].res : "",
-                            status: 3
-                        }
-
-                        UniqueEmail.push(response);
-                    }
-
-
-                }
-                const statusByEmail = [];
-                const allRequestedEmail = RequestedEmailExiestInUser.RequestedEmails
-                const requestedEmailWitchIsInuserRequeted = [];
-                allRequestedEmail.map((result, next) => {
-                    const resultEmail = result.requestedEmail
-                    requestedEmailWitchIsInuserRequeted.push(resultEmail);
-                })
-
-                const meageAllTable = await userModel.aggregate([{
-                    $match: {
-                        email: {
-                            $in: requestedEmailWitchIsInuserRequeted
-                        }
-                    }
-                },
-                {
-                    $lookup: {
-                        from: 'posts',
-                        localField: 'email',
-                        foreignField: 'email',
-                        as: 'req_data'
-                    }
-                },
-                {
-                    $lookup: {
-                        from: 'requests',
-                        let: {
-
-                            userId: mongoose.Types.ObjectId(req.params.user_id),
-                            email: "$email"
-                        },
-                        pipeline: [
-                            {
-                                $match: {
-                                    $expr: {
-                                        $and: [
-                                            {
-                                                $eq: [
-                                                    "$userId", "$$userId"
-                                                ]
-                                            },
-                                            {
-                                                $in:
-                                                    [
-                                                        "$$email", "$RequestedEmails.requestedEmail"
-                                                    ]
-                                            }
-                                        ]
-                                    }
-                                }
-                            },
-                        ],
-                        as: 'form_data'
-                    }
-                },
-                {
-                    $project: {
-                        polyDating: "$polyDating",
-                        HowDoYouPoly: "$HowDoYouPoly",
-                        loveToGive: "$loveToGive",
-                        polyRelationship: "$polyRelationship",
-                        firstName: "$firstName",
-                        email: "$email",
-                        firstName: "$firstName",
-                        relationshipSatus: "$relationshipSatus",
-                        Bio: "$Bio",
-                        photo: "$photo",
-                        hopingToFind: "$hopingToFind",
-                        jobTitle: "$jobTitle",
-                        wantChildren: "$wantChildren",
-                        posts: "$req_data",
-                        result: "$form_data.RequestedEmails",
-                    }
-                }])
-
-                const finalExistUser = [];
-
-
-
-                const emailDataDetail = meageAllTable;
-                for (const DataDetail of emailDataDetail) {
-
-                    for (const reqEmail of reaquestedAllEmail) {
-                        if (DataDetail.email == reqEmail) {
-                            finalExistUser.push(DataDetail)
-                        }
-                    }
-                }
-
-                for (const emailData of finalExistUser[0].result) {
-
-                    for (const requestEmail of emailData) {
-
-                        for (const meageAllTableEmail of finalExistUser) {
-
-                            if (requestEmail.requestedEmail == meageAllTableEmail.email) {
-
-
-                                if (requestEmail.accepted == 1) {
-                                    var status1 = {
-                                        status: 1,
-                                        email: requestEmail.requestedEmail
-                                    }
-                                    statusByEmail.push(status1)
-                                } else {
-                                    var status2 = {
-                                        status: 2,
-                                        email: requestEmail.requestedEmail
-                                    }
-                                    statusByEmail.push(status2)
+                const RequestedEmailExiestInUser = await requestsModel.findOne(
+                    {
+                        userId: req.params.user_id,
+                        RequestedEmails: {
+                            $elemMatch: {
+                                requestedEmail: {
+                                    $in: reaquestedAllEmail
                                 }
                             }
                         }
                     }
-                }
+                ).maxTimeMS(10)
 
-                const final_data = [];
 
-                const finalStatus = []
-                for (const [key, finalData] of meageAllTable.entries()) {
-                    for (const [key, final1Data] of statusByEmail.entries())
-                        if (finalData.email === final1Data.email) {
-                            finalStatus.push(final1Data.status)
+                if (reaquestedAllEmail && RequestedEmailExiestInUser == null) {
+                    const finalData = [];
+                    const responseData = [];
+                    // console.log("reaquestedAllEmail", reaquestedAllEmail);
+                    // console.log("RequestedEmailExiestInUser", RequestedEmailExiestInUser);
+                    for (const allrequestedDataNotAcceptedRequestAndNotFriend of reaquestedAllEmail) {
+
+                        const FindLocation = await userModel.find()
+                            // .aggregate([
+                            //     {
+                            //         $geoNear: {
+                            //             near: {
+                            //                 type: "Point",
+                            //                 coordinates: [
+                            //                     parseFloat(req.query.lat),
+                            //                     parseFloat(req.query.long) ||  parseFloat(req.query.long) == 0
+                            || parseFloat(req.query.long) == 0
+                        //                 ],
+                        //             },
+                        //             distanceField: "distanceFrom",
+                        //             maxDistance: 10000,
+                        //             minDistance: 0,
+                        //             uniqueDoc: true,
+                        //             spherical: true
+                        //         },
+                        //     }]);
+
+
+                        for (const uniqueDistance of FindLocation) {
+
+                            if (uniqueDistance.email == allrequestedDataNotAcceptedRequestAndNotFriend) {
+                                finalData.push(uniqueDistance)
+                            }
                         }
-                }
-                for (const [key, finalData] of finalExistUser.entries()) {
-
-                    // console.log("finalData", finalData);
-
-                    const response = {
-                        _id: finalData._id,
-                        polyDating: finalData.polyDating,
-                        HowDoYouPoly: finalData.HowDoYouPoly,
-                        loveToGive: finalData.loveToGive,
-                        polyRelationship: finalData.polyRelationship,
-                        firstName: finalData.firstName,
-                        email: finalData.email,
-                        relationshipSatus: finalData.relationshipSatus,
-                        Bio: finalData.Bio,
-                        profile: finalData.photo[0] ? finalData.photo[0].res : "",
-                        hopingToFind: finalData.hopingToFind,
-                        jobTitle: finalData.jobTitle,
-                        wantChildren: finalData.wantChildren,
-                        posts: finalData.posts,
-                        status: finalStatus[key]
                     }
-
-
+                    const UniqueEmail = [];
                     const chatRoomId = [];
-                    const findAllUserWithIchat1 = await chatRoomModel.findOne({
-                        $and: [{
-                            user1: finalData._id
-                        }, {
-                            user2: id._id
-                        }]
-                    }).select("_id")
+                    for (const getOriginalData of finalData) {
 
-                    const findAllUserWithIchat2 = await chatRoomModel.findOne({
-                        $and: [{
-                            user1: id._id
-                        }, {
-                            user2: finalData._id
-                        }]
-                    }).select("_id")
+                        const findAllUserWithIchat1 = await chatRoomModel.findOne({
+                            $and: [{
+                                user1: getOriginalData._id
+                            }, {
+                                user2: id._id
+                            }]
+                        }).select("_id")
 
 
-                    if (findAllUserWithIchat1) {
-                        chatRoomId.push(findAllUserWithIchat1._id)
+                        const findAllUserWithIchat2 = await chatRoomModel.findOne({
+                            $and: [{
+                                user1: id._id
+                            }, {
+                                user2: getOriginalData._id
+                            }]
+                        }).select("_id")
 
-                        const getDetail = {
-                            _id: finalData._id,
-                            firstName: finalData.firstName,
-                            email: finalData.email,
-                            profile: finalData.photo[0] ? finalData.photo[0] : "",
-                            status: finalStatus[key]
+
+                        if (findAllUserWithIchat1) {
+                            chatRoomId.push(findAllUserWithIchat1._id)
+                            const response = {
+                                chatRoomId: chatRoomId[0],
+                                _id: getOriginalData._id,
+                                email: getOriginalData.email,
+                                firstName: getOriginalData.firstName,
+                                profile: getOriginalData.photo[0] ? getOriginalData.photo[0].res : "",
+                                status: 3
+                            }
+
+                            UniqueEmail.push(response);
+
+                        } else if (findAllUserWithIchat2) {
+                            chatRoomId.push(findAllUserWithIchat2._id)
+                            const response = {
+                                chatRoomId: chatRoomId[0],
+                                _id: getOriginalData._id,
+                                email: getOriginalData.email,
+                                firstName: getOriginalData.firstName,
+                                profile: getOriginalData.photo[0] ? getOriginalData.photo[0].res : "",
+                                status: 3
+                            }
+
+                            UniqueEmail.push(response);
+                        } else {
+
+                            const response = {
+                                _id: getOriginalData._id,
+                                email: getOriginalData.email,
+                                firstName: getOriginalData.firstName,
+                                profile: getOriginalData.photo[0] ? getOriginalData.photo[0].res : "",
+                                status: 3
+                            }
+
+                            UniqueEmail.push(response);
                         }
 
-                        final_data.push(getDetail);
-                    } else if (findAllUserWithIchat2) {
-                        chatRoomId.push(findAllUserWithIchat2._id)
-                        const getDetail = {
-                            chatRoomId: chatRoomId[0],
-                            _id: finalData._id,
-                            firstName: finalData.firstName,
-                            email: finalData.email,
-                            profile: finalData.photo[0] ? finalData.photo[0].res : "",
-                            status: finalStatus[key]
-                        }
-
-                        final_data.push(getDetail);
-                    } else {
-
-                        const getDetail = {
-                            chatRoomId: chatRoomId[0],
-                            _id: finalData._id,
-                            firstName: finalData.firstName,
-                            email: finalData.email,
-                            profile: finalData.photo[0] ? finalData.photo[0].res : "",
-                            status: finalStatus[key]
-                        }
-
-                        final_data.push(getDetail);
                     }
+
+                    res.status(status.OK).json(
+                        new APIResponse("show all record searchwise", true, 201, 1, UniqueEmail)
+                    )
+
+
+                } else {
+
+                    const emailGet = [];
+                    const finalData = [];
+                    for (const getEmail of RequestedEmailExiestInUser.RequestedEmails) {
+                        emailGet.push(getEmail.requestedEmail)
+                    }
+
+                    var difference = reaquestedAllEmail.filter(x => emailGet.indexOf(x) === -1);
+
+
+                    const UniqueEmail = [];
+                    for (const uniqueEmail of difference) {
+                        const FindLocation = await userModel.find()
+
+
+
+                        for (const uniqueDistance of FindLocation) {
+
+                            if (uniqueDistance.email == uniqueEmail) {
+                                finalData.push(uniqueDistance)
+                            }
+                        }
+
+                    }
+                    const chatRoomId = [];
+                    for (const getOriginalData of finalData) {
+                        const findAllUserWithIchat1 = await chatRoomModel.findOne({
+                            $and: [{
+                                user1: getOriginalData._id
+                            }, {
+                                user2: id._id
+                            }]
+                        }).select("_id")
+
+
+                        const findAllUserWithIchat2 = await chatRoomModel.findOne({
+                            $and: [{
+                                user1: id._id
+                            }, {
+                                user2: getOriginalData._id
+                            }]
+                        }).select("_id")
+
+
+
+
+                        if (findAllUserWithIchat1) {
+                            chatRoomId.push(findAllUserWithIchat1._id)
+                            const response = {
+                                chatRoomId: chatRoomId[0],
+                                _id: getOriginalData._id,
+                                email: getOriginalData.email,
+                                firstName: getOriginalData.firstName,
+                                profile: getOriginalData.photo[0] ? getOriginalData.photo[0].res : "",
+                                status: 3
+                            }
+
+                            UniqueEmail.push(response);
+
+                            // console.log(chatRoomId[0]);
+                        } else if (findAllUserWithIchat2) {
+                            chatRoomId.push(findAllUserWithIchat2._id)
+                            const response = {
+                                chatRoomId: chatRoomId[0],
+                                _id: getOriginalData._id,
+                                email: getOriginalData.email,
+                                firstName: getOriginalData.firstName,
+                                profile: getOriginalData.photo[0] ? getOriginalData.photo[0].res : "",
+                                status: 3
+                            }
+
+                            UniqueEmail.push(response);
+                        } else {
+
+                            const response = {
+                                _id: getOriginalData._id,
+                                email: getOriginalData.email,
+                                firstName: getOriginalData.firstName,
+                                profile: getOriginalData.photo[0] ? getOriginalData.photo[0].res : "",
+                                status: 3
+                            }
+
+                            UniqueEmail.push(response);
+                        }
+
+
+                    }
+                    const statusByEmail = [];
+                    const allRequestedEmail = RequestedEmailExiestInUser.RequestedEmails
+                    const requestedEmailWitchIsInuserRequeted = [];
+                    allRequestedEmail.map((result, next) => {
+                        const resultEmail = result.requestedEmail
+                        requestedEmailWitchIsInuserRequeted.push(resultEmail);
+                    })
+
+                    const meageAllTable = await userModel.aggregate([{
+                        $match: {
+                            email: {
+                                $in: requestedEmailWitchIsInuserRequeted
+                            }
+                        }
+                    },
+                    {
+                        $lookup: {
+                            from: 'posts',
+                            localField: 'email',
+                            foreignField: 'email',
+                            as: 'req_data'
+                        }
+                    },
+                    {
+                        $lookup: {
+                            from: 'requests',
+                            let: {
+
+                                userId: mongoose.Types.ObjectId(req.params.user_id),
+                                email: "$email"
+                            },
+                            pipeline: [
+                                {
+                                    $match: {
+                                        $expr: {
+                                            $and: [
+                                                {
+                                                    $eq: [
+                                                        "$userId", "$$userId"
+                                                    ]
+                                                },
+                                                {
+                                                    $in:
+                                                        [
+                                                            "$$email", "$RequestedEmails.requestedEmail"
+                                                        ]
+                                                }
+                                            ]
+                                        }
+                                    }
+                                },
+                            ],
+                            as: 'form_data'
+                        }
+                    },
+                    {
+                        $project: {
+                            polyDating: "$polyDating",
+                            HowDoYouPoly: "$HowDoYouPoly",
+                            loveToGive: "$loveToGive",
+                            polyRelationship: "$polyRelationship",
+                            firstName: "$firstName",
+                            email: "$email",
+                            firstName: "$firstName",
+                            relationshipSatus: "$relationshipSatus",
+                            Bio: "$Bio",
+                            photo: "$photo",
+                            hopingToFind: "$hopingToFind",
+                            jobTitle: "$jobTitle",
+                            wantChildren: "$wantChildren",
+                            posts: "$req_data",
+                            result: "$form_data.RequestedEmails",
+                        }
+                    }])
+
+                    const finalExistUser = [];
+
+
+
+                    const emailDataDetail = meageAllTable;
+                    for (const DataDetail of emailDataDetail) {
+
+                        for (const reqEmail of reaquestedAllEmail) {
+                            if (DataDetail.email == reqEmail) {
+                                finalExistUser.push(DataDetail)
+                            }
+                        }
+                    }
+
+                    for (const emailData of finalExistUser[0].result) {
+
+                        for (const requestEmail of emailData) {
+
+                            for (const meageAllTableEmail of finalExistUser) {
+
+                                if (requestEmail.requestedEmail == meageAllTableEmail.email) {
+
+
+                                    if (requestEmail.accepted == 1) {
+                                        var status1 = {
+                                            status: 1,
+                                            email: requestEmail.requestedEmail
+                                        }
+                                        statusByEmail.push(status1)
+                                    } else {
+                                        var status2 = {
+                                            status: 2,
+                                            email: requestEmail.requestedEmail
+                                        }
+                                        statusByEmail.push(status2)
+                                    }
+                                }
+                            }
+                        }
+                    }
+
+                    const final_data = [];
+
+                    const finalStatus = []
+                    for (const [key, finalData] of meageAllTable.entries()) {
+                        for (const [key, final1Data] of statusByEmail.entries())
+                            if (finalData.email === final1Data.email) {
+                                finalStatus.push(final1Data.status)
+                            }
+                    }
+                    for (const [key, finalData] of finalExistUser.entries()) {
+
+                        // console.log("finalData", finalData);
+
+                        const response = {
+                            _id: finalData._id,
+                            polyDating: finalData.polyDating,
+                            HowDoYouPoly: finalData.HowDoYouPoly,
+                            loveToGive: finalData.loveToGive,
+                            polyRelationship: finalData.polyRelationship,
+                            firstName: finalData.firstName,
+                            email: finalData.email,
+                            relationshipSatus: finalData.relationshipSatus,
+                            Bio: finalData.Bio,
+                            profile: finalData.photo[0] ? finalData.photo[0].res : "",
+                            hopingToFind: finalData.hopingToFind,
+                            jobTitle: finalData.jobTitle,
+                            wantChildren: finalData.wantChildren,
+                            posts: finalData.posts,
+                            status: finalStatus[key]
+                        }
+
+
+                        const chatRoomId = [];
+                        const findAllUserWithIchat1 = await chatRoomModel.findOne({
+                            $and: [{
+                                user1: finalData._id
+                            }, {
+                                user2: id._id
+                            }]
+                        }).select("_id")
+
+                        const findAllUserWithIchat2 = await chatRoomModel.findOne({
+                            $and: [{
+                                user1: id._id
+                            }, {
+                                user2: finalData._id
+                            }]
+                        }).select("_id")
+
+
+                        if (findAllUserWithIchat1) {
+                            chatRoomId.push(findAllUserWithIchat1._id)
+
+                            const getDetail = {
+                                _id: finalData._id,
+                                firstName: finalData.firstName,
+                                email: finalData.email,
+                                profile: finalData.photo[0] ? finalData.photo[0] : "",
+                                status: finalStatus[key]
+                            }
+
+                            final_data.push(getDetail);
+                        } else if (findAllUserWithIchat2) {
+                            chatRoomId.push(findAllUserWithIchat2._id)
+                            const getDetail = {
+                                chatRoomId: chatRoomId[0],
+                                _id: finalData._id,
+                                firstName: finalData.firstName,
+                                email: finalData.email,
+                                profile: finalData.photo[0] ? finalData.photo[0].res : "",
+                                status: finalStatus[key]
+                            }
+
+                            final_data.push(getDetail);
+                        } else {
+
+                            const getDetail = {
+                                chatRoomId: chatRoomId[0],
+                                _id: finalData._id,
+                                firstName: finalData.firstName,
+                                email: finalData.email,
+                                profile: finalData.photo[0] ? finalData.photo[0].res : "",
+                                status: finalStatus[key]
+                            }
+
+                            final_data.push(getDetail);
+                        }
+                    }
+
+                    const final_response = [...final_data, ...UniqueEmail]
+
+                    // let uniqueObjArray = [...new Map(final_data.map((item) => [item["details"], item])).values()];
+
+                    res.status(status.OK).json(
+                        new APIResponse("show all record searchwise", true, 201, 1, final_response)
+                    )
                 }
-
-                const final_response = [...final_data, ...UniqueEmail]
-
-                // let uniqueObjArray = [...new Map(final_data.map((item) => [item["details"], item])).values()];
-
-                res.status(status.OK).json(
-                    new APIResponse("show all record searchwise", true, 201, 1, final_response)
-                )
             }
+
         }
 
     } catch (error) {
@@ -2337,7 +2345,7 @@ exports.yesBasket = async (req, res, next) => {
 
                 if (reaquestedAllEmail[0] == undefined) {
                     res.status(status.NOT_FOUND).json(
-                        new APIResponse("No User Found", 'false', 404, '0')
+                        new APIResponse("show all post When accept by the user", 'true', 201, '1', [])
                     )
                 } else {
 
@@ -2721,7 +2729,7 @@ exports.yesBasket = async (req, res, next) => {
 
                 if (reaquestedAllEmail[0] == undefined) {
                     res.status(status.NOT_FOUND).json(
-                        new APIResponse("No User Found", 'false', 404, '0')
+                        new APIResponse("show all post When accept by the user", 'true', 201, '1', [])
                     )
                 } else {
 
@@ -3080,7 +3088,7 @@ exports.noBasket = async (req, res, next) => {
 
                 if (reaquestedAllEmail[0] == undefined) {
                     res.status(status.NOT_FOUND).json(
-                        new APIResponse("No User Found", 'true', 200, '1', [])
+                        new APIResponse("show all post When accept by the user", 'true', 201, '1', [])
                     )
                 } else {
 
@@ -3464,7 +3472,7 @@ exports.noBasket = async (req, res, next) => {
 
                 if (reaquestedAllEmail[0] == undefined) {
                     res.status(status.NOT_FOUND).json(
-                        new APIResponse("No User Found", 'false', 404, '0')
+                        new APIResponse("show all post When accept by the user", 'true', 201, '1', [])
                     )
                 } else {
 
@@ -3779,6 +3787,9 @@ exports.noBasket = async (req, res, next) => {
 }
 
 
+exports.moveBasket = async (req, res, next) => {
+
+}
 
 exports.getAllNotification = async (req, res, next) => {
     try {

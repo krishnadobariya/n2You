@@ -318,7 +318,7 @@ exports.userAcceptedRequesteOrNot = async (req, res, next) => {
                     }, {
                         $push: {
                             notifications: {
-                                notifications: `${findUser.firstName}, ${findUserWhichAcceptRequest.firstName} bot are not become friend`,
+                                notifications: `${findUser.firstName}, ${findUserWhichAcceptRequest.firstName} both are not become friend`,
                                 userId: findUser._id,
                                 status: 3
                             }
@@ -328,7 +328,7 @@ exports.userAcceptedRequesteOrNot = async (req, res, next) => {
                     const data = notificationModel({
                         userId: findUser._id,
                         notifications: {
-                            notifications: `${findUser.firstName}, ${findUserWhichAcceptRequest.firstName} bot are not become friend`,
+                            notifications: `${findUser.firstName}, ${findUserWhichAcceptRequest.firstName} both are not become friend`,
                             userId: findUser._id,
                             status: 3
                         }
@@ -344,7 +344,7 @@ exports.userAcceptedRequesteOrNot = async (req, res, next) => {
                     }, {
                         $push: {
                             notifications: {
-                                notifications: `${findUser.firstName}, ${findUserWhichAcceptRequest.firstName} bot are not become friend`,
+                                notifications: `${findUser.firstName}, ${findUserWhichAcceptRequest.firstName} both are not become friend`,
                                 userId: findUserWhichAcceptRequest._id,
                                 status: 3
                             }
@@ -354,7 +354,7 @@ exports.userAcceptedRequesteOrNot = async (req, res, next) => {
                     const data = notificationModel({
                         userId: findUserWhichAcceptRequest._id,
                         notifications: {
-                            notifications: `${findUser.firstName}, ${findUserWhichAcceptRequest.firstName} bot are not become friend`,
+                            notifications: `${findUser.firstName}, ${findUserWhichAcceptRequest.firstName} both are not become friend`,
                             userId: findUserWhichAcceptRequest._id,
                             status: 3
                         }
