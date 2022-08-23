@@ -176,9 +176,8 @@ exports.getPostById = async (req, res, next) => {
         const id = req.params.post_id;
         const finalResponse = [];
         const userFindInPosts = await postModal.findOne({ userId: req.params.user_id, "posts._id": id });
-        const findInRequestModel = await requestsModel.findOne({ userId: req.params.req_id, "RequestedEmails.userId": req.params.user_id })
 
-       
+
 
         if (userFindInPosts) {
 
@@ -506,335 +505,9 @@ exports.getPostById = async (req, res, next) => {
                 }
             }
 
-        } else if (findInRequestModel) {
-
-            const findUser = await userModal.findOne({
-                _id: findInRequestModel.userId
-            })
-
-            const userWisePosts = await postModal.findOne({ userId: findInRequestModel.userId, "posts._id": id });
-
-            const getOnePost = [];
-            if (userWisePosts == null) {
-                res.status(status.OK).json(
-                    new APIResponse("get post by post id", "true", 200, "1", [])
-                )
-            } else {
-                for (const getPost of userWisePosts.posts) {
-                    if ((getPost._id).toString() == (id).toString()) {
-                        getOnePost.push(getPost)
-                    } else {
-
-                    }
-                }
-                if (userWisePosts.posts) {
-                    const storeAllpostsUserWise = [];
-                    const getAllPostsUserWise = getOnePost;
-
-                    getAllPostsUserWise.map((result, index) => {
-
-                        storeAllpostsUserWise.unshift(result);
-                    })
-
-                    for (const createResponse of storeAllpostsUserWise) {
-                        const post = [];
-                        for (const postwithType of createResponse.post) {
-                            const getExt1Name = postwithType ? postwithType.res : null;
-                            if (getExt1Name == null) {
-
-                            } else {
-                                const getExt1Name = path.extname(postwithType.res);
-                                if (getExt1Name != ".mp4") {
-                                    post.push({
-                                        res: postwithType.res,
-                                        type: "image"
-                                    })
-                                } else {
-                                    post.push({
-                                        res: postwithType.res,
-                                        type: "video"
-                                    })
-                                }
-                            }
-                        }
-                        datetime = createResponse.createdAt;
-
-                        var userPostedDate = new Date(datetime);
-                        now = new Date();
-                        var sec_num = (now - userPostedDate) / 1000;
-                        var days = Math.floor(sec_num / (3600 * 24));
-                        var hours = Math.floor((sec_num - (days * (3600 * 24))) / 3600);
-                        var minutes = Math.floor((sec_num - (days * (3600 * 24)) - (hours * 3600)) / 60);
-                        var seconds = Math.floor(sec_num - (days * (3600 * 24)) - (hours * 3600) - (minutes * 60));
-
-                        if (hours < 10) { hours = "0" + hours; }
-                        if (minutes < 10) { minutes = "0" + minutes; }
-                        if (seconds < 10) { seconds = "0" + seconds; }
-
-                        const finalPostedTime = [];
-                        const commentData = [];
-
-                        if (days > 30) {
-                            const getComment = await commentModel.findOne({ postId: createResponse._id });
-                            let whenUserPosted = userPostedDate;
-                            const fullDate = new Date(whenUserPosted).toDateString()
-                            finalPostedTime.push(`${fullDate}`);
-                            if (getComment == null) {
-                            } else {
-                                for (const commnetData of getComment.comments) {
-                                    const user = await userModal.findOne({ _id: commnetData.userId })
-                                    const replyUser = []
-                                    for (const commentId of commnetData.replyUser) {
-                                        const findUser = await userModal.findOne({
-                                            _id: commentId.userId
-                                        })
-
-                                        const response = {
-                                            commentId: commnetData._id,
-                                            profile: findUser.photo[0] ? findUser.photo[0].res : "",
-                                            firstName: findUser.firstName,
-                                            userId: findUser._id,
-                                            replyId: commentId._id,
-                                            replyMessage: commentId.replyMessage,
-                                            date: commentId.date
-                                        }
-
-                                        replyUser.push(response)
-                                    }
-                                    const response = {
-                                        userId: user._id,
-                                        comment: commnetData.comment,
-                                        commentId: commnetData._id,
-                                        photourl: user.photo[0] ? user.photo[0].res : "",
-                                        username: user.firstName,
-                                        date: commnetData.date,
-                                        replyUser: replyUser,
-                                    }
-                                    commentData.push(response)
-                                }
-
-                            }
-                        }
-                        if (days > 0 && days < 30) {
-                            const getComment = await commentModel.findOne({ postId: createResponse._id });
-                            finalPostedTime.push(`${days} days`);
-                            if (getComment == null) {
-                            } else {
-                                for (const commnetData of getComment.comments) {
-                                    const user = await userModal.findOne({ _id: commnetData.userId })
-                                    const replyUser = []
-                                    for (const commentId of commnetData.replyUser) {
-                                        const findUser = await userModal.findOne({
-                                            _id: commentId.userId
-                                        })
-
-                                        const response = {
-                                            commentId: commnetData._id,
-                                            profile: findUser.photo[0] ? findUser.photo[0].res : "",
-                                            firstName: findUser.firstName,
-                                            userId: findUser._id,
-                                            replyId: commentId._id,
-                                            replyMessage: commentId.replyMessage,
-                                            date: commentId.date
-                                        }
-
-                                        replyUser.push(response)
-                                    }
-                                    const response = {
-                                        userId: user._id,
-                                        comment: commnetData.comment,
-                                        commentId: commnetData._id,
-                                        photourl: user.photo[0] ? user.photo[0].res : "",
-                                        username: user.firstName,
-                                        date: commnetData.date,
-                                        replyUser: replyUser,
-                                    }
-                                    commentData.push(response)
-                                }
-
-                            }
-                        } else if (hours > 0 && days == 0) {
-                            const getComment = await commentModel.findOne({ postId: createResponse._id });
-                            finalPostedTime.push(`${hours} hours`);
-                            if (getComment == null) {
-                            } else {
-                                for (const commnetData of getComment.comments) {
-                                    const user = await userModal.findOne({ _id: commnetData.userId })
-                                    const replyUser = []
-                                    for (const commentId of commnetData.replyUser) {
-                                        const findUser = await userModal.findOne({
-                                            _id: commentId.userId
-                                        })
-
-                                        const response = {
-                                            commentId: commnetData._id,
-                                            profile: findUser.photo[0] ? findUser.photo[0].res : "",
-                                            firstName: findUser.firstName,
-                                            userId: findUser._id,
-                                            replyId: commentId._id,
-                                            replyMessage: commentId.replyMessage,
-                                            date: commentId.date
-                                        }
-
-                                        replyUser.push(response)
-                                    }
-                                    const response = {
-                                        userId: user._id,
-                                        comment: commnetData.comment,
-                                        commentId: commnetData._id,
-                                        photourl: user.photo[0] ? user.photo[0].res : "",
-                                        username: user.firstName,
-                                        date: commnetData.date,
-                                        replyUser: replyUser,
-                                    }
-                                    commentData.push(response)
-                                }
-
-                            }
-                        } else if (minutes > 0 && hours == 0) {
-                            const getComment = await commentModel.findOne({ postId: createResponse._id });
-                            finalPostedTime.push(`${minutes} minute`);
-                            if (getComment == null) {
-                            } else {
-                                for (const commnetData of getComment.comments) {
-                                    const user = await userModal.findOne({ _id: commnetData.userId })
-                                    const replyUser = []
-                                    for (const commentId of commnetData.replyUser) {
-                                        const findUser = await userModal.findOne({
-                                            _id: commentId.userId
-                                        })
-
-                                        const response = {
-                                            commentId: commnetData._id,
-                                            profile: findUser.photo[0] ? findUser.photo[0].res : "",
-                                            firstName: findUser.firstName,
-                                            userId: findUser._id,
-                                            replyId: commentId._id,
-                                            replyMessage: commentId.replyMessage,
-                                            date: commentId.date
-                                        }
-
-                                        replyUser.push(response)
-                                    }
-                                    const response = {
-                                        userId: user._id,
-                                        comment: commnetData.comment,
-                                        commentId: commnetData._id,
-                                        photourl: user.photo[0] ? user.photo[0].res : "",
-                                        username: user.firstName,
-                                        date: commnetData.date,
-                                        replyUser: replyUser,
-                                    }
-                                    commentData.push(response)
-                                }
-
-                            }
-                        } else if (seconds > 0 && minutes == 0 && hours == 0 && days === 0) {
-                            const getComment = await commentModel.findOne({ postId: createResponse._id });
-                            finalPostedTime.push(`${seconds} second`);
-                            if (getComment == null) {
-                            } else {
-                                for (const commnetData of getComment.comments) {
-                                    const user = await userModal.findOne({ _id: commnetData.userId })
-                                    const replyUser = []
-                                    for (const commentId of commnetData.replyUser) {
-                                        const findUser = await userModal.findOne({
-                                            _id: commentId.userId
-                                        })
-
-                                        const response = {
-                                            commentId: commnetData._id,
-                                            profile: findUser.photo[0] ? findUser.photo[0].res : "",
-                                            firstName: findUser.firstName,
-                                            userId: findUser._id,
-                                            replyId: commentId._id,
-                                            replyMessage: commentId.replyMessage,
-                                            date: commentId.date
-                                        }
-
-                                        replyUser.push(response)
-                                    }
-                                    const response = {
-                                        userId: user._id,
-                                        comment: commnetData.comment,
-                                        commentId: commnetData._id,
-                                        photourl: user.photo[0] ? user.photo[0].res : "",
-                                        username: user.firstName,
-                                        date: commnetData.date,
-                                        replyUser: replyUser,
-                                    }
-                                    commentData.push(response)
-                                }
-
-                            }
-                        }
-
-
-                        const posts = {
-                            _id: findUser._id,
-                            userName: findUser.firstName,
-                            email: findUser.email,
-                            profile: findUser.photo[0] ? findUser.photo[0].res : "",
-                            postId: createResponse._id,
-                            post_data: post,
-                            description: createResponse.description,
-                            like: createResponse.like,
-                            comment: createResponse.comment,
-                            report: createResponse.report
-                        }
-
-                        const findUserInLike = await likeModel.findOne({
-                            postId: createResponse._id,
-                            userId: findUser._id
-                        })
-                        if (findUserInLike) {
-                            const response = {
-                                posts,
-                                finalPostedTime,
-                                commentData: commentData[0] == null ? [] : commentData,
-                                postShowStatus: 1
-                            }
-
-                            finalResponse.push(response)
-
-                        } else {
-                            const response = {
-                                posts,
-                                finalPostedTime,
-                                commentData: commentData[0] == null ? [] : commentData,
-                                postShowStatus: 0
-                            }
-
-                            finalResponse.push(response)
-
-                        }
-
-
-
-
-
-                    }
-
-                    if (finalResponse[0] == undefined) {
-                        res.status(status.OK).json(
-                            new APIResponse("Not have any Images Posted!", "true", 200, "1")
-                        )
-                    } else {
-                        res.status(status.OK).json(
-                            new APIResponse("get post by post id", "true", 200, "1", finalResponse)
-                        )
-                    }
-
-                } else {
-                    res.status(status.NOT_FOUND).json(
-                        new APIResponse("Not Posted!", "false", 404, "0")
-                    )
-                }
-            }
-
         } else {
             res.status(status.OK).json(
-                new APIResponse("get post By post id", "true", 200, "1", [])
+                new APIResponse("get post by post id", "true", 200, "1", [])
             )
         }
 
@@ -2334,6 +2007,9 @@ exports.userAllFriendPost = async (req, res, next) => {
                                 }
                                 statusByEmail.push(status1)
 
+
+
+                                console.log("statusByEmail" , statusByEmail); 
                                 
                             } else {
 
@@ -2344,6 +2020,9 @@ exports.userAllFriendPost = async (req, res, next) => {
             }
 
 
+            console.log("meargAllTable" , meargAllTable);
+
+
             const final_data = [];
             const finalStatus = [];
             for (const [key, finalData] of meargAllTable.entries()) {
@@ -2351,13 +2030,20 @@ exports.userAllFriendPost = async (req, res, next) => {
                     if ((finalData._id).toString() == (final1Data.id).toString()) {
                         for (const data of final1Data.posts) {
 
-                          
+                         
+                           
                            
                             if(data.finalPosts){
+
+                                console.log("data.finalPosts" , data.finalPosts[0]._id);
+                                console.log("useris" , req.params.user_id);
                                 const findUserInLike = await likeModel.findOne({
                                     postId: data.finalPosts[0]._id,
-                                    userId: req.params.user_id
+                                    reqUserId: req.params.user_id
                                 })
+
+
+                                console.log("findUserInLike" , findUserInLike);
     
                                 
                                 const findUser = await userModal.findOne({
@@ -2758,7 +2444,7 @@ exports.userAllFriendPost = async (req, res, next) => {
 
                             const findUserInLike = await likeModel.findOne({
                                 postId: data.finalPosts[0]._id,
-                                userId: req.params.user_id
+                                reqUserId: req.params.user_id
                             })
 
                             const findUser = await userModal.findOne({
@@ -3159,7 +2845,7 @@ exports.userAllFriendPost = async (req, res, next) => {
 
                             const findUserInLike = await likeModel.findOne({
                                 postId: data.finalPosts[0]._id,
-                                userId: req.params.user_id
+                                reqUserId: req.params.user_id
                             })
 
                             const findUser = await userModal.findOne({
@@ -3247,6 +2933,7 @@ exports.userAllFriendPost = async (req, res, next) => {
         )
     }
 }
+
 exports.reportAdd = async (req, res, next) => {
     try {
 
