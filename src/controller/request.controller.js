@@ -4,22 +4,23 @@ const status = require("http-status");
 const APIResponse = require("../helper/APIResponse");
 const postModel = require("../model/post.model");
 const notificationModel = require("../model/polyamorous/notification.model");
+const chatRoomModel = require("../webSocket/models/chatRoom.model");
 
 exports.sendRequest = async (req, res, next) => {
     try {
 
         const checkUserExist = await userModel.findOne({ _id: req.params.user_id, polyDating: 0 });
-        const checkRequestedEmail = await userModel.findOne({ _id: req.params.requested_id, polyDating: 0 })
+        const checkRequestedEmail = await userModel.findOne({ _id: req.params.requested_id, polyDating: 0})
 
         if (checkUserExist && checkRequestedEmail) {
-
+            
             if (checkRequestedEmail) {
                 const emailExitInRequestedModel = await requestModel.findOne({ userId: req.params.user_id })
 
-                const emailExitInRequestedModel1 = await requestModel.findOne({ userId: req.params.requested_id })
+                const emailExitInRequestedModel1 = await requestModel.findOne({ userId: req.params.requested_id  })
+              
 
-
-                console.log("emailExitInRequestedModel1", emailExitInRequestedModel1);
+                console.log("emailExitInRequestedModel1" , emailExitInRequestedModel1);
                 if (!emailExitInRequestedModel) {
                     const request = requestModel({
                         userId: checkUserExist._id,
@@ -66,50 +67,50 @@ exports.sendRequest = async (req, res, next) => {
 
 
 
-                    if (!emailExitInRequestedModel1) {
+                if (!emailExitInRequestedModel1) {
 
+                
 
+                    const request = requestModel({
+                        userId: checkRequestedEmail._id,
+                        userEmail: checkRequestedEmail.email,
+                        RequestedEmails: [{
+                            requestedEmail: checkUserExist.email,
+                            accepted: 2,
+                            userId: checkUserExist._id
+                        }],
 
-                        const request = requestModel({
-                            userId: checkRequestedEmail._id,
-                            userEmail: checkRequestedEmail.email,
-                            RequestedEmails: [{
-                                requestedEmail: checkUserExist.email,
-                                accepted: 2,
-                                userId: checkUserExist._id
-                            }],
+                    })
 
-                        })
+                    const saveData = await request.save();
+                 
+                } else {
 
-                        const saveData = await request.save();
+                   
+                    const inRequested = [];
+                    const allRequestedEmail = emailExitInRequestedModel1.RequestedEmails
+                    allRequestedEmail.map((result, index) => {
 
-                    } else {
-
-
-                        const inRequested = [];
-                        const allRequestedEmail = emailExitInRequestedModel1.RequestedEmails
-                        allRequestedEmail.map((result, index) => {
-
-                            if (result.requestedEmail == checkUserExist.email) {
-                                inRequested.push(true)
-                            }
-                        })
-                        if (inRequested[0] == true) {
-
-                        } else {
-                            const updatePosts = await requestModel.updateOne({ userId: emailExitInRequestedModel1.userId },
-                                {
-                                    $push: {
-                                        RequestedEmails: [{
-                                            requestedEmail: checkUserExist.email,
-                                            accepted: 2,
-                                            userId: checkUserExist._id
-                                        }]
-                                    }
-                                })
+                        if (result.requestedEmail == checkUserExist.email) {
+                            inRequested.push(true)
                         }
-
+                    })
+                    if (inRequested[0] == true) {
+                      
+                    } else {
+                        const updatePosts = await requestModel.updateOne({ userId: emailExitInRequestedModel1.userId },
+                            {
+                                $push: {
+                                    RequestedEmails: [{
+                                        requestedEmail: checkUserExist.email,
+                                        accepted: 2,
+                                        userId: checkUserExist._id
+                                    }]
+                                }
+                            })
                     }
+
+                }
                     res.status(status.CREATED).json(
                         new APIResponse("Request Send successfully!", true, 201, 1)
                     )
@@ -123,46 +124,46 @@ exports.sendRequest = async (req, res, next) => {
                         }
                     })
 
-                    if (!emailExitInRequestedModel1) {
+                if (!emailExitInRequestedModel1) {
+                    
+                    const request = requestModel({
+                        userId: checkRequestedEmail._id,
+                        userEmail: checkRequestedEmail.email,
+                        RequestedEmails: [{
+                            requestedEmail: checkUserExist.email,
+                            accepted: 2,
+                            userId: checkUserExist._id
+                        }],
+                    })
 
-                        const request = requestModel({
-                            userId: checkRequestedEmail._id,
-                            userEmail: checkRequestedEmail.email,
-                            RequestedEmails: [{
-                                requestedEmail: checkUserExist.email,
-                                accepted: 2,
-                                userId: checkUserExist._id
-                            }],
-                        })
+                    const saveData = await request.save();
+                 
+                } else {
+                    const inRequested = [];
 
-                        const saveData = await request.save();
+                    const allRequestedEmail = emailExitInRequestedModel1.RequestedEmails
+                    allRequestedEmail.map((result, index) => {
 
-                    } else {
-                        const inRequested = [];
-
-                        const allRequestedEmail = emailExitInRequestedModel1.RequestedEmails
-                        allRequestedEmail.map((result, index) => {
-
-                            if (result.requestedEmail == checkUserExist.email) {
-                                inRequested.push(true)
-                            }
-                        })
-                        if (inRequested[0] == true) {
-
-                        } else {
-                            const updatePosts = await requestModel.updateOne({ userId: emailExitInRequestedModel1.userId },
-                                {
-                                    $push: {
-                                        RequestedEmails: [{
-                                            requestedEmail: checkUserExist.email,
-                                            accepted: 2,
-                                            userId: checkUserExist._id
-                                        }]
-                                    }
-                                })
+                        if (result.requestedEmail == checkUserExist.email) {
+                            inRequested.push(true)
                         }
-
+                    })
+                    if (inRequested[0] == true) {
+                      
+                    } else {
+                        const updatePosts = await requestModel.updateOne({ userId: emailExitInRequestedModel1.userId },
+                            {
+                                $push: {
+                                    RequestedEmails: [{
+                                        requestedEmail: checkUserExist.email,
+                                        accepted: 2,
+                                        userId: checkUserExist._id
+                                    }]
+                                }
+                            })
                     }
+
+                }
                     if (inRequested[0] == true) {
                         res.status(status.ALREADY_REPORTED).json(
                             new APIResponse("Already requesed!", "false", 208, "0")
@@ -213,15 +214,15 @@ exports.sendRequest = async (req, res, next) => {
                 }
 
             } else {
-
-
+               
+               
             }
         } else {
 
             res.status(status.NOT_FOUND).json(
                 new APIResponse("not found", "false", 404, "0")
             )
-
+            
         }
 
     } catch (error) {
@@ -311,14 +312,22 @@ exports.userAcceptedRequesteOrNot = async (req, res, next) => {
                         }
                     })
 
-                console.log("reqestId", reqestId);
+                    console.log("reqestId", reqestId); 
 
-                const updatePosts1 = await requestModel.updateOne({ userId: reqestId, "RequestedEmails.userId": req.params.user_id },
+                    const updatePosts1 = await requestModel.updateOne({ userId: reqestId, "RequestedEmails.userId": req.params.user_id },
                     {
                         $set: {
                             "RequestedEmails.$.accepted": req.body.accepted
                         }
                     })
+
+
+                    const addChat = chatRoomModel({
+                        user1: req.params.user_id,
+                        user2:reqestId
+                    })
+
+                    await addChat.save()
 
                 const findUserWhichAcceptRequest = await userModel.findOne({
                     _id: req.params.user_id
@@ -397,7 +406,10 @@ exports.userAcceptedRequesteOrNot = async (req, res, next) => {
                             "RequestedEmails.$.accepted": req.body.accepted
                         }
                     })
-                const updatePosts1 = await requestModel.updateOne({ userId: reqestId, "RequestedEmails.userId": req.params.user_id },
+
+
+                   
+                    const updatePosts1 = await requestModel.updateOne({ userId: reqestId, "RequestedEmails.userId": req.params.user_id },
                     {
                         $set: {
                             "RequestedEmails.$.accepted": req.body.accepted
