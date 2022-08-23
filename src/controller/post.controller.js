@@ -834,7 +834,7 @@ exports.getPostById = async (req, res, next) => {
 
         } else {
             res.status(status.OK).json(
-                new APIResponse("get post by post id", "true", 200, "1", [])
+                new APIResponse("get post By post id", "true", 200, "1", [])
             )
         }
 
