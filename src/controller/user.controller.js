@@ -281,6 +281,7 @@ exports.userLogin = async (req, res, next) => {
             email: req.body.email
         })
 
+        console.log(findUser);
         if (findUser) {
 
             if (req.body.password == findUser.password) {
@@ -297,7 +298,7 @@ exports.userLogin = async (req, res, next) => {
                     birthDate: findUser.birthDate,
                     identity: findUser.identity,
                     relationshipSatus: findUser.relationshipSatus,
-                    IntrestedIn: findUser.intrestedIn,
+                    IntrestedIn: findUser.IntrestedIn,
                     Bio: findUser.Bio,
                     photo: findUser.photo,
                     longitude: findUser.location.coordinates[0],
