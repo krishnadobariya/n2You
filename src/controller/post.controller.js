@@ -2042,10 +2042,9 @@ exports.userAllFriendPost = async (req, res, next) => {
                                     reqUserId: req.params.user_id
                                 })
 
-
                                 console.log("findUserInLike" , findUserInLike);
     
-                                
+                            
                                 const findUser = await userModal.findOne({
                                     email: finalData.email
                                 })
@@ -2434,6 +2433,9 @@ exports.userAllFriendPost = async (req, res, next) => {
             }
 
 
+            console.log("statusByEmail" , statusByEmail);
+
+
             const final_data1 = [];
 
             const finalStatus1 = [];
@@ -2442,14 +2444,20 @@ exports.userAllFriendPost = async (req, res, next) => {
                     if (finalData.email === final1Data.email) {
                         for (const data of final1Data.posts) {
 
+
+                            console.log("data.finalPosts[0]._id" , data.finalPosts[0]);
+
                             const findUserInLike = await likeModel.findOne({
-                                postId: data.finalPosts[0]._id,
+                                postId: data.finalPosts[0][0]._id,
                                 reqUserId: req.params.user_id
                             })
 
                             const findUser = await userModal.findOne({
                                 email: finalData.email
                             })
+
+
+                            console.log("findUserInLike......." , findUserInLike);
                             if (findUserInLike) {
 
                                 for (const allPost of data.finalPosts[0]) {
