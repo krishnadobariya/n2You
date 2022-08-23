@@ -1743,7 +1743,7 @@ exports.getAllUser = async (req, res, next) => {
                             _id: finalData._id,
                             firstName: finalData.firstName,
                             email: finalData.email,
-                            profile: finalData.photo[0] ? finalData.photo[0] : "",
+                            profile: finalData.photo[0] ? finalData.photo[0].res : "",
                             distance: (req.query.long && req.query.lat) == undefined ? "no distance found" : distance,
                             status: finalStatus[key]
                         }

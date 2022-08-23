@@ -8,6 +8,9 @@
     "start": "nodemon --exec babel-node server.js",
     "dev": "nodemon server.js"
   },
+  "engines": {
+    "node": "12"
+  },
   "author": "",
   "license": "ISC",
   "dependencies": {
