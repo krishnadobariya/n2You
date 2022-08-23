@@ -2620,7 +2620,7 @@ exports.yesBasket = async (req, res, next) => {
                                                         status: 1,
                                                         email: requestEmail.requestedEmail,
                                                         firstName: findThumbUp.firstName,
-                                                        profile: findThumbUp.photo ? findThumbUp.photo[0].res : "",
+                                                        profile: findThumbUp.photo[0] ? findThumbUp.photo[0].res : "",
                                                         thumbUp: findThumb.thumbUp,
                                                         thumbDown: findThumb.thumbDown
                                                     }
@@ -2630,7 +2630,7 @@ exports.yesBasket = async (req, res, next) => {
                                                         status: 2,
                                                         email: requestEmail.requestedEmail,
                                                         firstName: findThumbUp.firstName,
-                                                        profile: findThumbUp.photo ? findThumbUp.photo[0].res : "",
+                                                        profile: findThumbUp.photo[0] ? findThumbUp.photo[0].res : "",
                                                         thumbUp: findThumb.thumbUp,
                                                         thumbDown: findThumb.thumbDown
                                                     }
@@ -3042,7 +3042,7 @@ exports.yesBasket = async (req, res, next) => {
                                                     var status1 = {
                                                         status: 1,
                                                         firstName: findThumbUp.firstName,
-                                                        profile: findThumbUp.photo ? findThumbUp.photo[0].res : "",
+                                                        profile: findThumbUp.photo[0] ? findThumbUp.photo[0].res : "",
                                                         email: requestEmail.requestedEmail,
                                                         thumbUp: findThumb.thumbUp
                                                     }
@@ -3052,7 +3052,7 @@ exports.yesBasket = async (req, res, next) => {
                                                         status: 2,
                                                         email: requestEmail.requestedEmail,
                                                         firstName: findThumbUp.firstName,
-                                                        profile: findThumbUp.photo ? findThumbUp.photo[0].res : "",
+                                                        profile: findThumbUp.photo[0] ? findThumbUp.photo[0].res : "",
                                                         thumbUp: findThumb.thumbUp
                                                     }
                                                     statusByEmail.push(status2)
@@ -3492,7 +3492,7 @@ exports.noBasket = async (req, res, next) => {
                                                         status: 1,
                                                         email: requestEmail.requestedEmail,
                                                         firstName: findThumbUp.firstName,
-                                                        profile: findThumbUp.photo ? findThumbUp.photo[0].res : "",
+                                                        profile: findThumbUp.photo[0] ? findThumbUp.photo[0].res : "",
                                                         thumbUp: findThumb.thumbUp,
                                                         thumbDown: findThumb.thumbDown
                                                     }
@@ -3502,7 +3502,7 @@ exports.noBasket = async (req, res, next) => {
                                                         status: 2,
                                                         email: requestEmail.requestedEmail,
                                                         firstName: findThumbUp.firstName,
-                                                        profile: findThumbUp.photo ? findThumbUp.photo[0].res : "",
+                                                        profile: findThumbUp.photo[0] ? findThumbUp.photo[0].res : "",
                                                         thumbUp: findThumb.thumbUp,
                                                         thumbDown: findThumb.thumbDown
                                                     }
@@ -3849,7 +3849,7 @@ exports.noBasket = async (req, res, next) => {
                                                     var status1 = {
                                                         status: 1,
                                                         firstName: findThumbUp.firstName,
-                                                        profile: findThumbUp.photo ? findThumbUp.photo[0].res : "",
+                                                        profile: findThumbUp.photo[0] ? findThumbUp.photo[0].res : "",
                                                         email: requestEmail.requestedEmail,
                                                         thumbUp: findThumb.thumbUp
                                                     }
@@ -3859,7 +3859,7 @@ exports.noBasket = async (req, res, next) => {
                                                         status: 2,
                                                         email: requestEmail.requestedEmail,
                                                         firstName: findThumbUp.firstName,
-                                                        profile: findThumbUp.photo ? findThumbUp.photo[0].res : "",
+                                                        profile: findThumbUp.photo[0] ? findThumbUp.photo[0].res : "",
                                                         thumbUp: findThumb.thumbUp
                                                     }
                                                     statusByEmail.push(status2)
