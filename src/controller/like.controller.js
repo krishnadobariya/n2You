@@ -6,6 +6,7 @@ const requestsModel = require("../model/requests.model");
 const userModel = require("../model/user.model");
 const { default: mongoose } = require("mongoose");
 const { LOCKED } = require("http-status");
+const chatRoomModel = require("../webSocket/models/chatRoom.model");
 
 exports.LikeOrDislikeInUserPost = async (req, res, next) => {
     try {
@@ -315,25 +316,72 @@ exports.showAllUserWhichIsLikePost = async (req, res, next) => {
                                 finalStatus.push(final1Data.status)
                             }
                     }
+
+                    
                     for (const [key, finalData] of finalExistUser.entries()) {
 
-                        const response = {
-                            _id: finalData._id,
-                            // polyDating: finalData.polyDating,
-                            // HowDoYouPoly: finalData.HowDoYouPoly,
-                            // loveToGive: finalData.loveToGive,
-                            // polyRelationship: finalData.polyRelationship,
-                            firstName: finalData.firstName,
-                            email: finalData.email,
-                            profile: finalData.photo[0] ? finalData.photo[0].res : "",
-                            // relationshipSatus: finalData.relationshipSatus,
-                            // Bio: finalData.Bio,
-                            // hopingToFind: finalData.hopingToFind,
-                            // jobTitle: finalData.jobTitle,
-                            // wantChildren: finalData.wantChildren,
-                            status: finalStatus[key]
+                        const findAllUserWithIchat1 = await chatRoomModel.findOne({
+                            $and: [{
+                                user1: finalData._id
+                            }, {
+                                user2: req.params.user_id
+                            }]
+                        })
+    
+    
+                        console.log("findAllUserWithIchat1" , findAllUserWithIchat1);
+    
+                        const findAllUserWithIchat2 = await chatRoomModel.findOne({
+                            $and: [{
+                                user1: req.params.user_id
+                            }, {
+                                user2: finalData._id
+                            }]
+                        })
+
+
+                        if(findAllUserWithIchat1){
+                            const response = {
+                                _id: finalData._id,
+                                chatRoomId: findAllUserWithIchat1._id,
+                                // polyDating: finalData.polyDating,
+                                // HowDoYouPoly: finalData.HowDoYouPoly,
+                                // loveToGive: finalData.loveToGive,
+                                // polyRelationship: finalData.polyRelationship,
+                                firstName: finalData.firstName,
+                                email: finalData.email,
+                                profile: finalData.photo[0] ? finalData.photo[0].res : "",
+                                // relationshipSatus: finalData.relationshipSatus,
+                                // Bio: finalData.Bio,
+                                // hopingToFind: finalData.hopingToFind,
+                                // jobTitle: finalData.jobTitle,
+                                // wantChildren: finalData.wantChildren,
+                                status: finalStatus[key]
+                            }
+                            final_data.push(response);
+                        }else{
+                            const response = {
+                                _id: finalData._id,
+                                chatRoomId: findAllUserWithIchat2._id,
+                                // polyDating: finalData.polyDating,
+                                // HowDoYouPoly: finalData.HowDoYouPoly,
+                                // loveToGive: finalData.loveToGive,
+                                // polyRelationship: finalData.polyRelationship,
+                                firstName: finalData.firstName,
+                                email: finalData.email,
+                                profile: finalData.photo[0] ? finalData.photo[0].res : "",
+                                // relationshipSatus: finalData.relationshipSatus,
+                                // Bio: finalData.Bio,
+                                // hopingToFind: finalData.hopingToFind,
+                                // jobTitle: finalData.jobTitle,
+                                // wantChildren: finalData.wantChildren,
+                                status: finalStatus[key]
+                            }
+                            final_data.push(response);
                         }
-                        final_data.push(response);
+
+
+                       
                     }
 
                     // // let uniqueObjArray = [...new Map(final_data.map((item) => [item["details"], item])).values()];
