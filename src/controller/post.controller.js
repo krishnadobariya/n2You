@@ -1710,6 +1710,7 @@ exports.userAllFriendPost = async (req, res, next) => {
                     for (const meargAllTableEmail of meargAllTable) {
                         if ((requestEmail.userId).toString() == (meargAllTableEmail._id).toString()) {
 
+                          
                             if (requestEmail.accepted == 1) {
 
                                 const finalResponse = [];
@@ -1720,49 +1721,75 @@ exports.userAllFriendPost = async (req, res, next) => {
                                     for (const getallposts of allposts.posts) {
 
 
-
                                         const post = [];
-                                        for (const postwithType of getallposts.post) {
+                                        if(getallposts.post[0] != undefined){
+   
+                                            for (const postwithType of getallposts.post) {
 
-                                            const getExt1Name = postwithType ? postwithType.res : null;
-                                            if (getExt1Name == null) {
-
-                                            } else {
-                                                const getExt1Name = path.extname(postwithType.res);
-                                                if (getExt1Name != ".mp4") {
-                                                    post.push({
-                                                        post: [
-                                                            {
-                                                                res: postwithType.res,
-                                                                type: "image"
-                                                            }
-                                                        ],
-                                                        description: getallposts.description,
-                                                        like: getallposts.like,
-                                                        comment: getallposts.comment,
-                                                        report: getallposts.report,
-                                                        _id: getallposts._id,
-                                                        createdAt: getallposts.createdAt
-                                                    })
+                                                console.log("getallposts" , getallposts );
+    
+                                                const getExt1Name = postwithType ? postwithType.res : null;
+                                                if (getExt1Name == null) {
+    
                                                 } else {
-                                                    post.push({
-                                                        post: [
-                                                            {
-                                                                res: postwithType.res,
-                                                                type: "video"
-                                                            }
-                                                        ],
-                                                        description: getallposts.description,
-                                                        like: getallposts.like,
-                                                        comment: getallposts.comment,
-                                                        report: getallposts.report,
-                                                        _id: getallposts._id,
-                                                        createdAt: getallposts.createdAt
-                                                    })
+                                                    const getExt1Name = path.extname(postwithType.res);
+                                                    if (getExt1Name != ".mp4") {
+                                                        post.push({
+                                                            post: [
+                                                                {
+                                                                    res: postwithType.res,
+                                                                    type: "image"
+                                                                }
+                                                            ],
+                                                            description: getallposts.description,
+                                                            like: getallposts.like,
+                                                            comment: getallposts.comment,
+                                                            report: getallposts.report,
+                                                            _id: getallposts._id,
+                                                            createdAt: getallposts.createdAt
+                                                        })
+    
+                                                        console.log("post");
+                                                    } else {
+                                                        post.push({
+                                                            post: [
+                                                                {
+                                                                    res: postwithType.res,
+                                                                    type: "video"
+                                                                }
+                                                            ],
+                                                            description: getallposts.description,
+                                                            like: getallposts.like,
+                                                            comment: getallposts.comment,
+                                                            report: getallposts.report,
+                                                            _id: getallposts._id,
+                                                            createdAt: getallposts.createdAt
+                                                        })
+                                                    }
                                                 }
                                             }
+    
+                                        }else{
+                                           
+                                         
+                                       
+                                                        post.push({
+                                                            post: [],
+                                                            description: getallposts.description,
+                                                            like: getallposts.like,
+                                                            comment: getallposts.comment,
+                                                            report: getallposts.report,
+                                                            _id: getallposts._id,
+                                                            createdAt: getallposts.createdAt
+                                                        })
+                                                    
+                                                
+                                            
                                         }
+                                    
+                                     
 
+                                       
                                         const userPostDate = getallposts.createdAt;
 
                                         datetime = userPostDate;
@@ -1988,6 +2015,9 @@ exports.userAllFriendPost = async (req, res, next) => {
                                         const posts = [];
                                         posts.push(post)
 
+
+                                        console.log("posts" , posts);
+
                                         const finalPosts = [...post]
                                      
                                         const response = {
@@ -2009,7 +2039,7 @@ exports.userAllFriendPost = async (req, res, next) => {
 
 
 
-                                console.log("statusByEmail" , statusByEmail); 
+                                console.log("statusByEmail" , statusByEmail[0].posts); 
                                 
                             } else {
 
@@ -2020,8 +2050,9 @@ exports.userAllFriendPost = async (req, res, next) => {
             }
 
 
-            console.log("meargAllTable" , meargAllTable);
+          
 
+           
 
             const final_data = [];
             const finalStatus = [];
@@ -2030,15 +2061,12 @@ exports.userAllFriendPost = async (req, res, next) => {
                     if ((finalData._id).toString() == (final1Data.id).toString()) {
                         for (const data of final1Data.posts) {
 
-                         
                            
-                           
-                            if(data.finalPosts){
+                            if(data.finalPosts[0]){
 
-                                console.log("data.finalPosts" , data.finalPosts[0]._id);
-                                console.log("useris" , req.params.user_id);
+                              console.log(data.finalPosts);
                                 const findUserInLike = await likeModel.findOne({
-                                    postId: data.finalPosts[0]._id,
+                                    postId: data.finalPosts[0] ? data.finalPosts[0].id :null,
                                     reqUserId: req.params.user_id
                                 })
 
