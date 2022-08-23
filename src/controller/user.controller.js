@@ -1377,6 +1377,8 @@ exports.getAllUser = async (req, res, next) => {
                     })
 
 
+                    console.log("findAllUserWithIchat1" , findAllUserWithIchat1);
+
                     const findAllUserWithIchat2 = await chatRoomModel.findOne({
                         $and: [{
                             user1: id._id
@@ -1386,6 +1388,7 @@ exports.getAllUser = async (req, res, next) => {
                     })
 
 
+                    console.log("findAllUserWithIchat2" , findAllUserWithIchat2);
 
 
                     if (findAllUserWithIchat1) {
@@ -1740,6 +1743,7 @@ exports.getAllUser = async (req, res, next) => {
                         const km = finalData.distance / 1000;
                         const distance = km.toFixed(2) + " km";
                         const getDetail = {
+                            chatRoomId: chatRoomId[0],
                             _id: finalData._id,
                             firstName: finalData.firstName,
                             email: finalData.email,
