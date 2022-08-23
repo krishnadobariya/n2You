@@ -2660,44 +2660,109 @@ exports.yesBasket = async (req, res, next) => {
                         }
                         for (const [key, finalData] of finalExistUser.entries()) {
 
-                            const responses = {
-                                _id: finalData._id,
-                                // polyDating: finalData.polyDating,
-                                // HowDoYouPoly: finalData.HowDoYouPoly,
-                                // loveToGive: finalData.loveToGive,
-                                // polyRelationship: finalData.polyRelationship,
-                                firstName: finalData.firstName,
-                                email: finalData.email,
-                                profile: finalData.photo[0] ? finalData.photo[0].res : "",
-                                // relationshipSatus: finalData.relationshipSatus,
-                                // Bio: finalData.Bio,
-                                // hopingToFind: finalData.hopingToFind,
-                                // jobTitle: finalData.jobTitle,
-                                // wantChildren: finalData.wantChildren,
-                                // posts_data: finalData.posts,
-                                statusAndTumbCount: finalStatus[key]
-                            }
-                            const response = {
-                                _id: finalData._id,
-                                // polyDating: finalData.polyDating,
-                                // HowDoYouPoly: finalData.HowDoYouPoly,
-                                // loveToGive: finalData.loveToGive,
-                                // polyRelationship: finalData.polyRelationship,
-                                firstName: finalData.firstName,
-                                email: finalData.email,
-                                profile: finalData.photo[0] ? finalData.photo[0].res : "",
-                                // relationshipSatus: finalData.relationshipSatus,
-                                // Bio: finalData.Bio,
-                                // hopingToFind: finalData.hopingToFind,
-                                // jobTitle: finalData.jobTitle,
-                                // wantChildren: finalData.wantChildren,
-                                // posts_data: finalData.posts,
-                                status: responses.statusAndTumbCount.status,
-                                thumbUp: responses.statusAndTumbCount.thumbUp,
-                                thumbDown: responses.statusAndTumbCount.thumbDown
-                            }
+                            const findAllUserWithIchat1 = await chatRoomModel.findOne({
+                                $and: [{
+                                    user1: finalData._id
+                                }, {
+                                    user2: req.params.user_id
+                                }]
+                            })
+        
+        
+                            console.log("findAllUserWithIchat1" , findAllUserWithIchat1);
+        
+                            const findAllUserWithIchat2 = await chatRoomModel.findOne({
+                                $and: [{
+                                    user1: req.params.user_id
+                                }, {
+                                    user2: finalData._id
+                                }]
+                            })
 
-                            final_data.push(response);
+                            if(findAllUserWithIchat1){
+                                const responses = {
+                                    _id: finalData._id,
+                                    chatRoomId: findAllUserWithIchat1._id,
+                                    // polyDating: finalData.polyDating,
+                                    // HowDoYouPoly: finalData.HowDoYouPoly,
+                                    // loveToGive: finalData.loveToGive,
+                                    // polyRelationship: finalData.polyRelationship,
+                                    firstName: finalData.firstName,
+                                    email: finalData.email,
+                                    profile: finalData.photo[0] ? finalData.photo[0].res : "",
+                                    // relationshipSatus: finalData.relationshipSatus,
+                                    // Bio: finalData.Bio,
+                                    // hopingToFind: finalData.hopingToFind,
+                                    // jobTitle: finalData.jobTitle,
+                                    // wantChildren: finalData.wantChildren,
+                                    // posts_data: finalData.posts,
+                                    statusAndTumbCount: finalStatus[key]
+                                }
+                                const response = {
+                                    _id: finalData._id,
+                                    chatRoomId: responses.chatRoomId,
+                                    // polyDating: finalData.polyDating,
+                                    // HowDoYouPoly: finalData.HowDoYouPoly,
+                                    // loveToGive: finalData.loveToGive,
+                                    // polyRelationship: finalData.polyRelationship,
+                                    firstName: finalData.firstName,
+                                    email: finalData.email,
+                                    profile: finalData.photo[0] ? finalData.photo[0].res : "",
+                                    // relationshipSatus: finalData.relationshipSatus,
+                                    // Bio: finalData.Bio,
+                                    // hopingToFind: finalData.hopingToFind,
+                                    // jobTitle: finalData.jobTitle,
+                                    // wantChildren: finalData.wantChildren,
+                                    // posts_data: finalData.posts,
+                                    status: responses.statusAndTumbCount.status,
+                                    thumbUp: responses.statusAndTumbCount.thumbUp,
+                                    thumbDown: responses.statusAndTumbCount.thumbDown
+                                }
+    
+                                final_data.push(response);
+                            }else{
+                                const responses = {
+                                    _id: finalData._id,
+                                    chatRoomId: findAllUserWithIchat2._id,
+                                    // polyDating: finalData.polyDating,
+                                    // HowDoYouPoly: finalData.HowDoYouPoly,
+                                    // loveToGive: finalData.loveToGive,
+                                    // polyRelationship: finalData.polyRelationship,
+                                    firstName: finalData.firstName,
+                                    email: finalData.email,
+                                    profile: finalData.photo[0] ? finalData.photo[0].res : "",
+                                    // relationshipSatus: finalData.relationshipSatus,
+                                    // Bio: finalData.Bio,
+                                    // hopingToFind: finalData.hopingToFind,
+                                    // jobTitle: finalData.jobTitle,
+                                    // wantChildren: finalData.wantChildren,
+                                    // posts_data: finalData.posts,
+                                    statusAndTumbCount: finalStatus[key]
+                                }
+                                const response = {
+                                    _id: finalData._id,
+                                    chatRoomId: responses.chatRoomId,
+                                    // polyDating: finalData.polyDating,
+                                    // HowDoYouPoly: finalData.HowDoYouPoly,
+                                    // loveToGive: finalData.loveToGive,
+                                    // polyRelationship: finalData.polyRelationship,
+                                    firstName: finalData.firstName,
+                                    email: finalData.email,
+                                    profile: finalData.photo[0] ? finalData.photo[0].res : "",
+                                    // relationshipSatus: finalData.relationshipSatus,
+                                    // Bio: finalData.Bio,
+                                    // hopingToFind: finalData.hopingToFind,
+                                    // jobTitle: finalData.jobTitle,
+                                    // wantChildren: finalData.wantChildren,
+                                    // posts_data: finalData.posts,
+                                    status: responses.statusAndTumbCount.status,
+                                    thumbUp: responses.statusAndTumbCount.thumbUp,
+                                    thumbDown: responses.statusAndTumbCount.thumbDown
+                                }
+    
+                                final_data.push(response);
+                            }
+                            
                         }
 
 
@@ -3014,44 +3079,108 @@ exports.yesBasket = async (req, res, next) => {
                         }
                         for (const [key, finalData] of finalExistUser.entries()) {
 
-                            const responses = {
-                                _id: finalData._id,
-                                // polyDating: finalData.polyDating,
-                                // HowDoYouPoly: finalData.HowDoYouPoly,
-                                // loveToGive: finalData.loveToGive,
-                                // polyRelationship: finalData.polyRelationship,
-                                firstName: finalData.firstName,
-                                email: finalData.email,
-                                profile: finalData.photo[0] ? finalData.photo[0].res : "",
-                                // relationshipSatus: finalData.relationshipSatus,
-                                // Bio: finalData.Bio,
-                                // hopingToFind: finalData.hopingToFind,
-                                // jobTitle: finalData.jobTitle,
-                                // wantChildren: finalData.wantChildren,
-                                // posts_data: finalData.posts,
-                                statusAndTumbCount: finalStatus[key]
-                            }
-                            const response = {
-                                _id: finalData._id,
-                                // polyDating: finalData.polyDating,
-                                // HowDoYouPoly: finalData.HowDoYouPoly,
-                                // loveToGive: finalData.loveToGive,
-                                // polyRelationship: finalData.polyRelationship,
-                                firstName: finalData.firstName,
-                                email: finalData.email,
-                                profile: finalData.photo[0] ? finalData.photo[0].res : "",
-                                // relationshipSatus: finalData.relationshipSatus,
-                                // Bio: finalData.Bio,
-                                // hopingToFind: finalData.hopingToFind,
-                                // jobTitle: finalData.jobTitle,
-                                // wantChildren: finalData.wantChildren,
-                                // posts_data: finalData.posts,
-                                status: responses.statusAndTumbCount.status,
-                                thumbUp: responses.statusAndTumbCount.thumbUp,
-                                thumbDown: responses.statusAndTumbCount.thumbDown
-                            }
+                            const findAllUserWithIchat1 = await chatRoomModel.findOne({
+                                $and: [{
+                                    user1: finalData._id
+                                }, {
+                                    user2: req.params.user_id
+                                }]
+                            })
+        
+        
+                            console.log("findAllUserWithIchat1" , findAllUserWithIchat1);
+        
+                            const findAllUserWithIchat2 = await chatRoomModel.findOne({
+                                $and: [{
+                                    user1: req.params.user_id
+                                }, {
+                                    user2: finalData._id
+                                }]
+                            })
 
-                            final_data.push(response);
+                            if(findAllUserWithIchat1){
+                                const responses = {
+                                    _id: finalData._id,
+                                    chatRoomId: findAllUserWithIchat1._id,
+                                    // polyDating: finalData.polyDating,
+                                    // HowDoYouPoly: finalData.HowDoYouPoly,
+                                    // loveToGive: finalData.loveToGive,
+                                    // polyRelationship: finalData.polyRelationship,
+                                    firstName: finalData.firstName,
+                                    email: finalData.email,
+                                    profile: finalData.photo[0] ? finalData.photo[0].res : "",
+                                    // relationshipSatus: finalData.relationshipSatus,
+                                    // Bio: finalData.Bio,
+                                    // hopingToFind: finalData.hopingToFind,
+                                    // jobTitle: finalData.jobTitle,
+                                    // wantChildren: finalData.wantChildren,
+                                    // posts_data: finalData.posts,
+                                    statusAndTumbCount: finalStatus[key]
+                                }
+                                const response = {
+                                    _id: finalData._id,
+                                    chatRoomId: responses.chatRoomId,
+                                    // polyDating: finalData.polyDating,
+                                    // HowDoYouPoly: finalData.HowDoYouPoly,
+                                    // loveToGive: finalData.loveToGive,
+                                    // polyRelationship: finalData.polyRelationship,
+                                    firstName: finalData.firstName,
+                                    email: finalData.email,
+                                    profile: finalData.photo[0] ? finalData.photo[0].res : "",
+                                    // relationshipSatus: finalData.relationshipSatus,
+                                    // Bio: finalData.Bio,
+                                    // hopingToFind: finalData.hopingToFind,
+                                    // jobTitle: finalData.jobTitle,
+                                    // wantChildren: finalData.wantChildren,
+                                    // posts_data: finalData.posts,
+                                    status: responses.statusAndTumbCount.status,
+                                    thumbUp: responses.statusAndTumbCount.thumbUp,
+                                    thumbDown: responses.statusAndTumbCount.thumbDown
+                                }
+    
+                                final_data.push(response);
+                            }else{
+                                const responses = {
+                                    _id: finalData._id,
+                                    chatRoomId: findAllUserWithIchat2._id,
+                                    // polyDating: finalData.polyDating,
+                                    // HowDoYouPoly: finalData.HowDoYouPoly,
+                                    // loveToGive: finalData.loveToGive,
+                                    // polyRelationship: finalData.polyRelationship,
+                                    firstName: finalData.firstName,
+                                    email: finalData.email,
+                                    profile: finalData.photo[0] ? finalData.photo[0].res : "",
+                                    // relationshipSatus: finalData.relationshipSatus,
+                                    // Bio: finalData.Bio,
+                                    // hopingToFind: finalData.hopingToFind,
+                                    // jobTitle: finalData.jobTitle,
+                                    // wantChildren: finalData.wantChildren,
+                                    // posts_data: finalData.posts,
+                                    statusAndTumbCount: finalStatus[key]
+                                }
+                                const response = {
+                                    _id: finalData._id,
+                                    chatRoomId: responses.chatRoomId,
+                                    // polyDating: finalData.polyDating,
+                                    // HowDoYouPoly: finalData.HowDoYouPoly,
+                                    // loveToGive: finalData.loveToGive,
+                                    // polyRelationship: finalData.polyRelationship,
+                                    firstName: finalData.firstName,
+                                    email: finalData.email,
+                                    profile: finalData.photo[0] ? finalData.photo[0].res : "",
+                                    // relationshipSatus: finalData.relationshipSatus,
+                                    // Bio: finalData.Bio,
+                                    // hopingToFind: finalData.hopingToFind,
+                                    // jobTitle: finalData.jobTitle,
+                                    // wantChildren: finalData.wantChildren,
+                                    // posts_data: finalData.posts,
+                                    status: responses.statusAndTumbCount.status,
+                                    thumbUp: responses.statusAndTumbCount.thumbUp,
+                                    thumbDown: responses.statusAndTumbCount.thumbDown
+                                }
+    
+                                final_data.push(response);
+                            }
                         }
 
                         const final_response = [...final_data, ...UniqueEmail]

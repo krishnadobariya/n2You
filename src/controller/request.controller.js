@@ -20,7 +20,6 @@ exports.sendRequest = async (req, res, next) => {
                 const emailExitInRequestedModel1 = await requestModel.findOne({ userId: req.params.requested_id  })
               
 
-                console.log("emailExitInRequestedModel1" , emailExitInRequestedModel1);
                 if (!emailExitInRequestedModel) {
                     const request = requestModel({
                         userId: checkUserExist._id,
