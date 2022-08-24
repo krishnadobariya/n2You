@@ -1884,7 +1884,7 @@ exports.getDataUserWise = async (req, res, next) => {
                         Bio: '$Bio',
                         photo: '$photo',
                         hopingToFind: '$hopingToFind',
-                        jobTitle: 'jobTitle',
+                        jobTitle: '$jobTitle',
                         wantChildren: '$wantChildren',
                         phoneNumber: '$phoneNumber',
                         countryCode: '$countryCode',
@@ -2138,7 +2138,7 @@ exports.getDataUserWise = async (req, res, next) => {
                             getPost,
                             finalPostedTime,
                             commentData: commentData[0] == null ? [] : commentData,
-                            postShowStatus
+                            postShowStatus : postShowStatus[0]
                         }
                         getAllPosts.push(response);
                     }
