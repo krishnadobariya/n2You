@@ -458,7 +458,7 @@ exports.getPostById = async (req, res, next) => {
 
                         const findUserInLike = await likeModel.findOne({
                             postId: createResponse._id,
-                            userId: findUser._id
+                            userId: req.params.req_id
                         })
                         if (findUserInLike) {
                             const response = {
