@@ -4528,6 +4528,141 @@ exports.noBasket = async (req, res, next) => {
 
 exports.moveBasket = async (req, res, next) => {
 
+    try {
+
+
+        const findUser = await userModel.findOne({
+            _id: req.params.user_id
+        })
+
+        if(findUser){
+
+            const findYesBasketUser = await userModel.findOne({
+                _id: req.params.user_id,
+                "yesBasket.userId": req.params.request_user_id
+            })
+
+            const findNoBasketUser = await userModel.findOne({
+                _id: req.params.user_id,
+                "noBasket.userId": req.params.request_user_id
+            })
+
+            console.log("findYesBasketUser" , findYesBasketUser);
+            console.log("findNoBasketUser" , findNoBasketUser);
+
+           if(findYesBasketUser){
+            console.log("xcasdfwef");
+            const yesData = [];
+            for(const dataFind of findYesBasketUser.yesBasket){
+                console.log("dataFind");
+
+                if((dataFind.userId).toString() == (req.params.request_user_id).toString()){
+                    yesData.push(dataFind)
+                }
+            }
+
+           await userModel.updateOne(
+                {
+                    _id: req.params.user_id
+                },
+                {
+                    $pull: {
+                        yesBasket: {
+                            userId: req.params.request_user_id
+                        }
+                    }
+                });
+
+
+            await userModel.updateOne(
+                    {
+                        _id: req.params.user_id
+                    },
+                    {
+                        $push: {
+                            noBasket:{
+                                match: yesData[0].match,
+                                userId: yesData[0].userId,
+                                thumbUp: yesData[0].thumbUp,
+                                thumbDown:yesData[0].thumbDown,
+                            }
+                          
+                        }
+                    });
+
+
+        res.status(status.NOT_FOUND).json(
+            new APIResponse("move in no basket", true, 200 , "1")
+        );
+
+           }else if(findNoBasketUser){
+
+            const noData = [];
+
+           
+            for(const dataFind of findNoBasketUser.noBasket){
+               
+                console.log("dataFind" , dataFind);
+
+                if((dataFind.userId).toString() == (req.params.request_user_id).toString()){
+                    noData.push(dataFind)
+                }
+            }
+
+
+            
+           await userModel.updateOne(
+                {
+                    _id: req.params.user_id
+                },
+                {
+                    $pull: {
+                        noBasket: {
+                            userId: req.params.request_user_id
+                        }
+                    }
+                });
+
+
+            await userModel.updateOne(
+                    {
+                        _id: req.params.user_id,
+
+                    },
+                    {
+                        $push: {
+                            yesBasket: {
+                                match: noData[0].match,
+                                userId: noData[0].userId,
+                                thumbUp: noData[0].thumbUp,
+                                thumbDown:noData[0].thumbDown,
+                            }
+                          
+                        }
+                    });
+
+                    res.status(status.NOT_FOUND).json(
+                        new APIResponse("move in yes basket", true, 200 , "1")
+                    );
+
+           }else{
+            res.status(status.NOT_FOUND).json(
+                new APIResponse("not in basket", false, 404 ,"0")
+            );
+           }
+
+        }else{
+            res.status(status.NOT_FOUND).json(
+                new APIResponse("User not found", false, 404 , "0")
+            );
+        }
+    
+    } catch (error) {
+        console.log("Error:", error);
+        res.status(status.INTERNAL_SERVER_ERROR).json(
+            new APIResponse("Something Went Wrong", false, 500, error.message)
+        );
+    }
 }
 
 exports.getAllNotification = async (req, res, next) => {
