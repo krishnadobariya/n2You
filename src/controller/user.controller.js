@@ -4591,7 +4591,7 @@ exports.moveBasket = async (req, res, next) => {
                     });
 
 
-        res.status(status.NOT_FOUND).json(
+        res.status(status.OK).json(
             new APIResponse("move in no basket", true, 200 , "1")
         );
 
@@ -4641,7 +4641,7 @@ exports.moveBasket = async (req, res, next) => {
                         }
                     });
 
-                    res.status(status.NOT_FOUND).json(
+                    res.status(status.OK).json(
                         new APIResponse("move in yes basket", true, 200 , "1")
                     );
 
