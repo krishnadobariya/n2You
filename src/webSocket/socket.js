@@ -21,23 +21,15 @@ function socket(io) {
         // })
 
         socket.on("joinUser", function (data) {
+            console.log("data" , data);
             const userRoom = `User${data.user_id}`;
-
             socket.join(userRoom);
-            // io.to(data.user_id).emit('join', {msg: 'hello world.'});
-        });
+          });
 
         socket.on("chat", async (arg) => {
 
-            const userRoom = [];
-            if (arg.sender_id = arg.user_2) {
-                userRoom.push(arg.user_2)
-                socket.join(arg.user_2);
-            } else {
-                userRoom.push(arg.user_1)
-                socket.join(arg.user_1);
-            }
-
+          const userRoom = `User${arg.user_2}`
+           
             const date = new Date()
             let dates = date.getDate();
             let month = date.toLocaleString('en-us', { month: 'long' });
@@ -139,7 +131,7 @@ function socket(io) {
                                 receiver: receiver_id[0]
                             }
 
-                            io.to(userRoom[0]).emit("chatReceive", chat);
+                            io.to(userRoom).emit("chatReceive", chat);
 
                             const title = "n2you Notification";
                             const body = `${arg.sender_id} send request to `;
@@ -202,7 +194,7 @@ function socket(io) {
                                 receiver: receiver_id[0]
                             }
 
-                            io.to(userRoom[0]).emit("chatReceive", chat);
+                            io.to(userRoom).emit("chatReceive", chat);
                             const title = "n2you Notification";
                             const body = `${arg.sender_id} send request to `;
 
@@ -284,7 +276,7 @@ function socket(io) {
                                     receiver: receiver_id[0]
                                 }
 
-                                io.to(userRoom[0]).emit("chatReceive", chat);
+                                io.to(userRoom).emit("chatReceive", chat);
                                 const title = "n2you Notification";
                                 const body = `${arg.sender_id} send request to`;
 
@@ -342,7 +334,7 @@ function socket(io) {
                                     sender: arg.sender_id,
                                     receiver: receiver_id[0]
                                 }
-                                io.to(userRoom[0]).emit("chatReceive", chat);
+                                io.to(userRoom).emit("chatReceive", chat);
 
                                 const title = "n2you Notification";
                                 const body = `${arg.sender_id} send request to `;
@@ -403,7 +395,7 @@ function socket(io) {
                                     sender: arg.sender_id,
                                     receiver: receiver_id[0]
                                 }
-                                io.to(userRoom[0]).emit("chatReceive", chat);
+                                io.to(userRoom).emit("chatReceive", chat);
 
                                 const title = "n2you Notification";
                                 const body = `${arg.sender_id} send request to `;
@@ -460,7 +452,7 @@ function socket(io) {
                                     sender: arg.sender_id,
                                     receiver: receiver_id[0]
                                 }
-                                io.to(userRoom[0]).emit("chatReceive", chat);
+                                io.to(userRoom).emit("chatReceive", chat);
 
                                 const title = "n2you Notification";
                                 const body = `${arg.sender_id} send request to `;
