@@ -8,10 +8,15 @@ const basketModel = require("../model/basket.model");
 exports.thumbCount = async (req, res, next) => {
     try {
 
+        console.log("vfdvefvfv");
+
         const findUser = await userModel.findOne({
             _id: req.params.admin_user_id,
             polyDating: 0
         })
+
+
+        
         if (findUser == null) {
             res.status(status.NOT_FOUND).json(
                 new APIResponse("User not found and not Social Meida & Dating type user", "false", 404, "0")
@@ -38,12 +43,14 @@ exports.thumbCount = async (req, res, next) => {
 
             } else {
 
-                if (req.query.value == 1) {                          
+                if (req.query.value == 1) { 
+                    
+                    console.log("vdvdfvdfvdfv");
                             const checkInThumbModel = await thumbUpModel.find({
                                 adminUserId: req.params.admin_user_id,
                             })
 
-                            console.log("checkInThumbModel" , checkInThumbModel);
+                          
                             if (checkInThumbModel[0] == undefined) {
 
 
