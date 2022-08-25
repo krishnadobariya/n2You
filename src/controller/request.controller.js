@@ -353,7 +353,7 @@ exports.userAcceptedRequesteOrNot = async (req, res, next) => {
                         $push: {
                             notifications: {
                                 notifications: `${findUserWhichAcceptRequest.firstName}, ${findUser.firstName} both are become friend`,
-                                userId: findUser._id,
+                                userId: findUserWhichAcceptRequest._id,
                                 status: 2
                             }
                         }
@@ -362,8 +362,8 @@ exports.userAcceptedRequesteOrNot = async (req, res, next) => {
                     const data = notificationModel({
                         userId: findUser._id,
                         notifications: {
-                            notifications: `${findUserWhichAcceptRequest.firstName} accepted request`,
-                            userId: findUser._id,
+                            notifications: `${findUserWhichAcceptRequest.firstName}, ${findUser.firstName} both are become friend`,
+                            userId: findUserWhichAcceptRequest._id,
                             status: 2
                         }
                     })
@@ -378,7 +378,7 @@ exports.userAcceptedRequesteOrNot = async (req, res, next) => {
                         $push: {
                             notifications: {
                                 notifications: `${findUser.firstName}, ${findUserWhichAcceptRequest.firstName} both are become friend`,
-                                userId: findUserWhichAcceptRequest._id,
+                                userId: findUser._id,
                                 status: 2
                             }
                         }
@@ -388,7 +388,7 @@ exports.userAcceptedRequesteOrNot = async (req, res, next) => {
                         userId: findUser._id,
                         notifications: {
                             notifications: `${findUser.firstName}, ${findUserWhichAcceptRequest.firstName}  both are become friend`,
-                            userId: findUserWhichAcceptRequest._id,
+                            userId: findUser._id,
                             status: 2
                         }
                     })
@@ -440,7 +440,7 @@ exports.userAcceptedRequesteOrNot = async (req, res, next) => {
                         $push: {
                             notifications: {
                                 notifications: `${findUser.firstName}, ${findUserWhichAcceptRequest.firstName} both are not become friend`,
-                                userId: findUser._id,
+                                userId: findUserWhichAcceptRequest._id,
                                 status: 3
                             }
                         }
@@ -450,7 +450,7 @@ exports.userAcceptedRequesteOrNot = async (req, res, next) => {
                         userId: findUser._id,
                         notifications: {
                             notifications: `${findUser.firstName}, ${findUserWhichAcceptRequest.firstName} both are not become friend`,
-                            userId: findUser._id,
+                            userId: findUserWhichAcceptRequest._id,
                             status: 3
                         }
                     })
@@ -466,7 +466,7 @@ exports.userAcceptedRequesteOrNot = async (req, res, next) => {
                         $push: {
                             notifications: {
                                 notifications: `${findUser.firstName}, ${findUserWhichAcceptRequest.firstName} both are not become friend`,
-                                userId: findUserWhichAcceptRequest._id,
+                                userId: findUser._id,
                                 status: 3
                             }
                         }
@@ -476,7 +476,7 @@ exports.userAcceptedRequesteOrNot = async (req, res, next) => {
                         userId: findUserWhichAcceptRequest._id,
                         notifications: {
                             notifications: `${findUser.firstName}, ${findUserWhichAcceptRequest.firstName} both are not become friend`,
-                            userId: findUserWhichAcceptRequest._id,
+                            userId: findUser._id,
                             status: 3
                         }
                     })
