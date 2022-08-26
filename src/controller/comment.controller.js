@@ -34,49 +34,49 @@ exports.CommetInsert = async (req, res, next) => {
                         date: new Date(Date.now()).toDateString()
                     }
 
-                    if((req.params.user_id).toString() == (req.params.req_user_id).toString()){
+                    if ((req.params.user_id).toString() == (req.params.req_user_id).toString()) {
 
-                    }else{
+                    } else {
                         const findInNotification = await notificationModel.findOne({
                             userId: req.params.user_id
                         })
-    
+
                         const findUser = await userModel.findOne({
-                            _id : req.params.req_user_id
+                            _id: req.params.req_user_id
                         }).select("firstName")
-    
-                        if(findInNotification){
+
+                        if (findInNotification) {
                             await notificationModel.updateOne({
-                                userId : req.params.user_id
-                            },{
+                                userId: req.params.user_id
+                            }, {
                                 $push: {
                                     notifications: {
-                                        userId : req.params.req_user_id,
+                                        userId: req.params.req_user_id,
                                         notifications: `${findUser.firstName} comment on your post`,
                                         status: 5
                                     }
-                                    
+
                                 }
                             })
-                        }else{
-    
+                        } else {
+
                             const saveNotification = notificationModel({
-                                userId : req.params.user_id,
-                                notifications:{
-                                    userId : req.params.req_user_id,
+                                userId: req.params.user_id,
+                                notifications: {
+                                    userId: req.params.req_user_id,
                                     notifications: `${findUser.firstName} comment on your post`,
                                     status: 5
                                 }
                             })
-    
+
                             await saveNotification.save();
                         }
                     }
 
-                    
-                    
+
+
                     await commentModel.updateOne({ postId: req.params.post_id }, { $push: { comments: finalData } });
-                    await postModel.updateOne({ "posts._id": req.params.post_id }, { $inc: { "posts.$.comment": 1 } });
+                    await postModel.updateOne({ userId: req.params.user_id, "posts._id": req.params.post_id }, { $inc: { "posts.$.comment": 1 } });
 
                     res.status(status.OK).json(
                         new APIResponse("comment added successfully!", "true", 201, "1", finalData)
@@ -94,50 +94,47 @@ exports.CommetInsert = async (req, res, next) => {
 
                     const saveData = await comment.save();
 
-                    if((req.params.user_id).toString() == (req.params.req_user_id).toString()){
+                    if ((req.params.user_id).toString() == (req.params.req_user_id).toString()) {
 
-                    }else{
+                    } else {
                         const findInNotification = await notificationModel.findOne({
                             userId: req.params.user_id
                         })
-    
+
                         const findUser = await userModel.findOne({
-                            _id : req.params.req_user_id
+                            _id: req.params.req_user_id
                         }).select("firstName")
-    
-                        if(findInNotification){
+
+                        if (findInNotification) {
                             await notificationModel.updateOne({
-                                userId : req.params.user_id
-                            },{
+                                userId: req.params.user_id
+                            }, {
                                 $push: {
-                                    notifications:{
-                                        userId : req.params.req_user_id,
+                                    notifications: {
+                                        userId: req.params.req_user_id,
                                         notifications: `${findUser.firstName} comment on your post`,
                                         status: 5
                                     }
                                 }
                             })
-                        }else{
-    
+                        } else {
+
                             const saveNotification = notificationModel({
-                                userId : req.params.user_id,
-                                notifications:{
-                                    userId : req.params.req_user_id,
+                                userId: req.params.user_id,
+                                notifications: {
+                                    userId: req.params.req_user_id,
                                     notifications: `${findUser.firstName} comment on your post`,
                                     status: 5
                                 }
                             })
-    
+
                             await saveNotification.save();
                         }
                     }
 
-                   
+                    await postModel.updateOne({ userId: req.params.user_id, "posts._id": req.params.post_id }, { $inc: { "posts.$.comment": 1 } });
 
-                    
-                    await postModel.updateOne({ "posts._id": req.params.post_id }, { $inc: { "posts.$.comment": 1 } });
-                   
-                   
+
                     res.status(status.CREATED).json(
                         new APIResponse("comment Added", "true", 201, "1", saveData)
                     )
@@ -294,6 +291,8 @@ exports.deleteComment = async (req, res, next) => {
                         }
                     );
 
+                    await postModel.updateOne({ userId: req.params.user_id, "posts._id": req.params.post_id }, { $inc: { "posts.$.comment": -1 } });
+
                     res.status(status.OK).json(
                         new APIResponse("Reply updated Successfully", "true", 200, "1")
                     );
@@ -312,7 +311,7 @@ exports.deleteComment = async (req, res, next) => {
                         }
                     }
                 );
-
+                await postModel.updateOne({ userId: req.params.user_id, "posts._id": req.params.post_id }, { $inc: { "posts.$.comment": -1 } });
                 res.status(status.OK).json(
                     new APIResponse("Reply updated Successfully", "true", 200, "1")
                 );

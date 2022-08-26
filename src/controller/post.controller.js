@@ -2006,6 +2006,7 @@ exports.userAllFriendPost = async (req, res, next) => {
 
 
 
+                                        console.log("getallposts.createdAt", getallposts.createdAt);
 
                                         const userPostDate = getallposts.createdAt;
 
@@ -2388,7 +2389,9 @@ exports.userAllFriendPost = async (req, res, next) => {
 
                     for (const getallposts of allposts.posts) {
                         const post = [];
-                        for (const postwithType of getallposts.post) {
+                        for (const postwithType of (getallposts.post)) {
+
+                            console.log("getallposts.post", getallposts);
                             const getExt1Name = postwithType ? postwithType.res : null;
                             if (getExt1Name == null) {
 
@@ -2766,9 +2769,30 @@ exports.userAllFriendPost = async (req, res, next) => {
 
             }
 
+            const minute = [];
+            const houres = [];
+            const second = [];
+            const all = [];
+            for (const data of final_data) {
+                let data1 = data.finalPostedTime[0]
+                const split = data1.split(" ")
+                if (split[1] == "minute") {
+                    console.log("split[0].parseInt()", split[0]);
+                    console.log(split[1]);
+
+                    minute.push(data)
+                } else if ("hours") {
+                    houres.push(data)
+                } else if ("second") {
+                    second.push(data)
+                } else {
+                    all.push(data)
+                }
+
+            }
 
             res.status(status.OK).json(
-                new APIResponse("show all post When accept by the user", "true", 201, "1", final_data)
+                new APIResponse("show all post When accept by the user", "true", 201, "1", [...second, ...minute, ...houres, ...all])
             )
         } else if (user) {
 
@@ -3176,6 +3200,8 @@ exports.userAllFriendPost = async (req, res, next) => {
 
             }
 
+
+            console.log("final_data", final_data);
 
             res.status(status.OK).json(
                 new APIResponse("show all post When accept by the user", "true", 201, "1", final_data)
