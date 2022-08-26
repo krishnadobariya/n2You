@@ -79,15 +79,18 @@ exports.addPostVideo = async (req, res, next) => {
                     if (findNotification) {
 
                         await notificationModel.updateOne({
-                            userId: sendNotification,
-                            $push: {
-                                notifications: {
-                                    userId: req.params.id,
-                                    notifications: `${findUser.firstName} add post`,
-                                    status: 6
+                            userId: sendNotification
+                        },
+                            {
+                                $push: {
+                                    notifications: {
+                                        userId: req.params.id,
+                                        notifications: `${findUser.firstName} add post`,
+                                        status: 6
+                                    }
                                 }
                             }
-                        })
+                        )
 
                     } else {
 
@@ -152,15 +155,18 @@ exports.addPostVideo = async (req, res, next) => {
                     if (findNotification) {
 
                         await notificationModel.updateOne({
-                            userId: sendNotification,
-                            $push: {
-                                notifications: {
-                                    userId: req.params.id,
-                                    notifications: `${findUser.firstName} add post`,
-                                    status: 6
+                            userId: sendNotification
+                        },
+                            {
+                                $push: {
+                                    notifications: {
+                                        userId: req.params.id,
+                                        notifications: `${findUser.firstName} add post`,
+                                        status: 6
+                                    }
                                 }
                             }
-                        })
+                        )
 
                     } else {
 
@@ -250,6 +256,8 @@ exports.addPostImages = async (req, res, next) => {
                     }
                 }
 
+                console.log("allRequestEmail", allRequestEmail);
+
                 for (const sendNotification of allRequestEmail) {
 
                     const findNotification = await notificationModel.findOne({
@@ -263,15 +271,18 @@ exports.addPostImages = async (req, res, next) => {
                     if (findNotification) {
 
                         await notificationModel.updateOne({
-                            userId: sendNotification,
-                            $push: {
-                                notifications: {
-                                    userId: req.params.id,
-                                    notifications: `${findUser.firstName} add post`,
-                                    status: 6
+                            userId: sendNotification
+                        },
+                            {
+                                $push: {
+                                    notifications: {
+                                        userId: req.params.id,
+                                        notifications: `${findUser.firstName} add post`,
+                                        status: 6
+                                    }
                                 }
                             }
-                        })
+                        )
 
                     } else {
 
@@ -323,6 +334,7 @@ exports.addPostImages = async (req, res, next) => {
                         allRequestEmail.push(postData.userId)
                     }
                 }
+                console.log("allRequestEmail", allRequestEmail);
 
                 for (const sendNotification of allRequestEmail) {
 
@@ -330,22 +342,28 @@ exports.addPostImages = async (req, res, next) => {
                         userId: sendNotification
                     })
 
+                    console.log(findNotification);
+
                     const findUser = await userModal.findOne({
                         _id: req.params.id
                     }).select("firstName")
 
                     if (findNotification) {
 
-                        await notificationModel.updateOne({
-                            userId: sendNotification,
-                            $push: {
-                                notifications: {
-                                    userId: req.params.id,
-                                    notifications: `${findUser.firstName} add post`,
-                                    status: 6
+                        await notificationModel.updateOne(
+                            {
+                                userId: sendNotification,
+                            },
+                            {
+                                $push: {
+                                    notifications: {
+                                        userId: req.params.id,
+                                        notifications: `${findUser.firstName} add post`,
+                                        status: 6
+                                    }
                                 }
                             }
-                        })
+                        )
 
                     } else {
 
