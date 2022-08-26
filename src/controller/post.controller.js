@@ -54,12 +54,6 @@ exports.addPostVideo = async (req, res, next) => {
 
                 const saveData = await posts.save();
 
-                res.status(status.CREATED).json(
-                    new APIResponse("Posts Inserted successfully!", "true", 201, "1", saveData)
-                )
-
-                next();
-
                 const findAllEmail = await requestsModel.findOne({
                     userId: req.params.id
                 })
@@ -109,6 +103,12 @@ exports.addPostVideo = async (req, res, next) => {
                         await dataSave.save();
                     }
                 }
+
+                res.status(status.CREATED).json(
+                    new APIResponse("Posts Inserted successfully!", "true", 201, "1", saveData)
+                )
+
+             
 
             } else {
                 const urls = [];
@@ -127,13 +127,6 @@ exports.addPostVideo = async (req, res, next) => {
 
                 await postModal.updateOne({ userId: req.params.id }, { $push: { posts: finalData } });
 
-
-                res.status(status.OK).json(
-                    new APIResponse("Post added successfully!", "true", 201, "1", finalData)
-                )
-
-                next();
-
                 const findAllEmail = await requestsModel.findOne({
                     userId: req.params.id
                 })
@@ -183,6 +176,13 @@ exports.addPostVideo = async (req, res, next) => {
                         await dataSave.save();
                     }
                 }
+
+                res.status(status.OK).json(
+                    new APIResponse("Post added successfully!", "true", 201, "1", finalData)
+                )
+
+
+           
             }
         } else {
             res.status(status.NOT_FOUND).json(
@@ -237,14 +237,7 @@ exports.addPostImages = async (req, res, next) => {
                     email: userFindForImages.email
                 })
 
-
-                const saveData = await posts.save();
-                res.status(status.CREATED).json(
-                    new APIResponse("Posts Inserted successfully!", "true", 201, "1", saveData)
-                )
-
-                next();
-
+                
                 const findAllEmail = await requestsModel.findOne({
                     userId: req.params.id
                 })
@@ -294,6 +287,12 @@ exports.addPostImages = async (req, res, next) => {
                         await dataSave.save();
                     }
                 }
+
+
+                const saveData = await posts.save();
+                res.status(status.CREATED).json(
+                    new APIResponse("Posts Inserted successfully!", "true", 201, "1", saveData)
+                )
 
             } else {
                 const urls = [];
@@ -313,13 +312,6 @@ exports.addPostImages = async (req, res, next) => {
                 await postModal.updateOne({ userId: req.params.id }, { $push: { posts: finalData } });
 
 
-
-                res.status(status.OK).json(
-                    new APIResponse("Post added successfully!", "true", 201, "1", finalData)
-                )
-
-                next();
-
                 const findAllEmail = await requestsModel.findOne({
                     userId: req.params.id
                 })
@@ -369,6 +361,11 @@ exports.addPostImages = async (req, res, next) => {
                         await dataSave.save();
                     }
                 }
+
+                res.status(status.OK).json(
+                    new APIResponse("Post added successfully!", "true", 201, "1", finalData)
+                )
+
             }
 
         } else {
@@ -1934,6 +1931,7 @@ exports.userAllFriendPost = async (req, res, next) => {
 
                                 for (const allposts of meargAllTableEmail.posts) {
 
+                                    console.log("allposts.posts",  meargAllTableEmail.posts);
 
                                     for (const getallposts of allposts.posts) {
 
