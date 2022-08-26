@@ -2771,30 +2771,11 @@ exports.userAllFriendPost = async (req, res, next) => {
 
             }
 
-            const minute = [];
-            const houres = [];
-            const second = [];
-            const all = [];
-            for (const data of final_data) {
-                let data1 = data.finalPostedTime[0]
-                const split = data1.split(" ")
-                if (split[1] == "minute") {
-                    console.log("split[0].parseInt()", split[0]);
-                    console.log(split[1]);
 
-                    minute.push(data)
-                } else if ("hours") {
-                    houres.push(data)
-                } else if ("second") {
-                    second.push(data)
-                } else {
-                    all.push(data)
-                }
 
-            }
 
             res.status(status.OK).json(
-                new APIResponse("show all post When accept by the user", "true", 201, "1", [...second, ...minute, ...houres, ...all])
+                new APIResponse("show all post When accept by the user", "true", 201, "1", final_data.sort((a, b) => b.posts.createdAt - a.posts.createdAt))
             )
         } else if (user) {
 
