@@ -7,6 +7,7 @@ const userModel = require("../model/user.model");
 const { default: mongoose } = require("mongoose");
 const { LOCKED } = require("http-status");
 const chatRoomModel = require("../webSocket/models/chatRoom.model");
+const notificationModel = require("../model/polyamorous/notification.model");
 
 exports.LikeOrDislikeInUserPost = async (req, res, next) => {
     try {
@@ -30,6 +31,51 @@ exports.LikeOrDislikeInUserPost = async (req, res, next) => {
                         });
 
                         await InsertIntoLikeTable.save();
+
+                        const findRequestedUser = await userModel.findOne({
+                            _id: req.params.req_user_id
+                        }).select("firstName")
+
+
+
+                        const findInNotification = await notificationModel.findOne({
+                            userId: req.params.user_id
+                        })
+
+                        console.log("findInNotification" , findInNotification);
+
+                        if(findInNotification){
+
+
+                            await notificationModel.updateOne({
+                                userId: req.params.user_id
+                            },{
+                                $push:{
+                                    notifications: {
+                                        notifications:`${findRequestedUser.firstName} like your post.`,
+                                        userId:req.params.req_user_id,
+                                        status:4
+                                    }
+                                }
+                            })
+
+                        }else{
+                            const saveNotification = notificationModel({
+
+                                userId:req.params.user_id,
+                                notifications: {
+                                    notifications:`${findRequestedUser.firstName} like your post.`,
+                                    userId:req.params.req_user_id,
+                                    status:4
+                                }
+                            })
+
+                            await saveNotification.save()  
+                        }
+
+                       
+
+
 
                         const data = await postModel.updateOne({ "posts._id": req.params.post_id }, { $inc: { "posts.$.like": 1 } }).then(() => {
                             const status_code = 1

@@ -3,7 +3,7 @@ const router = express.Router();
 
 const commentController = require("../controller/comment.controller");
 
-router.post('/add/:post_id/:user_id', commentController.CommetInsert);
+router.post('/add/:post_id/:user_id/:req_user_id', commentController.CommetInsert);
 router.post('/reply/:post_id/:user_id/:comment_id', commentController.replyComment);
 router.put('/edit/:post_id/:comment_id/:commented_user', commentController.editComment);
 router.delete('/delete/:post_id/:user_id/:comment_id/:commented_user', commentController.deleteComment);

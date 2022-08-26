@@ -10,6 +10,8 @@ const relationShipHistoryModel = require("../model/polyamorous/relationShipHisto
 const chatRoomModel = require("../webSocket/models/chatRoom.model");
 const notificationModel = require("../model/polyamorous/notification.model");
 const likeModel = require("../model/like.model");
+const thumbUpModel = require("../model/thumbUp.model");
+const thumbDownModel = require("../model/thumDown.model");
 
 exports.userRegister = async (req, res, next) => {
     try {
@@ -1882,7 +1884,8 @@ exports.getDataUserWise = async (req, res, next) => {
                         Bio: '$Bio',
                         photo: '$photo',
                         hopingToFind: '$hopingToFind',
-                        jobTitle: 'jobTitle',
+                        jobTitle: '$jobTitle',
+                        location: '$location',
                         wantChildren: '$wantChildren',
                         phoneNumber: '$phoneNumber',
                         countryCode: '$countryCode',
@@ -2136,13 +2139,56 @@ exports.getDataUserWise = async (req, res, next) => {
                             getPost,
                             finalPostedTime,
                             commentData: commentData[0] == null ? [] : commentData,
-                            postShowStatus
+                            postShowStatus : postShowStatus[0]
                         }
                         getAllPosts.push(response);
                     }
                 }
             }
 
+            
+
+            const findUser = await requestsModel.findOne({
+                userId: req.params.req_user_id
+            })
+
+            const statusCode = [];
+
+            if((req.params.req_user_id).toString() == (req.params.user_id).toString()){
+              
+                statusCode.push(10)
+               
+            }else{
+
+                if(findUser){
+                    if(findUser.RequestedEmails[0] == undefined){
+                        statusCode.push(3)
+                    }else{
+                        for(const findStatus of findUser.RequestedEmails){
+                            if(findStatus.userId == req.params.req_user_id){
+                                
+                                statusCode.push(findStatus.accepted)
+                                console.log("indStatus.accepted)" , findStatus.accepted);
+                            }
+                        }
+                    }
+                   
+                }else{
+                    statusCode.push(3)
+                }
+
+                
+            }
+          
+            console.log("statusCode" , statusCode);
+
+            let birthDate = new Date(data[0].birthDate);
+            birthDate = birthDate.getFullYear();
+            let currentDate = new Date(Date.now());
+            currentDate = currentDate.getFullYear();
+
+            const age = currentDate - birthDate;
+          
             const response = {
                 userId: data[0]._id,
                 polyDating: data[0].polyDating,
@@ -2151,6 +2197,7 @@ exports.getDataUserWise = async (req, res, next) => {
                 polyRelationship: data[0].polyRelationship,
                 firstName: data[0].firstName,
                 birthDate: data[0].birthDate,
+                age: age,
                 identity: data[0].identity,
                 relationshipSatus: data[0].relationshipSatus,
                 IntrestedIn: data[0].IntrestedIn,
@@ -2158,12 +2205,15 @@ exports.getDataUserWise = async (req, res, next) => {
                 photo: data[0].photo,
                 fcm_token: data[0].fcm_token,
                 hopingToFind: data[0].hopingToFind,
+                longitude:data[0].location.coordinates[0],
+                latitude:data[0].location.coordinates[1],
                 jobTitle: data[0].jobTitle,
                 wantChildren: data[0].wantChildren,
                 countryCode: data[0].countryCode,
                 phoneNumber: data[0].phoneNumber,
                 extraAtrribute: data[0].extraAtrribute,
-                Posts: getAllPosts
+                Posts: getAllPosts,
+                friendStatus : statusCode[0]
             }
 
 
@@ -2178,6 +2228,8 @@ exports.getDataUserWise = async (req, res, next) => {
         )
     }
 }
+
+
 
 
 exports.storeBasketValue = async (req, res, next) => {
@@ -2381,7 +2433,7 @@ exports.yesBasket = async (req, res, next) => {
                 }
 
                 if (reaquestedAllEmail[0] == undefined) {
-                    res.status(status.NOT_FOUND).json(
+                    res.status(status.OK).json(
                         new APIResponse("show all post When accept by the user", 'true', 201, '1', [])
                     )
                 } else {
@@ -2475,22 +2527,81 @@ exports.yesBasket = async (req, res, next) => {
                         for (const getOriginalData of finalData) {
 
                             for (const findThumb of findThumbUp.yesBasket) {
-                                const findThumbData = findThumb.userId
-                                const orginalData = getOriginalData._id
 
-                                if (orginalData.toString() == findThumbData.toString()) {
-                                    const response = {
-                                        _id: getOriginalData._id,
-                                        email: getOriginalData.email,
-                                        firstName: getOriginalData.firstName,
-                                        profile: getOriginalData.photo[0] ? getOriginalData.photo[0].res : "",
-                                        status: 3,
-                                        thumbUp: findThumb.thumbUp,
-                                        thumbDown: findThumb.thumbDown
+                                const findInThumbUp = await thumbUpModel.findOne({
+                                    adminUserId : req.params.user_id,
+                                    "thumbDetail.reqUserId": req.params.request_user_id,
+                                    "thumbDetail.userId": findThumb.userId
+                                })
+
+                                const findInThumbDown = await thumbDownModel.findOne({
+                                    adminUserId : req.params.user_id,
+                                    "thumbDetail.reqUserId": req.params.request_user_id,
+                                    "thumbDetail.userId": findThumb.userId
+                                })
+
+
+                                if(findInThumbUp){
+                                    const findThumbData = findThumb.userId
+                                    const orginalData = getOriginalData._id
+    
+                                    if (orginalData.toString() == findThumbData.toString()) {
+                                        const response = {
+                                            _id: getOriginalData._id,
+                                            email: getOriginalData.email,
+                                            firstName: getOriginalData.firstName,
+                                            profile: getOriginalData.photo[0] ? getOriginalData.photo[0].res : "",
+                                            status: 3,
+                                            thumbUp: findThumb.thumbUp,
+                                            thumbDown: findThumb.thumbDown,
+                                            thumbUpStatus: 1,
+                                            thumbDownStatus: 0
+                                        }
+    
+                                        UniqueEmail.push(response);
                                     }
-
-                                    UniqueEmail.push(response);
+                                }else if(findInThumbDown){
+                                    const findThumbData = findThumb.userId
+                                    const orginalData = getOriginalData._id
+    
+                                    if (orginalData.toString() == findThumbData.toString()) {
+                                        const response = {
+                                            _id: getOriginalData._id,
+                                            email: getOriginalData.email,
+                                            firstName: getOriginalData.firstName,
+                                            profile: getOriginalData.photo[0] ? getOriginalData.photo[0].res : "",
+                                            status: 3,
+                                            thumbUp: findThumb.thumbUp,
+                                            thumbDown: findThumb.thumbDown,
+                                            thumbUpStatus: 0,
+                                            thumbDownStatus: 1,
+                                            thumbUpStatus: 0,
+                                            thumbDownStatus: 1
+                                        }
+    
+                                        UniqueEmail.push(response);
+                                    }
+                                }else{
+                                    const findThumbData = findThumb.userId
+                                    const orginalData = getOriginalData._id
+    
+                                    if (orginalData.toString() == findThumbData.toString()) {
+                                        const response = {
+                                            _id: getOriginalData._id,
+                                            email: getOriginalData.email,
+                                            firstName: getOriginalData.firstName,
+                                            profile: getOriginalData.photo[0] ? getOriginalData.photo[0].res : "",
+                                            status: 3,
+                                            thumbUp: findThumb.thumbUp,
+                                            thumbDown: findThumb.thumbDown,
+                                            thumbUpStatus: 0,
+                                            thumbDownStatus: 0
+                                        }
+    
+                                        UniqueEmail.push(response);
+                                    }
                                 }
+                                
                             }
 
 
@@ -2610,11 +2721,95 @@ exports.yesBasket = async (req, res, next) => {
 
 
                                         for (const findThumb of findThumbUp.yesBasket) {
+                                            
 
-                                            const findThumbData = findThumb.userId
+                                            const findInThumbUp = await thumbUpModel.findOne({
+                                                adminUserId : req.params.user_id,
+                                                "thumbDetail.reqUserId": req.params.request_user_id,
+                                                "thumbDetail.userId": findThumb.userId
+                                            })
+
+                                            const findInThumbDown = await thumbDownModel.findOne({
+                                                adminUserId : req.params.user_id,
+                                                "thumbDetail.reqUserId": req.params.request_user_id,
+                                                "thumbDetail.userId": findThumb.userId
+                                            })
+
+                                            if(findInThumbUp){
+                                                const findThumbData = findThumb.userId
+                                                const originalData = requestEmail.userId
+    
+                                                if (originalData.toString() == findThumbData.toString()) {
+    
+                                                   
+                                                    if (requestEmail.accepted == 1) {
+                                                        var status1 = {
+                                                            status: 1,
+                                                            email: requestEmail.requestedEmail,
+                                                            firstName: findThumbUp.firstName,
+                                                            profile: findThumbUp.photo[0] ? findThumbUp.photo[0].res : "",
+                                                            thumbUp: findThumb.thumbUp,
+                                                            thumbDown: findThumb.thumbDown,
+                                                            thumbUpStatus: 1,
+                                                            thumbDownStatus: 0
+                                                        }
+                                                        statusByEmail.push(status1)
+                                                    } else {
+                                                        var status2 = {
+                                                            status: 2,
+                                                            email: requestEmail.requestedEmail,
+                                                            firstName: findThumbUp.firstName,
+                                                            profile: findThumbUp.photo[0] ? findThumbUp.photo[0].res : "",
+                                                            thumbUp: findThumb.thumbUp,
+                                                            thumbDown: findThumb.thumbDown,
+                                                            thumbUpStatus: 1,
+                                                            thumbDownStatus: 0
+                                                        }
+                                                        statusByEmail.push(status2)
+                                                    }
+                                                }
+                                            }else if(findInThumbDown){
+                                                const findThumbData = findThumb.userId
+                                                const originalData = requestEmail.userId
+    
+                                                if (originalData.toString() == findThumbData.toString()) {
+    
+                                                   
+    
+                                                    if (requestEmail.accepted == 1) {
+                                                        var status1 = {
+                                                            status: 1,
+                                                            email: requestEmail.requestedEmail,
+                                                            firstName: findThumbUp.firstName,
+                                                            profile: findThumbUp.photo[0] ? findThumbUp.photo[0].res : "",
+                                                            thumbUp: findThumb.thumbUp,
+                                                            thumbDown: findThumb.thumbDown,
+                                                            thumbUpStatus: 0,
+                                                            thumbDownStatus: 1
+                                                        }
+                                                        statusByEmail.push(status1)
+                                                    } else {
+                                                        var status2 = {
+                                                            status: 2,
+                                                            email: requestEmail.requestedEmail,
+                                                            firstName: findThumbUp.firstName,
+                                                            profile: findThumbUp.photo[0] ? findThumbUp.photo[0].res : "",
+                                                            thumbUp: findThumb.thumbUp,
+                                                            thumbDown: findThumb.thumbDown,
+                                                            thumbUpStatus: 0,
+                                                            thumbDownStatus: 1
+                                                        }
+                                                        statusByEmail.push(status2)
+                                                    }
+                                                }
+                                            }else{
+                                                const findThumbData = findThumb.userId
                                             const originalData = requestEmail.userId
 
                                             if (originalData.toString() == findThumbData.toString()) {
+
+                                               
+
                                                 if (requestEmail.accepted == 1) {
                                                     var status1 = {
                                                         status: 1,
@@ -2622,7 +2817,9 @@ exports.yesBasket = async (req, res, next) => {
                                                         firstName: findThumbUp.firstName,
                                                         profile: findThumbUp.photo[0] ? findThumbUp.photo[0].res : "",
                                                         thumbUp: findThumb.thumbUp,
-                                                        thumbDown: findThumb.thumbDown
+                                                        thumbDown: findThumb.thumbDown,
+                                                        thumbUpStatus: 0,
+                                                        thumbDownStatus: 0
                                                     }
                                                     statusByEmail.push(status1)
                                                 } else {
@@ -2632,11 +2829,15 @@ exports.yesBasket = async (req, res, next) => {
                                                         firstName: findThumbUp.firstName,
                                                         profile: findThumbUp.photo[0] ? findThumbUp.photo[0].res : "",
                                                         thumbUp: findThumb.thumbUp,
-                                                        thumbDown: findThumb.thumbDown
+                                                        thumbDown: findThumb.thumbDown,
+                                                        thumbUpStatus: 0,
+                                                        thumbDownStatus: 0
                                                     }
                                                     statusByEmail.push(status2)
                                                 }
                                             }
+                                            }
+                                            
                                         }
 
                                     }
@@ -2648,12 +2849,16 @@ exports.yesBasket = async (req, res, next) => {
 
                         const finalStatus = []
                         for (const [key, finalData] of meageAllTable.entries()) {
+
+                            console.log("finalData" , finalData); 
                             for (const [key, final1Data] of statusByEmail.entries())
                                 if (finalData.email === final1Data.email) {
                                     const response = {
                                         status: final1Data.status,
                                         thumbUp: final1Data.thumbUp,
-                                        thumbDown: final1Data.thumbDown
+                                        thumbDown: final1Data.thumbDown,
+                                        thumbUpStatus: final1Data.thumbUpStatus,
+                                        thumbDownStatus: final1Data.thumbDownStatus
                                     }
                                     finalStatus.push(response)
                                 }
@@ -2679,7 +2884,52 @@ exports.yesBasket = async (req, res, next) => {
                                 }]
                             })
 
+
+                          
                             if(findAllUserWithIchat1){
+                                
+                            if(finalStatus[key].status == 2){
+                                const responses = {
+                                    _id: finalData._id,
+                                    // polyDating: finalData.polyDating,
+                                    // HowDoYouPoly: finalData.HowDoYouPoly,
+                                    // loveToGive: finalData.loveToGive,
+                                    // polyRelationship: finalData.polyRelationship,
+                                    firstName: finalData.firstName,
+                                    email: finalData.email,
+                                    profile: finalData.photo[0] ? finalData.photo[0].res : "",
+                                    // relationshipSatus: finalData.relationshipSatus,
+                                    // Bio: finalData.Bio,
+                                    // hopingToFind: finalData.hopingToFind,
+                                    // jobTitle: finalData.jobTitle,
+                                    // wantChildren: finalData.wantChildren,
+                                    // posts_data: finalData.posts,
+                                    statusAndTumbCount: finalStatus[key]
+                                }
+                                const response = {
+                                    _id: finalData._id,
+                                    // polyDating: finalData.polyDating,
+                                    // HowDoYouPoly: finalData.HowDoYouPoly,
+                                    // loveToGive: finalData.loveToGive,
+                                    // polyRelationship: finalData.polyRelationship,
+                                    firstName: finalData.firstName,
+                                    email: finalData.email,
+                                    profile: finalData.photo[0] ? finalData.photo[0].res : "",
+                                    // relationshipSatus: finalData.relationshipSatus,
+                                    // Bio: finalData.Bio,
+                                    // hopingToFind: finalData.hopingToFind,
+                                    // jobTitle: finalData.jobTitle,
+                                    // wantChildren: finalData.wantChildren,
+                                    // posts_data: finalData.posts,
+                                    status: responses.statusAndTumbCount.status,
+                                    thumbUp: responses.statusAndTumbCount.thumbUp,
+                                    thumbDown: responses.statusAndTumbCount.thumbDown,
+                                    thumbUpStatus:responses.statusAndTumbCount.thumbUpStatus,
+                                    thumbDownStatus:responses.statusAndTumbCount.thumbDownStatus
+                                }
+    
+                                final_data.push(response);
+                            }else{
                                 const responses = {
                                     _id: finalData._id,
                                     chatRoomId: findAllUserWithIchat1._id,
@@ -2716,51 +2966,102 @@ exports.yesBasket = async (req, res, next) => {
                                     // posts_data: finalData.posts,
                                     status: responses.statusAndTumbCount.status,
                                     thumbUp: responses.statusAndTumbCount.thumbUp,
-                                    thumbDown: responses.statusAndTumbCount.thumbDown
+                                    thumbDown: responses.statusAndTumbCount.thumbDown,
+                                    thumbUpStatus:responses.statusAndTumbCount.thumbUpStatus,
+                                    thumbDownStatus:responses.statusAndTumbCount.thumbDownStatus
                                 }
     
                                 final_data.push(response);
+                            }
+                                
                             }else{
-                                const responses = {
-                                    _id: finalData._id,
-                                    chatRoomId: findAllUserWithIchat2._id,
-                                    // polyDating: finalData.polyDating,
-                                    // HowDoYouPoly: finalData.HowDoYouPoly,
-                                    // loveToGive: finalData.loveToGive,
-                                    // polyRelationship: finalData.polyRelationship,
-                                    firstName: finalData.firstName,
-                                    email: finalData.email,
-                                    profile: finalData.photo[0] ? finalData.photo[0].res : "",
-                                    // relationshipSatus: finalData.relationshipSatus,
-                                    // Bio: finalData.Bio,
-                                    // hopingToFind: finalData.hopingToFind,
-                                    // jobTitle: finalData.jobTitle,
-                                    // wantChildren: finalData.wantChildren,
-                                    // posts_data: finalData.posts,
-                                    statusAndTumbCount: finalStatus[key]
+
+                                if(finalStatus[key].status == 2){
+                                    const responses = {
+                                        _id: finalData._id,
+                                        // polyDating: finalData.polyDating,
+                                        // HowDoYouPoly: finalData.HowDoYouPoly,
+                                        // loveToGive: finalData.loveToGive,
+                                        // polyRelationship: finalData.polyRelationship,
+                                        firstName: finalData.firstName,
+                                        email: finalData.email,
+                                        profile: finalData.photo[0] ? finalData.photo[0].res : "",
+                                        // relationshipSatus: finalData.relationshipSatus,
+                                        // Bio: finalData.Bio,
+                                        // hopingToFind: finalData.hopingToFind,
+                                        // jobTitle: finalData.jobTitle,
+                                        // wantChildren: finalData.wantChildren,
+                                        // posts_data: finalData.posts,
+                                        statusAndTumbCount: finalStatus[key]
+                                    }
+                                    const response = {
+                                        _id: finalData._id,
+                                        // polyDating: finalData.polyDating,
+                                        // HowDoYouPoly: finalData.HowDoYouPoly,
+                                        // loveToGive: finalData.loveToGive,
+                                        // polyRelationship: finalData.polyRelationship,
+                                        firstName: finalData.firstName,
+                                        email: finalData.email,
+                                        profile: finalData.photo[0] ? finalData.photo[0].res : "",
+                                        // relationshipSatus: finalData.relationshipSatus,
+                                        // Bio: finalData.Bio,
+                                        // hopingToFind: finalData.hopingToFind,
+                                        // jobTitle: finalData.jobTitle,
+                                        // wantChildren: finalData.wantChildren,
+                                        // posts_data: finalData.posts,
+                                        status: responses.statusAndTumbCount.status,
+                                        thumbUp: responses.statusAndTumbCount.thumbUp,
+                                        thumbDown: responses.statusAndTumbCount.thumbDown,
+                                        thumbUpStatus:responses.statusAndTumbCount.thumbUpStatus,
+                                        thumbDownStatus:responses.statusAndTumbCount.thumbDownStatus
+                                    }
+        
+                                    final_data.push(response);
+                                }else{
+                                    const responses = {
+                                        _id: finalData._id,
+                                        chatRoomId: findAllUserWithIchat2._id,
+                                        // polyDating: finalData.polyDating,
+                                        // HowDoYouPoly: finalData.HowDoYouPoly,
+                                        // loveToGive: finalData.loveToGive,
+                                        // polyRelationship: finalData.polyRelationship,
+                                        firstName: finalData.firstName,
+                                        email: finalData.email,
+                                        profile: finalData.photo[0] ? finalData.photo[0].res : "",
+                                        // relationshipSatus: finalData.relationshipSatus,
+                                        // Bio: finalData.Bio,
+                                        // hopingToFind: finalData.hopingToFind,
+                                        // jobTitle: finalData.jobTitle,
+                                        // wantChildren: finalData.wantChildren,
+                                        // posts_data: finalData.posts,
+                                        statusAndTumbCount: finalStatus[key]
+                                    }
+                                    const response = {
+                                        _id: finalData._id,
+                                        chatRoomId: responses.chatRoomId,
+                                        // polyDating: finalData.polyDating,
+                                        // HowDoYouPoly: finalData.HowDoYouPoly,
+                                        // loveToGive: finalData.loveToGive,
+                                        // polyRelationship: finalData.polyRelationship,
+                                        firstName: finalData.firstName,
+                                        email: finalData.email,
+                                        profile: finalData.photo[0] ? finalData.photo[0].res : "",
+                                        // relationshipSatus: finalData.relationshipSatus,
+                                        // Bio: finalData.Bio,
+                                        // hopingToFind: finalData.hopingToFind,
+                                        // jobTitle: finalData.jobTitle,
+                                        // wantChildren: finalData.wantChildren,
+                                        // posts_data: finalData.posts,
+                                        status: responses.statusAndTumbCount.status,
+                                        thumbUp: responses.statusAndTumbCount.thumbUp,
+                                        thumbDown: responses.statusAndTumbCount.thumbDown,
+                                        thumbUpStatus:responses.statusAndTumbCount.thumbUpStatus,
+                                        thumbDownStatus:responses.statusAndTumbCount.thumbDownStatus
+                                    }
+        
+                                    final_data.push(response);
                                 }
-                                const response = {
-                                    _id: finalData._id,
-                                    chatRoomId: responses.chatRoomId,
-                                    // polyDating: finalData.polyDating,
-                                    // HowDoYouPoly: finalData.HowDoYouPoly,
-                                    // loveToGive: finalData.loveToGive,
-                                    // polyRelationship: finalData.polyRelationship,
-                                    firstName: finalData.firstName,
-                                    email: finalData.email,
-                                    profile: finalData.photo[0] ? finalData.photo[0].res : "",
-                                    // relationshipSatus: finalData.relationshipSatus,
-                                    // Bio: finalData.Bio,
-                                    // hopingToFind: finalData.hopingToFind,
-                                    // jobTitle: finalData.jobTitle,
-                                    // wantChildren: finalData.wantChildren,
-                                    // posts_data: finalData.posts,
-                                    status: responses.statusAndTumbCount.status,
-                                    thumbUp: responses.statusAndTumbCount.thumbUp,
-                                    thumbDown: responses.statusAndTumbCount.thumbDown
-                                }
-    
-                                final_data.push(response);
+                               
                             }
                             
                         }
@@ -2830,7 +3131,7 @@ exports.yesBasket = async (req, res, next) => {
                 }
 
                 if (reaquestedAllEmail[0] == undefined) {
-                    res.status(status.NOT_FOUND).json(
+                    res.status(status.OK).json(
                         new APIResponse("show all post When accept by the user", 'true', 201, '1', [])
                     )
                 } else {
@@ -2866,21 +3167,49 @@ exports.yesBasket = async (req, res, next) => {
                         for (const getOriginalData of finalData) {
 
                             for (const findThumb of findThumbUp.yesBasket) {
-                                const findThumbData = findThumb.userId
-                                const orginalData = getOriginalData._id
 
-                                if (orginalData.toString() == findThumbData.toString()) {
-                                    const response = {
-                                        _id: getOriginalData._id,
-                                        email: getOriginalData.email,
-                                        firstName: getOriginalData.firstName,
-                                        profile: getOriginalData.photo[0] ? getOriginalData.photo[0].res : "",
-                                        status: 3,
-                                        thumbUp: findThumb.thumbUp
+                                const findInThumbUp = await thumbUpModel.findOne({
+                                    adminUserId : req.params.user_id,
+                                    "thumbDetail.reqUserId": req.params.request_user_id,
+                                    "thumbDetail.userId": findThumb.userId
+                                })
+
+                                if(findInThumbUp){
+                                    const findThumbData = findThumb.userId
+                                    const orginalData = getOriginalData._id
+    
+                                    if (orginalData.toString() == findThumbData.toString()) {
+                                        const response = {
+                                            _id: getOriginalData._id,
+                                            email: getOriginalData.email,
+                                            firstName: getOriginalData.firstName,
+                                            profile: getOriginalData.photo[0] ? getOriginalData.photo[0].res : "",
+                                            status: 3,
+                                            thumbUp: findThumb.thumbUp,
+                                            thumbUpStatus: 1
+                                        }
+    
+                                        responseData.push(response);
                                     }
-
-                                    responseData.push(response);
+                                }else{
+                                    const findThumbData = findThumb.userId
+                                    const orginalData = getOriginalData._id
+    
+                                    if (orginalData.toString() == findThumbData.toString()) {
+                                        const response = {
+                                            _id: getOriginalData._id,
+                                            email: getOriginalData.email,
+                                            firstName: getOriginalData.firstName,
+                                            profile: getOriginalData.photo[0] ? getOriginalData.photo[0].res : "",
+                                            status: 3,
+                                            thumbUp: findThumb.thumbUp,
+                                            thumbUpStatus: 0
+                                        }
+    
+                                        responseData.push(response);
+                                    }
                                 }
+                                
                             }
 
                         }
@@ -2915,21 +3244,49 @@ exports.yesBasket = async (req, res, next) => {
                         for (const getOriginalData of finalData) {
 
                             for (const findThumb of findThumbUp.yesBasket) {
-                                const findThumbData = findThumb.userId
-                                const orginalData = getOriginalData._id
 
-                                if (orginalData.toString() == findThumbData.toString()) {
-                                    const response = {
-                                        _id: getOriginalData._id,
-                                        email: getOriginalData.email,
-                                        firstName: getOriginalData.firstName,
-                                        profile: getOriginalData.photo[0] ? getOriginalData.photo[0].res : "",
-                                        status: 3,
-                                        thumbUp: findThumb.thumbUp
+                                const findInThumbUp = await thumbUpModel.findOne({
+                                    adminUserId : req.params.user_id,
+                                    "thumbDetail.reqUserId": req.params.request_user_id,
+                                    "thumbDetail.userId": findThumb.userId
+                                })
+
+                                if(findInThumbUp){
+                                    const findThumbData = findThumb.userId
+                                    const orginalData = getOriginalData._id
+    
+                                    if (orginalData.toString() == findThumbData.toString()) {
+                                        const response = {
+                                            _id: getOriginalData._id,
+                                            email: getOriginalData.email,
+                                            firstName: getOriginalData.firstName,
+                                            profile: getOriginalData.photo[0] ? getOriginalData.photo[0].res : "",
+                                            status: 3,
+                                            thumbUp: findThumb.thumbUp,
+                                            thumbUpStatus:1
+                                        }
+    
+                                        UniqueEmail.push(response);
                                     }
-
-                                    UniqueEmail.push(response);
+                                }else{
+                                    const findThumbData = findThumb.userId
+                                    const orginalData = getOriginalData._id
+    
+                                    if (orginalData.toString() == findThumbData.toString()) {
+                                        const response = {
+                                            _id: getOriginalData._id,
+                                            email: getOriginalData.email,
+                                            firstName: getOriginalData.firstName,
+                                            profile: getOriginalData.photo[0] ? getOriginalData.photo[0].res : "",
+                                            status: 3,
+                                            thumbUp: findThumb.thumbUp,
+                                            thumbUpStatus:0
+                                        }
+    
+                                        UniqueEmail.push(response);
+                                    }
                                 }
+                                
                             }
 
                         }
@@ -3034,30 +3391,70 @@ exports.yesBasket = async (req, res, next) => {
                                         })
 
                                         for (const findThumb of findThumbUp.yesBasket) {
-                                            const findThumbData = findThumb.userId
-                                            const originalData = requestEmail.userId
 
-                                            if (originalData.toString() == findThumbData.toString()) {
-                                                if (requestEmail.accepted == 1) {
-                                                    var status1 = {
-                                                        status: 1,
-                                                        firstName: findThumbUp.firstName,
-                                                        profile: findThumbUp.photo[0] ? findThumbUp.photo[0].res : "",
-                                                        email: requestEmail.requestedEmail,
-                                                        thumbUp: findThumb.thumbUp
+
+                                            const findInThumbUp = await thumbUpModel.findOne({
+                                                adminUserId : req.params.user_id,
+                                                "thumbDetail.reqUserId": req.params.request_user_id,
+                                                "thumbDetail.userId": findThumb.userId
+                                            })
+                                            if(findInThumbUp){
+                                                const findThumbData = findThumb.userId
+                                                const originalData = requestEmail.userId
+    
+                                                if (originalData.toString() == findThumbData.toString()) {
+                                                    if (requestEmail.accepted == 1) {
+                                                        var status1 = {
+                                                            status: 1,
+                                                            firstName: findThumbUp.firstName,
+                                                            profile: findThumbUp.photo[0] ? findThumbUp.photo[0].res : "",
+                                                            email: requestEmail.requestedEmail,
+                                                            thumbUp: findThumb.thumbUp,
+                                                            thumbUpStatus: 1
+                                                        }
+                                                        statusByEmail.push(status1)
+                                                    } else {
+                                                        var status2 = {
+                                                            status: 2,
+                                                            email: requestEmail.requestedEmail,
+                                                            firstName: findThumbUp.firstName,
+                                                            profile: findThumbUp.photo[0] ? findThumbUp.photo[0].res : "",
+                                                            thumbUp: findThumb.thumbUp,
+                                                            thumbUpStatus:1
+                                                        }
+                                                        statusByEmail.push(status2)
                                                     }
-                                                    statusByEmail.push(status1)
-                                                } else {
-                                                    var status2 = {
-                                                        status: 2,
-                                                        email: requestEmail.requestedEmail,
-                                                        firstName: findThumbUp.firstName,
-                                                        profile: findThumbUp.photo[0] ? findThumbUp.photo[0].res : "",
-                                                        thumbUp: findThumb.thumbUp
+                                                }
+                                            }else{
+                                                const findThumbData = findThumb.userId
+                                                const originalData = requestEmail.userId
+    
+                                                if (originalData.toString() == findThumbData.toString()) {
+                                                    if (requestEmail.accepted == 1) {
+                                                        var status1 = {
+                                                            status: 1,
+                                                            firstName: findThumbUp.firstName,
+                                                            profile: findThumbUp.photo[0] ? findThumbUp.photo[0].res : "",
+                                                            email: requestEmail.requestedEmail,
+                                                            thumbUp: findThumb.thumbUp,
+                                                            thumbUpStatus: 0
+                                                        }
+                                                        statusByEmail.push(status1)
+                                                    } else {
+                                                        var status2 = {
+                                                            status: 2,
+                                                            email: requestEmail.requestedEmail,
+                                                            firstName: findThumbUp.firstName,
+                                                            profile: findThumbUp.photo[0] ? findThumbUp.photo[0].res : "",
+                                                            thumbUp: findThumb.thumbUp,
+                                                            thumbUpStatus:0
+                                                        }
+                                                        statusByEmail.push(status2)
                                                     }
-                                                    statusByEmail.push(status2)
                                                 }
                                             }
+
+                                           
                                         }
                                     }
                                 }
@@ -3072,7 +3469,8 @@ exports.yesBasket = async (req, res, next) => {
                                 if (finalData.email === final1Data.email) {
                                     const response = {
                                         status: final1Data.status,
-                                        thumbUp: final1Data.thumbUp
+                                        thumbUp: final1Data.thumbUp,
+                                        thumbUpStatus: final1Data.thumbUpStatus
                                     }
                                     finalStatus.push(response)
                                 }
@@ -3099,87 +3497,173 @@ exports.yesBasket = async (req, res, next) => {
                             })
 
                             if(findAllUserWithIchat1){
-                                const responses = {
-                                    _id: finalData._id,
-                                    chatRoomId: findAllUserWithIchat1._id,
-                                    // polyDating: finalData.polyDating,
-                                    // HowDoYouPoly: finalData.HowDoYouPoly,
-                                    // loveToGive: finalData.loveToGive,
-                                    // polyRelationship: finalData.polyRelationship,
-                                    firstName: finalData.firstName,
-                                    email: finalData.email,
-                                    profile: finalData.photo[0] ? finalData.photo[0].res : "",
-                                    // relationshipSatus: finalData.relationshipSatus,
-                                    // Bio: finalData.Bio,
-                                    // hopingToFind: finalData.hopingToFind,
-                                    // jobTitle: finalData.jobTitle,
-                                    // wantChildren: finalData.wantChildren,
-                                    // posts_data: finalData.posts,
-                                    statusAndTumbCount: finalStatus[key]
+
+                                if(finalStatus[key].status == 2){
+                                    const responses = {
+                                        _id: finalData._id,
+                                        // polyDating: finalData.polyDating,
+                                        // HowDoYouPoly: finalData.HowDoYouPoly,
+                                        // loveToGive: finalData.loveToGive,
+                                        // polyRelationship: finalData.polyRelationship,
+                                        firstName: finalData.firstName,
+                                        email: finalData.email,
+                                        profile: finalData.photo[0] ? finalData.photo[0].res : "",
+                                        // relationshipSatus: finalData.relationshipSatus,
+                                        // Bio: finalData.Bio,
+                                        // hopingToFind: finalData.hopingToFind,
+                                        // jobTitle: finalData.jobTitle,
+                                        // wantChildren: finalData.wantChildren,
+                                        // posts_data: finalData.posts,
+                                        statusAndTumbCount: finalStatus[key]
+                                    }
+                                    const response = {
+                                        _id: finalData._id,
+                                        // polyDating: finalData.polyDating,
+                                        // HowDoYouPoly: finalData.HowDoYouPoly,
+                                        // loveToGive: finalData.loveToGive,
+                                        // polyRelationship: finalData.polyRelationship,
+                                        firstName: finalData.firstName,
+                                        email: finalData.email,
+                                        profile: finalData.photo[0] ? finalData.photo[0].res : "",
+                                        // relationshipSatus: finalData.relationshipSatus,
+                                        // Bio: finalData.Bio,
+                                        // hopingToFind: finalData.hopingToFind,
+                                        // jobTitle: finalData.jobTitle,
+                                        // wantChildren: finalData.wantChildren,
+                                        // posts_data: finalData.posts,
+                                        status: responses.statusAndTumbCount.status,
+                                        thumbUp: responses.statusAndTumbCount.thumbUp,
+                                        thumbUpStatus: responses.statusAndTumbCount.thumbUpStatus
+                                    }
+        
+                                    final_data.push(response);
+                                }else{
+                                    const responses = {
+                                        _id: finalData._id,
+                                        chatRoomId: findAllUserWithIchat1._id,
+                                        // polyDating: finalData.polyDating,
+                                        // HowDoYouPoly: finalData.HowDoYouPoly,
+                                        // loveToGive: finalData.loveToGive,
+                                        // polyRelationship: finalData.polyRelationship,
+                                        firstName: finalData.firstName,
+                                        email: finalData.email,
+                                        profile: finalData.photo[0] ? finalData.photo[0].res : "",
+                                        // relationshipSatus: finalData.relationshipSatus,
+                                        // Bio: finalData.Bio,
+                                        // hopingToFind: finalData.hopingToFind,
+                                        // jobTitle: finalData.jobTitle,
+                                        // wantChildren: finalData.wantChildren,
+                                        // posts_data: finalData.posts,
+                                        statusAndTumbCount: finalStatus[key]
+                                    }
+                                    const response = {
+                                        _id: finalData._id,
+                                        chatRoomId: responses.chatRoomId,
+                                        // polyDating: finalData.polyDating,
+                                        // HowDoYouPoly: finalData.HowDoYouPoly,
+                                        // loveToGive: finalData.loveToGive,
+                                        // polyRelationship: finalData.polyRelationship,
+                                        firstName: finalData.firstName,
+                                        email: finalData.email,
+                                        profile: finalData.photo[0] ? finalData.photo[0].res : "",
+                                        // relationshipSatus: finalData.relationshipSatus,
+                                        // Bio: finalData.Bio,
+                                        // hopingToFind: finalData.hopingToFind,
+                                        // jobTitle: finalData.jobTitle,
+                                        // wantChildren: finalData.wantChildren,
+                                        // posts_data: finalData.posts,
+                                        status: responses.statusAndTumbCount.status,
+                                        thumbUp: responses.statusAndTumbCount.thumbUp,
+                                        thumbUpStatus: responses.statusAndTumbCount.thumbUpStatus
+                                    }
+        
+                                    final_data.push(response);
                                 }
-                                const response = {
-                                    _id: finalData._id,
-                                    chatRoomId: responses.chatRoomId,
-                                    // polyDating: finalData.polyDating,
-                                    // HowDoYouPoly: finalData.HowDoYouPoly,
-                                    // loveToGive: finalData.loveToGive,
-                                    // polyRelationship: finalData.polyRelationship,
-                                    firstName: finalData.firstName,
-                                    email: finalData.email,
-                                    profile: finalData.photo[0] ? finalData.photo[0].res : "",
-                                    // relationshipSatus: finalData.relationshipSatus,
-                                    // Bio: finalData.Bio,
-                                    // hopingToFind: finalData.hopingToFind,
-                                    // jobTitle: finalData.jobTitle,
-                                    // wantChildren: finalData.wantChildren,
-                                    // posts_data: finalData.posts,
-                                    status: responses.statusAndTumbCount.status,
-                                    thumbUp: responses.statusAndTumbCount.thumbUp,
-                                    thumbDown: responses.statusAndTumbCount.thumbDown
-                                }
-    
-                                final_data.push(response);
+                              
                             }else{
-                                const responses = {
-                                    _id: finalData._id,
-                                    chatRoomId: findAllUserWithIchat2._id,
-                                    // polyDating: finalData.polyDating,
-                                    // HowDoYouPoly: finalData.HowDoYouPoly,
-                                    // loveToGive: finalData.loveToGive,
-                                    // polyRelationship: finalData.polyRelationship,
-                                    firstName: finalData.firstName,
-                                    email: finalData.email,
-                                    profile: finalData.photo[0] ? finalData.photo[0].res : "",
-                                    // relationshipSatus: finalData.relationshipSatus,
-                                    // Bio: finalData.Bio,
-                                    // hopingToFind: finalData.hopingToFind,
-                                    // jobTitle: finalData.jobTitle,
-                                    // wantChildren: finalData.wantChildren,
-                                    // posts_data: finalData.posts,
-                                    statusAndTumbCount: finalStatus[key]
+
+                                if(finalStatus[key].status == 2){
+                                    const responses = {
+                                        _id: finalData._id,
+                                        // polyDating: finalData.polyDating,
+                                        // HowDoYouPoly: finalData.HowDoYouPoly,
+                                        // loveToGive: finalData.loveToGive,
+                                        // polyRelationship: finalData.polyRelationship,
+                                        firstName: finalData.firstName,
+                                        email: finalData.email,
+                                        profile: finalData.photo[0] ? finalData.photo[0].res : "",
+                                        // relationshipSatus: finalData.relationshipSatus,
+                                        // Bio: finalData.Bio,
+                                        // hopingToFind: finalData.hopingToFind,
+                                        // jobTitle: finalData.jobTitle,
+                                        // wantChildren: finalData.wantChildren,
+                                        // posts_data: finalData.posts,
+                                        statusAndTumbCount: finalStatus[key]
+                                    }
+                                    const response = {
+                                        _id: finalData._id,
+                                        // polyDating: finalData.polyDating,
+                                        // HowDoYouPoly: finalData.HowDoYouPoly,
+                                        // loveToGive: finalData.loveToGive,
+                                        // polyRelationship: finalData.polyRelationship,
+                                        firstName: finalData.firstName,
+                                        email: finalData.email,
+                                        profile: finalData.photo[0] ? finalData.photo[0].res : "",
+                                        // relationshipSatus: finalData.relationshipSatus,
+                                        // Bio: finalData.Bio,
+                                        // hopingToFind: finalData.hopingToFind,
+                                        // jobTitle: finalData.jobTitle,
+                                        // wantChildren: finalData.wantChildren,
+                                        // posts_data: finalData.posts,
+                                        status: responses.statusAndTumbCount.status,
+                                        thumbUp: responses.statusAndTumbCount.thumbUp,
+                                        thumbUpStatus: responses.statusAndTumbCount.thumbUpStatus
+                                    }
+        
+                                    final_data.push(response);
+                                }else{
+                                    const responses = {
+                                        _id: finalData._id,
+                                        chatRoomId: findAllUserWithIchat2._id,
+                                        // polyDating: finalData.polyDating,
+                                        // HowDoYouPoly: finalData.HowDoYouPoly,
+                                        // loveToGive: finalData.loveToGive,
+                                        // polyRelationship: finalData.polyRelationship,
+                                        firstName: finalData.firstName,
+                                        email: finalData.email,
+                                        profile: finalData.photo[0] ? finalData.photo[0].res : "",
+                                        // relationshipSatus: finalData.relationshipSatus,
+                                        // Bio: finalData.Bio,
+                                        // hopingToFind: finalData.hopingToFind,
+                                        // jobTitle: finalData.jobTitle,
+                                        // wantChildren: finalData.wantChildren,
+                                        // posts_data: finalData.posts,
+                                        statusAndTumbCount: finalStatus[key]
+                                    }
+                                    const response = {
+                                        _id: finalData._id,
+                                        chatRoomId: responses.chatRoomId,
+                                        // polyDating: finalData.polyDating,
+                                        // HowDoYouPoly: finalData.HowDoYouPoly,
+                                        // loveToGive: finalData.loveToGive,
+                                        // polyRelationship: finalData.polyRelationship,
+                                        firstName: finalData.firstName,
+                                        email: finalData.email,
+                                        profile: finalData.photo[0] ? finalData.photo[0].res : "",
+                                        // relationshipSatus: finalData.relationshipSatus,
+                                        // Bio: finalData.Bio,
+                                        // hopingToFind: finalData.hopingToFind,
+                                        // jobTitle: finalData.jobTitle,
+                                        // wantChildren: finalData.wantChildren,
+                                        // posts_data: finalData.posts,
+                                        status: responses.statusAndTumbCount.status,
+                                        thumbUp: responses.statusAndTumbCount.thumbUp,
+                                        thumbUpStatus: responses.statusAndTumbCount.thumbUpStatus
+                                    }
+        
+                                    final_data.push(response);
                                 }
-                                const response = {
-                                    _id: finalData._id,
-                                    chatRoomId: responses.chatRoomId,
-                                    // polyDating: finalData.polyDating,
-                                    // HowDoYouPoly: finalData.HowDoYouPoly,
-                                    // loveToGive: finalData.loveToGive,
-                                    // polyRelationship: finalData.polyRelationship,
-                                    firstName: finalData.firstName,
-                                    email: finalData.email,
-                                    profile: finalData.photo[0] ? finalData.photo[0].res : "",
-                                    // relationshipSatus: finalData.relationshipSatus,
-                                    // Bio: finalData.Bio,
-                                    // hopingToFind: finalData.hopingToFind,
-                                    // jobTitle: finalData.jobTitle,
-                                    // wantChildren: finalData.wantChildren,
-                                    // posts_data: finalData.posts,
-                                    status: responses.statusAndTumbCount.status,
-                                    thumbUp: responses.statusAndTumbCount.thumbUp,
-                                    thumbDown: responses.statusAndTumbCount.thumbDown
-                                }
-    
-                                final_data.push(response);
+                               
                             }
                         }
 
@@ -3253,7 +3737,7 @@ exports.noBasket = async (req, res, next) => {
                 }
 
                 if (reaquestedAllEmail[0] == undefined) {
-                    res.status(status.NOT_FOUND).json(
+                    res.status(status.OK).json(
                         new APIResponse("show all post When accept by the user", 'true', 201, '1', [])
                     )
                 } else {
@@ -3290,23 +3774,84 @@ exports.noBasket = async (req, res, next) => {
                         for (const getOriginalData of finalData) {
 
                             for (const findThumb of findThumbUp.noBasket) {
-                                const findThumbData = findThumb.userId
-                                const orginalData = getOriginalData._id
 
-                                if (orginalData.toString() == findThumbData.toString()) {
-                                    const response = {
-                                        _id: getOriginalData._id,
-                                        email: getOriginalData.email,
-                                        profile: getOriginalData.photo[0] ? getOriginalData.photo[0].res : "",
-                                        firstName: getOriginalData.firstName,
-                                        status: 3,
-                                        thumbUp: findThumb.thumbUp,
-                                        thumbDown: findThumb.thumbDown
+                                const findInThumbUp = await thumbUpModel.findOne({
+                                    adminUserId : req.params.user_id,
+                                    "thumbDetail.reqUserId": req.params.request_user_id,
+                                    "thumbDetail.userId": findThumb.userId
+                                })
+
+                                const findInThumbDown = await thumbDownModel.findOne({
+                                    adminUserId : req.params.user_id,
+                                    "thumbDetail.reqUserId": req.params.request_user_id,
+                                    "thumbDetail.userId": findThumb.userId
+                                })
+
+                                if(findInThumbUp){
+                                    const findThumbData = findThumb.userId
+                                    const orginalData = getOriginalData._id
+    
+                                    if (orginalData.toString() == findThumbData.toString()) {
+                                        const response = {
+                                            _id: getOriginalData._id,
+                                            email: getOriginalData.email,
+                                            profile: getOriginalData.photo[0] ? getOriginalData.photo[0].res : "",
+                                            firstName: getOriginalData.firstName,
+                                            status: 3,
+                                            thumbUp: findThumb.thumbUp,
+                                            thumbDown: findThumb.thumbDown,
+                                            thumbUpStatus: 1,
+                                            thumbDownStatus: 0
+                                        }
+    
+    
+                                        responseData.push(response);
                                     }
 
+                                }else if(findInThumbDown){
 
-                                    responseData.push(response);
+                                    const findThumbData = findThumb.userId
+                                    const orginalData = getOriginalData._id
+    
+                                    if (orginalData.toString() == findThumbData.toString()) {
+                                        const response = {
+                                            _id: getOriginalData._id,
+                                            email: getOriginalData.email,
+                                            profile: getOriginalData.photo[0] ? getOriginalData.photo[0].res : "",
+                                            firstName: getOriginalData.firstName,
+                                            status: 3,
+                                            thumbUp: findThumb.thumbUp,
+                                            thumbDown: findThumb.thumbDown,
+                                            thumbUpStatus: 0,
+                                            thumbDownStatus: 1
+                                        }
+    
+    
+                                        responseData.push(response);
+                                    }
+                                }else{
+                                    const findThumbData = findThumb.userId
+                                    const orginalData = getOriginalData._id
+    
+                                    if (orginalData.toString() == findThumbData.toString()) {
+                                        const response = {
+                                            _id: getOriginalData._id,
+                                            email: getOriginalData.email,
+                                            profile: getOriginalData.photo[0] ? getOriginalData.photo[0].res : "",
+                                            firstName: getOriginalData.firstName,
+                                            status: 3,
+                                            thumbUp: findThumb.thumbUp,
+                                            thumbDown: findThumb.thumbDown,
+                                            thumbUpStatus: 0,
+                                            thumbDownStatus: 0
+                                        }
+    
+    
+                                        responseData.push(response);
+                                    }
+
                                 }
+                               
                             }
 
 
@@ -3347,22 +3892,82 @@ exports.noBasket = async (req, res, next) => {
                         for (const getOriginalData of finalData) {
 
                             for (const findThumb of findThumbUp.noBasket) {
-                                const findThumbData = findThumb.userId
-                                const orginalData = getOriginalData._id
 
-                                if (orginalData.toString() == findThumbData.toString()) {
-                                    const response = {
-                                        _id: getOriginalData._id,
-                                        email: getOriginalData.email,
-                                        firstName: getOriginalData.firstName,
-                                        profile: getOriginalData.photo[0] ? getOriginalData.photo[0].res : "",
-                                        status: 3,
-                                        thumbUp: findThumb.thumbUp,
-                                        thumbDown: findThumb.thumbDown
+
+                                const findInThumbUp = await thumbUpModel.findOne({
+                                    adminUserId : req.params.user_id,
+                                    "thumbDetail.reqUserId": req.params.request_user_id,
+                                    "thumbDetail.userId": findThumb.userId
+                                })
+
+                                const findInThumbDown = await thumbDownModel.findOne({
+                                    adminUserId : req.params.user_id,
+                                    "thumbDetail.reqUserId": req.params.request_user_id,
+                                    "thumbDetail.userId": findThumb.userId
+                                })
+
+                                if(findInThumbUp){
+
+                                    const findThumbData = findThumb.userId
+                                    const orginalData = getOriginalData._id
+    
+                                    if (orginalData.toString() == findThumbData.toString()) {
+                                        const response = {
+                                            _id: getOriginalData._id,
+                                            email: getOriginalData.email,
+                                            firstName: getOriginalData.firstName,
+                                            profile: getOriginalData.photo[0] ? getOriginalData.photo[0].res : "",
+                                            status: 3,
+                                            thumbUp: findThumb.thumbUp,
+                                            thumbDown: findThumb.thumbDown,
+                                            thumbUpStatus: 1,
+                                            thumbDownStatus: 0
+                                        }
+    
+                                        UniqueEmail.push(response);
                                     }
+                                }else if(findInThumbDown){
 
-                                    UniqueEmail.push(response);
+                                    const findThumbData = findThumb.userId
+                                    const orginalData = getOriginalData._id
+    
+                                    if (orginalData.toString() == findThumbData.toString()) {
+                                        const response = {
+                                            _id: getOriginalData._id,
+                                            email: getOriginalData.email,
+                                            firstName: getOriginalData.firstName,
+                                            profile: getOriginalData.photo[0] ? getOriginalData.photo[0].res : "",
+                                            status: 3,
+                                            thumbUp: findThumb.thumbUp,
+                                            thumbDown: findThumb.thumbDown,
+                                            thumbUpStatus: 0,
+                                            thumbDownStatus: 1
+                                        }
+    
+                                        UniqueEmail.push(response);
+                                    }
+                                }else{
+
+                                    const findThumbData = findThumb.userId
+                                    const orginalData = getOriginalData._id
+    
+                                    if (orginalData.toString() == findThumbData.toString()) {
+                                        const response = {
+                                            _id: getOriginalData._id,
+                                            email: getOriginalData.email,
+                                            firstName: getOriginalData.firstName,
+                                            profile: getOriginalData.photo[0] ? getOriginalData.photo[0].res : "",
+                                            status: 3,
+                                            thumbUp: findThumb.thumbUp,
+                                            thumbDown: findThumb.thumbDown,
+                                            thumbUpStatus: 0,
+                                            thumbDownStatus: 0
+                                        }
+    
+                                        UniqueEmail.push(response);
+                                    }
                                 }
+                               
                             }
 
 
@@ -3480,35 +4085,120 @@ exports.noBasket = async (req, res, next) => {
                                             polyDating: 0
                                         })
 
-
                                         for (const findThumb of findThumbUp.noBasket) {
 
-                                            const findThumbData = findThumb.userId
-                                            const originalData = requestEmail.userId
+                                            const findInThumbUp = await thumbUpModel.findOne({
+                                                adminUserId : req.params.user_id,
+                                                "thumbDetail.reqUserId": req.params.request_user_id,
+                                                "thumbDetail.userId": findThumb.userId
+                                            })
+    
+                                            const findInThumbDown = await thumbDownModel.findOne({
+                                                adminUserId : req.params.user_id,
+                                                "thumbDetail.reqUserId": req.params.request_user_id,
+                                                "thumbDetail.userId": findThumb.userId
+                                            })
+    
+                                            if(findInThumbUp){
+    
+                                                const findThumbData = findThumb.userId
+                                                const originalData = requestEmail.userId
+    
+                                                if (originalData.toString() == findThumbData.toString()) {
+                                                    if (requestEmail.accepted == 1) {
+                                                        var status1 = {
+                                                            status: 1,
+                                                            email: requestEmail.requestedEmail,
+                                                            firstName: findThumbUp.firstName,
+                                                            profile: findThumbUp.photo[0] ? findThumbUp.photo[0].res : "",
+                                                            thumbUp: findThumb.thumbUp,
+                                                            thumbDown: findThumb.thumbDown,
+                                                            thumbUpStatus: 1,
+                                                            thumbDownStatus: 0
 
-                                            if (originalData.toString() == findThumbData.toString()) {
-                                                if (requestEmail.accepted == 1) {
-                                                    var status1 = {
-                                                        status: 1,
-                                                        email: requestEmail.requestedEmail,
-                                                        firstName: findThumbUp.firstName,
-                                                        profile: findThumbUp.photo[0] ? findThumbUp.photo[0].res : "",
-                                                        thumbUp: findThumb.thumbUp,
-                                                        thumbDown: findThumb.thumbDown
+                                                        }
+                                                        statusByEmail.push(status1)
+                                                    } else {
+                                                        var status2 = {
+                                                            status: 2,
+                                                            email: requestEmail.requestedEmail,
+                                                            firstName: findThumbUp.firstName,
+                                                            profile: findThumbUp.photo[0] ? findThumbUp.photo[0].res : "",
+                                                            thumbUp: findThumb.thumbUp,
+                                                            thumbDown: findThumb.thumbDown,
+                                                            thumbUpStatus: 1,
+                                                            thumbDownStatus: 0
+                                                        }
+                                                        statusByEmail.push(status2)
                                                     }
-                                                    statusByEmail.push(status1)
-                                                } else {
-                                                    var status2 = {
-                                                        status: 2,
-                                                        email: requestEmail.requestedEmail,
-                                                        firstName: findThumbUp.firstName,
-                                                        profile: findThumbUp.photo[0] ? findThumbUp.photo[0].res : "",
-                                                        thumbUp: findThumb.thumbUp,
-                                                        thumbDown: findThumb.thumbDown
+                                                }
+                                            }else if(findInThumbDown){
+    
+                                                const findThumbData = findThumb.userId
+                                                const originalData = requestEmail.userId
+    
+                                                if (originalData.toString() == findThumbData.toString()) {
+                                                    if (requestEmail.accepted == 1) {
+                                                        var status1 = {
+                                                            status: 1,
+                                                            email: requestEmail.requestedEmail,
+                                                            firstName: findThumbUp.firstName,
+                                                            profile: findThumbUp.photo[0] ? findThumbUp.photo[0].res : "",
+                                                            thumbUp: findThumb.thumbUp,
+                                                            thumbDown: findThumb.thumbDown,
+                                                            thumbUpStatus: 0,
+                                                            thumbDownStatus: 1
+                                                        }
+                                                        statusByEmail.push(status1)
+                                                    } else {
+                                                        var status2 = {
+                                                            status: 2,
+                                                            email: requestEmail.requestedEmail,
+                                                            firstName: findThumbUp.firstName,
+                                                            profile: findThumbUp.photo[0] ? findThumbUp.photo[0].res : "",
+                                                            thumbUp: findThumb.thumbUp,
+                                                            thumbDown: findThumb.thumbDown,
+                                                            thumbUpStatus: 0,
+                                                            thumbDownStatus: 1
+                                                        }
+                                                        statusByEmail.push(status2)
                                                     }
-                                                    statusByEmail.push(status2)
+                                                }
+                                            }else{
+    
+                                                const findThumbData = findThumb.userId
+                                                const originalData = requestEmail.userId
+    
+                                                if (originalData.toString() == findThumbData.toString()) {
+                                                    if (requestEmail.accepted == 1) {
+                                                        var status1 = {
+                                                            status: 1,
+                                                            email: requestEmail.requestedEmail,
+                                                            firstName: findThumbUp.firstName,
+                                                            profile: findThumbUp.photo[0] ? findThumbUp.photo[0].res : "",
+                                                            thumbUp: findThumb.thumbUp,
+                                                            thumbDown: findThumb.thumbDown,
+                                                            thumbUpStatus: 0,
+                                                            thumbDownStatus: 0
+                                                        }
+                                                        statusByEmail.push(status1)
+                                                    } else {
+                                                        var status2 = {
+                                                            status: 2,
+                                                            email: requestEmail.requestedEmail,
+                                                            firstName: findThumbUp.firstName,
+                                                            profile: findThumbUp.photo[0] ? findThumbUp.photo[0].res : "",
+                                                            thumbUp: findThumb.thumbUp,
+                                                            thumbDown: findThumb.thumbDown,
+                                                            thumbUpStatus: 0,
+                                                            thumbDownStatus: 0
+                                                        }
+                                                        statusByEmail.push(status2)
+                                                    }
                                                 }
                                             }
+
+                                          
                                         }
 
                                     }
@@ -3525,7 +4215,9 @@ exports.noBasket = async (req, res, next) => {
                                     const response = {
                                         status: final1Data.status,
                                         thumbUp: final1Data.thumbUp,
-                                        thumbDown: final1Data.thumbDown
+                                        thumbDown: final1Data.thumbDown,
+                                        thumbUpStatus: final1Data.thumbUpStatus,
+                                        thumbDownStatus: final1Data.thumbDownStatus
                                     }
                                     finalStatus.push(response)
                                 }
@@ -3566,7 +4258,9 @@ exports.noBasket = async (req, res, next) => {
                                 // posts_data: finalData.posts,
                                 status: responses.statusAndTumbCount.status,
                                 thumbUp: responses.statusAndTumbCount.thumbUp,
-                                thumbDown: responses.statusAndTumbCount.thumbDown
+                                thumbDown: responses.statusAndTumbCount.thumbDown,
+                                thumbUpStatus:responses.statusAndTumbCount.thumbUpStatus,
+                                thumbDownStatus:responses.statusAndTumbCount.thumbDownStatus
                             }
 
                             final_data.push(response);
@@ -3637,7 +4331,7 @@ exports.noBasket = async (req, res, next) => {
                 }
 
                 if (reaquestedAllEmail[0] == undefined) {
-                    res.status(status.NOT_FOUND).json(
+                    res.status(status.OK).json(
                         new APIResponse("show all post When accept by the user", 'true', 201, '1', [])
                     )
                 } else {
@@ -3673,21 +4367,49 @@ exports.noBasket = async (req, res, next) => {
                         for (const getOriginalData of finalData) {
 
                             for (const findThumb of findThumbUp.noBasket) {
-                                const findThumbData = findThumb.userId
-                                const orginalData = getOriginalData._id
+                             
+                                const findInThumbUp = await thumbUpModel.findOne({
+                                    adminUserId : req.params.user_id,
+                                    "thumbDetail.reqUserId": req.params.request_user_id,
+                                    "thumbDetail.userId": findThumb.userId
+                                })
 
-                                if (orginalData.toString() == findThumbData.toString()) {
-                                    const response = {
-                                        _id: getOriginalData._id,
-                                        email: getOriginalData.email,
-                                        firstName: getOriginalData.firstName,
-                                        profile: getOriginalData.photo[0] ? getOriginalData.photo[0].res : "",
-                                        status: 3,
-                                        thumbUp: findThumb.thumbUp
+                                if(findInThumbUp){
+                                    const findThumbData = findThumb.userId
+                                    const orginalData = getOriginalData._id
+    
+                                    if (orginalData.toString() == findThumbData.toString()) {
+                                        const response = {
+                                            _id: getOriginalData._id,
+                                            email: getOriginalData.email,
+                                            firstName: getOriginalData.firstName,
+                                            profile: getOriginalData.photo[0] ? getOriginalData.photo[0].res : "",
+                                            status: 3,
+                                            thumbUp: findThumb.thumbUp,
+                                            thumbUpStatus: 1,
+                                        }
+    
+                                        responseData.push(response);
                                     }
-
-                                    responseData.push(response);
+                                }else{
+                                    const findThumbData = findThumb.userId
+                                    const orginalData = getOriginalData._id
+    
+                                    if (orginalData.toString() == findThumbData.toString()) {
+                                        const response = {
+                                            _id: getOriginalData._id,
+                                            email: getOriginalData.email,
+                                            firstName: getOriginalData.firstName,
+                                            profile: getOriginalData.photo[0] ? getOriginalData.photo[0].res : "",
+                                            status: 3,
+                                            thumbUp: findThumb.thumbUp,
+                                            thumbUpStatus: 0,
+                                        }
+    
+                                        responseData.push(response);
+                                    }
                                 }
+                                
                             }
 
                         }
@@ -3722,21 +4444,49 @@ exports.noBasket = async (req, res, next) => {
                         for (const getOriginalData of finalData) {
 
                             for (const findThumb of findThumbUp.noBasket) {
-                                const findThumbData = findThumb.userId
-                                const orginalData = getOriginalData._id
 
-                                if (orginalData.toString() == findThumbData.toString()) {
-                                    const response = {
-                                        _id: getOriginalData._id,
-                                        email: getOriginalData.email,
-                                        firstName: getOriginalData.firstName,
-                                        profile: getOriginalData.photo[0] ? getOriginalData.photo[0].res : "",
-                                        status: 3,
-                                        thumbUp: findThumb.thumbUp
+                                const findInThumbUp = await thumbUpModel.findOne({
+                                    adminUserId : req.params.user_id,
+                                    "thumbDetail.reqUserId": req.params.request_user_id,
+                                    "thumbDetail.userId": findThumb.userId
+                                })
+
+                                if(findInThumbUp){
+                                    const findThumbData = findThumb.userId
+                                    const orginalData = getOriginalData._id
+    
+                                    if (orginalData.toString() == findThumbData.toString()) {
+                                        const response = {
+                                            _id: getOriginalData._id,
+                                            email: getOriginalData.email,
+                                            firstName: getOriginalData.firstName,
+                                            profile: getOriginalData.photo[0] ? getOriginalData.photo[0].res : "",
+                                            status: 3,
+                                            thumbUp: findThumb.thumbUp,
+                                            thumbUpStatus: 1,
+                                        }
+    
+                                        UniqueEmail.push(response);
                                     }
-
-                                    UniqueEmail.push(response);
+                                }else{
+                                    const findThumbData = findThumb.userId
+                                    const orginalData = getOriginalData._id
+    
+                                    if (orginalData.toString() == findThumbData.toString()) {
+                                        const response = {
+                                            _id: getOriginalData._id,
+                                            email: getOriginalData.email,
+                                            firstName: getOriginalData.firstName,
+                                            profile: getOriginalData.photo[0] ? getOriginalData.photo[0].res : "",
+                                            status: 3,
+                                            thumbUp: findThumb.thumbUp,
+                                            thumbUpStatus: 0,
+                                        }
+    
+                                        UniqueEmail.push(response);
+                                    }
                                 }
+                                
                             }
 
                         }
@@ -3841,30 +4591,70 @@ exports.noBasket = async (req, res, next) => {
                                         })
 
                                         for (const findThumb of findThumbUp.noBasket) {
-                                            const findThumbData = findThumb.userId
-                                            const originalData = requestEmail.userId
 
-                                            if (originalData.toString() == findThumbData.toString()) {
-                                                if (requestEmail.accepted == 1) {
-                                                    var status1 = {
-                                                        status: 1,
-                                                        firstName: findThumbUp.firstName,
-                                                        profile: findThumbUp.photo[0] ? findThumbUp.photo[0].res : "",
-                                                        email: requestEmail.requestedEmail,
-                                                        thumbUp: findThumb.thumbUp
+
+                                            const findInThumbUp = await thumbUpModel.findOne({
+                                                adminUserId : req.params.user_id,
+                                                "thumbDetail.reqUserId": req.params.request_user_id,
+                                                "thumbDetail.userId": findThumb.userId
+                                            })
+
+                                            if(findInThumbUp){
+                                                const findThumbData = findThumb.userId
+                                                const originalData = requestEmail.userId
+    
+                                                if (originalData.toString() == findThumbData.toString()) {
+                                                    if (requestEmail.accepted == 1) {
+                                                        var status1 = {
+                                                            status: 1,
+                                                            firstName: findThumbUp.firstName,
+                                                            profile: findThumbUp.photo[0] ? findThumbUp.photo[0].res : "",
+                                                            email: requestEmail.requestedEmail,
+                                                            thumbUp: findThumb.thumbUp,
+                                                            thumbUpStatus: 1,
+                                                        }
+                                                        statusByEmail.push(status1)
+                                                    } else {
+                                                        var status2 = {
+                                                            status: 2,
+                                                            email: requestEmail.requestedEmail,
+                                                            firstName: findThumbUp.firstName,
+                                                            profile: findThumbUp.photo[0] ? findThumbUp.photo[0].res : "",
+                                                            thumbUp: findThumb.thumbUp,
+                                                            thumbUpStatus: 1,
+                                                        }
+                                                        statusByEmail.push(status2)
                                                     }
-                                                    statusByEmail.push(status1)
-                                                } else {
-                                                    var status2 = {
-                                                        status: 2,
-                                                        email: requestEmail.requestedEmail,
-                                                        firstName: findThumbUp.firstName,
-                                                        profile: findThumbUp.photo[0] ? findThumbUp.photo[0].res : "",
-                                                        thumbUp: findThumb.thumbUp
+                                                }
+                                            }else{
+                                                const findThumbData = findThumb.userId
+                                                const originalData = requestEmail.userId
+    
+                                                if (originalData.toString() == findThumbData.toString()) {
+                                                    if (requestEmail.accepted == 1) {
+                                                        var status1 = {
+                                                            status: 1,
+                                                            firstName: findThumbUp.firstName,
+                                                            profile: findThumbUp.photo[0] ? findThumbUp.photo[0].res : "",
+                                                            email: requestEmail.requestedEmail,
+                                                            thumbUp: findThumb.thumbUp,
+                                                            thumbUpStatus: 0,
+                                                        }
+                                                        statusByEmail.push(status1)
+                                                    } else {
+                                                        var status2 = {
+                                                            status: 2,
+                                                            email: requestEmail.requestedEmail,
+                                                            firstName: findThumbUp.firstName,
+                                                            profile: findThumbUp.photo[0] ? findThumbUp.photo[0].res : "",
+                                                            thumbUp: findThumb.thumbUp,
+                                                            thumbUpStatus: 0,
+                                                        }
+                                                        statusByEmail.push(status2)
                                                     }
-                                                    statusByEmail.push(status2)
                                                 }
                                             }
+                                          
                                         }
                                     }
                                 }
@@ -3879,7 +4669,8 @@ exports.noBasket = async (req, res, next) => {
                                 if (finalData.email === final1Data.email) {
                                     const response = {
                                         status: final1Data.status,
-                                        thumbUp: final1Data.thumbUp
+                                        thumbUp: final1Data.thumbUp,
+                                        thumbUpStatus: final1Data.thumbUpStatus,
                                     }
                                     finalStatus.push(response)
                                 }
@@ -3920,7 +4711,8 @@ exports.noBasket = async (req, res, next) => {
                                 // posts_data: finalData.posts,
                                 status: responses.statusAndTumbCount.status,
                                 thumbUp: responses.statusAndTumbCount.thumbUp,
-                                thumbDown: responses.statusAndTumbCount.thumbDown
+                                thumbUpStatus:responses.statusAndTumbCount.thumbUpStatus,
+
                             }
 
                             final_data.push(response);
@@ -3955,6 +4747,141 @@ exports.noBasket = async (req, res, next) => {
 
 exports.moveBasket = async (req, res, next) => {
 
+    try {
+
+
+        const findUser = await userModel.findOne({
+            _id: req.params.user_id
+        })
+
+        if(findUser){
+
+            const findYesBasketUser = await userModel.findOne({
+                _id: req.params.user_id,
+                "yesBasket.userId": req.params.request_user_id
+            })
+
+            const findNoBasketUser = await userModel.findOne({
+                _id: req.params.user_id,
+                "noBasket.userId": req.params.request_user_id
+            })
+
+            console.log("findYesBasketUser" , findYesBasketUser);
+            console.log("findNoBasketUser" , findNoBasketUser);
+
+           if(findYesBasketUser){
+            console.log("xcasdfwef");
+            const yesData = [];
+            for(const dataFind of findYesBasketUser.yesBasket){
+                console.log("dataFind");
+
+                if((dataFind.userId).toString() == (req.params.request_user_id).toString()){
+                    yesData.push(dataFind)
+                }
+            }
+
+           await userModel.updateOne(
+                {
+                    _id: req.params.user_id
+                },
+                {
+                    $pull: {
+                        yesBasket: {
+                            userId: req.params.request_user_id
+                        }
+                    }
+                });
+
+
+            await userModel.updateOne(
+                    {
+                        _id: req.params.user_id
+                    },
+                    {
+                        $push: {
+                            noBasket:{
+                                match: yesData[0].match,
+                                userId: yesData[0].userId,
+                                thumbUp: yesData[0].thumbUp,
+                                thumbDown:yesData[0].thumbDown,
+                            }
+                          
+                        }
+                    });
+
+
+        res.status(status.OK).json(
+            new APIResponse("move in no basket", true, 200 , "1")
+        );
+
+           }else if(findNoBasketUser){
+
+            const noData = [];
+
+           
+            for(const dataFind of findNoBasketUser.noBasket){
+               
+                console.log("dataFind" , dataFind);
+
+                if((dataFind.userId).toString() == (req.params.request_user_id).toString()){
+                    noData.push(dataFind)
+                }
+            }
+
+
+            
+           await userModel.updateOne(
+                {
+                    _id: req.params.user_id
+                },
+                {
+                    $pull: {
+                        noBasket: {
+                            userId: req.params.request_user_id
+                        }
+                    }
+                });
+
+
+            await userModel.updateOne(
+                    {
+                        _id: req.params.user_id,
+
+                    },
+                    {
+                        $push: {
+                            yesBasket: {
+                                match: noData[0].match,
+                                userId: noData[0].userId,
+                                thumbUp: noData[0].thumbUp,
+                                thumbDown:noData[0].thumbDown,
+                            }
+                          
+                        }
+                    });
+
+                    res.status(status.OK).json(
+                        new APIResponse("move in yes basket", true, 200 , "1")
+                    );
+
+           }else{
+            res.status(status.NOT_FOUND).json(
+                new APIResponse("not in basket", false, 404 ,"0")
+            );
+           }
+
+        }else{
+            res.status(status.NOT_FOUND).json(
+                new APIResponse("User not found", false, 404 , "0")
+            );
+        }
+    
+    } catch (error) {
+        console.log("Error:", error);
+        res.status(status.INTERNAL_SERVER_ERROR).json(
+            new APIResponse("Something Went Wrong", false, 500, error.message)
+        );
+    }
 }
 
 exports.getAllNotification = async (req, res, next) => {

@@ -9,6 +9,7 @@ const commentModel = require("../model/comment.model");
 const path = require('path');
 const { log } = require("console");
 const likeModel = require("../model/like.model");
+const notificationModel = require("../model/polyamorous/notification.model");
 
 // Mutiple Videos Upload
 
@@ -134,6 +135,58 @@ exports.addPostImages = async (req, res, next) => {
                 res.status(status.CREATED).json(
                     new APIResponse("Posts Inserted successfully!", "true", 201, "1", saveData)
                 )
+
+
+                const findAllEmail = await requestsModel.findOne({
+                    userId: req.params.id
+                })
+
+
+                const allRequestEmail = [];
+                for(const postData of findAllEmail.RequestedEmails){
+                    if(postData.accepted == 1){
+                        allRequestEmail.push(postData.userId)
+                    }
+                }
+
+                for(const sendNotification of allRequestEmail){
+
+                    const findNotification = await notificationModel.findOne({
+                        userId : sendNotification
+                    })
+
+                    const findUser = await userModal.findOne({
+                        _id: req.params.id
+                    }).select("firstName")
+
+                    if(findNotification){
+
+                        await notificationModel.updateOne({
+                            userId: sendNotification,
+                            $push:{
+                                notifications:{
+                                    userId: req.params.id,
+                                    notifications: `${findUser.firstName} add post`,
+                                    status: 6
+                                }
+                            }
+                        })
+
+                    }else{
+
+                        const dataSave = notificationModel({
+                            userId: sendNotification,
+                            notifications:{
+                                userId: req.params.id,
+                                notifications: `${findUser.firstName} add post`,
+                                status: 6
+                            }
+                        })
+
+                        await dataSave.save();
+                    }
+                }
+
             } else {
                 const urls = [];
                 const files = req.files;
@@ -150,6 +203,58 @@ exports.addPostImages = async (req, res, next) => {
                     urls.push(newPath);
                 }
                 await postModal.updateOne({ userId: req.params.id }, { $push: { posts: finalData } });
+
+
+                const findAllEmail = await requestsModel.findOne({
+                    userId: req.params.id
+                })
+
+
+                const allRequestEmail = [];
+                for(const postData of findAllEmail.RequestedEmails){
+                    if(postData.accepted == 1){
+                        allRequestEmail.push(postData.userId)
+                    }
+                }
+
+                for(const sendNotification of allRequestEmail){
+
+                    const findNotification = await notificationModel.findOne({
+                        userId : sendNotification
+                    })
+
+                    const findUser = await userModal.findOne({
+                        _id: req.params.id
+                    }).select("firstName")
+
+                    if(findNotification){
+
+                        await notificationModel.updateOne({
+                            userId: sendNotification,
+                            $push:{
+                                notifications:{
+                                    userId: req.params.id,
+                                    notifications: `${findUser.firstName} add post`,
+                                    status: 6
+                                }
+                            }
+                        })
+
+                    }else{
+
+                        const dataSave = notificationModel({
+                            userId: sendNotification,
+                            notifications:{
+                                userId: req.params.id,
+                                notifications: `${findUser.firstName} add post`,
+                                status: 6
+                            }
+                        })
+
+                        await dataSave.save();
+                    }
+                }
+
 
                 res.status(status.OK).json(
                     new APIResponse("Post added successfully!", "true", 201, "1", finalData)
@@ -458,8 +563,10 @@ exports.getPostById = async (req, res, next) => {
 
                         const findUserInLike = await likeModel.findOne({
                             postId: createResponse._id,
-                            userId: findUser._id
+                            reqUserId: req.params.req_id
                         })
+
+                        console.log("findUserInLike._id" , findUserInLike);
                         if (findUserInLike) {
                             const response = {
                                 posts,

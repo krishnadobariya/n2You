@@ -4,6 +4,7 @@ const postModel = require("../model/post.model");
 const userModel = require("../model/user.model");
 const commentModel = require("../model/comment.model");
 const { default: mongoose } = require("mongoose");
+const notificationModel = require("../model/polyamorous/notification.model");
 
 exports.CommetInsert = async (req, res, next) => {
     try {
@@ -33,6 +34,42 @@ exports.CommetInsert = async (req, res, next) => {
                         date: new Date(Date.now()).toDateString()
                     }
 
+
+                    const findInNotification = await notificationModel.findOne({
+                        userId: req.params.user_id
+                    })
+
+                    const findUser = await userModel.findOne({
+                        _id : req.params.req_user_id
+                    }).select("firstName")
+
+                    if(findInNotification){
+                        await notificationModel.updateOne({
+                            userId : req.params.user_id
+                        },{
+                            $push: {
+                                notifications: {
+                                    userId : req.params.req_user_id,
+                                    notifications: `${findUser.firstName} comment on your post`,
+                                    status: 5
+                                }
+                                
+                            }
+                        })
+                    }else{
+
+                        const saveNotification = notificationModel({
+                            userId : req.params.user_id,
+                            notifications:{
+                                userId : req.params.req_user_id,
+                                notifications: `${findUser.firstName} comment on your post`,
+                                status: 5
+                            }
+                        })
+
+                        await saveNotification.save();
+                    }
+                    
                     await commentModel.updateOne({ postId: req.params.post_id }, { $push: { comments: finalData } });
                     await postModel.updateOne({ "posts._id": req.params.post_id }, { $inc: { "posts.$.comment": 1 } });
 
@@ -52,7 +89,44 @@ exports.CommetInsert = async (req, res, next) => {
 
                     const saveData = await comment.save();
 
+                    const findInNotification = await notificationModel.findOne({
+                        userId: req.params.user_id
+                    })
+
+                    const findUser = await userModel.findOne({
+                        _id : req.params.req_user_id
+                    }).select("firstName")
+
+                    if(findInNotification){
+                        await notificationModel.updateOne({
+                            userId : req.params.user_id
+                        },{
+                            $push: {
+                                notifications:{
+                                    userId : req.params.req_user_id,
+                                    notifications: `${findUser.firstName} comment on your post`,
+                                    status: 5
+                                }
+                            }
+                        })
+                    }else{
+
+                        const saveNotification = notificationModel({
+                            userId : req.params.user_id,
+                            notifications:{
+                                userId : req.params.req_user_id,
+                                notifications: `${findUser.firstName} comment on your post`,
+                                status: 5
+                            }
+                        })
+
+                        await saveNotification.save();
+                    }
+
+                    
                     await postModel.updateOne({ "posts._id": req.params.post_id }, { $inc: { "posts.$.comment": 1 } });
+                   
+                   
                     res.status(status.CREATED).json(
                         new APIResponse("comment Added", "true", 201, "1", saveData)
                     )
