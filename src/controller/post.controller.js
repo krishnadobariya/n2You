@@ -108,7 +108,7 @@ exports.addPostVideo = async (req, res, next) => {
                     new APIResponse("Posts Inserted successfully!", "true", 201, "1", saveData)
                 )
 
-             
+
 
             } else {
                 const urls = [];
@@ -182,7 +182,7 @@ exports.addPostVideo = async (req, res, next) => {
                 )
 
 
-           
+
             }
         } else {
             res.status(status.NOT_FOUND).json(
@@ -237,7 +237,7 @@ exports.addPostImages = async (req, res, next) => {
                     email: userFindForImages.email
                 })
 
-                
+
                 const findAllEmail = await requestsModel.findOne({
                     userId: req.params.id
                 })
@@ -1931,7 +1931,7 @@ exports.userAllFriendPost = async (req, res, next) => {
 
                                 for (const allposts of meargAllTableEmail.posts) {
 
-                                    console.log("allposts.posts",  meargAllTableEmail.posts);
+                                    console.log("allposts.posts", meargAllTableEmail.posts);
 
                                     for (const getallposts of allposts.posts) {
 
@@ -2308,6 +2308,7 @@ exports.userAllFriendPost = async (req, res, next) => {
                                                 like: allPost.like,
                                                 comment: allPost.comment,
                                                 report: allPost.report,
+                                                createdAt: allPost.createdAt
                                             },
                                             finalPostedTime: data.finalPostedTime, commentData: data.commentData[0] == undefined ? [] : data.commentData, postShowStatus: 1
 
@@ -2329,6 +2330,7 @@ exports.userAllFriendPost = async (req, res, next) => {
                                                 like: allPost.like,
                                                 comment: allPost.comment,
                                                 report: allPost.report,
+                                                createdAt: allPost.createdAt
                                             },
                                             finalPostedTime: data.finalPostedTime, commentData: data.commentData[0] == undefined ? [] : data.commentData, postShowStatus: 0
 
@@ -2721,6 +2723,7 @@ exports.userAllFriendPost = async (req, res, next) => {
                                             like: allPost.like,
                                             comment: allPost.comment,
                                             report: allPost.report,
+                                            createdAt: allPost.createdAt
                                         },
                                         finalPostedTime: data.finalPostedTime, commentData: data.commentData[0] == undefined ? [] : data.commentData, postShowStatus: 1
 
@@ -2742,6 +2745,7 @@ exports.userAllFriendPost = async (req, res, next) => {
                                             like: allPost.like,
                                             comment: allPost.comment,
                                             report: allPost.report,
+                                            createdAt: allPost.createdAt
                                         },
                                         finalPostedTime: data.finalPostedTime, commentData: data.commentData[0] == undefined ? [] : data.commentData, postShowStatus: 0
 
