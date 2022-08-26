@@ -291,7 +291,7 @@ exports.deleteComment = async (req, res, next) => {
                         }
                     );
 
-                    await postModel.updateOne({ userId: req.params.user_id, "posts._id": req.params.post_id }, { $inc: { "posts.$.comment": -1 } });
+                    await postModel.updateOne({ "posts._id": req.params.post_id }, { $inc: { "posts.$.comment": -1 } });
 
                     res.status(status.OK).json(
                         new APIResponse("Reply updated Successfully", "true", 200, "1")
@@ -311,7 +311,7 @@ exports.deleteComment = async (req, res, next) => {
                         }
                     }
                 );
-                await postModel.updateOne({ userId: req.params.user_id, "posts._id": req.params.post_id }, { $inc: { "posts.$.comment": -1 } });
+                await postModel.updateOne({ "posts._id": req.params.post_id }, { $inc: { "posts.$.comment": -1 } });
                 res.status(status.OK).json(
                     new APIResponse("Reply updated Successfully", "true", 200, "1")
                 );
