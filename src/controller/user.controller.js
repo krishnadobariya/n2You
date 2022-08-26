@@ -4916,13 +4916,16 @@ exports.getAllNotification = async (req, res, next) => {
 
                         const data = new Date(getNotification.createdAt).toString().split(" ")
                         console.log(data);
+                        const data1 = data[4].split(":")
+
+                        console.log(data1);
                         const response = {
                             _id: getNotification.userId,
                             notification: getNotification.notifications,
                             name: findUserDetail.firstName,
                             profile: findUserDetail.photo[0] ? findUserDetail.photo[0].res : "",
                             status: getNotification.status,
-                            time: `${data[0]} ${data[1]} ${data[2]} ${data[3]} ${data[4]}`
+                            time: `${data[0]} ${data[1]} ${data[2]} ${data[3]} ${parseInt((data1[0]))+ 5} hourse ${parseInt((data1[1]))+ 5} minute ${parseInt((data1[1]))} second `
                         }
                         allNotification.push(response)
 
