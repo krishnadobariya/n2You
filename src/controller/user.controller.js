@@ -2149,20 +2149,11 @@ exports.getDataUserWise = async (req, res, next) => {
             
 
             const findUser = await requestsModel.findOne({
-<<<<<<< HEAD
-                userId: req.params.user_id
-=======
                 userId: req.params.req_user_id
->>>>>>> ec6597df764db42bbd49714ba1ab72def1ad54b8
             })
 
             const statusCode = [];
 
-<<<<<<< HEAD
-            console.log("req.params.req_user_id" , req.params.req_user_id);
-            console.log("eq.params.user_id" , req.params.user_id);
-=======
->>>>>>> ec6597df764db42bbd49714ba1ab72def1ad54b8
             if((req.params.req_user_id).toString() == (req.params.user_id).toString()){
               
                 statusCode.push(10)
@@ -2548,13 +2539,8 @@ exports.yesBasket = async (req, res, next) => {
                                     "thumbDetail.reqUserId": req.params.request_user_id,
                                     "thumbDetail.userId": findThumb.userId
                                 })
-<<<<<<< HEAD
 
 
-=======
-
-
->>>>>>> ec6597df764db42bbd49714ba1ab72def1ad54b8
                                 if(findInThumbUp){
                                     const findThumbData = findThumb.userId
                                     const orginalData = getOriginalData._id
