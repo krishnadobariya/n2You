@@ -9,6 +9,8 @@ const groupChatModel = require("./models/groupChat.model");
 const { default: mongoose } = require("mongoose");
 const linkProfileModel = require("../model/polyamorous/linkProfile.model");
 const conflictModel = require("../model/polyamorous/conflict.model");
+const { findOne } = require("../model/user.model");
+const notificationModel = require("../model/polyamorous/notification.model");
 function socket(io) {
 
     console.log("socket connected...");
@@ -21,15 +23,86 @@ function socket(io) {
         // })
 
         socket.on("joinUser", function (data) {
-            console.log("data" , data);
+            console.log("data", data);
             const userRoom = `User${data.user_id}`;
             socket.join(userRoom);
-          });
+        });
 
         socket.on("chat", async (arg) => {
 
-          const userRoom = `User${arg.user_2}`
-           
+            const userRoom = `User${arg.user_2}`
+
+            if (arg.user_1 == arg.sender_id) {
+                const findUserInNotification = await notificationModel.findOne({
+                    userId: arg.user_2
+                })
+
+                const findUser = await userModel.findOne({
+                    _id: arg.user_1
+                })
+
+                if (findUserInNotification) {
+
+                    await notificationModel.updateOne({
+                        userId: arg.user_2
+                    }, {
+                        $push: {
+                            notifications: {
+                                notifications: `${findUser.firstname} message you`,
+                                userId: findUser._id,
+                                status: 7
+                            }
+                        }
+                    })
+                } else {
+
+                    const saveNotification = notificationModel({
+                        userId: arg.user_2,
+                        notifications: {
+                            notifications: `${findUser.firstname} message you`,
+                            userId: findUser._id,
+                            status: 7
+                        }
+                    })
+
+                    await saveNotification.save()
+                }
+
+            } else if (arg.user_2 == arg.sender_id) {
+                const findUserInNotification = await notificationModel.findOne({
+                    userId: arg.user_1
+                })
+
+                const findUser = await userModel.findOne({
+                    _id: arg.user_2
+                })
+
+                if (findUserInNotification) {
+                    await notificationModel.updateOne({
+                        userId: arg.user_1
+                    }, {
+                        $push: {
+                            notifications: {
+                                notifications: `${findUser.firstname} message you`,
+                                userId: findUser._id,
+                                status: 7
+                            }
+                        }
+                    })
+                } else {
+                    const saveNotification = notificationModel({
+                        userId: arg.user_1,
+                        notifications: {
+                            notifications: `${findUser.firstname} message you`,
+                            userId: findUser._id,
+                            status: 7
+                        }
+                    })
+
+                    await saveNotification.save()
+                }
+            }
+
             const date = new Date()
             let dates = date.getDate();
             let month = date.toLocaleString('en-us', { month: 'long' });

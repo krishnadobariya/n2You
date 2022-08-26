@@ -27,8 +27,7 @@ exports.sendRequest = async (req, res, next) => {
                         userEmail: checkUserExist.email,
                         RequestedEmails: [{
                             requestedEmail: checkRequestedEmail.email,
-                            accepted: 2,
-                            respond: 4,
+                            accepted: 4,
                             userId: checkRequestedEmail._id
                         }],
 
@@ -175,8 +174,7 @@ exports.sendRequest = async (req, res, next) => {
                                 $push: {
                                     RequestedEmails: [{
                                         requestedEmail: checkRequestedEmail.email,
-                                        accepted: 2,
-                                        respond: 4,
+                                        accepted: 4,
                                         userId: checkRequestedEmail._id
                                     }]
                                 }
@@ -242,7 +240,6 @@ exports.getUserWithFriend = async (req, res, next) => {
         const user_id = req.params.user_id;
         const request_user_id = req.params.request_user_id;
 
-
         const findUser = await userModel.findOne({
             _id: req.params.user_id,
             polyDating: 0
@@ -256,8 +253,6 @@ exports.getUserWithFriend = async (req, res, next) => {
             const reaquestedAllEmail = [];
             const allMeargeData = [];
 
-
-            console.log("reaquestedAllEmail", reaquestedAllEmail);
 
             const requestEmail = await requestModel.findOne({
                 userId: req.params.req_user_id
@@ -282,7 +277,6 @@ exports.getUserWithFriend = async (req, res, next) => {
             } else {
                 reaquestedAllEmail.push()
             }
-
 
             if (reaquestedAllEmail[0] == undefined) {
                 res.status(status.OK).json(
@@ -323,14 +317,10 @@ exports.getUserWithFriend = async (req, res, next) => {
                             profile: getOriginalData.photo[0] ? getOriginalData.photo[0].res : "",
                             firstName: getOriginalData.firstName,
                             status: 3,
-                            respond: 0
                         }
 
 
                         responseData.push(response);
-
-
-
 
                     }
                     let uniqueObjArray = [...new Map(responseData.map((item) => [item["_id"], item])).values()];
@@ -347,20 +337,13 @@ exports.getUserWithFriend = async (req, res, next) => {
                         emailGet.push(getEmail.requestedEmail)
                     }
 
-
                     var difference = reaquestedAllEmail.filter(x => emailGet.indexOf(x) === -1);
-
-
-
                     const UniqueEmail = [];
-
 
                     for (const uniqueEmail of difference) {
                         const userDetail = await userModel.findOne({ email: uniqueEmail });
                         finalData.push(userDetail)
                     }
-
-
 
                     for (const getOriginalData of finalData) {
 
@@ -473,8 +456,6 @@ exports.getUserWithFriend = async (req, res, next) => {
 
                     for (const emailData of finalExistUser[0].result) {
 
-
-
                         for (const requestEmail of emailData) {
 
                             for (const meageAllTableEmail of finalExistUser) {
@@ -488,8 +469,7 @@ exports.getUserWithFriend = async (req, res, next) => {
 
                                     if (requestEmail.accepted == 1) {
                                         var status1 = {
-                                            status: 1,
-                                            respond: requestEmail.respond,
+                                            status: requestEmail.accepted,
                                             email: requestEmail.requestedEmail,
                                             firstName: user.firstName,
                                             profile: user.photo[0] ? user.photo[0].res : "",
@@ -498,9 +478,8 @@ exports.getUserWithFriend = async (req, res, next) => {
                                         statusByEmail.push(status1)
                                     } else {
                                         var status2 = {
-                                            status: 2,
+                                            status: requestEmail.accepted,
                                             email: requestEmail.requestedEmail,
-                                            respond: requestEmail.respond,
                                             firstName: user.firstName,
                                             profile: user.photo[0] ? user.photo[0].res : "",
 
@@ -523,7 +502,6 @@ exports.getUserWithFriend = async (req, res, next) => {
                             if (finalData.email === final1Data.email) {
                                 const response = {
                                     status: final1Data.status,
-                                    respond: final1Data.respond
                                 }
                                 finalStatus.push(response)
                             }
@@ -582,7 +560,6 @@ exports.getUserWithFriend = async (req, res, next) => {
                                     // wantChildren: finalData.wantChildren,
                                     // posts_data: finalData.posts,
                                     status: responses.statusAndTumbCount.status,
-                                    respond: responses.statusAndTumbCount.respond
 
                                 }
                                 final_data.push(response);
@@ -622,7 +599,6 @@ exports.getUserWithFriend = async (req, res, next) => {
                                     // wantChildren: finalData.wantChildren,
                                     // posts_data: finalData.posts,
                                     status: responses.statusAndTumbCount.status,
-                                    respond: responses.statusAndTumbCount.respond
                                 }
 
 
@@ -666,7 +642,6 @@ exports.getUserWithFriend = async (req, res, next) => {
                                     // wantChildren: finalData.wantChildren,
                                     // posts_data: finalData.posts,
                                     status: responses.statusAndTumbCount.status,
-                                    respond: responses.statusAndTumbCount.respond
 
                                 }
 
@@ -707,7 +682,6 @@ exports.getUserWithFriend = async (req, res, next) => {
                                     // wantChildren: finalData.wantChildren,
                                     // posts_data: finalData.posts,
                                     status: responses.statusAndTumbCount.status,
-                                    respond: responses.statusAndTumbCount.respond
                                 }
 
                                 final_data.push(response);
@@ -913,7 +887,7 @@ exports.userAcceptedRequesteOrNot = async (req, res, next) => {
                 const updatePosts = await requestModel.updateOne({ userId: req.params.user_id, "RequestedEmails.userId": reqestId },
                     {
                         $set: {
-                            "RequestedEmails.$.accepted": req.body.accepted
+                            "RequestedEmails.$.accepted": 3
                         }
                     })
 
@@ -922,7 +896,7 @@ exports.userAcceptedRequesteOrNot = async (req, res, next) => {
                 const updatePosts1 = await requestModel.updateOne({ userId: reqestId, "RequestedEmails.userId": req.params.user_id },
                     {
                         $set: {
-                            "RequestedEmails.$.accepted": req.body.accepted
+                            "RequestedEmails.$.accepted": 3
                         }
                     })
 

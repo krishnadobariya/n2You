@@ -2162,8 +2162,6 @@ exports.getDataUserWise = async (req, res, next) => {
 
                 if (findUser) {
 
-
-                    console.log("findUser.RequestedEmails[0]", findUser.RequestedEmails[0]);
                     if (findUser.RequestedEmails[0] == undefined) {
                         statusCode.push(3)
                     } else {
