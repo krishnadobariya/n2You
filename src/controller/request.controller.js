@@ -353,7 +353,6 @@ exports.getUserWithFriend = async (req, res, next) => {
                             firstName: getOriginalData.firstName,
                             profile: getOriginalData.photo[0] ? getOriginalData.photo[0].res : "",
                             status: 3,
-                            respond: 0
 
                         }
 
@@ -601,10 +600,10 @@ exports.getUserWithFriend = async (req, res, next) => {
                                     status: responses.statusAndTumbCount.status,
                                 }
 
-
+                                final_data.push(response);
                             }
 
-                            final_data.push(response);
+                            
 
                         } else {
 
