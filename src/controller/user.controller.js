@@ -1702,16 +1702,18 @@ exports.getAllUser = async (req, res, next) => {
 
                         for (const meageAllTableEmail of finalExistUser) {
 
+
+
                             if (requestEmail.requestedEmail == meageAllTableEmail.email) {
                                 if (requestEmail.accepted == 1) {
                                     var status1 = {
-                                        status: 1,
+                                        status: requestEmail.accepted,
                                         email: requestEmail.requestedEmail
                                     }
                                     statusByEmail.push(status1)
                                 } else {
                                     var status2 = {
-                                        status: 2,
+                                        status: requestEmail.accepted,
                                         email: requestEmail.requestedEmail
                                     }
                                     statusByEmail.push(status2)

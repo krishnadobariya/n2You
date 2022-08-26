@@ -48,7 +48,7 @@ function socket(io) {
                     }, {
                         $push: {
                             notifications: {
-                                notifications: `${findUser.firstname} message you`,
+                                notifications: `${findUser.firstName} message you`,
                                 userId: findUser._id,
                                 status: 7
                             }
@@ -59,7 +59,7 @@ function socket(io) {
                     const saveNotification = notificationModel({
                         userId: arg.user_2,
                         notifications: {
-                            notifications: `${findUser.firstname} message you`,
+                            notifications: `${findUser.firstName} message you`,
                             userId: findUser._id,
                             status: 7
                         }
@@ -83,7 +83,7 @@ function socket(io) {
                     }, {
                         $push: {
                             notifications: {
-                                notifications: `${findUser.firstname} message you`,
+                                notifications: `${findUser.firstName} message you`,
                                 userId: findUser._id,
                                 status: 7
                             }
@@ -93,7 +93,7 @@ function socket(io) {
                     const saveNotification = notificationModel({
                         userId: arg.user_1,
                         notifications: {
-                            notifications: `${findUser.firstname} message you`,
+                            notifications: `${findUser.firstName} message you`,
                             userId: findUser._id,
                             status: 7
                         }
