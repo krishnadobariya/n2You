@@ -34,41 +34,46 @@ exports.CommetInsert = async (req, res, next) => {
                         date: new Date(Date.now()).toDateString()
                     }
 
+                    if((req.params.user_id).toString() == (req.params.req_user_id).toString()){
 
-                    const findInNotification = await notificationModel.findOne({
-                        userId: req.params.user_id
-                    })
-
-                    const findUser = await userModel.findOne({
-                        _id : req.params.req_user_id
-                    }).select("firstName")
-
-                    if(findInNotification){
-                        await notificationModel.updateOne({
-                            userId : req.params.user_id
-                        },{
-                            $push: {
-                                notifications: {
+                    }else{
+                        const findInNotification = await notificationModel.findOne({
+                            userId: req.params.user_id
+                        })
+    
+                        const findUser = await userModel.findOne({
+                            _id : req.params.req_user_id
+                        }).select("firstName")
+    
+                        if(findInNotification){
+                            await notificationModel.updateOne({
+                                userId : req.params.user_id
+                            },{
+                                $push: {
+                                    notifications: {
+                                        userId : req.params.req_user_id,
+                                        notifications: `${findUser.firstName} comment on your post`,
+                                        status: 5
+                                    }
+                                    
+                                }
+                            })
+                        }else{
+    
+                            const saveNotification = notificationModel({
+                                userId : req.params.user_id,
+                                notifications:{
                                     userId : req.params.req_user_id,
                                     notifications: `${findUser.firstName} comment on your post`,
                                     status: 5
                                 }
-                                
-                            }
-                        })
-                    }else{
-
-                        const saveNotification = notificationModel({
-                            userId : req.params.user_id,
-                            notifications:{
-                                userId : req.params.req_user_id,
-                                notifications: `${findUser.firstName} comment on your post`,
-                                status: 5
-                            }
-                        })
-
-                        await saveNotification.save();
+                            })
+    
+                            await saveNotification.save();
+                        }
                     }
+
+                    
                     
                     await commentModel.updateOne({ postId: req.params.post_id }, { $push: { comments: finalData } });
                     await postModel.updateOne({ "posts._id": req.params.post_id }, { $inc: { "posts.$.comment": 1 } });
@@ -89,39 +94,45 @@ exports.CommetInsert = async (req, res, next) => {
 
                     const saveData = await comment.save();
 
-                    const findInNotification = await notificationModel.findOne({
-                        userId: req.params.user_id
-                    })
+                    if((req.params.user_id).toString() == (req.params.req_user_id).toString()){
 
-                    const findUser = await userModel.findOne({
-                        _id : req.params.req_user_id
-                    }).select("firstName")
-
-                    if(findInNotification){
-                        await notificationModel.updateOne({
-                            userId : req.params.user_id
-                        },{
-                            $push: {
+                    }else{
+                        const findInNotification = await notificationModel.findOne({
+                            userId: req.params.user_id
+                        })
+    
+                        const findUser = await userModel.findOne({
+                            _id : req.params.req_user_id
+                        }).select("firstName")
+    
+                        if(findInNotification){
+                            await notificationModel.updateOne({
+                                userId : req.params.user_id
+                            },{
+                                $push: {
+                                    notifications:{
+                                        userId : req.params.req_user_id,
+                                        notifications: `${findUser.firstName} comment on your post`,
+                                        status: 5
+                                    }
+                                }
+                            })
+                        }else{
+    
+                            const saveNotification = notificationModel({
+                                userId : req.params.user_id,
                                 notifications:{
                                     userId : req.params.req_user_id,
                                     notifications: `${findUser.firstName} comment on your post`,
                                     status: 5
                                 }
-                            }
-                        })
-                    }else{
-
-                        const saveNotification = notificationModel({
-                            userId : req.params.user_id,
-                            notifications:{
-                                userId : req.params.req_user_id,
-                                notifications: `${findUser.firstName} comment on your post`,
-                                status: 5
-                            }
-                        })
-
-                        await saveNotification.save();
+                            })
+    
+                            await saveNotification.save();
+                        }
                     }
+
+                   
 
                     
                     await postModel.updateOne({ "posts._id": req.params.post_id }, { $inc: { "posts.$.comment": 1 } });

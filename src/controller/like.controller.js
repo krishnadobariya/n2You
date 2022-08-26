@@ -32,50 +32,53 @@ exports.LikeOrDislikeInUserPost = async (req, res, next) => {
 
                         await InsertIntoLikeTable.save();
 
-                        const findRequestedUser = await userModel.findOne({
-                            _id: req.params.req_user_id
-                        }).select("firstName")
+
+                        if ((req.params.user_id).toString() == (req.params.req_user_id).toString()) {
+
+                        } else {
+
+                            const findRequestedUser = await userModel.findOne({
+                                _id: req.params.req_user_id
+                            }).select("firstName")
 
 
 
-                        const findInNotification = await notificationModel.findOne({
-                            userId: req.params.user_id
-                        })
-
-                        console.log("findInNotification" , findInNotification);
-
-                        if(findInNotification){
-
-
-                            await notificationModel.updateOne({
+                            const findInNotification = await notificationModel.findOne({
                                 userId: req.params.user_id
-                            },{
-                                $push:{
-                                    notifications: {
-                                        notifications:`${findRequestedUser.firstName} like your post.`,
-                                        userId:req.params.req_user_id,
-                                        status:4
+                            })
+
+                            console.log("findInNotification", findInNotification);
+
+                            if (findInNotification) {
+
+
+                                await notificationModel.updateOne({
+                                    userId: req.params.user_id
+                                }, {
+                                    $push: {
+                                        notifications: {
+                                            notifications: `${findRequestedUser.firstName} like your post.`,
+                                            userId: req.params.req_user_id,
+                                            status: 4
+                                        }
                                     }
-                                }
-                            })
+                                })
 
-                        }else{
-                            const saveNotification = notificationModel({
+                            } else {
+                                const saveNotification = notificationModel({
 
-                                userId:req.params.user_id,
-                                notifications: {
-                                    notifications:`${findRequestedUser.firstName} like your post.`,
-                                    userId:req.params.req_user_id,
-                                    status:4
-                                }
-                            })
+                                    userId: req.params.user_id,
+                                    notifications: {
+                                        notifications: `${findRequestedUser.firstName} like your post.`,
+                                        userId: req.params.req_user_id,
+                                        status: 4
+                                    }
+                                })
 
-                            await saveNotification.save()  
+                                await saveNotification.save()
+                            }
+
                         }
-
-                       
-
-
 
                         const data = await postModel.updateOne({ "posts._id": req.params.post_id }, { $inc: { "posts.$.like": 1 } }).then(() => {
                             const status_code = 1
@@ -363,7 +366,7 @@ exports.showAllUserWhichIsLikePost = async (req, res, next) => {
                             }
                     }
 
-                    
+
                     for (const [key, finalData] of finalExistUser.entries()) {
 
                         const findAllUserWithIchat1 = await chatRoomModel.findOne({
@@ -373,10 +376,10 @@ exports.showAllUserWhichIsLikePost = async (req, res, next) => {
                                 user2: req.params.user_id
                             }]
                         })
-    
-    
-                        console.log("findAllUserWithIchat1" , findAllUserWithIchat1);
-    
+
+
+                        console.log("findAllUserWithIchat1", findAllUserWithIchat1);
+
                         const findAllUserWithIchat2 = await chatRoomModel.findOne({
                             $and: [{
                                 user1: req.params.user_id
@@ -386,7 +389,7 @@ exports.showAllUserWhichIsLikePost = async (req, res, next) => {
                         })
 
 
-                        if(findAllUserWithIchat1){
+                        if (findAllUserWithIchat1) {
                             const response = {
                                 _id: finalData._id,
                                 chatRoomId: findAllUserWithIchat1._id,
@@ -405,7 +408,7 @@ exports.showAllUserWhichIsLikePost = async (req, res, next) => {
                                 status: finalStatus[key]
                             }
                             final_data.push(response);
-                        }else{
+                        } else {
                             const response = {
                                 _id: finalData._id,
                                 chatRoomId: findAllUserWithIchat2._id,
@@ -427,7 +430,7 @@ exports.showAllUserWhichIsLikePost = async (req, res, next) => {
                         }
 
 
-                       
+
                     }
 
                     // // let uniqueObjArray = [...new Map(final_data.map((item) => [item["details"], item])).values()];
