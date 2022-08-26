@@ -28,6 +28,7 @@ exports.sendRequest = async (req, res, next) => {
                         RequestedEmails: [{
                             requestedEmail: checkRequestedEmail.email,
                             accepted: 2,
+                            respond: 4,
                             userId: checkRequestedEmail._id
                         }],
 
@@ -175,6 +176,7 @@ exports.sendRequest = async (req, res, next) => {
                                     RequestedEmails: [{
                                         requestedEmail: checkRequestedEmail.email,
                                         accepted: 2,
+                                        respond: 4,
                                         userId: checkRequestedEmail._id
                                     }]
                                 }
@@ -320,7 +322,12 @@ if(requestEmail){
                                         email: getOriginalData.email,
                                         profile: getOriginalData.photo[0] ? getOriginalData.photo[0].res : "",
                                         firstName: getOriginalData.firstName,
+<<<<<<< HEAD
                                         status: 3
+=======
+                                        status: 3,
+                                        respond: 0
+>>>>>>> ec6597df764db42bbd49714ba1ab72def1ad54b8
                                     }
 
 
@@ -367,6 +374,10 @@ if(requestEmail){
                                             firstName: getOriginalData.firstName,
                                             profile: getOriginalData.photo[0] ? getOriginalData.photo[0].res : "",
                                             status: 3,
+<<<<<<< HEAD
+=======
+                                            respond: 0
+>>>>>>> ec6597df764db42bbd49714ba1ab72def1ad54b8
                                             
                                         }
     
@@ -485,6 +496,10 @@ if(requestEmail){
                                                     if (requestEmail.accepted == 1) {
                                                         var status1 = {
                                                             status: 1,
+<<<<<<< HEAD
+=======
+                                                            respond: requestEmail.respond,
+>>>>>>> ec6597df764db42bbd49714ba1ab72def1ad54b8
                                                             email: requestEmail.requestedEmail,
                                                             firstName: user.firstName,
                                                             profile: user.photo[0] ? user.photo[0].res : "",
@@ -495,6 +510,10 @@ if(requestEmail){
                                                         var status2 = {
                                                             status: 2,
                                                             email: requestEmail.requestedEmail,
+<<<<<<< HEAD
+=======
+                                                            respond: requestEmail.respond,
+>>>>>>> ec6597df764db42bbd49714ba1ab72def1ad54b8
                                                             firstName: user.firstName,
                                                             profile: user.photo[0] ? user.photo[0].res : "",
                                                            
@@ -512,11 +531,19 @@ if(requestEmail){
                         const finalStatus = []
                         for (const [key, finalData] of meageAllTable.entries()) {
 
+<<<<<<< HEAD
                             console.log("finalData" , finalData); 
+=======
+                           
+>>>>>>> ec6597df764db42bbd49714ba1ab72def1ad54b8
                             for (const [key, final1Data] of statusByEmail.entries())
                                 if (finalData.email === final1Data.email) {
                                     const response = {
                                         status: final1Data.status,
+<<<<<<< HEAD
+=======
+                                        respond: final1Data.respond
+>>>>>>> ec6597df764db42bbd49714ba1ab72def1ad54b8
                                     }
                                     finalStatus.push(response)
                                 }
@@ -575,6 +602,11 @@ if(requestEmail){
                                         // wantChildren: finalData.wantChildren,
                                         // posts_data: finalData.posts,
                                         status: responses.statusAndTumbCount.status,
+<<<<<<< HEAD
+=======
+                                        respond: responses.statusAndTumbCount.respond
+
+>>>>>>> ec6597df764db42bbd49714ba1ab72def1ad54b8
                                     }
                                     final_data.push(response);
                                 }else{
@@ -613,12 +645,22 @@ if(requestEmail){
                                         // wantChildren: finalData.wantChildren,
                                         // posts_data: finalData.posts,
                                         status: responses.statusAndTumbCount.status,
+<<<<<<< HEAD
                                     }
 
                                     final_data.push(response);
                                 }
                                
     
+=======
+                                        respond: responses.statusAndTumbCount.respond
+                                    }
+
+                                    
+                                }
+                               
+                                final_data.push(response);
+>>>>>>> ec6597df764db42bbd49714ba1ab72def1ad54b8
                                
                             }else{
 
@@ -656,6 +698,11 @@ if(requestEmail){
                                         // wantChildren: finalData.wantChildren,
                                         // posts_data: finalData.posts,
                                         status: responses.statusAndTumbCount.status,
+<<<<<<< HEAD
+=======
+                                        respond: responses.statusAndTumbCount.respond
+
+>>>>>>> ec6597df764db42bbd49714ba1ab72def1ad54b8
                                     }
         
                                     final_data.push(response);
@@ -695,6 +742,10 @@ if(requestEmail){
                                         // wantChildren: finalData.wantChildren,
                                         // posts_data: finalData.posts,
                                         status: responses.statusAndTumbCount.status,
+<<<<<<< HEAD
+=======
+                                        respond: responses.statusAndTumbCount.respond
+>>>>>>> ec6597df764db42bbd49714ba1ab72def1ad54b8
                                     }
         
                                     final_data.push(response);

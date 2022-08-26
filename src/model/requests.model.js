@@ -21,6 +21,10 @@ const requestSchema = mongoose.Schema({
             type: Number,
             default: 2
         },
+        respond:{
+            type: Number,
+            default: 0
+        },
         userId: {
             type: mongoose.Schema.Types.ObjectId,
             ref: 'User',
