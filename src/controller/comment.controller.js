@@ -76,7 +76,7 @@ exports.CommetInsert = async (req, res, next) => {
 
 
                     await commentModel.updateOne({ postId: req.params.post_id }, { $push: { comments: finalData } });
-                    await postModel.updateOne({ userId: req.params.user_id, "posts._id": req.params.post_id }, { $inc: { "posts.$.comment": 1 } });
+                    await postModel.updateOne({"posts._id": req.params.post_id }, { $inc: { "posts.$.comment": 1 } });
 
                     res.status(status.OK).json(
                         new APIResponse("comment added successfully!", "true", 201, "1", finalData)
@@ -95,7 +95,7 @@ exports.CommetInsert = async (req, res, next) => {
                     const saveData = await comment.save();
 
                     if ((req.params.user_id).toString() == (req.params.req_user_id).toString()) {
-
+                     
                     } else {
                         const findInNotification = await notificationModel.findOne({
                             userId: req.params.user_id
@@ -132,7 +132,7 @@ exports.CommetInsert = async (req, res, next) => {
                         }
                     }
 
-                    await postModel.updateOne({ userId: req.params.user_id, "posts._id": req.params.post_id }, { $inc: { "posts.$.comment": 1 } });
+                    await postModel.updateOne({ "posts._id": req.params.post_id }, { $inc: { "posts.$.comment": 1 } });
 
 
                     res.status(status.CREATED).json(
