@@ -2767,8 +2767,6 @@ exports.userAllFriendPost = async (req, res, next) => {
 
                 final_data.push(...finalStatus1);
 
-
-
             }
 
 

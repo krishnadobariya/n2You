@@ -318,10 +318,10 @@ exports.userLogin = async (req, res, next) => {
                     countryCode: findUser.countryCode,
                     password: findUser.password
                 }
-               
+
                 res.status(status.OK).json(
 
-                    new APIResponse("login success", "true", 200, "1" , data)
+                    new APIResponse("login success", "true", 200, "1", data)
                 )
             } else {
                 res.status(status.NOT_FOUND).json(
@@ -1412,7 +1412,7 @@ exports.getAllUser = async (req, res, next) => {
                     })
 
 
-                    console.log("findAllUserWithIchat1" , findAllUserWithIchat1);
+                    console.log("findAllUserWithIchat1", findAllUserWithIchat1);
 
                     const findAllUserWithIchat2 = await chatRoomModel.findOne({
                         $and: [{
@@ -1423,7 +1423,7 @@ exports.getAllUser = async (req, res, next) => {
                     })
 
 
-                    console.log("findAllUserWithIchat2" , findAllUserWithIchat2);
+                    console.log("findAllUserWithIchat2", findAllUserWithIchat2);
 
 
                     if (findAllUserWithIchat1) {
@@ -2139,14 +2139,14 @@ exports.getDataUserWise = async (req, res, next) => {
                             getPost,
                             finalPostedTime,
                             commentData: commentData[0] == null ? [] : commentData,
-                            postShowStatus : postShowStatus[0]
+                            postShowStatus: postShowStatus[0]
                         }
                         getAllPosts.push(response);
                     }
                 }
             }
 
-            
+
 
             const findUser = await requestsModel.findOne({
                 userId: req.params.req_user_id
@@ -2154,33 +2154,36 @@ exports.getDataUserWise = async (req, res, next) => {
 
             const statusCode = [];
 
-            if((req.params.req_user_id).toString() == (req.params.user_id).toString()){
-              
-                statusCode.push(10)
-               
-            }else{
+            if ((req.params.req_user_id).toString() == (req.params.user_id).toString()) {
 
-                if(findUser){
-                    if(findUser.RequestedEmails[0] == undefined){
+                statusCode.push(10)
+
+            } else {
+
+                if (findUser) {
+
+
+                    console.log("findUser.RequestedEmails[0]", findUser.RequestedEmails[0]);
+                    if (findUser.RequestedEmails[0] == undefined) {
                         statusCode.push(3)
-                    }else{
-                        for(const findStatus of findUser.RequestedEmails){
-                            if(findStatus.userId == req.params.req_user_id){
-                                
+                    } else {
+                        for (const findStatus of findUser.RequestedEmails) {
+                            if (findStatus.userId == req.params.req_user_id) {
+                                statusCode.push(10)
+                            } else {
                                 statusCode.push(findStatus.accepted)
-                                console.log("indStatus.accepted)" , findStatus.accepted);
                             }
                         }
                     }
-                   
-                }else{
+
+                } else {
                     statusCode.push(3)
                 }
 
-                
+
             }
-          
-            console.log("statusCode" , statusCode);
+
+            console.log("statusCode", statusCode);
 
             let birthDate = new Date(data[0].birthDate);
             birthDate = birthDate.getFullYear();
@@ -2188,7 +2191,7 @@ exports.getDataUserWise = async (req, res, next) => {
             currentDate = currentDate.getFullYear();
 
             const age = currentDate - birthDate;
-          
+
             const response = {
                 userId: data[0]._id,
                 polyDating: data[0].polyDating,
@@ -2205,15 +2208,15 @@ exports.getDataUserWise = async (req, res, next) => {
                 photo: data[0].photo,
                 fcm_token: data[0].fcm_token,
                 hopingToFind: data[0].hopingToFind,
-                longitude:data[0].location.coordinates[0],
-                latitude:data[0].location.coordinates[1],
+                longitude: data[0].location.coordinates[0],
+                latitude: data[0].location.coordinates[1],
                 jobTitle: data[0].jobTitle,
                 wantChildren: data[0].wantChildren,
                 countryCode: data[0].countryCode,
                 phoneNumber: data[0].phoneNumber,
                 extraAtrribute: data[0].extraAtrribute,
                 Posts: getAllPosts,
-                friendStatus : statusCode[0]
+                friendStatus: statusCode[0]
             }
 
 
@@ -2529,22 +2532,22 @@ exports.yesBasket = async (req, res, next) => {
                             for (const findThumb of findThumbUp.yesBasket) {
 
                                 const findInThumbUp = await thumbUpModel.findOne({
-                                    adminUserId : req.params.user_id,
+                                    adminUserId: req.params.user_id,
                                     "thumbDetail.reqUserId": req.params.request_user_id,
                                     "thumbDetail.userId": findThumb.userId
                                 })
 
                                 const findInThumbDown = await thumbDownModel.findOne({
-                                    adminUserId : req.params.user_id,
+                                    adminUserId: req.params.user_id,
                                     "thumbDetail.reqUserId": req.params.request_user_id,
                                     "thumbDetail.userId": findThumb.userId
                                 })
 
 
-                                if(findInThumbUp){
+                                if (findInThumbUp) {
                                     const findThumbData = findThumb.userId
                                     const orginalData = getOriginalData._id
-    
+
                                     if (orginalData.toString() == findThumbData.toString()) {
                                         const response = {
                                             _id: getOriginalData._id,
@@ -2557,13 +2560,13 @@ exports.yesBasket = async (req, res, next) => {
                                             thumbUpStatus: 1,
                                             thumbDownStatus: 0
                                         }
-    
+
                                         UniqueEmail.push(response);
                                     }
-                                }else if(findInThumbDown){
+                                } else if (findInThumbDown) {
                                     const findThumbData = findThumb.userId
                                     const orginalData = getOriginalData._id
-    
+
                                     if (orginalData.toString() == findThumbData.toString()) {
                                         const response = {
                                             _id: getOriginalData._id,
@@ -2578,13 +2581,13 @@ exports.yesBasket = async (req, res, next) => {
                                             thumbUpStatus: 0,
                                             thumbDownStatus: 1
                                         }
-    
+
                                         UniqueEmail.push(response);
                                     }
-                                }else{
+                                } else {
                                     const findThumbData = findThumb.userId
                                     const orginalData = getOriginalData._id
-    
+
                                     if (orginalData.toString() == findThumbData.toString()) {
                                         const response = {
                                             _id: getOriginalData._id,
@@ -2597,11 +2600,11 @@ exports.yesBasket = async (req, res, next) => {
                                             thumbUpStatus: 0,
                                             thumbDownStatus: 0
                                         }
-    
+
                                         UniqueEmail.push(response);
                                     }
                                 }
-                                
+
                             }
 
 
@@ -2721,27 +2724,27 @@ exports.yesBasket = async (req, res, next) => {
 
 
                                         for (const findThumb of findThumbUp.yesBasket) {
-                                            
+
 
                                             const findInThumbUp = await thumbUpModel.findOne({
-                                                adminUserId : req.params.user_id,
+                                                adminUserId: req.params.user_id,
                                                 "thumbDetail.reqUserId": req.params.request_user_id,
                                                 "thumbDetail.userId": findThumb.userId
                                             })
 
                                             const findInThumbDown = await thumbDownModel.findOne({
-                                                adminUserId : req.params.user_id,
+                                                adminUserId: req.params.user_id,
                                                 "thumbDetail.reqUserId": req.params.request_user_id,
                                                 "thumbDetail.userId": findThumb.userId
                                             })
 
-                                            if(findInThumbUp){
+                                            if (findInThumbUp) {
                                                 const findThumbData = findThumb.userId
                                                 const originalData = requestEmail.userId
-    
+
                                                 if (originalData.toString() == findThumbData.toString()) {
-    
-                                                   
+
+
                                                     if (requestEmail.accepted == 1) {
                                                         var status1 = {
                                                             status: 1,
@@ -2768,14 +2771,14 @@ exports.yesBasket = async (req, res, next) => {
                                                         statusByEmail.push(status2)
                                                     }
                                                 }
-                                            }else if(findInThumbDown){
+                                            } else if (findInThumbDown) {
                                                 const findThumbData = findThumb.userId
                                                 const originalData = requestEmail.userId
-    
+
                                                 if (originalData.toString() == findThumbData.toString()) {
-    
-                                                   
-    
+
+
+
                                                     if (requestEmail.accepted == 1) {
                                                         var status1 = {
                                                             status: 1,
@@ -2802,42 +2805,42 @@ exports.yesBasket = async (req, res, next) => {
                                                         statusByEmail.push(status2)
                                                     }
                                                 }
-                                            }else{
+                                            } else {
                                                 const findThumbData = findThumb.userId
-                                            const originalData = requestEmail.userId
+                                                const originalData = requestEmail.userId
 
-                                            if (originalData.toString() == findThumbData.toString()) {
+                                                if (originalData.toString() == findThumbData.toString()) {
 
-                                               
 
-                                                if (requestEmail.accepted == 1) {
-                                                    var status1 = {
-                                                        status: 1,
-                                                        email: requestEmail.requestedEmail,
-                                                        firstName: findThumbUp.firstName,
-                                                        profile: findThumbUp.photo[0] ? findThumbUp.photo[0].res : "",
-                                                        thumbUp: findThumb.thumbUp,
-                                                        thumbDown: findThumb.thumbDown,
-                                                        thumbUpStatus: 0,
-                                                        thumbDownStatus: 0
+
+                                                    if (requestEmail.accepted == 1) {
+                                                        var status1 = {
+                                                            status: 1,
+                                                            email: requestEmail.requestedEmail,
+                                                            firstName: findThumbUp.firstName,
+                                                            profile: findThumbUp.photo[0] ? findThumbUp.photo[0].res : "",
+                                                            thumbUp: findThumb.thumbUp,
+                                                            thumbDown: findThumb.thumbDown,
+                                                            thumbUpStatus: 0,
+                                                            thumbDownStatus: 0
+                                                        }
+                                                        statusByEmail.push(status1)
+                                                    } else {
+                                                        var status2 = {
+                                                            status: 2,
+                                                            email: requestEmail.requestedEmail,
+                                                            firstName: findThumbUp.firstName,
+                                                            profile: findThumbUp.photo[0] ? findThumbUp.photo[0].res : "",
+                                                            thumbUp: findThumb.thumbUp,
+                                                            thumbDown: findThumb.thumbDown,
+                                                            thumbUpStatus: 0,
+                                                            thumbDownStatus: 0
+                                                        }
+                                                        statusByEmail.push(status2)
                                                     }
-                                                    statusByEmail.push(status1)
-                                                } else {
-                                                    var status2 = {
-                                                        status: 2,
-                                                        email: requestEmail.requestedEmail,
-                                                        firstName: findThumbUp.firstName,
-                                                        profile: findThumbUp.photo[0] ? findThumbUp.photo[0].res : "",
-                                                        thumbUp: findThumb.thumbUp,
-                                                        thumbDown: findThumb.thumbDown,
-                                                        thumbUpStatus: 0,
-                                                        thumbDownStatus: 0
-                                                    }
-                                                    statusByEmail.push(status2)
                                                 }
                                             }
-                                            }
-                                            
+
                                         }
 
                                     }
@@ -2850,7 +2853,7 @@ exports.yesBasket = async (req, res, next) => {
                         const finalStatus = []
                         for (const [key, finalData] of meageAllTable.entries()) {
 
-                            console.log("finalData" , finalData); 
+                            console.log("finalData", finalData);
                             for (const [key, final1Data] of statusByEmail.entries())
                                 if (finalData.email === final1Data.email) {
                                     const response = {
@@ -2872,10 +2875,10 @@ exports.yesBasket = async (req, res, next) => {
                                     user2: req.params.user_id
                                 }]
                             })
-        
-        
-                            console.log("findAllUserWithIchat1" , findAllUserWithIchat1);
-        
+
+
+                            console.log("findAllUserWithIchat1", findAllUserWithIchat1);
+
                             const findAllUserWithIchat2 = await chatRoomModel.findOne({
                                 $and: [{
                                     user1: req.params.user_id
@@ -2885,98 +2888,10 @@ exports.yesBasket = async (req, res, next) => {
                             })
 
 
-                          
-                            if(findAllUserWithIchat1){
-                                
-                            if(finalStatus[key].status == 2){
-                                const responses = {
-                                    _id: finalData._id,
-                                    // polyDating: finalData.polyDating,
-                                    // HowDoYouPoly: finalData.HowDoYouPoly,
-                                    // loveToGive: finalData.loveToGive,
-                                    // polyRelationship: finalData.polyRelationship,
-                                    firstName: finalData.firstName,
-                                    email: finalData.email,
-                                    profile: finalData.photo[0] ? finalData.photo[0].res : "",
-                                    // relationshipSatus: finalData.relationshipSatus,
-                                    // Bio: finalData.Bio,
-                                    // hopingToFind: finalData.hopingToFind,
-                                    // jobTitle: finalData.jobTitle,
-                                    // wantChildren: finalData.wantChildren,
-                                    // posts_data: finalData.posts,
-                                    statusAndTumbCount: finalStatus[key]
-                                }
-                                const response = {
-                                    _id: finalData._id,
-                                    // polyDating: finalData.polyDating,
-                                    // HowDoYouPoly: finalData.HowDoYouPoly,
-                                    // loveToGive: finalData.loveToGive,
-                                    // polyRelationship: finalData.polyRelationship,
-                                    firstName: finalData.firstName,
-                                    email: finalData.email,
-                                    profile: finalData.photo[0] ? finalData.photo[0].res : "",
-                                    // relationshipSatus: finalData.relationshipSatus,
-                                    // Bio: finalData.Bio,
-                                    // hopingToFind: finalData.hopingToFind,
-                                    // jobTitle: finalData.jobTitle,
-                                    // wantChildren: finalData.wantChildren,
-                                    // posts_data: finalData.posts,
-                                    status: responses.statusAndTumbCount.status,
-                                    thumbUp: responses.statusAndTumbCount.thumbUp,
-                                    thumbDown: responses.statusAndTumbCount.thumbDown,
-                                    thumbUpStatus:responses.statusAndTumbCount.thumbUpStatus,
-                                    thumbDownStatus:responses.statusAndTumbCount.thumbDownStatus
-                                }
-    
-                                final_data.push(response);
-                            }else{
-                                const responses = {
-                                    _id: finalData._id,
-                                    chatRoomId: findAllUserWithIchat1._id,
-                                    // polyDating: finalData.polyDating,
-                                    // HowDoYouPoly: finalData.HowDoYouPoly,
-                                    // loveToGive: finalData.loveToGive,
-                                    // polyRelationship: finalData.polyRelationship,
-                                    firstName: finalData.firstName,
-                                    email: finalData.email,
-                                    profile: finalData.photo[0] ? finalData.photo[0].res : "",
-                                    // relationshipSatus: finalData.relationshipSatus,
-                                    // Bio: finalData.Bio,
-                                    // hopingToFind: finalData.hopingToFind,
-                                    // jobTitle: finalData.jobTitle,
-                                    // wantChildren: finalData.wantChildren,
-                                    // posts_data: finalData.posts,
-                                    statusAndTumbCount: finalStatus[key]
-                                }
-                                const response = {
-                                    _id: finalData._id,
-                                    chatRoomId: responses.chatRoomId,
-                                    // polyDating: finalData.polyDating,
-                                    // HowDoYouPoly: finalData.HowDoYouPoly,
-                                    // loveToGive: finalData.loveToGive,
-                                    // polyRelationship: finalData.polyRelationship,
-                                    firstName: finalData.firstName,
-                                    email: finalData.email,
-                                    profile: finalData.photo[0] ? finalData.photo[0].res : "",
-                                    // relationshipSatus: finalData.relationshipSatus,
-                                    // Bio: finalData.Bio,
-                                    // hopingToFind: finalData.hopingToFind,
-                                    // jobTitle: finalData.jobTitle,
-                                    // wantChildren: finalData.wantChildren,
-                                    // posts_data: finalData.posts,
-                                    status: responses.statusAndTumbCount.status,
-                                    thumbUp: responses.statusAndTumbCount.thumbUp,
-                                    thumbDown: responses.statusAndTumbCount.thumbDown,
-                                    thumbUpStatus:responses.statusAndTumbCount.thumbUpStatus,
-                                    thumbDownStatus:responses.statusAndTumbCount.thumbDownStatus
-                                }
-    
-                                final_data.push(response);
-                            }
-                                
-                            }else{
 
-                                if(finalStatus[key].status == 2){
+                            if (findAllUserWithIchat1) {
+
+                                if (finalStatus[key].status == 2) {
                                     const responses = {
                                         _id: finalData._id,
                                         // polyDating: finalData.polyDating,
@@ -3012,12 +2927,100 @@ exports.yesBasket = async (req, res, next) => {
                                         status: responses.statusAndTumbCount.status,
                                         thumbUp: responses.statusAndTumbCount.thumbUp,
                                         thumbDown: responses.statusAndTumbCount.thumbDown,
-                                        thumbUpStatus:responses.statusAndTumbCount.thumbUpStatus,
-                                        thumbDownStatus:responses.statusAndTumbCount.thumbDownStatus
+                                        thumbUpStatus: responses.statusAndTumbCount.thumbUpStatus,
+                                        thumbDownStatus: responses.statusAndTumbCount.thumbDownStatus
                                     }
-        
+
                                     final_data.push(response);
-                                }else{
+                                } else {
+                                    const responses = {
+                                        _id: finalData._id,
+                                        chatRoomId: findAllUserWithIchat1._id,
+                                        // polyDating: finalData.polyDating,
+                                        // HowDoYouPoly: finalData.HowDoYouPoly,
+                                        // loveToGive: finalData.loveToGive,
+                                        // polyRelationship: finalData.polyRelationship,
+                                        firstName: finalData.firstName,
+                                        email: finalData.email,
+                                        profile: finalData.photo[0] ? finalData.photo[0].res : "",
+                                        // relationshipSatus: finalData.relationshipSatus,
+                                        // Bio: finalData.Bio,
+                                        // hopingToFind: finalData.hopingToFind,
+                                        // jobTitle: finalData.jobTitle,
+                                        // wantChildren: finalData.wantChildren,
+                                        // posts_data: finalData.posts,
+                                        statusAndTumbCount: finalStatus[key]
+                                    }
+                                    const response = {
+                                        _id: finalData._id,
+                                        chatRoomId: responses.chatRoomId,
+                                        // polyDating: finalData.polyDating,
+                                        // HowDoYouPoly: finalData.HowDoYouPoly,
+                                        // loveToGive: finalData.loveToGive,
+                                        // polyRelationship: finalData.polyRelationship,
+                                        firstName: finalData.firstName,
+                                        email: finalData.email,
+                                        profile: finalData.photo[0] ? finalData.photo[0].res : "",
+                                        // relationshipSatus: finalData.relationshipSatus,
+                                        // Bio: finalData.Bio,
+                                        // hopingToFind: finalData.hopingToFind,
+                                        // jobTitle: finalData.jobTitle,
+                                        // wantChildren: finalData.wantChildren,
+                                        // posts_data: finalData.posts,
+                                        status: responses.statusAndTumbCount.status,
+                                        thumbUp: responses.statusAndTumbCount.thumbUp,
+                                        thumbDown: responses.statusAndTumbCount.thumbDown,
+                                        thumbUpStatus: responses.statusAndTumbCount.thumbUpStatus,
+                                        thumbDownStatus: responses.statusAndTumbCount.thumbDownStatus
+                                    }
+
+                                    final_data.push(response);
+                                }
+
+                            } else {
+
+                                if (finalStatus[key].status == 2) {
+                                    const responses = {
+                                        _id: finalData._id,
+                                        // polyDating: finalData.polyDating,
+                                        // HowDoYouPoly: finalData.HowDoYouPoly,
+                                        // loveToGive: finalData.loveToGive,
+                                        // polyRelationship: finalData.polyRelationship,
+                                        firstName: finalData.firstName,
+                                        email: finalData.email,
+                                        profile: finalData.photo[0] ? finalData.photo[0].res : "",
+                                        // relationshipSatus: finalData.relationshipSatus,
+                                        // Bio: finalData.Bio,
+                                        // hopingToFind: finalData.hopingToFind,
+                                        // jobTitle: finalData.jobTitle,
+                                        // wantChildren: finalData.wantChildren,
+                                        // posts_data: finalData.posts,
+                                        statusAndTumbCount: finalStatus[key]
+                                    }
+                                    const response = {
+                                        _id: finalData._id,
+                                        // polyDating: finalData.polyDating,
+                                        // HowDoYouPoly: finalData.HowDoYouPoly,
+                                        // loveToGive: finalData.loveToGive,
+                                        // polyRelationship: finalData.polyRelationship,
+                                        firstName: finalData.firstName,
+                                        email: finalData.email,
+                                        profile: finalData.photo[0] ? finalData.photo[0].res : "",
+                                        // relationshipSatus: finalData.relationshipSatus,
+                                        // Bio: finalData.Bio,
+                                        // hopingToFind: finalData.hopingToFind,
+                                        // jobTitle: finalData.jobTitle,
+                                        // wantChildren: finalData.wantChildren,
+                                        // posts_data: finalData.posts,
+                                        status: responses.statusAndTumbCount.status,
+                                        thumbUp: responses.statusAndTumbCount.thumbUp,
+                                        thumbDown: responses.statusAndTumbCount.thumbDown,
+                                        thumbUpStatus: responses.statusAndTumbCount.thumbUpStatus,
+                                        thumbDownStatus: responses.statusAndTumbCount.thumbDownStatus
+                                    }
+
+                                    final_data.push(response);
+                                } else {
                                     const responses = {
                                         _id: finalData._id,
                                         chatRoomId: findAllUserWithIchat2._id,
@@ -3055,15 +3058,15 @@ exports.yesBasket = async (req, res, next) => {
                                         status: responses.statusAndTumbCount.status,
                                         thumbUp: responses.statusAndTumbCount.thumbUp,
                                         thumbDown: responses.statusAndTumbCount.thumbDown,
-                                        thumbUpStatus:responses.statusAndTumbCount.thumbUpStatus,
-                                        thumbDownStatus:responses.statusAndTumbCount.thumbDownStatus
+                                        thumbUpStatus: responses.statusAndTumbCount.thumbUpStatus,
+                                        thumbDownStatus: responses.statusAndTumbCount.thumbDownStatus
                                     }
-        
+
                                     final_data.push(response);
                                 }
-                               
+
                             }
-                            
+
                         }
 
 
@@ -3169,15 +3172,15 @@ exports.yesBasket = async (req, res, next) => {
                             for (const findThumb of findThumbUp.yesBasket) {
 
                                 const findInThumbUp = await thumbUpModel.findOne({
-                                    adminUserId : req.params.user_id,
+                                    adminUserId: req.params.user_id,
                                     "thumbDetail.reqUserId": req.params.request_user_id,
                                     "thumbDetail.userId": findThumb.userId
                                 })
 
-                                if(findInThumbUp){
+                                if (findInThumbUp) {
                                     const findThumbData = findThumb.userId
                                     const orginalData = getOriginalData._id
-    
+
                                     if (orginalData.toString() == findThumbData.toString()) {
                                         const response = {
                                             _id: getOriginalData._id,
@@ -3188,13 +3191,13 @@ exports.yesBasket = async (req, res, next) => {
                                             thumbUp: findThumb.thumbUp,
                                             thumbUpStatus: 1
                                         }
-    
+
                                         responseData.push(response);
                                     }
-                                }else{
+                                } else {
                                     const findThumbData = findThumb.userId
                                     const orginalData = getOriginalData._id
-    
+
                                     if (orginalData.toString() == findThumbData.toString()) {
                                         const response = {
                                             _id: getOriginalData._id,
@@ -3205,11 +3208,11 @@ exports.yesBasket = async (req, res, next) => {
                                             thumbUp: findThumb.thumbUp,
                                             thumbUpStatus: 0
                                         }
-    
+
                                         responseData.push(response);
                                     }
                                 }
-                                
+
                             }
 
                         }
@@ -3246,15 +3249,15 @@ exports.yesBasket = async (req, res, next) => {
                             for (const findThumb of findThumbUp.yesBasket) {
 
                                 const findInThumbUp = await thumbUpModel.findOne({
-                                    adminUserId : req.params.user_id,
+                                    adminUserId: req.params.user_id,
                                     "thumbDetail.reqUserId": req.params.request_user_id,
                                     "thumbDetail.userId": findThumb.userId
                                 })
 
-                                if(findInThumbUp){
+                                if (findInThumbUp) {
                                     const findThumbData = findThumb.userId
                                     const orginalData = getOriginalData._id
-    
+
                                     if (orginalData.toString() == findThumbData.toString()) {
                                         const response = {
                                             _id: getOriginalData._id,
@@ -3263,15 +3266,15 @@ exports.yesBasket = async (req, res, next) => {
                                             profile: getOriginalData.photo[0] ? getOriginalData.photo[0].res : "",
                                             status: 3,
                                             thumbUp: findThumb.thumbUp,
-                                            thumbUpStatus:1
+                                            thumbUpStatus: 1
                                         }
-    
+
                                         UniqueEmail.push(response);
                                     }
-                                }else{
+                                } else {
                                     const findThumbData = findThumb.userId
                                     const orginalData = getOriginalData._id
-    
+
                                     if (orginalData.toString() == findThumbData.toString()) {
                                         const response = {
                                             _id: getOriginalData._id,
@@ -3280,13 +3283,13 @@ exports.yesBasket = async (req, res, next) => {
                                             profile: getOriginalData.photo[0] ? getOriginalData.photo[0].res : "",
                                             status: 3,
                                             thumbUp: findThumb.thumbUp,
-                                            thumbUpStatus:0
+                                            thumbUpStatus: 0
                                         }
-    
+
                                         UniqueEmail.push(response);
                                     }
                                 }
-                                
+
                             }
 
                         }
@@ -3394,14 +3397,14 @@ exports.yesBasket = async (req, res, next) => {
 
 
                                             const findInThumbUp = await thumbUpModel.findOne({
-                                                adminUserId : req.params.user_id,
+                                                adminUserId: req.params.user_id,
                                                 "thumbDetail.reqUserId": req.params.request_user_id,
                                                 "thumbDetail.userId": findThumb.userId
                                             })
-                                            if(findInThumbUp){
+                                            if (findInThumbUp) {
                                                 const findThumbData = findThumb.userId
                                                 const originalData = requestEmail.userId
-    
+
                                                 if (originalData.toString() == findThumbData.toString()) {
                                                     if (requestEmail.accepted == 1) {
                                                         var status1 = {
@@ -3420,15 +3423,15 @@ exports.yesBasket = async (req, res, next) => {
                                                             firstName: findThumbUp.firstName,
                                                             profile: findThumbUp.photo[0] ? findThumbUp.photo[0].res : "",
                                                             thumbUp: findThumb.thumbUp,
-                                                            thumbUpStatus:1
+                                                            thumbUpStatus: 1
                                                         }
                                                         statusByEmail.push(status2)
                                                     }
                                                 }
-                                            }else{
+                                            } else {
                                                 const findThumbData = findThumb.userId
                                                 const originalData = requestEmail.userId
-    
+
                                                 if (originalData.toString() == findThumbData.toString()) {
                                                     if (requestEmail.accepted == 1) {
                                                         var status1 = {
@@ -3447,14 +3450,14 @@ exports.yesBasket = async (req, res, next) => {
                                                             firstName: findThumbUp.firstName,
                                                             profile: findThumbUp.photo[0] ? findThumbUp.photo[0].res : "",
                                                             thumbUp: findThumb.thumbUp,
-                                                            thumbUpStatus:0
+                                                            thumbUpStatus: 0
                                                         }
                                                         statusByEmail.push(status2)
                                                     }
                                                 }
                                             }
 
-                                           
+
                                         }
                                     }
                                 }
@@ -3484,10 +3487,10 @@ exports.yesBasket = async (req, res, next) => {
                                     user2: req.params.user_id
                                 }]
                             })
-        
-        
-                            console.log("findAllUserWithIchat1" , findAllUserWithIchat1);
-        
+
+
+                            console.log("findAllUserWithIchat1", findAllUserWithIchat1);
+
                             const findAllUserWithIchat2 = await chatRoomModel.findOne({
                                 $and: [{
                                     user1: req.params.user_id
@@ -3496,9 +3499,9 @@ exports.yesBasket = async (req, res, next) => {
                                 }]
                             })
 
-                            if(findAllUserWithIchat1){
+                            if (findAllUserWithIchat1) {
 
-                                if(finalStatus[key].status == 2){
+                                if (finalStatus[key].status == 2) {
                                     const responses = {
                                         _id: finalData._id,
                                         // polyDating: finalData.polyDating,
@@ -3535,9 +3538,9 @@ exports.yesBasket = async (req, res, next) => {
                                         thumbUp: responses.statusAndTumbCount.thumbUp,
                                         thumbUpStatus: responses.statusAndTumbCount.thumbUpStatus
                                     }
-        
+
                                     final_data.push(response);
-                                }else{
+                                } else {
                                     const responses = {
                                         _id: finalData._id,
                                         chatRoomId: findAllUserWithIchat1._id,
@@ -3576,13 +3579,13 @@ exports.yesBasket = async (req, res, next) => {
                                         thumbUp: responses.statusAndTumbCount.thumbUp,
                                         thumbUpStatus: responses.statusAndTumbCount.thumbUpStatus
                                     }
-        
+
                                     final_data.push(response);
                                 }
-                              
-                            }else{
 
-                                if(finalStatus[key].status == 2){
+                            } else {
+
+                                if (finalStatus[key].status == 2) {
                                     const responses = {
                                         _id: finalData._id,
                                         // polyDating: finalData.polyDating,
@@ -3619,9 +3622,9 @@ exports.yesBasket = async (req, res, next) => {
                                         thumbUp: responses.statusAndTumbCount.thumbUp,
                                         thumbUpStatus: responses.statusAndTumbCount.thumbUpStatus
                                     }
-        
+
                                     final_data.push(response);
-                                }else{
+                                } else {
                                     const responses = {
                                         _id: finalData._id,
                                         chatRoomId: findAllUserWithIchat2._id,
@@ -3660,10 +3663,10 @@ exports.yesBasket = async (req, res, next) => {
                                         thumbUp: responses.statusAndTumbCount.thumbUp,
                                         thumbUpStatus: responses.statusAndTumbCount.thumbUpStatus
                                     }
-        
+
                                     final_data.push(response);
                                 }
-                               
+
                             }
                         }
 
@@ -3776,21 +3779,21 @@ exports.noBasket = async (req, res, next) => {
                             for (const findThumb of findThumbUp.noBasket) {
 
                                 const findInThumbUp = await thumbUpModel.findOne({
-                                    adminUserId : req.params.user_id,
+                                    adminUserId: req.params.user_id,
                                     "thumbDetail.reqUserId": req.params.request_user_id,
                                     "thumbDetail.userId": findThumb.userId
                                 })
 
                                 const findInThumbDown = await thumbDownModel.findOne({
-                                    adminUserId : req.params.user_id,
+                                    adminUserId: req.params.user_id,
                                     "thumbDetail.reqUserId": req.params.request_user_id,
                                     "thumbDetail.userId": findThumb.userId
                                 })
 
-                                if(findInThumbUp){
+                                if (findInThumbUp) {
                                     const findThumbData = findThumb.userId
                                     const orginalData = getOriginalData._id
-    
+
                                     if (orginalData.toString() == findThumbData.toString()) {
                                         const response = {
                                             _id: getOriginalData._id,
@@ -3803,16 +3806,16 @@ exports.noBasket = async (req, res, next) => {
                                             thumbUpStatus: 1,
                                             thumbDownStatus: 0
                                         }
-    
-    
+
+
                                         responseData.push(response);
                                     }
 
-                                }else if(findInThumbDown){
+                                } else if (findInThumbDown) {
 
                                     const findThumbData = findThumb.userId
                                     const orginalData = getOriginalData._id
-    
+
                                     if (orginalData.toString() == findThumbData.toString()) {
                                         const response = {
                                             _id: getOriginalData._id,
@@ -3825,14 +3828,14 @@ exports.noBasket = async (req, res, next) => {
                                             thumbUpStatus: 0,
                                             thumbDownStatus: 1
                                         }
-    
-    
+
+
                                         responseData.push(response);
                                     }
-                                }else{
+                                } else {
                                     const findThumbData = findThumb.userId
                                     const orginalData = getOriginalData._id
-    
+
                                     if (orginalData.toString() == findThumbData.toString()) {
                                         const response = {
                                             _id: getOriginalData._id,
@@ -3845,13 +3848,13 @@ exports.noBasket = async (req, res, next) => {
                                             thumbUpStatus: 0,
                                             thumbDownStatus: 0
                                         }
-    
-    
+
+
                                         responseData.push(response);
                                     }
 
                                 }
-                               
+
                             }
 
 
@@ -3895,22 +3898,22 @@ exports.noBasket = async (req, res, next) => {
 
 
                                 const findInThumbUp = await thumbUpModel.findOne({
-                                    adminUserId : req.params.user_id,
+                                    adminUserId: req.params.user_id,
                                     "thumbDetail.reqUserId": req.params.request_user_id,
                                     "thumbDetail.userId": findThumb.userId
                                 })
 
                                 const findInThumbDown = await thumbDownModel.findOne({
-                                    adminUserId : req.params.user_id,
+                                    adminUserId: req.params.user_id,
                                     "thumbDetail.reqUserId": req.params.request_user_id,
                                     "thumbDetail.userId": findThumb.userId
                                 })
 
-                                if(findInThumbUp){
+                                if (findInThumbUp) {
 
                                     const findThumbData = findThumb.userId
                                     const orginalData = getOriginalData._id
-    
+
                                     if (orginalData.toString() == findThumbData.toString()) {
                                         const response = {
                                             _id: getOriginalData._id,
@@ -3923,14 +3926,14 @@ exports.noBasket = async (req, res, next) => {
                                             thumbUpStatus: 1,
                                             thumbDownStatus: 0
                                         }
-    
+
                                         UniqueEmail.push(response);
                                     }
-                                }else if(findInThumbDown){
+                                } else if (findInThumbDown) {
 
                                     const findThumbData = findThumb.userId
                                     const orginalData = getOriginalData._id
-    
+
                                     if (orginalData.toString() == findThumbData.toString()) {
                                         const response = {
                                             _id: getOriginalData._id,
@@ -3943,14 +3946,14 @@ exports.noBasket = async (req, res, next) => {
                                             thumbUpStatus: 0,
                                             thumbDownStatus: 1
                                         }
-    
+
                                         UniqueEmail.push(response);
                                     }
-                                }else{
+                                } else {
 
                                     const findThumbData = findThumb.userId
                                     const orginalData = getOriginalData._id
-    
+
                                     if (orginalData.toString() == findThumbData.toString()) {
                                         const response = {
                                             _id: getOriginalData._id,
@@ -3963,11 +3966,11 @@ exports.noBasket = async (req, res, next) => {
                                             thumbUpStatus: 0,
                                             thumbDownStatus: 0
                                         }
-    
+
                                         UniqueEmail.push(response);
                                     }
                                 }
-                               
+
                             }
 
 
@@ -4088,22 +4091,22 @@ exports.noBasket = async (req, res, next) => {
                                         for (const findThumb of findThumbUp.noBasket) {
 
                                             const findInThumbUp = await thumbUpModel.findOne({
-                                                adminUserId : req.params.user_id,
+                                                adminUserId: req.params.user_id,
                                                 "thumbDetail.reqUserId": req.params.request_user_id,
                                                 "thumbDetail.userId": findThumb.userId
                                             })
-    
+
                                             const findInThumbDown = await thumbDownModel.findOne({
-                                                adminUserId : req.params.user_id,
+                                                adminUserId: req.params.user_id,
                                                 "thumbDetail.reqUserId": req.params.request_user_id,
                                                 "thumbDetail.userId": findThumb.userId
                                             })
-    
-                                            if(findInThumbUp){
-    
+
+                                            if (findInThumbUp) {
+
                                                 const findThumbData = findThumb.userId
                                                 const originalData = requestEmail.userId
-    
+
                                                 if (originalData.toString() == findThumbData.toString()) {
                                                     if (requestEmail.accepted == 1) {
                                                         var status1 = {
@@ -4132,11 +4135,11 @@ exports.noBasket = async (req, res, next) => {
                                                         statusByEmail.push(status2)
                                                     }
                                                 }
-                                            }else if(findInThumbDown){
-    
+                                            } else if (findInThumbDown) {
+
                                                 const findThumbData = findThumb.userId
                                                 const originalData = requestEmail.userId
-    
+
                                                 if (originalData.toString() == findThumbData.toString()) {
                                                     if (requestEmail.accepted == 1) {
                                                         var status1 = {
@@ -4164,11 +4167,11 @@ exports.noBasket = async (req, res, next) => {
                                                         statusByEmail.push(status2)
                                                     }
                                                 }
-                                            }else{
-    
+                                            } else {
+
                                                 const findThumbData = findThumb.userId
                                                 const originalData = requestEmail.userId
-    
+
                                                 if (originalData.toString() == findThumbData.toString()) {
                                                     if (requestEmail.accepted == 1) {
                                                         var status1 = {
@@ -4198,7 +4201,7 @@ exports.noBasket = async (req, res, next) => {
                                                 }
                                             }
 
-                                          
+
                                         }
 
                                     }
@@ -4259,8 +4262,8 @@ exports.noBasket = async (req, res, next) => {
                                 status: responses.statusAndTumbCount.status,
                                 thumbUp: responses.statusAndTumbCount.thumbUp,
                                 thumbDown: responses.statusAndTumbCount.thumbDown,
-                                thumbUpStatus:responses.statusAndTumbCount.thumbUpStatus,
-                                thumbDownStatus:responses.statusAndTumbCount.thumbDownStatus
+                                thumbUpStatus: responses.statusAndTumbCount.thumbUpStatus,
+                                thumbDownStatus: responses.statusAndTumbCount.thumbDownStatus
                             }
 
                             final_data.push(response);
@@ -4367,17 +4370,17 @@ exports.noBasket = async (req, res, next) => {
                         for (const getOriginalData of finalData) {
 
                             for (const findThumb of findThumbUp.noBasket) {
-                             
+
                                 const findInThumbUp = await thumbUpModel.findOne({
-                                    adminUserId : req.params.user_id,
+                                    adminUserId: req.params.user_id,
                                     "thumbDetail.reqUserId": req.params.request_user_id,
                                     "thumbDetail.userId": findThumb.userId
                                 })
 
-                                if(findInThumbUp){
+                                if (findInThumbUp) {
                                     const findThumbData = findThumb.userId
                                     const orginalData = getOriginalData._id
-    
+
                                     if (orginalData.toString() == findThumbData.toString()) {
                                         const response = {
                                             _id: getOriginalData._id,
@@ -4388,13 +4391,13 @@ exports.noBasket = async (req, res, next) => {
                                             thumbUp: findThumb.thumbUp,
                                             thumbUpStatus: 1,
                                         }
-    
+
                                         responseData.push(response);
                                     }
-                                }else{
+                                } else {
                                     const findThumbData = findThumb.userId
                                     const orginalData = getOriginalData._id
-    
+
                                     if (orginalData.toString() == findThumbData.toString()) {
                                         const response = {
                                             _id: getOriginalData._id,
@@ -4405,11 +4408,11 @@ exports.noBasket = async (req, res, next) => {
                                             thumbUp: findThumb.thumbUp,
                                             thumbUpStatus: 0,
                                         }
-    
+
                                         responseData.push(response);
                                     }
                                 }
-                                
+
                             }
 
                         }
@@ -4446,15 +4449,15 @@ exports.noBasket = async (req, res, next) => {
                             for (const findThumb of findThumbUp.noBasket) {
 
                                 const findInThumbUp = await thumbUpModel.findOne({
-                                    adminUserId : req.params.user_id,
+                                    adminUserId: req.params.user_id,
                                     "thumbDetail.reqUserId": req.params.request_user_id,
                                     "thumbDetail.userId": findThumb.userId
                                 })
 
-                                if(findInThumbUp){
+                                if (findInThumbUp) {
                                     const findThumbData = findThumb.userId
                                     const orginalData = getOriginalData._id
-    
+
                                     if (orginalData.toString() == findThumbData.toString()) {
                                         const response = {
                                             _id: getOriginalData._id,
@@ -4465,13 +4468,13 @@ exports.noBasket = async (req, res, next) => {
                                             thumbUp: findThumb.thumbUp,
                                             thumbUpStatus: 1,
                                         }
-    
+
                                         UniqueEmail.push(response);
                                     }
-                                }else{
+                                } else {
                                     const findThumbData = findThumb.userId
                                     const orginalData = getOriginalData._id
-    
+
                                     if (orginalData.toString() == findThumbData.toString()) {
                                         const response = {
                                             _id: getOriginalData._id,
@@ -4482,11 +4485,11 @@ exports.noBasket = async (req, res, next) => {
                                             thumbUp: findThumb.thumbUp,
                                             thumbUpStatus: 0,
                                         }
-    
+
                                         UniqueEmail.push(response);
                                     }
                                 }
-                                
+
                             }
 
                         }
@@ -4594,15 +4597,15 @@ exports.noBasket = async (req, res, next) => {
 
 
                                             const findInThumbUp = await thumbUpModel.findOne({
-                                                adminUserId : req.params.user_id,
+                                                adminUserId: req.params.user_id,
                                                 "thumbDetail.reqUserId": req.params.request_user_id,
                                                 "thumbDetail.userId": findThumb.userId
                                             })
 
-                                            if(findInThumbUp){
+                                            if (findInThumbUp) {
                                                 const findThumbData = findThumb.userId
                                                 const originalData = requestEmail.userId
-    
+
                                                 if (originalData.toString() == findThumbData.toString()) {
                                                     if (requestEmail.accepted == 1) {
                                                         var status1 = {
@@ -4626,10 +4629,10 @@ exports.noBasket = async (req, res, next) => {
                                                         statusByEmail.push(status2)
                                                     }
                                                 }
-                                            }else{
+                                            } else {
                                                 const findThumbData = findThumb.userId
                                                 const originalData = requestEmail.userId
-    
+
                                                 if (originalData.toString() == findThumbData.toString()) {
                                                     if (requestEmail.accepted == 1) {
                                                         var status1 = {
@@ -4654,7 +4657,7 @@ exports.noBasket = async (req, res, next) => {
                                                     }
                                                 }
                                             }
-                                          
+
                                         }
                                     }
                                 }
@@ -4711,7 +4714,7 @@ exports.noBasket = async (req, res, next) => {
                                 // posts_data: finalData.posts,
                                 status: responses.statusAndTumbCount.status,
                                 thumbUp: responses.statusAndTumbCount.thumbUp,
-                                thumbUpStatus:responses.statusAndTumbCount.thumbUpStatus,
+                                thumbUpStatus: responses.statusAndTumbCount.thumbUpStatus,
 
                             }
 
@@ -4754,7 +4757,7 @@ exports.moveBasket = async (req, res, next) => {
             _id: req.params.user_id
         })
 
-        if(findUser){
+        if (findUser) {
 
             const findYesBasketUser = await userModel.findOne({
                 _id: req.params.user_id,
@@ -4766,84 +4769,84 @@ exports.moveBasket = async (req, res, next) => {
                 "noBasket.userId": req.params.request_user_id
             })
 
-            console.log("findYesBasketUser" , findYesBasketUser);
-            console.log("findNoBasketUser" , findNoBasketUser);
+            console.log("findYesBasketUser", findYesBasketUser);
+            console.log("findNoBasketUser", findNoBasketUser);
 
-           if(findYesBasketUser){
-            console.log("xcasdfwef");
-            const yesData = [];
-            for(const dataFind of findYesBasketUser.yesBasket){
-                console.log("dataFind");
+            if (findYesBasketUser) {
+                console.log("xcasdfwef");
+                const yesData = [];
+                for (const dataFind of findYesBasketUser.yesBasket) {
+                    console.log("dataFind");
 
-                if((dataFind.userId).toString() == (req.params.request_user_id).toString()){
-                    yesData.push(dataFind)
-                }
-            }
-
-           await userModel.updateOne(
-                {
-                    _id: req.params.user_id
-                },
-                {
-                    $pull: {
-                        yesBasket: {
-                            userId: req.params.request_user_id
-                        }
+                    if ((dataFind.userId).toString() == (req.params.request_user_id).toString()) {
+                        yesData.push(dataFind)
                     }
-                });
+                }
+
+                await userModel.updateOne(
+                    {
+                        _id: req.params.user_id
+                    },
+                    {
+                        $pull: {
+                            yesBasket: {
+                                userId: req.params.request_user_id
+                            }
+                        }
+                    });
 
 
-            await userModel.updateOne(
+                await userModel.updateOne(
                     {
                         _id: req.params.user_id
                     },
                     {
                         $push: {
-                            noBasket:{
+                            noBasket: {
                                 match: yesData[0].match,
                                 userId: yesData[0].userId,
                                 thumbUp: yesData[0].thumbUp,
-                                thumbDown:yesData[0].thumbDown,
+                                thumbDown: yesData[0].thumbDown,
                             }
-                          
+
                         }
                     });
 
 
-        res.status(status.OK).json(
-            new APIResponse("move in no basket", true, 200 , "1")
-        );
+                res.status(status.OK).json(
+                    new APIResponse("move in no basket", true, 200, "1")
+                );
 
-           }else if(findNoBasketUser){
+            } else if (findNoBasketUser) {
 
-            const noData = [];
-
-           
-            for(const dataFind of findNoBasketUser.noBasket){
-               
-                console.log("dataFind" , dataFind);
-
-                if((dataFind.userId).toString() == (req.params.request_user_id).toString()){
-                    noData.push(dataFind)
-                }
-            }
+                const noData = [];
 
 
-            
-           await userModel.updateOne(
-                {
-                    _id: req.params.user_id
-                },
-                {
-                    $pull: {
-                        noBasket: {
-                            userId: req.params.request_user_id
-                        }
+                for (const dataFind of findNoBasketUser.noBasket) {
+
+                    console.log("dataFind", dataFind);
+
+                    if ((dataFind.userId).toString() == (req.params.request_user_id).toString()) {
+                        noData.push(dataFind)
                     }
-                });
+                }
 
 
-            await userModel.updateOne(
+
+                await userModel.updateOne(
+                    {
+                        _id: req.params.user_id
+                    },
+                    {
+                        $pull: {
+                            noBasket: {
+                                userId: req.params.request_user_id
+                            }
+                        }
+                    });
+
+
+                await userModel.updateOne(
                     {
                         _id: req.params.user_id,
 
@@ -4854,28 +4857,28 @@ exports.moveBasket = async (req, res, next) => {
                                 match: noData[0].match,
                                 userId: noData[0].userId,
                                 thumbUp: noData[0].thumbUp,
-                                thumbDown:noData[0].thumbDown,
+                                thumbDown: noData[0].thumbDown,
                             }
-                          
+
                         }
                     });
 
-                    res.status(status.OK).json(
-                        new APIResponse("move in yes basket", true, 200 , "1")
-                    );
+                res.status(status.OK).json(
+                    new APIResponse("move in yes basket", true, 200, "1")
+                );
 
-           }else{
-            res.status(status.NOT_FOUND).json(
-                new APIResponse("not in basket", false, 404 ,"0")
-            );
-           }
+            } else {
+                res.status(status.NOT_FOUND).json(
+                    new APIResponse("not in basket", false, 404, "0")
+                );
+            }
 
-        }else{
+        } else {
             res.status(status.NOT_FOUND).json(
-                new APIResponse("User not found", false, 404 , "0")
+                new APIResponse("User not found", false, 404, "0")
             );
         }
-    
+
     } catch (error) {
         console.log("Error:", error);
         res.status(status.INTERNAL_SERVER_ERROR).json(
