@@ -4914,12 +4914,15 @@ exports.getAllNotification = async (req, res, next) => {
                             _id: getNotification.userId
                         })
 
+                        const data = new Date(getNotification.createdAt).toString().split(" ")
+                        console.log(data);
                         const response = {
                             _id: getNotification.userId,
                             notification: getNotification.notifications,
                             name: findUserDetail.firstName,
                             profile: findUserDetail.photo[0] ? findUserDetail.photo[0].res : "",
-                            status: getNotification.status
+                            status: getNotification.status,
+                            time: `${data[0]} ${data[1]} ${data[2]} ${data[3]} ${data[4]}`
                         }
                         allNotification.push(response)
 
@@ -4936,7 +4939,7 @@ exports.getAllNotification = async (req, res, next) => {
                 }
 
                 res.status(status.OK).json(
-                    new APIResponse("show all notification", "true", 200, "1", allNotification)
+                    new APIResponse("show all notification", "true", 200, "1", allNotification.reverse())
                 );
 
             }

@@ -18,6 +18,7 @@ exports.getAllNotification = async (req, res, next) => {
             const findUserInNotificationModel = await notificationModel.findOne({
                 userId: req.params.user_id
             })
+
             if (findUserInNotificationModel == null) {
                 res.status(status.NOT_FOUND).json(
                     new APIResponse("User not have any Notification..!", "false", 404, "0")
@@ -30,12 +31,15 @@ exports.getAllNotification = async (req, res, next) => {
                             _id: getNotification.userId
                         })
 
+                        console.log("getNotification", getNotification.createdAt);
                         const response = {
                             _id: getNotification.userId,
                             notification: getNotification.notifications,
                             name: findUserDetail.firstName,
-                            profile: finduserDetail.photo[0] ? findUserDetail.photo[0].res : ""
+                            profile: findUserDetail.photo[0] ? findUserDetail.photo[0].res : "",
+                            // time: 
                         }
+
                         allNotification.push(response)
 
                     } else {
@@ -50,8 +54,9 @@ exports.getAllNotification = async (req, res, next) => {
                     }
                 }
 
+
                 res.status(status.OK).json(
-                    new APIResponse("show all notification", "true", 200, "1", allNotification)
+                    new APIResponse("show all notification", "true", 200, "1", arr1)
                 );
 
             }
