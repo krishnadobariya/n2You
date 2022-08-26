@@ -50,7 +50,7 @@ exports.getUserWithChat = async (req, res, next) => {
         const endIndex = page * limit;
 
         const chat = findRoom.chat;
-        for (const finalchat of chat.slice(startIndex, endIndex)) {
+        for (const finalchat of chat) {
             const response = {
                 _id: finalchat.sender,
                 text: finalchat.text,
@@ -61,7 +61,7 @@ exports.getUserWithChat = async (req, res, next) => {
             allChat.push(response)
         }
         res.status(status.OK).json(
-            new APIResponse("show all record with chat", "true", 201, "1", allChat)
+            new APIResponse("show all record with chat", "true", 201, "1", startIndex ? allChat.slice(startIndex, endIndex) : allChat)
         )
 
     } catch (error) {
