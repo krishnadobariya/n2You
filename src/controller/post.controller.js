@@ -1456,7 +1456,7 @@ exports.getPostsImagesbyUseId = async (req, res, next) => {
 
                         } else {
                             const getExt1Name = path.extname(postwithType.res);
-                            if (getExt1Name != ".mp4" || getExt1Name != ".mov" || getExt1Name != ".avi" || getExt1Name != ".wmv" || getExt1Name != ".m3u8" || getExt1Name != ".webm" || getExt1Name != ".flv" || getExt1Name != ".ts" || getExt1Name != ".3gp") {
+                            if (getExt1Name == ".jpeg" || getExt1Name == ".jpg" || getExt1Name == ".png" || getExt1Name == ".apng" || getExt1Name == ".avif" || getExt1Name == ".gif" || getExt1Name == ".svg+xml" || getExt1Name == ".webp") {
                                 post.push({
                                     res: postwithType.res,
                                     type: "image"
@@ -1469,7 +1469,7 @@ exports.getPostsImagesbyUseId = async (req, res, next) => {
 
                     } else {
                         const getExtName = path.extname(createResponse.post[0].res);
-                        if (getExtName != ".mp4" || getExtName != ".mov" || getExtName != ".avi" || getExtName != ".wmv" || getExtName != ".m3u8" || getExtName != ".webm" || getExtName != ".flv" || getExtName != ".ts" || getExtName != ".3gp") {
+                        if (getExtName == ".jpeg" || getExtName == ".jpg" || getExtName == ".png" || getExtName == ".apng" || getExtName == ".avif" || getExtName == ".gif" || getExtName == ".svg+xml" || getExtName == ".webp") {
 
                             datetime = createResponse.createdAt;
 
