@@ -250,54 +250,60 @@ exports.addPostImages = async (req, res, next) => {
 
 
                 const allRequestEmail = [];
-                for (const postData of findAllEmail.RequestedEmails) {
-                    if (postData.accepted == 1) {
-                        allRequestEmail.push(postData.userId)
+                console.log("allRequestEmail" , allRequestEmail);
+                if(allRequestEmail[0] == undefined){
+
+                }else{
+                    for (const postData of findAllEmail.RequestedEmails) {
+                        if (postData.accepted == 1) {
+                            allRequestEmail.push(postData.userId)
+                        }
                     }
-                }
-
-                console.log("allRequestEmail", allRequestEmail);
-
-                for (const sendNotification of allRequestEmail) {
-
-                    const findNotification = await notificationModel.findOne({
-                        userId: sendNotification
-                    })
-
-                    const findUser = await userModal.findOne({
-                        _id: req.params.id
-                    }).select("firstName")
-
-                    if (findNotification) {
-
-                        await notificationModel.updateOne({
+    
+                    console.log("allRequestEmail", allRequestEmail);
+    
+                    for (const sendNotification of allRequestEmail) {
+    
+                        const findNotification = await notificationModel.findOne({
                             userId: sendNotification
-                        },
-                            {
-                                $push: {
-                                    notifications: {
-                                        userId: req.params.id,
-                                        notifications: `${findUser.firstName} add post`,
-                                        status: 6
+                        })
+    
+                        const findUser = await userModal.findOne({
+                            _id: req.params.id
+                        }).select("firstName")
+    
+                        if (findNotification) {
+    
+                            await notificationModel.updateOne({
+                                userId: sendNotification
+                            },
+                                {
+                                    $push: {
+                                        notifications: {
+                                            userId: req.params.id,
+                                            notifications: `${findUser.firstName} add post`,
+                                            status: 6
+                                        }
                                     }
                                 }
-                            }
-                        )
-
-                    } else {
-
-                        const dataSave = notificationModel({
-                            userId: sendNotification,
-                            notifications: {
-                                userId: req.params.id,
-                                notifications: `${findUser.firstName} add post`,
-                                status: 6
-                            }
-                        })
-
-                        await dataSave.save();
+                            )
+    
+                        } else {
+    
+                            const dataSave = notificationModel({
+                                userId: sendNotification,
+                                notifications: {
+                                    userId: req.params.id,
+                                    notifications: `${findUser.firstName} add post`,
+                                    status: 6
+                                }
+                            })
+    
+                            await dataSave.save();
+                        }
                     }
                 }
+           
 
 
                 const saveData = await posts.save();
@@ -329,56 +335,61 @@ exports.addPostImages = async (req, res, next) => {
 
 
                 const allRequestEmail = [];
-                for (const postData of findAllEmail.RequestedEmails) {
-                    if (postData.accepted == 1) {
-                        allRequestEmail.push(postData.userId)
+                if(allRequestEmail[0] == undefined){
+
+                }else{
+                    for (const postData of findAllEmail.RequestedEmails) {
+                        if (postData.accepted == 1) {
+                            allRequestEmail.push(postData.userId)
+                        }
                     }
-                }
-                console.log("allRequestEmail", allRequestEmail);
-
-                for (const sendNotification of allRequestEmail) {
-
-                    const findNotification = await notificationModel.findOne({
-                        userId: sendNotification
-                    })
-
-                    console.log(findNotification);
-
-                    const findUser = await userModal.findOne({
-                        _id: req.params.id
-                    }).select("firstName")
-
-                    if (findNotification) {
-
-                        await notificationModel.updateOne(
-                            {
-                                userId: sendNotification,
-                            },
-                            {
-                                $push: {
-                                    notifications: {
-                                        userId: req.params.id,
-                                        notifications: `${findUser.firstName} add post`,
-                                        status: 6
+                    console.log("allRequestEmail", allRequestEmail);
+    
+                    for (const sendNotification of allRequestEmail) {
+    
+                        const findNotification = await notificationModel.findOne({
+                            userId: sendNotification
+                        })
+    
+                        console.log(findNotification);
+    
+                        const findUser = await userModal.findOne({
+                            _id: req.params.id
+                        }).select("firstName")
+    
+                        if (findNotification) {
+    
+                            await notificationModel.updateOne(
+                                {
+                                    userId: sendNotification,
+                                },
+                                {
+                                    $push: {
+                                        notifications: {
+                                            userId: req.params.id,
+                                            notifications: `${findUser.firstName} add post`,
+                                            status: 6
+                                        }
                                     }
                                 }
-                            }
-                        )
-
-                    } else {
-
-                        const dataSave = notificationModel({
-                            userId: sendNotification,
-                            notifications: {
-                                userId: req.params.id,
-                                notifications: `${findUser.firstName} add post`,
-                                status: 6
-                            }
-                        })
-
-                        await dataSave.save();
+                            )
+    
+                        } else {
+    
+                            const dataSave = notificationModel({
+                                userId: sendNotification,
+                                notifications: {
+                                    userId: req.params.id,
+                                    notifications: `${findUser.firstName} add post`,
+                                    status: 6
+                                }
+                            })
+    
+                            await dataSave.save();
+                        }
                     }
                 }
+             
 
                 res.status(status.OK).json(
                     new APIResponse("Post added successfully!", "true", 201, "1", finalData)
