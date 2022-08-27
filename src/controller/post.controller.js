@@ -470,7 +470,7 @@ exports.getPostById = async (req, res, next) => {
 
                             } else {
                                 const getExt1Name = path.extname(postwithType.res);
-                                if (getExt1Name != ".mp4") {
+                                if (getExt1Name != ".mp4" || ".MOV" || ".avi" || ".wmv" || ".m3u8" || ".webm" || ".flv" || ".ts" || ".3gp") {
                                     post.push({
                                         res: postwithType.res,
                                         type: "image"
