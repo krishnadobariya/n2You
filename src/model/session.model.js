@@ -29,10 +29,6 @@ const sessionSchema = mongoose.Schema({
             type: mongoose.Schema.Types.ObjectId,
             ref: 'User',
         },
-        participants_4: {
-            type: mongoose.Schema.Types.ObjectId,
-            ref: 'User',
-        }
     }],
     RoomType: {
         type: String
