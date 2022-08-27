@@ -7,24 +7,41 @@ const e = require("express");
 exports.sessionCreate = async (req, res, next) => {
     try {
 
-        const createSession = sessionModel({
-            selectedDate: req.body.selected_date,
-            selectedTime: req.body.selected_time,
-            cretedSessionUser: req.body.creted_session_user,
-            participants: {
-                participants_1: req.body.participants_1 ? req.body.participants_1 : null,
-                participants_2: req.body.participants_2 ? req.body.participants_2 : null,
-                participants_3: req.body.participants_3 ? req.body.participants_3 : null,
-                participants_4: req.body.participants_4 ? req.body.participants_4 : null
-            },
-            RoomType: req.body.room_type
-        })
+const findUserInUserModel = await userModel.findOne({
+    _id : req.body.creted_session_user
+})
 
-        const saveData = await createSession.save();
+if(findUserInUserModel){
 
-        res.status(status.CREATED).json(
-            new APIResponse("successfully Session Created!", "true", 201, "1", saveData)
-        )
+    const date = new Date(req.body.selected_date)
+    let hours = date.getHours();
+    let ampm = hours >= 12 ? 'pm' : 'am';
+    hours = hours % 12;
+    hours = hours ? hours : 12;
+    let strTime = hours + ' ' + ampm;
+    const createSession = sessionModel({
+        selectedDate: req.body.selected_date,
+        selectedTime: strTime,
+        cretedSessionUser: req.body.creted_session_user,
+        participants: {
+            participants_1: req.body.participants_1 ? req.body.participants_1 : null,
+            participants_2: req.body.participants_2 ? req.body.participants_2 : null,
+            participants_3: req.body.participants_3 ? req.body.participants_3 : null,
+        },
+        RoomType: req.body.room_type
+    })
+
+    const saveData = await createSession.save();
+
+    res.status(status.CREATED).json(
+        new APIResponse("successfully Session Created!", "true", 201, "1", saveData)
+    )
+}else{
+    res.status(status.NOT_FOUND).json(
+        new APIResponse("usernot found!", "false", 404, "0")
+    )
+}
+        
 
     } catch (error) {
         console.log("error", error);
@@ -73,30 +90,21 @@ exports.publicSession = async (req, res, next) => {
                     _id: publicSessionwithUserDetails.participants[0].participants_3,
                     polyDating: 0
                 })
-                const participants4Find = await userModel.findOne({
-                    _id: publicSessionwithUserDetails.participants[0].participants_4,
-                    polyDating: 0
-                })
 
                 const participants_1 = {
-                    _id: participants1Find ? participants1Find._id : " ",
-                    name: participants1Find ? participants1Find.firstName : " ",
-                    profile: participants1Find ? participants1Find.photo ? participants1Find.photo[0].res : " " : " ",
+                    _id: participants1Find ? participants1Find._id : "",
+                    name: participants1Find ? participants1Find.firstName : "",
+                    profile: participants1Find ? participants1Find.photo[0] ? participants1Find.photo[0].res : "" : "",
                 }
                 const participants_2 = {
-                    _id: participants2Find ? participants2Find._id : " ",
-                    name: participants2Find ? participants2Find.firstName : " ",
-                    profile: participants2Find ? participants2Find.photo ? participants2Find.photo[0].res : " " : " ",
+                    _id: participants2Find ? participants2Find._id : "",
+                    name: participants2Find ? participants2Find.firstName : "",
+                    profile: participants2Find ? participants2Find.photo[0] ? participants2Find.photo[0].res : "" : "",
                 }
                 const participants_3 = {
-                    _id: participants3Find ? participants3Find._id : " ",
-                    name: participants3Find ? participants3Find.firstName : " ",
-                    profile: participants3Find ? participants3Find.photo ? participants3Find.photo[0].res : " " : " ",
-                }
-                const participants_4 = {
-                    _id: participants4Find ? participants4Find._id : " ",
-                    name: participants4Find ? participants4Find.firstName : " ",
-                    profile: participants4Find ? participants4Find.photo ? participants4Find.photo[0].res : " " : " ",
+                    _id: participants3Find ? participants3Find._id : "",
+                    name: participants3Find ? participants3Find.firstName : "",
+                    profile: participants3Find ? participants3Find.photo [0]? participants3Find.photo[0].res : "" : "",
                 }
 
                 const userDetail = findUser.firstName
@@ -112,7 +120,6 @@ exports.publicSession = async (req, res, next) => {
                     participants_1: participants_1,
                     participants_2: participants_2,
                     participants_3: participants_3,
-                    participants_4: participants_4,
                 }
                 const response = {
                     sessionDetail
@@ -120,8 +127,13 @@ exports.publicSession = async (req, res, next) => {
                 publicSession.push(response)
             }
 
+            const page = parseInt(req.query.page)
+            const limit = parseInt(req.query.limit)
+            const startIndex = (page - 1) * limit;
+            const endIndex = page * limit;
+
             res.status(status.OK).json(
-                new APIResponse("successfully Show All Public Session!", "true", 200, "1", publicSession)
+                new APIResponse("successfully Show All Public Session!", "true", 200, "1", publicSession.slice(startIndex,endIndex).sort((a, b) => new Date(a.sessionDetail.selectedDate) - new Date(b.sessionDetail.selectedDate)))
             )
 
 
@@ -168,20 +180,25 @@ exports.invitedInSession = async (req, res, next) => {
                 })
 
                 const createdSessionUserDetail = {
+                    _id: createdSessionUser._id,
                     cretedSessionUserName: createdSessionUser.firstName,
                     RoomType: findInvited.RoomType,
+                    isLive: findInvited.isLive,
                     selectedTime: findInvited.selectedTime,
                     selectedDate: findInvited.selectedDate,
                     photo: createdSessionUser.photo,
                     participants: [{
-                        photo: participants_2 == null ? " " : participants_2.photo ? participants_2.photo[0].res : null,
-                        name: participants_2 == null ? " " : participants_2.firstName
+                        _id: participants_2 == null ? "" : participants_2._id,
+                        photo: participants_2 == null ? "" : participants_2.photo ? participants_2.photo[0].res : null,
+                        name: participants_2 == null ? "" : participants_2.firstName
                     }, {
-                        photo: participants_3 == null ? " " : participants_3.photo,
-                        name: participants_3 == null ? " " : participants_3.firstName
+                        _id: participants_3 == null ? "" : participants_2._id,
+                        photo: participants_3 == null ? "" : participants_3.photo,
+                        name: participants_3 == null ? "" : participants_3.firstName
                     }, {
-                        photo: participants_4 == null ? " " : participants_4.photo,
-                        name: participants_4 == null ? " " : participants_4.firstName
+                        _id: participants_4 == null ? "" : participants_2._id,
+                        photo: participants_4 == null ? "" : participants_4.photo,
+                        name: participants_4 == null ? "" : participants_4.firstName
                     }]
                 }
                 allInvited.push(createdSessionUserDetail)
@@ -206,20 +223,25 @@ exports.invitedInSession = async (req, res, next) => {
                 })
 
                 const createdSessionUserDetail = {
+                    _id:createdSessionUser._id,
                     cretedSessionUserName: createdSessionUser.firstName,
                     RoomType: findInvited.RoomType,
+                    isLive: findInvited.isLive,
                     selectedTime: findInvited.selectedTime,
                     selectedDate: findInvited.selectedDate,
                     photo: createdSessionUser.photo,
                     participants: [{
-                        photo: participants_1 == null ? " " : participants_1.photo,
-                        name: participants_1 == null ? " " : participants_1.firstName
+                        _id: participants_1 == null ? "" : participants_1._id,
+                        photo: participants_1 == null ? "" : participants_1.photo,
+                        name: participants_1 == null ? "" : participants_1.firstName
                     }, {
-                        photo: participants_3 == null ? " " : participants_3.photo,
-                        name: participants_3 == null ? " " : participants_3.firstName
+                        _id: participants_3 == null ? "" : participants_3._id,
+                        photo: participants_3 == null ? "" : participants_3.photo,
+                        name: participants_3 == null ? "" : participants_3.firstName
                     }, {
-                        photo: participants_4 == null ? " " : participants_4.photo,
-                        name: participants_4 == null ? " " : participants_4.firstName
+                        _id: participants_4 == null ? "" : participants_4._id,
+                        photo: participants_4 == null ? "" : participants_4.photo,
+                        name: participants_4 == null ? "" : participants_4.firstName
                     }]
                 }
                 allInvited.push(createdSessionUserDetail)
@@ -242,20 +264,25 @@ exports.invitedInSession = async (req, res, next) => {
                 })
 
                 const createdSessionUserDetail = {
+                    _id:createdSessionUser._id,
                     cretedSessionUserName: createdSessionUser.firstName,
+                    isLive: findInvited.isLive,
                     RoomType: findInvited.RoomType,
                     selectedTime: findInvited.selectedTime,
                     selectedDate: findInvited.selectedDate,
                     photo: createdSessionUser.photo,
                     participants: [{
-                        photo: participants_1 == null ? " " : participants_1.photo,
-                        name: participants_1 == null ? " " : participants_1.firstName
+                        _id: participants_1 == null ? "" : participants_1._id,
+                        photo: participants_1 == null ? "" : participants_1.photo,
+                        name: participants_1 == null ? "" : participants_1.firstName
                     }, {
-                        photo: participants_2 == null ? " " : participants_2.photo,
-                        name: participants_2 == null ? " " : participants_2.firstName
+                        _id: participants_2 == null ? "" : participants_2._id,
+                        photo: participants_2 == null ? "" : participants_2.photo,
+                        name: participants_2 == null ? "" : participants_2.firstName
                     }, {
-                        photo: participants_4 == null ? " " : participants_4.photo,
-                        name: participants_4 == null ? " " : participants_4.firstName
+                        _id: participants_4 == null ? "" : participants_4._id,
+                        photo: participants_4 == null ? "" : participants_4.photo,
+                        name: participants_4 == null ? "" : participants_4.firstName
                     }]
                 }
                 allInvited.push(createdSessionUserDetail)
@@ -278,25 +305,36 @@ exports.invitedInSession = async (req, res, next) => {
                 })
 
                 const createdSessionUserDetail = {
+                    _id: createdSessionUser._id,
                     cretedSessionUserName: createdSessionUser.firstName,
                     RoomType: findInvited.RoomType,
+                    isLive: findInvited.isLive,
                     selectedTime: findInvited.selectedTime,
                     selectedDate: findInvited.selectedDate,
-                    photo: createdSessionuser.photo[0] ? createdSessionUser.photo[0].res : null,
+                    photo: createdSessionUser.photo[0] ? createdSessionUser.photo[0].res : null,
                     participants: [{
-                        photo: participants_1 == null ? " " : participants_1.photo,
-                        name: participants_1 == null ? " " : participants_1.firstName
+                        _id: participants_1 == null ? "" : participants_1._id,
+                        photo: participants_1 == null ? "" : participants_1.photo,
+                        name: participants_1 == null ? "" : participants_1.firstName
                     }, {
-                        photo: participants_2 == null ? " " : participants_2.photo,
-                        name: participants_2 == null ? " " : participants_2.firstName
+                        _id: participants_2 == null ? "" : participants_2._id,
+                        photo: participants_2 == null ? "" : participants_2.photo,
+                        name: participants_2 == null ? "" : participants_2.firstName
                     }, {
-                        photo: participants_3 == null ? " " : participants_3.photo,
-                        name: participants_3 == null ? " " : participants_3.firstName
+                        _id: participants_3 == null ? "" : participants_3._id,
+                        photo: participants_3 == null ? "" : participants_3.photo,
+                        name: participants_3 == null ? "" : participants_3.firstName
                     }]
                 }
                 allInvited.push(createdSessionUserDetail)
             }
         }
+
+        const page = parseInt(req.query.page)
+        const limit = parseInt(req.query.limit)
+        const startIndex = (page - 1) * limit;
+        const endIndex = page * limit;
+
 
         if (allInvited[0] == undefined) {
             res.status(status.NOT_FOUND).json(
@@ -304,7 +342,7 @@ exports.invitedInSession = async (req, res, next) => {
             )
         } else {
             res.status(status.OK).json(
-                new APIResponse("successfully Show All Invited Session!", "true", 200, "1", allInvited)
+                new APIResponse("successfully Show All Invited Session!", "true", 200, "1", allInvited.slice(startIndex,endIndex).sort((a, b) => new Date(a.selectedDate) - new Date(b.selectedDate)))
             )
         }
 
@@ -347,41 +385,44 @@ exports.mySession = async (req, res, next) => {
                 _id: findMySession.participants[0].participants_3,
                 polyDating: 0
             })
-            const findParticipantsiUserDeatil4 = await userModel.findOne({
-                _id: findMySession.participants[0].participants_4,
-                polyDating: 0
-            })
 
             console.log("findUserDeatil", findUserDeatil);
             const response = {
+                _id: findMySession._id,
                 selectedTime: findMySession.selectedTime,
                 selectedDate: findMySession.selectedDate,
+                isLive: findMySession.isLive,
                 RoomType: findMySession.RoomType,
                 cretedSessionUser: {
-                    photo: findUserDeatil.photo ? findUserDeatil.photo[0].res : null,
-                    name: findUserDeatil.firstName
+                    _id: findUserDeatil ? findUserDeatil._id : "",
+                    photo: findUserDeatil.photo ? findUserDeatil.photo[0] ?  findUserDeatil.photo[0].res: "" : "",
+                    name: findUserDeatil? findUserDeatil.firstName: ""
                 },
                 participants_1: {
-                    photo: findParticipantsiUserDeatil1 == null ? " " : findParticipantsiUserDeatil1.photo ? findParticipantsiUserDeatil1.photo[0].res : " ",
-                    name: findParticipantsiUserDeatil1 == null ? " " : findParticipantsiUserDeatil1.firstName
+                    _id: findParticipantsiUserDeatil1 ? findParticipantsiUserDeatil1._id : "",
+                    photo: findParticipantsiUserDeatil1 == null ? "" : findParticipantsiUserDeatil1.photo[0] ? findParticipantsiUserDeatil1.photo[0].res : "",
+                    name: findParticipantsiUserDeatil1 == null ? "" : findParticipantsiUserDeatil1.firstName
                 },
                 participants_2: {
-                    photo: findParticipantsiUserDeatil2 == null ? " " : findParticipantsiUserDeatil2.photo ? findParticipantsiUserDeatil2.photo[0].res : " ",
+                    _id: findParticipantsiUserDeatil2 ? findParticipantsiUserDeatil2._id : "",
+                    photo: findParticipantsiUserDeatil2 == null ? "" : findParticipantsiUserDeatil2.photo[0] ? findParticipantsiUserDeatil2.photo[0].res : "",
                     name: findParticipantsiUserDeatil2 == null ? " " : findParticipantsiUserDeatil2.firstName
                 },
                 participants_3: {
-                    photo: findParticipantsiUserDeatil3 == null ? " " : findParticipantsiUserDeatil3.photo ? findParticipantsiUserDeatil3.photo[0].res : " ",
-                    name: findParticipantsiUserDeatil3 == null ? " " : findParticipantsiUserDeatil3.firstName
-                },
-                participants_4: {
-                    photo: findParticipantsiUserDeatil4 == null ? " " : findParticipantsiUserDeatil4.photo ? findParticipantsiUserDeatil4.photo[0].res : " ",
-                    name: findParticipantsiUserDeatil4 == null ? " " : findParticipantsiUserDeatil4.firstName
+                    _id: findParticipantsiUserDeatil3 ? findParticipantsiUserDeatil3._id : "",
+                    photo: findParticipantsiUserDeatil3 == null ? " " : findParticipantsiUserDeatil3.photo[0] ? findParticipantsiUserDeatil3.photo[0].res : "",
+                    name: findParticipantsiUserDeatil3 == null ? "" : findParticipantsiUserDeatil3.firstName
                 }
+              
             }
 
             mySession.push(response)
 
         }
+        const page = parseInt(req.query.page)
+        const limit = parseInt(req.query.limit)
+        const startIndex = (page - 1) * limit;
+        const endIndex = page * limit;
 
 
         if (mySession[0] == undefined) {
@@ -390,7 +431,7 @@ exports.mySession = async (req, res, next) => {
             )
         } else {
             res.status(status.OK).json(
-                new APIResponse("successfully Show All My Session!", "true", 200, "1", mySession)
+                new APIResponse("successfully Show All My Session!", "true", 200, "1", mySession.slice(startIndex,endIndex).sort((a, b) => new Date(a.selectedDate) - new Date(b.selectedDate)))
             )
         }
 
