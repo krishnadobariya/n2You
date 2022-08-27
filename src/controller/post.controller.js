@@ -60,52 +60,57 @@ exports.addPostVideo = async (req, res, next) => {
 
 
                 const allRequestEmail = [];
-                for (const postData of findAllEmail.RequestedEmails) {
-                    if (postData.accepted == 1) {
-                        allRequestEmail.push(postData.userId)
+                if (allRequestEmail[0] == undefined) {
+
+                } else {
+                    for (const postData of findAllEmail.RequestedEmails) {
+                        if (postData.accepted == 1) {
+                            allRequestEmail.push(postData.userId)
+                        }
                     }
-                }
 
-                for (const sendNotification of allRequestEmail) {
+                    for (const sendNotification of allRequestEmail) {
 
-                    const findNotification = await notificationModel.findOne({
-                        userId: sendNotification
-                    })
-
-                    const findUser = await userModal.findOne({
-                        _id: req.params.id
-                    }).select("firstName")
-
-                    if (findNotification) {
-
-                        await notificationModel.updateOne({
+                        const findNotification = await notificationModel.findOne({
                             userId: sendNotification
-                        },
-                            {
-                                $push: {
-                                    notifications: {
-                                        userId: req.params.id,
-                                        notifications: `${findUser.firstName} add post`,
-                                        status: 6
-                                    }
-                                }
-                            }
-                        )
-
-                    } else {
-
-                        const dataSave = notificationModel({
-                            userId: sendNotification,
-                            notifications: {
-                                userId: req.params.id,
-                                notifications: `${findUser.firstName} add post`,
-                                status: 6
-                            }
                         })
 
-                        await dataSave.save();
+                        const findUser = await userModal.findOne({
+                            _id: req.params.id
+                        }).select("firstName")
+
+                        if (findNotification) {
+
+                            await notificationModel.updateOne({
+                                userId: sendNotification
+                            },
+                                {
+                                    $push: {
+                                        notifications: {
+                                            userId: req.params.id,
+                                            notifications: `${findUser.firstName} add post`,
+                                            status: 6
+                                        }
+                                    }
+                                }
+                            )
+
+                        } else {
+
+                            const dataSave = notificationModel({
+                                userId: sendNotification,
+                                notifications: {
+                                    userId: req.params.id,
+                                    notifications: `${findUser.firstName} add post`,
+                                    status: 6
+                                }
+                            })
+
+                            await dataSave.save();
+                        }
                     }
                 }
+
 
                 res.status(status.CREATED).json(
                     new APIResponse("Posts Inserted successfully!", "true", 201, "1", saveData)
@@ -135,52 +140,59 @@ exports.addPostVideo = async (req, res, next) => {
                 })
 
 
+
                 const allRequestEmail = [];
-                for (const postData of findAllEmail.RequestedEmails) {
-                    if (postData.accepted == 1) {
-                        allRequestEmail.push(postData.userId)
+
+                if (allRequestEmail[0] == undefined) {
+
+                } else {
+                    for (const postData of findAllEmail.RequestedEmails) {
+                        if (postData.accepted == 1) {
+                            allRequestEmail.push(postData.userId)
+                        }
                     }
-                }
 
-                for (const sendNotification of allRequestEmail) {
+                    for (const sendNotification of allRequestEmail) {
 
-                    const findNotification = await notificationModel.findOne({
-                        userId: sendNotification
-                    })
-
-                    const findUser = await userModal.findOne({
-                        _id: req.params.id
-                    }).select("firstName")
-
-                    if (findNotification) {
-
-                        await notificationModel.updateOne({
+                        const findNotification = await notificationModel.findOne({
                             userId: sendNotification
-                        },
-                            {
-                                $push: {
-                                    notifications: {
-                                        userId: req.params.id,
-                                        notifications: `${findUser.firstName} add post`,
-                                        status: 6
-                                    }
-                                }
-                            }
-                        )
-
-                    } else {
-
-                        const dataSave = notificationModel({
-                            userId: sendNotification,
-                            notifications: {
-                                userId: req.params.id,
-                                notifications: `${findUser.firstName} add post`,
-                                status: 6
-                            }
                         })
 
-                        await dataSave.save();
+                        const findUser = await userModal.findOne({
+                            _id: req.params.id
+                        }).select("firstName")
+
+                        if (findNotification) {
+
+                            await notificationModel.updateOne({
+                                userId: sendNotification
+                            },
+                                {
+                                    $push: {
+                                        notifications: {
+                                            userId: req.params.id,
+                                            notifications: `${findUser.firstName} add post`,
+                                            status: 6
+                                        }
+                                    }
+                                }
+                            )
+
+                        } else {
+
+                            const dataSave = notificationModel({
+                                userId: sendNotification,
+                                notifications: {
+                                    userId: req.params.id,
+                                    notifications: `${findUser.firstName} add post`,
+                                    status: 6
+                                }
+                            })
+
+                            await dataSave.save();
+                        }
                     }
+
                 }
 
                 res.status(status.OK).json(
@@ -250,30 +262,30 @@ exports.addPostImages = async (req, res, next) => {
 
 
                 const allRequestEmail = [];
-                console.log("allRequestEmail" , allRequestEmail);
-                if(allRequestEmail[0] == undefined){
+                console.log("allRequestEmail", allRequestEmail);
+                if (allRequestEmail[0] == undefined) {
 
-                }else{
+                } else {
                     for (const postData of findAllEmail.RequestedEmails) {
                         if (postData.accepted == 1) {
                             allRequestEmail.push(postData.userId)
                         }
                     }
-    
+
                     console.log("allRequestEmail", allRequestEmail);
-    
+
                     for (const sendNotification of allRequestEmail) {
-    
+
                         const findNotification = await notificationModel.findOne({
                             userId: sendNotification
                         })
-    
+
                         const findUser = await userModal.findOne({
                             _id: req.params.id
                         }).select("firstName")
-    
+
                         if (findNotification) {
-    
+
                             await notificationModel.updateOne({
                                 userId: sendNotification
                             },
@@ -287,9 +299,9 @@ exports.addPostImages = async (req, res, next) => {
                                     }
                                 }
                             )
-    
+
                         } else {
-    
+
                             const dataSave = notificationModel({
                                 userId: sendNotification,
                                 notifications: {
@@ -298,12 +310,12 @@ exports.addPostImages = async (req, res, next) => {
                                     status: 6
                                 }
                             })
-    
+
                             await dataSave.save();
                         }
                     }
                 }
-           
+
 
 
                 const saveData = await posts.save();
@@ -335,30 +347,30 @@ exports.addPostImages = async (req, res, next) => {
 
 
                 const allRequestEmail = [];
-                if(allRequestEmail[0] == undefined){
+                if (allRequestEmail[0] == undefined) {
 
-                }else{
+                } else {
                     for (const postData of findAllEmail.RequestedEmails) {
                         if (postData.accepted == 1) {
                             allRequestEmail.push(postData.userId)
                         }
                     }
                     console.log("allRequestEmail", allRequestEmail);
-    
+
                     for (const sendNotification of allRequestEmail) {
-    
+
                         const findNotification = await notificationModel.findOne({
                             userId: sendNotification
                         })
-    
+
                         console.log(findNotification);
-    
+
                         const findUser = await userModal.findOne({
                             _id: req.params.id
                         }).select("firstName")
-    
+
                         if (findNotification) {
-    
+
                             await notificationModel.updateOne(
                                 {
                                     userId: sendNotification,
@@ -373,9 +385,9 @@ exports.addPostImages = async (req, res, next) => {
                                     }
                                 }
                             )
-    
+
                         } else {
-    
+
                             const dataSave = notificationModel({
                                 userId: sendNotification,
                                 notifications: {
@@ -384,12 +396,12 @@ exports.addPostImages = async (req, res, next) => {
                                     status: 6
                                 }
                             })
-    
+
                             await dataSave.save();
                         }
                     }
                 }
-             
+
 
                 res.status(status.OK).json(
                     new APIResponse("Post added successfully!", "true", 201, "1", finalData)
