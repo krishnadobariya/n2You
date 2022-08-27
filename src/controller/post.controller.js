@@ -470,7 +470,7 @@ exports.getPostById = async (req, res, next) => {
 
                             } else {
                                 const getExt1Name = path.extname(postwithType.res);
-                                if (getExt1Name != ".mp4" || ".MOV" || ".avi" || ".wmv" || ".m3u8" || ".webm" || ".flv" || ".ts" || ".3gp") {
+                                if (getExt1Name != ".mp4" || ".mov" || ".avi" || ".wmv" || ".m3u8" || ".webm" || ".flv" || ".ts" || ".3gp") {
                                     post.push({
                                         res: postwithType.res,
                                         type: "image"
@@ -1120,7 +1120,7 @@ exports.getPostsVideobyUseId = async (req, res, next) => {
 
                         } else {
                             const getExt1Name = path.extname(postwithType.res);
-                            if (getExt1Name == ".mp4") {
+                            if (getExt1Name == ".mp4" || ".mov" || ".avi" || ".wmv" || ".m3u8" || ".webm" || ".flv" || ".ts" || ".3gp") {
                                 post.push({
                                     res: postwithType.res,
                                     type: "video"
@@ -1131,7 +1131,7 @@ exports.getPostsVideobyUseId = async (req, res, next) => {
 
                     const getExtName = path.extname(createResponse.post[0] ? createResponse.post[0].res : "");
 
-                    if (getExtName == ".mp4") {
+                    if (getExtName == ".mp4" || ".mov" || ".avi" || ".wmv" || ".m3u8" || ".webm" || ".flv" || ".ts" || ".3gp") {
                         datetime = createResponse.createdAt;
 
                         var userPostedDate = new Date(datetime);
@@ -1456,7 +1456,7 @@ exports.getPostsImagesbyUseId = async (req, res, next) => {
 
                         } else {
                             const getExt1Name = path.extname(postwithType.res);
-                            if (getExt1Name != ".mp4") {
+                            if (getExt1Name != ".mp4" || ".mov" || ".avi" || ".wmv" || ".m3u8" || ".webm" || ".flv" || ".ts" || ".3gp") {
                                 post.push({
                                     res: postwithType.res,
                                     type: "image"
@@ -1469,7 +1469,7 @@ exports.getPostsImagesbyUseId = async (req, res, next) => {
 
                     } else {
                         const getExtName = path.extname(createResponse.post[0].res);
-                        if (getExtName != ".mp4") {
+                        if (getExtName != ".mp4" || ".mov" || ".avi" || ".wmv" || ".m3u8" || ".webm" || ".flv" || ".ts" || ".3gp") {
 
                             datetime = createResponse.createdAt;
 
@@ -1989,7 +1989,7 @@ exports.userAllFriendPost = async (req, res, next) => {
 
                                                 } else {
                                                     const getExt1Name = path.extname(postwithType.res);
-                                                    if (getExt1Name != ".mp4") {
+                                                    if (getExt1Name != ".mp4" || ".mov" || ".avi" || ".wmv" || ".m3u8" || ".webm" || ".flv" || ".ts" || ".3gp") {
                                                         post.push({
                                                             post: [
                                                                 {
@@ -2438,7 +2438,7 @@ exports.userAllFriendPost = async (req, res, next) => {
 
                             } else {
                                 const getExt1Name = path.extname(postwithType.res);
-                                if (getExt1Name != ".mp4") {
+                                if (getExt1Name != ".mp4" || ".mov" || ".avi" || ".wmv" || ".m3u8" || ".webm" || ".flv" || ".ts" || ".3gp") {
                                     post.push({
                                         post: [
                                             {
@@ -2854,7 +2854,7 @@ exports.userAllFriendPost = async (req, res, next) => {
 
                             } else {
                                 const getExt1Name = path.extname(postwithType.res);
-                                if (getExt1Name != ".mp4") {
+                                if (getExt1Name != ".mp4" || ".mov" || ".avi" || ".wmv" || ".m3u8" || ".webm" || ".flv" || ".ts" || ".3gp") {
                                     post.push({
                                         post: [
                                             {
