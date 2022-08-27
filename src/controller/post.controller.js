@@ -3168,6 +3168,7 @@ exports.userAllFriendPost = async (req, res, next) => {
                                             like: allPost.like,
                                             comment: allPost.comment,
                                             report: allPost.report,
+                                            createdAt: allPost.createdAt
                                         },
                                         finalPostedTime: data.finalPostedTime, commentData: data.commentData[0] == undefined ? [] : data.commentData, postShowStatus: 1
 
@@ -3188,6 +3189,7 @@ exports.userAllFriendPost = async (req, res, next) => {
                                             like: allPost.like,
                                             comment: allPost.comment,
                                             report: allPost.report,
+                                            createdAt: allPost.createdAt
                                         },
                                         finalPostedTime: data.finalPostedTime, commentData: data.commentData[0] == undefined ? [] : data.commentData, postShowStatus: 0
 
@@ -3226,7 +3228,7 @@ exports.userAllFriendPost = async (req, res, next) => {
             console.log("final_data", final_data);
 
             res.status(status.OK).json(
-                new APIResponse("show all post When accept by the user", "true", 201, "1", final_data)
+                new APIResponse("show all post When accept by the user", "true", 201, "1", final_data.sort((a, b) => b.posts.createdAt - a.posts.createdAt))
             )
         }
 
