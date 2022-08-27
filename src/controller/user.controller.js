@@ -2192,32 +2192,60 @@ exports.getDataUserWise = async (req, res, next) => {
 
             const age = currentDate - birthDate;
 
-            const response = {
-                userId: data[0]._id,
-                polyDating: data[0].polyDating,
-                email: data[0].email,
-                loveToGive: data[0].loveToGive,
-                polyRelationship: data[0].polyRelationship,
-                firstName: data[0].firstName,
-                birthDate: data[0].birthDate,
-                age: age,
-                identity: data[0].identity,
-                relationshipSatus: data[0].relationshipSatus,
-                IntrestedIn: data[0].IntrestedIn,
-                Bio: data[0].Bio,
-                photo: data[0].photo,
-                fcm_token: data[0].fcm_token,
-                hopingToFind: data[0].hopingToFind,
-                longitude: data[0].location.coordinates[0],
-                latitude: data[0].location.coordinates[1],
-                jobTitle: data[0].jobTitle,
-                wantChildren: data[0].wantChildren,
-                countryCode: data[0].countryCode,
-                phoneNumber: data[0].phoneNumber,
-                extraAtrribute: data[0].extraAtrribute,
-                Posts: getAllPosts,
-                friendStatus: statusCode[0]
+            const chatRoomId =  [];
+            const findChatRoomId1 = await chatRoomModel.findOne({
+                user1 : req.params.user_id,
+                user2 : req.params.req_user_id
+            }).select("_id")
+
+            const findChatRoomId2 =  await chatRoomModel.findOne({
+                user1 : req.params.req_user_id,
+                user2 : req.params.user_id
+            }).select("_id")
+
+
+            console.log("findChatRoomId2" , findChatRoomId2);
+            console.log("findChatRoomId1" , findChatRoomId1);
+            if(findChatRoomId1){
+
+                chatRoomId.push(findChatRoomId1._id)
+            }else if(findChatRoomId2){
+
+                chatRoomId.push(findChatRoomId2._id)
+            }else{
+
+                chatRoomId.push()
             }
+          
+                const response = {
+                    userId: data[0]._id,
+                    polyDating: data[0].polyDating,
+                    email: data[0].email,
+                    loveToGive: data[0].loveToGive,
+                    polyRelationship: data[0].polyRelationship,
+                    firstName: data[0].firstName,
+                    birthDate: data[0].birthDate,
+                    age: age,
+                    identity: data[0].identity,
+                    relationshipSatus: data[0].relationshipSatus,
+                    IntrestedIn: data[0].IntrestedIn,
+                    Bio: data[0].Bio,
+                    photo: data[0].photo,
+                    fcm_token: data[0].fcm_token,
+                    hopingToFind: data[0].hopingToFind,
+                    longitude: data[0].location.coordinates[0],
+                    latitude: data[0].location.coordinates[1],
+                    jobTitle: data[0].jobTitle,
+                    wantChildren: data[0].wantChildren,
+                    countryCode: data[0].countryCode,
+                    phoneNumber: data[0].phoneNumber,
+                    extraAtrribute: data[0].extraAtrribute,
+                    Posts: getAllPosts,
+                    friendStatus: statusCode[0],
+                    chatRoomId: chatRoomId[0] == undefined ? "" : chatRoomId[0]
+                }
+        
+
 
 
             res.status(status.OK).json(
