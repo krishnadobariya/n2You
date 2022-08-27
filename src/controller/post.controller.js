@@ -1131,7 +1131,7 @@ exports.getPostsVideobyUseId = async (req, res, next) => {
 
                     const getExtName = path.extname(createResponse.post[0] ? createResponse.post[0].res : "");
 
-                    if (getExt1Name == ".mp4" || getExt1Name == ".mov" || getExt1Name == ".avi" || getExt1Name == ".wmv" || getExt1Name == ".m3u8" || getExt1Name == ".webm" || getExt1Name == ".flv" || getExt1Name == ".ts" || getExt1Name == ".3gp") {
+                    if (getExtName == ".mp4" || getExtName == ".mov" || getExtName == ".avi" || getExtName == ".wmv" || getExtName == ".m3u8" || getExtName == ".webm" || getExtName == ".flv" || getExtName == ".ts" || getExtName == ".3gp") {
                         datetime = createResponse.createdAt;
 
                         var userPostedDate = new Date(datetime);
@@ -1456,7 +1456,7 @@ exports.getPostsImagesbyUseId = async (req, res, next) => {
 
                         } else {
                             const getExt1Name = path.extname(postwithType.res);
-                            if (getExt1Name == ".mp4" || getExt1Name == ".mov" || getExt1Name == ".avi" || getExt1Name == ".wmv" || getExt1Name == ".m3u8" || getExt1Name == ".webm" || getExt1Name == ".flv" || getExt1Name == ".ts" || getExt1Name == ".3gp") {
+                            if (getExt1Name != ".mp4" || getExt1Name != ".mov" || getExt1Name != ".avi" || getExt1Name != ".wmv" || getExt1Name != ".m3u8" || getExt1Name != ".webm" || getExt1Name != ".flv" || getExt1Name != ".ts" || getExt1Name != ".3gp") {
                                 post.push({
                                     res: postwithType.res,
                                     type: "image"
@@ -1469,7 +1469,7 @@ exports.getPostsImagesbyUseId = async (req, res, next) => {
 
                     } else {
                         const getExtName = path.extname(createResponse.post[0].res);
-                        if (getExt1Name == ".mp4" || getExt1Name == ".mov" || getExt1Name == ".avi" || getExt1Name == ".wmv" || getExt1Name == ".m3u8" || getExt1Name == ".webm" || getExt1Name == ".flv" || getExt1Name == ".ts" || getExt1Name == ".3gp") {
+                        if (getExtName != ".mp4" || getExtName != ".mov" || getExtName != ".avi" || getExtName != ".wmv" || getExtName != ".m3u8" || getExtName != ".webm" || getExtName != ".flv" || getExtName != ".ts" || getExtName != ".3gp") {
 
                             datetime = createResponse.createdAt;
 
