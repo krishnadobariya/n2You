@@ -2146,7 +2146,7 @@ exports.getDataUserWise = async (req, res, next) => {
                         getAllPosts.push(response);
                     }
                 }
-            }
+            }   
 
 
 
@@ -2217,6 +2217,12 @@ exports.getDataUserWise = async (req, res, next) => {
                 chatRoomId.push()
             }
           
+            const basketSetting = await basketModel.findOne({
+                userId: req.params.user_id
+            })
+
+            console.log("basketSetting" , basketSetting);
+
                 const response = {
                     userId: data[0]._id,
                     polyDating: data[0].polyDating,
@@ -2242,7 +2248,9 @@ exports.getDataUserWise = async (req, res, next) => {
                     extraAtrribute: data[0].extraAtrribute,
                     Posts: getAllPosts,
                     friendStatus: statusCode[0],
-                    chatRoomId: chatRoomId[0] == undefined ? "" : chatRoomId[0]
+                    chatRoomId: chatRoomId[0] == undefined ? "" : chatRoomId[0],
+                    fullAccess:basketSetting == null ? true : basketSetting.fullAccess,
+                    thumbUpDownAccess:basketSetting == null ? false : basketSetting.thumpsUpAndDown,
                 }
         
 
