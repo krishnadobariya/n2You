@@ -17,11 +17,17 @@ exports.sessionCreate = async (req, res, next) => {
         if (findUserInUserModel) {
 
             const date = new Date(req.body.selected_date)
+            let dates = date.getDate();
+            let month = date.toLocaleString('en-us', { month: 'long' });
+            let year = date.getFullYear();
             let hours = date.getHours();
+            let minutes = date.getMinutes();
             let ampm = hours >= 12 ? 'pm' : 'am';
             hours = hours % 12;
             hours = hours ? hours : 12;
+            minutes = minutes.toString().padStart(2, '0');
             let strTime = hours + ' ' + ampm;
+            let timeSession = 'At' + ' ' + hours + ':' + minutes + ' ' + ampm + ' ' + 'on' + ' ' + month + ' ' + dates + ',' + year;
             const createSession = sessionModel({
                 selectedDate: req.body.selected_date,
                 selectedTime: strTime,
@@ -50,22 +56,22 @@ exports.sessionCreate = async (req, res, next) => {
                 
                 for(const allRequestedEmail of findAllFriend.RequestedEmails){
 
-                    console.log("allRequestedEmail.userId" , allRequestedEmail.userId);
-
                     if(((allRequestedEmail.userId).toString() != (p1).toString()) && ((allRequestedEmail.userId).toString() !=(p2).toString()) && ((allRequestedEmail.userId).toString() !=(p3).toString())){
                         allRequestedEmails.push(allRequestedEmail.userId)
                     }
 
                 }
 
+
+                const invitedUsers = [];
                 if(p1 != ""){
-                    allRequestedEmails.push(mongoose.Types.ObjectId(req.body.participants_1))
+                    invitedUsers.push(mongoose.Types.ObjectId(req.body.participants_1))
                 }
                 if(p2 != ""){
-                    allRequestedEmails.push(mongoose.Types.ObjectId(req.body.participants_2))
+                    invitedUsers.push(mongoose.Types.ObjectId(req.body.participants_2))
                 }
                 if(p3!= ""){
-                    allRequestedEmails.push(mongoose.Types.ObjectId(req.body.participants_3))
+                    invitedUsers.push(mongoose.Types.ObjectId(req.body.participants_3))
                 }
 
 
@@ -81,7 +87,7 @@ exports.sessionCreate = async (req, res, next) => {
                         },{
                             $push: {
                                 notifications : {
-                                    notifications : `${findUserInUserModel.firstName} create session`,
+                                    notifications : `${findUserInUserModel.firstName} create session ${timeSession}`,
                                     userId: findUserInUserModel._id,
                                     status: 8
                                 }
@@ -93,7 +99,43 @@ exports.sessionCreate = async (req, res, next) => {
                         const savedata = notificationModel({
                             userId: notification,
                             notifications : {
-                                notifications : `${findUserInUserModel.firstName} create session`,
+                                notifications : `${findUserInUserModel.firstName} create session ${timeSession}`,
+                                userId: findUserInUserModel._id,
+                                status: 8
+                            }
+                        })
+
+                        await savedata.save();
+
+                    }
+                }
+
+                for(const invitedUser of invitedUsers){
+
+                    const findInNotification = await notificationModel.findOne({
+                        userId: invitedUser
+                    })
+
+                    if(findInNotification){
+
+                        await notificationModel.updateOne({
+                            userId: invitedUser
+                        },{
+                            $push: {
+                                notifications : {
+                                    notifications : `${findUserInUserModel.firstName} invited you in session ${timeSession}`,
+                                    userId: findUserInUserModel._id,
+                                    status: 8
+                                }
+                            }
+                        })
+
+                    }else{
+
+                        const savedata = notificationModel({
+                            userId: notification,
+                            notifications : {
+                                notifications : `${findUserInUserModel.firstName} invited you in session ${timeSession}`,
                                 userId: findUserInUserModel._id,
                                 status: 8
                             }
@@ -135,7 +177,7 @@ exports.sessionCreate = async (req, res, next) => {
                         },{
                             $push: {
                                 notifications : {
-                                    notifications : `${findUserInUserModel.firstName} create session`,
+                                    notifications : `${findUserInUserModel.firstName} invited you in session ${timeSession}`,
                                     userId: findUserInUserModel._id,
                                     status: 8
                                 }
@@ -147,7 +189,7 @@ exports.sessionCreate = async (req, res, next) => {
                         const savedata = notificationModel({
                             userId: notification,
                             notifications : {
-                                notifications : `${findUserInUserModel.firstName} create session`,
+                                notifications : `${findUserInUserModel.firstName} invited you in session ${timeSession}`,
                                 userId: findUserInUserModel._id,
                                 status: 8
                             }
