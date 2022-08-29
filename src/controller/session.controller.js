@@ -3,6 +3,8 @@ const status = require("http-status");
 const sessionModel = require("../model/session.model");
 const userModel = require("../model/user.model");
 const e = require("express");
+const notificationModel = require("../model/polyamorous/notification.model");
+const requestsModel = require("../model/requests.model");
 
 exports.sessionCreate = async (req, res, next) => {
     try {
@@ -31,11 +33,28 @@ exports.sessionCreate = async (req, res, next) => {
                 RoomType: req.body.room_type
             })
 
-            const saveData = await createSession.save();
+            // const saveData = await createSession.save();
 
             res.status(status.CREATED).json(
                 new APIResponse("successfully Session Created!", "true", 201, "1", saveData)
             )
+
+
+            if(req.body.room_type == "public"){
+            
+                const findAllFriend = await requestsModel.findOne({
+                    userId : req.params.creted_session_user
+                })
+                if(findAllFriend){
+
+                }else{
+                    
+                }
+
+            }else{
+
+
+            }
         } else {
             res.status(status.NOT_FOUND).json(
                 new APIResponse("usernot found!", "false", 404, "0")
