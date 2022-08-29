@@ -119,19 +119,20 @@ exports.allUserListWithUnreadCount = async (req, res, next) => {
                 var count = 0;
                 const lastMessage = [];
 
-                console.log("aaaaaaaa");
                 for (const getChat of findRoom.chat) {
 
-
-                    console.log("getChat" , getChat);
-
+                    console.log("getChat", getChat);
                     var count = count + getChat.read;
                     const lastUnreadMessage = {
                         text: getChat.text,
-                        createdAt: getChat.createdAt
+                        createdAt: getChat.createdAt,
+                        dateAndTime: getChat.dateAndTime
                     }
+
+                    console.log("lastUnreadMessage", lastUnreadMessage);
                     lastMessage.push(lastUnreadMessage);
                     const lastValue = lastMessage[lastMessage.length - 1];
+                    console.log("lastValue", lastValue);
                     const response = {
                         chatRoomId: findRoom.chatRoomId,
                         _id: userDetail[0]._id,
@@ -139,6 +140,7 @@ exports.allUserListWithUnreadCount = async (req, res, next) => {
                         lastMessage: lastValue.text,
                         createdAt: lastValue.createdAt,
                         name: userDetail[0].firstName,
+                        dateAndTime: lastValue.dateAndTime,
                         profile: userDetail[0].photo[0] == undefined ? "" : userDetail[0].photo[0].res,
 
                     }
@@ -157,12 +159,13 @@ exports.allUserListWithUnreadCount = async (req, res, next) => {
         const endIndex = page * limit;
 
 
-        console.log("uniqueObjArray" , uniqueObjArray);
+        console.log("uniqueObjArray", uniqueObjArray);
 
-        const data = uniqueObjArray[0].createdAt
-        console.log("date is" , new Date(data));
+        const data = uniqueObjArray[0].dateAndTime
+        console.log(data);
+        console.log("date is", new Date(data));
         res.status(status.OK).json(
-            new APIResponse("all group", true, 200, 1, uniqueObjArray.slice(startIndex, endIndex).sort((a, b) => new Date (a.createdAt) - new Date(b.createdAt)))
+            new APIResponse("all group", true, 200, 1, uniqueObjArray.slice(startIndex, endIndex).sort((a, b) => new Date(b.dateAndTime) - new Date(a.dateAndTime)))
         );
         // getAllChrRoomForPericularUser =
 
