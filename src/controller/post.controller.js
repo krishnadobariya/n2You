@@ -10,6 +10,7 @@ const path = require('path');
 const { log } = require("console");
 const likeModel = require("../model/like.model");
 const notificationModel = require("../model/polyamorous/notification.model");
+const blockUnblockModel = require("../model/blockuser.model");
 
 // Mutiple Videos Upload
 
@@ -262,7 +263,7 @@ exports.addPostImages = async (req, res, next) => {
 
 
                 const allRequestEmail = [];
-        
+
                 if (allRequestEmail[0] == undefined) {
 
                 } else {
@@ -353,7 +354,7 @@ exports.addPostImages = async (req, res, next) => {
                             allRequestEmail.push(postData.userId)
                         }
                     }
-                 
+
 
                     for (const sendNotification of allRequestEmail) {
 
@@ -1888,11 +1889,25 @@ exports.userAllFriendPost = async (req, res, next) => {
             const requestedEmailWitchIsInuserRequeted = [];
             const allData = [];
 
-            allRequestedEmail.map((result, next) => {
+            for (const result of allRequestedEmail) {
+
+            }
+            for (const result of allRequestedEmail) {
                 const resultEmail = result.userId;
-                requestedEmailWitchIsInuserRequeted.push(resultEmail);
+
+                const findInBlockUser = await blockUnblockModel.findOne({
+                    userId: req.params.user_id,
+                    "blockUnblockUser.blockUserId": resultEmail
+                })
+                if (findInBlockUser) {
+
+                } else {
+                    requestedEmailWitchIsInuserRequeted.push(resultEmail);
+                }
+
+
                 allData.push(resultEmail)
-            });
+            };
             allData.push(user._id)
 
             const meargAllTable = await userModal.aggregate([{
@@ -1905,8 +1920,8 @@ exports.userAllFriendPost = async (req, res, next) => {
             {
                 $lookup: {
                     from: 'posts',
-                    localField: 'email',
-                    foreignField: 'email',
+                    localField: '_id',
+                    foreignField: 'userId',
                     as: 'req_data'
                 }
             },
@@ -1915,7 +1930,7 @@ exports.userAllFriendPost = async (req, res, next) => {
                     from: 'requests',
                     let: {
                         userId: mongoose.Types.ObjectId(req.params.user_id),
-                        email: "$email"
+                        id: "$_id"
                     },
                     pipeline: [
                         {
@@ -1930,7 +1945,7 @@ exports.userAllFriendPost = async (req, res, next) => {
                                         {
                                             $in:
                                                 [
-                                                    "$$email", "$RequestedEmails.requestedEmail"
+                                                    "$$id", "$RequestedEmails.userId"
                                                 ]
                                         }
                                     ]
@@ -1952,8 +1967,6 @@ exports.userAllFriendPost = async (req, res, next) => {
 
             const emailDataDetail = meargAllTable[0].result;
 
-
-
             for (const emailData of emailDataDetail) {
 
                 for (const requestEmail of emailData) {
@@ -1971,7 +1984,6 @@ exports.userAllFriendPost = async (req, res, next) => {
 
                                     for (const getallposts of allposts.posts) {
 
-
                                         const post = [];
                                         if (getallposts.post[0] != undefined) {
 
@@ -1983,7 +1995,7 @@ exports.userAllFriendPost = async (req, res, next) => {
 
                                                 } else {
                                                     const getExt1Name = path.extname(postwithType.res);
-                                      
+
                                                     if (getExt1Name == ".mp4" || getExt1Name == ".mov" || getExt1Name == ".avi" || getExt1Name == ".wmv" || getExt1Name == ".m3u8" || getExt1Name == ".webm" || getExt1Name == ".flv" || getExt1Name == ".ts" || getExt1Name == ".3gp") {
                                                         post.push({
                                                             post: [
@@ -2386,14 +2398,14 @@ exports.userAllFriendPost = async (req, res, next) => {
             {
                 $lookup: {
                     from: 'posts',
-                    localField: 'email',
-                    foreignField: 'email',
+                    localField: '_id',
+                    foreignField: 'userId',
                     as: 'req_data'
                 }
             },
             {
                 $project: {
-                    email: "$email",
+                    _id: "$_id",
                     posts: "$req_data"
                 }
             }])
@@ -2693,7 +2705,7 @@ exports.userAllFriendPost = async (req, res, next) => {
                     }
                 }
                 var status1 = {
-                    email: meargAllTable2[0].email,
+                    _id: meargAllTable2[0]._id,
                     posts: finalResponse
                 }
                 statusByEmail.push(status1)
@@ -2704,7 +2716,7 @@ exports.userAllFriendPost = async (req, res, next) => {
             const finalStatus1 = [];
             for (const [key, finalData] of meargAllTable2.entries()) {
                 for (const [key, final1Data] of statusByEmail.entries())
-                    if (finalData.email === final1Data.email) {
+                    if (finalData._id === final1Data._id) {
                         for (const data of final1Data.posts) {
                             const findUserInLike = await likeModel.findOne({
                                 postId: data.finalPosts[0][0]._id,
@@ -2712,7 +2724,7 @@ exports.userAllFriendPost = async (req, res, next) => {
                             })
 
                             const findUser = await userModal.findOne({
-                                email: finalData.email
+                                _id: finalData._id
                             })
 
                             if (findUserInLike) {
@@ -3195,6 +3207,7 @@ exports.userAllFriendPost = async (req, res, next) => {
         }
 
     } catch (error) {
+        console.log(error);
         res.status(status.INTERNAL_SERVER_ERROR).json(
             new APIResponse("Something Went Wrong", "false", 500, "0", error.message)
         )
