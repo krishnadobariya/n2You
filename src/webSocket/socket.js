@@ -108,6 +108,8 @@ function socket(io) {
             let year = date.getFullYear();
             let hours = date.getHours();
             let minutes = date.getMinutes();
+            let second = date.getSeconds();
+            let mon = date.getMonth();
             let ampm = hours >= 12 ? 'pm' : 'am';
             hours = hours % 12;
             hours = hours ? hours : 12;
@@ -168,6 +170,7 @@ function socket(io) {
                                 chat: {
                                     sender: arg.sender_id,
                                     text: arg.text,
+                                    dateAndTime: `${year}-${mon}-${dates} ${hours}:${minutes}:${second}`,
                                     name: findUser.name,
                                     photo: findUser.photo[0] ? findUser.photo[0].res : "",
                                     createdAt: time
@@ -230,6 +233,7 @@ function socket(io) {
                                     sender: arg.sender_id,
                                     text: arg.text,
                                     name: findUser.name,
+                                    dateAndTime: `${year}-${mon}-${dates} ${hours}:${minutes}:${second}`,
                                     photo: findUser.photo[0] ? findUser.photo[0].res : "",
                                     createdAt: time
                                 }
@@ -308,6 +312,7 @@ function socket(io) {
                                     chat: {
                                         sender: arg.sender_id,
                                         text: arg.text,
+                                        dateAndTime: `${year}-${mon}-${dates} ${hours}:${minutes}:${second}`,
                                         name: findUser.name,
                                         photo: findUser.photo[0] ? findUser.photo[0].res : "",
                                         createdAt: time
@@ -365,6 +370,7 @@ function socket(io) {
                                     sender: arg.sender_id,
                                     text: arg.text,
                                     name: findUser.name,
+                                    dateAndTime: `${year}-${mon}-${dates} ${hours}:${minutes}:${second}`,
                                     photo: findUser.photo[0] ? findUser.photo[0].res : "",
                                     createdAt: time
                                 }
@@ -432,6 +438,7 @@ function socket(io) {
                                         sender: arg.sender_id,
                                         text: arg.text,
                                         name: findUser.name,
+                                        dateAndTime: `${year}-${mon}-${dates} ${hours}:${minutes}:${second}`,
                                         photo: findUser.photo[0] ? findUser.photo[0].res : "",
                                         createdAt: time
                                     }
@@ -483,6 +490,7 @@ function socket(io) {
                                     sender: arg.sender_id,
                                     text: arg.text,
                                     name: findUser.name,
+                                    dateAndTime: `${year}-${mon}-${dates} ${hours}:${minutes}:${second}`,
                                     photo: findUser.photo[0] ? findUser.photo[0].res : "",
                                     createdAt: time
                                 }
