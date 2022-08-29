@@ -310,7 +310,7 @@ exports.invitedInSession = async (req, res, next) => {
                     isLive: findInvited.isLive,
                     selectedTime: findInvited.selectedTime,
                     selectedDate: findInvited.selectedDate,
-                    photo: createdSessionUser.photo,
+                    photo: createdSessionUser.photo[0] ? createdSessionUser.photo[0].res : "",
                     participants: [{
                         _id: participants_2 == null ? "" : participants_2._id,
                         photo: participants_2 == null ? "" : participants_2.photo[0] ? participants_2.photo[0].res : "",
@@ -353,7 +353,7 @@ exports.invitedInSession = async (req, res, next) => {
                     isLive: findInvited.isLive,
                     selectedTime: findInvited.selectedTime,
                     selectedDate: findInvited.selectedDate,
-                    photo: createdSessionUser.photo,
+                    photo: createdSessionUser.photo[0] ? createdSessionUser.photo[0].res : "",
                     participants: [{
                         _id: participants_1 == null ? "" : participants_1._id,
                         photo: participants_1 == null ? "" : participants_1.photo,
@@ -394,7 +394,7 @@ exports.invitedInSession = async (req, res, next) => {
                     RoomType: findInvited.RoomType,
                     selectedTime: findInvited.selectedTime,
                     selectedDate: findInvited.selectedDate,
-                    photo: createdSessionUser.photo,
+                    photo: createdSessionUser.photo[0] ? createdSessionUser.photo[0].res : "",
                     participants: [{
                         _id: participants_1 == null ? "" : participants_1._id,
                         photo: participants_1 == null ? "" : participants_1.photo,
@@ -435,7 +435,7 @@ exports.invitedInSession = async (req, res, next) => {
                     isLive: findInvited.isLive,
                     selectedTime: findInvited.selectedTime,
                     selectedDate: findInvited.selectedDate,
-                    photo: createdSessionUser.photo[0] ? createdSessionUser.photo[0].res : null,
+                    photo: createdSessionUser.photo[0] ? createdSessionUser.photo[0].res : "",
                     participants: [{
                         _id: participants_1 == null ? "" : participants_1._id,
                         photo: participants_1 == null ? "" : participants_1.photo,
