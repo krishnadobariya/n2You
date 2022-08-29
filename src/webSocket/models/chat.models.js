@@ -17,6 +17,9 @@ const chatSchema = mongoose.Schema({
             createdAt: {
                 type: String
             },
+            dateAndTime:{
+                type: String
+            },
             photo: {
                 type: String
             },
