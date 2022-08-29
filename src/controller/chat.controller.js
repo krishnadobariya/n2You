@@ -90,6 +90,7 @@ exports.allUserListWithUnreadCount = async (req, res, next) => {
             }]
         })
 
+        console.log();
         const unReadMessage = [];
 
         for (const roomId of findAllUserWithIchat) {
@@ -118,7 +119,11 @@ exports.allUserListWithUnreadCount = async (req, res, next) => {
                 var count = 0;
                 const lastMessage = [];
 
+                console.log("aaaaaaaa");
                 for (const getChat of findRoom.chat) {
+
+
+                    console.log("getChat" , getChat);
 
                     var count = count + getChat.read;
                     const lastUnreadMessage = {
@@ -151,8 +156,13 @@ exports.allUserListWithUnreadCount = async (req, res, next) => {
         const startIndex = (page - 1) * limit;
         const endIndex = page * limit;
 
+
+        console.log("uniqueObjArray" , uniqueObjArray);
+
+        const data = uniqueObjArray[0].createdAt
+        console.log("date is" , new Date(data));
         res.status(status.OK).json(
-            new APIResponse("all group", true, 200, 1, uniqueObjArray.slice(startIndex, endIndex))
+            new APIResponse("all group", true, 200, 1, uniqueObjArray.slice(startIndex, endIndex).sort((a, b) => new Date (a.createdAt) - new Date(b.createdAt)))
         );
         // getAllChrRoomForPericularUser =
 
