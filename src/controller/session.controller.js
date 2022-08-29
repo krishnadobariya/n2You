@@ -7,41 +7,41 @@ const e = require("express");
 exports.sessionCreate = async (req, res, next) => {
     try {
 
-const findUserInUserModel = await userModel.findOne({
-    _id : req.body.creted_session_user
-})
+        const findUserInUserModel = await userModel.findOne({
+            _id: req.body.creted_session_user
+        })
 
-if(findUserInUserModel){
+        if (findUserInUserModel) {
 
-    const date = new Date(req.body.selected_date)
-    let hours = date.getHours();
-    let ampm = hours >= 12 ? 'pm' : 'am';
-    hours = hours % 12;
-    hours = hours ? hours : 12;
-    let strTime = hours + ' ' + ampm;
-    const createSession = sessionModel({
-        selectedDate: req.body.selected_date,
-        selectedTime: strTime,
-        cretedSessionUser: req.body.creted_session_user,
-        participants: {
-            participants_1: req.body.participants_1 ? req.body.participants_1 : null,
-            participants_2: req.body.participants_2 ? req.body.participants_2 : null,
-            participants_3: req.body.participants_3 ? req.body.participants_3 : null,
-        },
-        RoomType: req.body.room_type
-    })
+            const date = new Date(req.body.selected_date)
+            let hours = date.getHours();
+            let ampm = hours >= 12 ? 'pm' : 'am';
+            hours = hours % 12;
+            hours = hours ? hours : 12;
+            let strTime = hours + ' ' + ampm;
+            const createSession = sessionModel({
+                selectedDate: req.body.selected_date,
+                selectedTime: strTime,
+                cretedSessionUser: req.body.creted_session_user,
+                participants: {
+                    participants_1: req.body.participants_1 ? req.body.participants_1 : null,
+                    participants_2: req.body.participants_2 ? req.body.participants_2 : null,
+                    participants_3: req.body.participants_3 ? req.body.participants_3 : null,
+                },
+                RoomType: req.body.room_type
+            })
 
-    const saveData = await createSession.save();
+            const saveData = await createSession.save();
 
-    res.status(status.CREATED).json(
-        new APIResponse("successfully Session Created!", "true", 201, "1", saveData)
-    )
-}else{
-    res.status(status.NOT_FOUND).json(
-        new APIResponse("usernot found!", "false", 404, "0")
-    )
-}
-        
+            res.status(status.CREATED).json(
+                new APIResponse("successfully Session Created!", "true", 201, "1", saveData)
+            )
+        } else {
+            res.status(status.NOT_FOUND).json(
+                new APIResponse("usernot found!", "false", 404, "0")
+            )
+        }
+
 
     } catch (error) {
         console.log("error", error);
@@ -104,12 +104,13 @@ exports.publicSession = async (req, res, next) => {
                 const participants_3 = {
                     _id: participants3Find ? participants3Find._id : "",
                     name: participants3Find ? participants3Find.firstName : "",
-                    profile: participants3Find ? participants3Find.photo [0]? participants3Find.photo[0].res : "" : "",
+                    profile: participants3Find ? participants3Find.photo[0] ? participants3Find.photo[0].res : "" : "",
                 }
 
                 const userDetail = findUser.firstName
 
                 const sessionDetail = {
+                    _id: findUser._id,
                     name: userDetail,
                     selectedDate: publicSessionwithUserDetails.selectedDate,
                     selectedTime: publicSessionwithUserDetails.selectedTime,
@@ -133,7 +134,7 @@ exports.publicSession = async (req, res, next) => {
             const endIndex = page * limit;
 
             res.status(status.OK).json(
-                new APIResponse("successfully Show All Public Session!", "true", 200, "1", publicSession.slice(startIndex,endIndex).sort((a, b) => new Date(a.sessionDetail.selectedDate) - new Date(b.sessionDetail.selectedDate)))
+                new APIResponse("successfully Show All Public Session!", "true", 200, "1", publicSession.slice(startIndex, endIndex).sort((a, b) => new Date(a.sessionDetail.selectedDate) - new Date(b.sessionDetail.selectedDate)))
             )
 
 
@@ -189,7 +190,7 @@ exports.invitedInSession = async (req, res, next) => {
                     photo: createdSessionUser.photo,
                     participants: [{
                         _id: participants_2 == null ? "" : participants_2._id,
-                        photo: participants_2 == null ? "" : participants_2.photo ? participants_2.photo[0].res : null,
+                        photo: participants_2 == null ? "" : participants_2.photo[0] ? participants_2.photo[0].res : "",
                         name: participants_2 == null ? "" : participants_2.firstName
                     }, {
                         _id: participants_3 == null ? "" : participants_2._id,
@@ -223,7 +224,7 @@ exports.invitedInSession = async (req, res, next) => {
                 })
 
                 const createdSessionUserDetail = {
-                    _id:createdSessionUser._id,
+                    _id: createdSessionUser._id,
                     cretedSessionUserName: createdSessionUser.firstName,
                     RoomType: findInvited.RoomType,
                     isLive: findInvited.isLive,
@@ -264,7 +265,7 @@ exports.invitedInSession = async (req, res, next) => {
                 })
 
                 const createdSessionUserDetail = {
-                    _id:createdSessionUser._id,
+                    _id: createdSessionUser._id,
                     cretedSessionUserName: createdSessionUser.firstName,
                     isLive: findInvited.isLive,
                     RoomType: findInvited.RoomType,
@@ -342,7 +343,7 @@ exports.invitedInSession = async (req, res, next) => {
             )
         } else {
             res.status(status.OK).json(
-                new APIResponse("successfully Show All Invited Session!", "true", 200, "1", allInvited.slice(startIndex,endIndex).sort((a, b) => new Date(a.selectedDate) - new Date(b.selectedDate)))
+                new APIResponse("successfully Show All Invited Session!", "true", 200, "1", allInvited.slice(startIndex, endIndex).sort((a, b) => new Date(a.selectedDate) - new Date(b.selectedDate)))
             )
         }
 
@@ -395,8 +396,8 @@ exports.mySession = async (req, res, next) => {
                 RoomType: findMySession.RoomType,
                 cretedSessionUser: {
                     _id: findUserDeatil ? findUserDeatil._id : "",
-                    photo: findUserDeatil.photo ? findUserDeatil.photo[0] ?  findUserDeatil.photo[0].res: "" : "",
-                    name: findUserDeatil? findUserDeatil.firstName: ""
+                    photo: findUserDeatil.photo ? findUserDeatil.photo[0] ? findUserDeatil.photo[0].res : "" : "",
+                    name: findUserDeatil ? findUserDeatil.firstName : ""
                 },
                 participants_1: {
                     _id: findParticipantsiUserDeatil1 ? findParticipantsiUserDeatil1._id : "",
@@ -413,7 +414,7 @@ exports.mySession = async (req, res, next) => {
                     photo: findParticipantsiUserDeatil3 == null ? " " : findParticipantsiUserDeatil3.photo[0] ? findParticipantsiUserDeatil3.photo[0].res : "",
                     name: findParticipantsiUserDeatil3 == null ? "" : findParticipantsiUserDeatil3.firstName
                 }
-              
+
             }
 
             mySession.push(response)
@@ -431,7 +432,7 @@ exports.mySession = async (req, res, next) => {
             )
         } else {
             res.status(status.OK).json(
-                new APIResponse("successfully Show All My Session!", "true", 200, "1", mySession.slice(startIndex,endIndex).sort((a, b) => new Date(a.selectedDate) - new Date(b.selectedDate)))
+                new APIResponse("successfully Show All My Session!", "true", 200, "1", mySession.slice(startIndex, endIndex).sort((a, b) => new Date(a.selectedDate) - new Date(b.selectedDate)))
             )
         }
 
