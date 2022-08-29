@@ -5,6 +5,7 @@ const userModel = require("../model/user.model");
 const e = require("express");
 const notificationModel = require("../model/polyamorous/notification.model");
 const requestsModel = require("../model/requests.model");
+const { default: mongoose } = require("mongoose");
 
 exports.sessionCreate = async (req, res, next) => {
     try {
@@ -33,34 +34,140 @@ exports.sessionCreate = async (req, res, next) => {
                 RoomType: req.body.room_type
             })
 
-            // const saveData = await createSession.save();
-
-            res.status(status.CREATED).json(
-                new APIResponse("successfully Session Created!", "true", 201, "1", saveData)
-            )
-
+            const saveData = await createSession.save();
 
             if(req.body.room_type == "public"){
             
+                const allRequestedEmails = [];
                 const findAllFriend = await requestsModel.findOne({
-                    userId : req.params.creted_session_user
+                    userId : req.body.creted_session_user
                 })
-                if(findAllFriend){
 
-                }else{
-                    
+                const p1 = req.body.participants_1 ? req.body.participants_1 : ""
+                const p2 = req.body.participants_2? req.body.participants_2 : ""
+                const p3 = req.body.participants_3? req.body.participants_3 : ""
+
+                
+                for(const allRequestedEmail of findAllFriend.RequestedEmails){
+
+                    console.log("allRequestedEmail.userId" , allRequestedEmail.userId);
+
+                    if(((allRequestedEmail.userId).toString() != (p1).toString()) && ((allRequestedEmail.userId).toString() !=(p2).toString()) && ((allRequestedEmail.userId).toString() !=(p3).toString())){
+                        allRequestedEmails.push(allRequestedEmail.userId)
+                    }
+
                 }
 
+                if(p1 != ""){
+                    allRequestedEmails.push(mongoose.Types.ObjectId(req.body.participants_1))
+                }
+                if(p2 != ""){
+                    allRequestedEmails.push(mongoose.Types.ObjectId(req.body.participants_2))
+                }
+                if(p3!= ""){
+                    allRequestedEmails.push(mongoose.Types.ObjectId(req.body.participants_3))
+                }
+
+
+                for(const notification of allRequestedEmails){
+                    const findInNotification = await notificationModel.findOne({
+                        userId: notification
+                    })
+
+                    if(findInNotification){
+
+                        await notificationModel.updateOne({
+                            userId: notification
+                        },{
+                            $push: {
+                                notifications : {
+                                    notifications : `${findUserInUserModel.firstName} create session`,
+                                    userId: findUserInUserModel._id,
+                                    status: 8
+                                }
+                            }
+                        })
+
+                    }else{
+
+                        const savedata = notificationModel({
+                            userId: notification,
+                            notifications : {
+                                notifications : `${findUserInUserModel.firstName} create session`,
+                                userId: findUserInUserModel._id,
+                                status: 8
+                            }
+                        })
+
+                        await savedata.save();
+
+                    }
+                }
             }else{
 
+               const allRequestedEmails = [];
+
+                const p1 = req.body.participants_1 ? req.body.participants_1 : ""
+                const p2 = req.body.participants_2? req.body.participants_2 : ""
+                const p3 = req.body.participants_3? req.body.participants_3 : ""
+
+
+                if(p1 != ""){
+                    allRequestedEmails.push(mongoose.Types.ObjectId(req.body.participants_1))
+                }
+                if(p2 != ""){
+                    allRequestedEmails.push(mongoose.Types.ObjectId(req.body.participants_2))
+                }
+                if(p3!= ""){
+                    allRequestedEmails.push(mongoose.Types.ObjectId(req.body.participants_3))
+                }
+
+
+                for(const notification of allRequestedEmails){
+                    const findInNotification = await notificationModel.findOne({
+                        userId: notification
+                    })
+
+                    if(findInNotification){
+
+                        await notificationModel.updateOne({
+                            userId: notification
+                        },{
+                            $push: {
+                                notifications : {
+                                    notifications : `${findUserInUserModel.firstName} create session`,
+                                    userId: findUserInUserModel._id,
+                                    status: 8
+                                }
+                            }
+                        })
+
+                    }else{
+
+                        const savedata = notificationModel({
+                            userId: notification,
+                            notifications : {
+                                notifications : `${findUserInUserModel.firstName} create session`,
+                                userId: findUserInUserModel._id,
+                                status: 8
+                            }
+                        })
+
+                        await savedata.save();
+
+                    }
+                }
 
             }
+
+            res.status(status.CREATED).json(
+                new APIResponse("successfully Session Created!", "true", 201, "1")
+            )
         } else {
             res.status(status.NOT_FOUND).json(
                 new APIResponse("usernot found!", "false", 404, "0")
             )
         }
-
 
     } catch (error) {
         console.log("error", error);
