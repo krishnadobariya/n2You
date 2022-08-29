@@ -23,7 +23,6 @@ function socket(io) {
         // })
 
         socket.on("joinUser", function (data) {
-            console.log("data", data);
             const userRoom = `User${data.user_id}`;
             socket.join(userRoom);
         });
@@ -115,61 +114,49 @@ function socket(io) {
             minutes = minutes.toString().padStart(2, '0');
 
             let time = 'At' + ' ' + hours + ':' + minutes + ' ' + ampm + ' ' + 'on' + ' ' + month + ' ' + dates + ',' + year;
-            console.log("time::", time);
+       
 
             const fcm_token = [];
             if (arg.sender_id == arg.user_1) {
-                console.log("gvwesdrfwq32aerqRTFQ2");
                 const userFind = await userModel.findOne({ _id: arg.user_2, polyDating: 0 }).select('name, photo,fcm_token');
                 fcm_token.push(userFind.fcm_token)
-                console.log("userFind", userFind);
             } else {
-                console.log("bfdgerdhg");
                 const userFind = await userModel.findOne({ _id: arg.user_1, polyDating: 0 }).select('name, photo, fcm_token')
                 fcm_token.push(userFind.fcm_token)
-                console.log("userFind", userFind);
             }
 
             const addInChatRoom = await chatRoomModel.findOne({
                 user1: arg.user_1,
                 user2: arg.user_2,
             }).select('user1, user2').lean();
-            console.log("addInChatRoom::", addInChatRoom);
 
             const checkUsers = await chatRoomModel.findOne({
                 user1: arg.user_2,
                 user2: arg.user_1,
             }).select('user1, user2').lean();
-            console.log("checkUsers::", checkUsers);
 
             if (addInChatRoom == null && checkUsers == null) {
                 const insertChatRoom = chatRoomModel({
                     user1: arg.user_1,
                     user2: arg.user_2
                 });
-
-                console.log("insertChatRoom::", insertChatRoom);
-
-
                 await insertChatRoom.save();
 
                 const getChatRoom = await chatRoomModel.findOne({
                     user1: arg.user_1,
                     user2: arg.user_2
                 }).select('user1, user2').lean();
-
-                console.log("getChatRoom", getChatRoom);
                 const alterNateChatRoom = await chatRoomModel.findOne({
                     user1: arg.user_2,
                     user2: arg.user_1
                 }).select('user1, user2').lean();
-                console.log("alterNateChatRoom", alterNateChatRoom);
+
                 if (getChatRoom == null && alterNateChatRoom == null) {
                     io.emit("chatReceive", "chat room not found");
                 } else {
 
                     if (getChatRoom) {
-                        console.log("getChatRoom", getChatRoom);
+                       
                         if (arg.sender_id == arg.user_1 || arg.sender_id == arg.user_2) {
 
                             const findUser = await userModel.findOne({
@@ -237,7 +224,6 @@ function socket(io) {
                                 _id: arg.sender_id
                             }).select('name, photo').lean();
 
-                            console.log("findUser", findUser);
                             const data = chatModels({
                                 chatRoomId: alterNateChatRoom._id,
                                 chat: {
@@ -311,13 +297,12 @@ function socket(io) {
                             chatRoomId: getChatRoom._id
                         }).select('chatRoomId').lean();
 
-                        console.log("find1", find1);
                         if (find1 == null) {
                             if (arg.sender_id == arg.user_1 || arg.sender_id == arg.user_2) {
                                 const findUser = await userModel.findOne({
                                     _id: arg.sender_id
                                 }).select('name, photo').lean();
-                                console.log("findUser", findUser);
+                         
                                 const data = chatModels({
                                     chatRoomId: getChatRoom._id,
                                     chat: {
@@ -435,8 +420,6 @@ function socket(io) {
                             chatRoomId: alterNateChatRoom._id
                         }).select("chatRoomId").lean();
 
-                        console.log("find2......", find2);
-
                         if (find2 == null) {
                             if (arg.sender_id == arg.user_1 || arg.sender_id == arg.user_2) {
                                 const findUser = await userModel.findOne({
@@ -475,7 +458,7 @@ function socket(io) {
 
                                 const text = arg.text;
                                 const sendBy = arg.sender_id;
-                                console.log("fcm_token:::", fcm_token);
+                          
                                 const registrationToken = fcm_token[0]
                                 Notification.sendPushNotificationFCM(
                                     registrationToken,
@@ -533,7 +516,7 @@ function socket(io) {
                                 const sendBy = arg.sender_id;
 
                                 const registrationToken = fcm_token[0]
-                                console.log("fcm_token:::", registrationToken);
+                      
                                 Notification.sendPushNotificationFCM(
                                     registrationToken,
                                     title,

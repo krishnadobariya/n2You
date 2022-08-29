@@ -760,8 +760,8 @@ exports.inviteFriends = async (req, res, next) => {
                         );
 
                     } else {
-                        res.status(status.ALREADY_REPORTED).json(
-                            new APIResponse("aleardy Invited!", "false", 208, "0")
+                        res.status(status.CONFLICT).json(
+                            new APIResponse("aleardy Invited!", "false", 409, "0")
                         );
                     }
 
@@ -2247,8 +2247,8 @@ exports.acceptedLinkProfile = async (req, res, next) => {
                                 })
 
 
-                                res.status(status.NOT_ACCEPTABLE).json(
-                                    new APIResponse("Rjected Both User", "false", 406, "0")
+                                res.status(status.CONFLICT).json(
+                                    new APIResponse("Rjected Both User", "false", 409, "0")
                                 );
                             } else {
 

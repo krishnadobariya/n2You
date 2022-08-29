@@ -432,8 +432,6 @@ exports.exitByGroupUser = async (req, res, next) => {
                     }
                 })
             }
-
-            console.log(userName);
             res.status(status.OK).json(
                 new APIResponse("Exit group successfully by group mamber", "true", 200, "1")
             );

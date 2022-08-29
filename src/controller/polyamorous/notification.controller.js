@@ -31,13 +31,11 @@ exports.getAllNotification = async (req, res, next) => {
                             _id: getNotification.userId
                         })
 
-                        console.log("getNotification", getNotification.createdAt);
                         const response = {
                             _id: getNotification.userId,
                             notification: getNotification.notifications,
                             name: findUserDetail.firstName,
                             profile: findUserDetail.photo[0] ? findUserDetail.photo[0].res : "",
-                            // time: 
                         }
 
                         allNotification.push(response)

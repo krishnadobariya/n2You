@@ -262,7 +262,7 @@ exports.addPostImages = async (req, res, next) => {
 
 
                 const allRequestEmail = [];
-                console.log("allRequestEmail", allRequestEmail);
+        
                 if (allRequestEmail[0] == undefined) {
 
                 } else {
@@ -271,8 +271,6 @@ exports.addPostImages = async (req, res, next) => {
                             allRequestEmail.push(postData.userId)
                         }
                     }
-
-                    console.log("allRequestEmail", allRequestEmail);
 
                     for (const sendNotification of allRequestEmail) {
 
@@ -355,7 +353,7 @@ exports.addPostImages = async (req, res, next) => {
                             allRequestEmail.push(postData.userId)
                         }
                     }
-                    console.log("allRequestEmail", allRequestEmail);
+                 
 
                     for (const sendNotification of allRequestEmail) {
 
@@ -363,7 +361,6 @@ exports.addPostImages = async (req, res, next) => {
                             userId: sendNotification
                         })
 
-                        console.log(findNotification);
 
                         const findUser = await userModal.findOne({
                             _id: req.params.id
@@ -714,7 +711,6 @@ exports.getPostById = async (req, res, next) => {
                             reqUserId: req.params.req_id
                         })
 
-                        console.log("findUserInLike._id", findUserInLike);
                         if (findUserInLike) {
                             const response = {
                                 posts,
@@ -1972,7 +1968,6 @@ exports.userAllFriendPost = async (req, res, next) => {
 
                                 for (const allposts of meargAllTableEmail.posts) {
 
-                                    console.log("allposts.posts", meargAllTableEmail.posts);
 
                                     for (const getallposts of allposts.posts) {
 
@@ -1982,14 +1977,13 @@ exports.userAllFriendPost = async (req, res, next) => {
 
                                             for (const postwithType of getallposts.post) {
 
-                                                console.log("getallposts", getallposts);
 
                                                 const getExt1Name = postwithType ? postwithType.res : null;
                                                 if (getExt1Name == null) {
 
                                                 } else {
                                                     const getExt1Name = path.extname(postwithType.res);
-                                                    console.log("getExt1Name", getExt1Name);
+                                      
                                                     if (getExt1Name == ".mp4" || getExt1Name == ".mov" || getExt1Name == ".avi" || getExt1Name == ".wmv" || getExt1Name == ".m3u8" || getExt1Name == ".webm" || getExt1Name == ".flv" || getExt1Name == ".ts" || getExt1Name == ".3gp") {
                                                         post.push({
                                                             post: [
@@ -2006,7 +2000,6 @@ exports.userAllFriendPost = async (req, res, next) => {
                                                             createdAt: getallposts.createdAt
                                                         })
 
-                                                        console.log("post");
                                                     } else {
                                                         post.push({
                                                             post: [
@@ -2043,10 +2036,6 @@ exports.userAllFriendPost = async (req, res, next) => {
 
 
                                         }
-
-
-
-                                        console.log("getallposts.createdAt", getallposts.createdAt);
 
                                         const userPostDate = getallposts.createdAt;
 
@@ -2273,9 +2262,6 @@ exports.userAllFriendPost = async (req, res, next) => {
                                         const posts = [];
                                         posts.push(post)
 
-
-                                        console.log("posts", posts);
-
                                         const finalPosts = [...post]
 
                                         const response = {
@@ -2294,10 +2280,6 @@ exports.userAllFriendPost = async (req, res, next) => {
                                     posts: finalResponse
                                 }
                                 statusByEmail.push(status1)
-
-
-
-                                console.log("statusByEmail", statusByEmail[0].posts);
 
                             } else {
 
@@ -2319,19 +2301,12 @@ exports.userAllFriendPost = async (req, res, next) => {
                     if ((finalData._id).toString() == (final1Data.id).toString()) {
                         for (const data of final1Data.posts) {
 
-
-                            console.log("data.finalPosts[0]", data.finalPosts[0]);
                             if (data.finalPosts[0]) {
-
-                                console.log(data.finalPosts);
 
                                 const findUserInLike = await likeModel.findOne({
                                     postId: data.finalPosts[0]._id,
                                     reqUserId: req.params.user_id
                                 })
-
-                                console.log("findUserInLike", findUserInLike);
-
 
                                 const findUser = await userModal.findOne({
                                     email: finalData.email
@@ -2433,13 +2408,11 @@ exports.userAllFriendPost = async (req, res, next) => {
                         const post = [];
                         for (const postwithType of (getallposts.post)) {
 
-                            console.log("getallposts.post", getallposts);
                             const getExt1Name = postwithType ? postwithType.res : null;
                             if (getExt1Name == null) {
 
                             } else {
 
-                                console.log("");
                                 const getExt1Name = path.extname(postwithType.res);
                                 if (getExt1Name == ".mp4" || getExt1Name == ".mov" || getExt1Name == ".avi" || getExt1Name == ".wmv" || getExt1Name == ".m3u8" || getExt1Name == ".webm" || getExt1Name == ".flv" || getExt1Name == ".ts" || getExt1Name == ".3gp") {
                                     post.push({
@@ -2726,10 +2699,6 @@ exports.userAllFriendPost = async (req, res, next) => {
                 statusByEmail.push(status1)
             }
 
-
-            console.log("statusByEmail", statusByEmail);
-
-
             const final_data1 = [];
 
             const finalStatus1 = [];
@@ -2737,10 +2706,6 @@ exports.userAllFriendPost = async (req, res, next) => {
                 for (const [key, final1Data] of statusByEmail.entries())
                     if (finalData.email === final1Data.email) {
                         for (const data of final1Data.posts) {
-
-
-                            console.log("data.finalPosts[0]._id", data.finalPosts[0]);
-
                             const findUserInLike = await likeModel.findOne({
                                 postId: data.finalPosts[0][0]._id,
                                 reqUserId: req.params.user_id
@@ -2750,8 +2715,6 @@ exports.userAllFriendPost = async (req, res, next) => {
                                 email: finalData.email
                             })
 
-
-                            console.log("findUserInLike.......", findUserInLike);
                             if (findUserInLike) {
 
                                 for (const allPost of data.finalPosts[0]) {
@@ -3226,10 +3189,6 @@ exports.userAllFriendPost = async (req, res, next) => {
                 final_data.push(...finalStatus);
 
             }
-
-
-            console.log("final_data", final_data);
-
             res.status(status.OK).json(
                 new APIResponse("show all post When accept by the user", "true", 201, "1", final_data.sort((a, b) => b.posts.createdAt - a.posts.createdAt))
             )

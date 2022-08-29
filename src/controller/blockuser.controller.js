@@ -65,8 +65,8 @@ exports.blockUnblockUser = async (req, res, next) => {
                         new APIResponse("unblockUser successfully!", "true", 200, "1")
                     )
                 } else {
-                    res.status(status.NOT_ACCEPTABLE).json(
-                        new APIResponse("Not Allowed!", "false", 406, "0")
+                    res.status(status.CONFLICT).json(
+                        new APIResponse("Not Allowed!", "false", 409, "0")
                     )
                 }
 

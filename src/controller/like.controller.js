@@ -47,8 +47,6 @@ exports.LikeOrDislikeInUserPost = async (req, res, next) => {
                                 userId: req.params.user_id
                             })
 
-                            console.log("findInNotification", findInNotification);
-
                             if (findInNotification) {
 
 
@@ -93,8 +91,8 @@ exports.LikeOrDislikeInUserPost = async (req, res, next) => {
 
                     } else {
                         const status_code = 2
-                        res.status(status.ALREADY_REPORTED).json(
-                            new APIResponse("Already Liked Post", "true", 208, "1", status_code)
+                        res.status(status.CONFLICT).json(
+                            new APIResponse("Already Liked Post", "true", 409, "1", status_code)
                         );
                     }
 
@@ -222,7 +220,6 @@ exports.showAllUserWhichIsLikePost = async (req, res, next) => {
 
                     UniqueId.push(response);
                 }
-                console.log(RequestedEmailExiestInUser[0]);
 
                 if (RequestedEmailExiestInUser == null) {
                     const responseData = [];
@@ -377,8 +374,6 @@ exports.showAllUserWhichIsLikePost = async (req, res, next) => {
                             }]
                         })
 
-
-                        console.log("findAllUserWithIchat1", findAllUserWithIchat1);
 
                         const findAllUserWithIchat2 = await chatRoomModel.findOne({
                             $and: [{

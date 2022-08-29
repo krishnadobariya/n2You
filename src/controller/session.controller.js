@@ -75,9 +75,6 @@ exports.publicSession = async (req, res, next) => {
                     polyDating: 0
                 })
 
-
-                console.log(findUser);
-
                 const participants1Find = await userModel.findOne({
                     _id: publicSessionwithUserDetails.participants[0].participants_1,
                     polyDating: 0
@@ -387,7 +384,6 @@ exports.mySession = async (req, res, next) => {
                 polyDating: 0
             })
 
-            console.log("findUserDeatil", findUserDeatil);
             const response = {
                 _id: findMySession._id,
                 selectedTime: findMySession.selectedTime,

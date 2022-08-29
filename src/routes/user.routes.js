@@ -14,10 +14,11 @@ router.get('/view/:user_id/:req_user_id', userController.getDataUserWise);
 router.get('/storeBasketValue/:user_id', userController.storeBasketValue);
 router.get('/yesBasket/:user_id/:request_user_id', userController.yesBasket);
 router.get('/noBasket/:user_id/:request_user_id', userController.noBasket);
-router.get('/moveBasket/:user_id/:request_user_id' , userController.moveBasket);
+router.get('/moveBasket/:user_id/:request_user_id', userController.moveBasket);
 router.get('/getUser/:user_id', userController.getAllUser);
 router.get('/notification/:user_id', userController.getAllNotification);
-
+router.post('/forgetPassword/:email', userController.forGetPassword);
+router.get('/existMailOrNot/:email', userController.checkMailExiesOrNot);
 // router.get('/add', userController.add)
 
 module.exports = router; 

@@ -165,8 +165,8 @@ exports.sendRequest = async (req, res, next) => {
 
                     }
                     if (inRequested[0] == true) {
-                        res.status(status.ALREADY_REPORTED).json(
-                            new APIResponse("Already requesed!", "false", 208, "0")
+                        res.status(status.CONFLICT).json(
+                            new APIResponse("Already requesed!", "false", 409, "0")
                         )
                     } else {
                         const updatePosts = await requestModel.updateOne({ userId: req.params.user_id },
@@ -301,7 +301,6 @@ exports.getUserWithFriend = async (req, res, next) => {
                     const finalData = [];
                     const responseData = [];
                     for (const allrequestedDataNotAcceptedRequestAndNotFriend of reaquestedAllEmail) {
-                        // console.log("allrequestedDataNotAcceptedRequestAndNotFriend", allrequestedDataNotAcceptedRequestAndNotFriend);
                         const userDetail = await userModel.findOne({ email: allrequestedDataNotAcceptedRequestAndNotFriend });
                         finalData.push(userDetail)
                     }
@@ -603,7 +602,7 @@ exports.getUserWithFriend = async (req, res, next) => {
                                 final_data.push(response);
                             }
 
-                            
+
 
                         } else {
 
@@ -771,16 +770,10 @@ exports.getRequestUserWise = async (req, res, next) => {
 
 exports.userAcceptedRequesteOrNot = async (req, res, next) => {
     try {
-
-
-        const reqConfirm = req.body.accepted;
         const reqestId = req.params.id;
 
-
-        console.log("req.params.user_id", req.params.user_id);
-        console.log("reqestId", reqestId);
         const checkRequestEmail = await requestModel.findOne({ userId: req.params.user_id, "RequestedEmails.userId": reqestId });
-        console.log("checkRequestEmail", checkRequestEmail);
+
         if (!checkRequestEmail) {
             res.status(status.NOT_FOUND).json(
                 new APIResponse("Request Not Found", "false", 404, "0")
@@ -794,9 +787,6 @@ exports.userAcceptedRequesteOrNot = async (req, res, next) => {
                             "RequestedEmails.$.accepted": req.body.accepted
                         }
                     })
-
-                console.log("reqestId", reqestId);
-
                 const updatePosts1 = await requestModel.updateOne({ userId: reqestId, "RequestedEmails.userId": req.params.user_id },
                     {
                         $set: {

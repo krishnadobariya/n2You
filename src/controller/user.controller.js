@@ -12,6 +12,8 @@ const notificationModel = require("../model/polyamorous/notification.model");
 const likeModel = require("../model/like.model");
 const thumbUpModel = require("../model/thumbUp.model");
 const thumbDownModel = require("../model/thumDown.model");
+var nodemailer = require('nodemailer');
+const { updateOne } = require("../model/user.model");
 
 exports.userRegister = async (req, res, next) => {
     try {
@@ -40,8 +42,8 @@ exports.userRegister = async (req, res, next) => {
 
         const findEmail = await userModel.findOne({ email: req.body.email });
         if (findEmail) {
-            res.status(status.NOT_ACCEPTABLE).json(
-                new APIResponse("Not Allowed, Email Already Exist", "false", 406, "0")
+            res.status(status.CONFLICT).json(
+                new APIResponse("Not Allowed, Email Already Exist", "false", 409, "0")
             )
         } else {
             const phoneNum = req.body.phone_num;
@@ -50,8 +52,8 @@ exports.userRegister = async (req, res, next) => {
 
 
             if (findNumber) {
-                res.status(status.NOT_ACCEPTABLE).json(
-                    new APIResponse("Number Already Exist, It must be Unique", "false", 406, "0")
+                res.status(status.CONFLICT).json(
+                    new APIResponse("Number Already Exist, It must be Unique", "false", 409, "0")
                 )
             } else {
                 const user = userModel({
@@ -282,8 +284,6 @@ exports.userLogin = async (req, res, next) => {
         const findUser = await userModel.findOne({
             email: req.body.email
         })
-
-        console.log(findUser);
         if (findUser) {
 
             if (req.body.password == findUser.password) {
@@ -429,12 +429,12 @@ exports.userUpdate = async (req, res, next) => {
             const resultForEmail = findEmailUnique.includes("yes")
 
             if (resultForNumber) {
-                res.status(status.NOT_ACCEPTABLE).json(
-                    new APIResponse("Number Already Exist, It must be Unique", "false", 406, "0")
+                res.status(status.CONFLICT).json(
+                    new APIResponse("Number Already Exist, It must be Unique", "false", 409, "0")
                 )
             } else if (resultForEmail) {
-                res.status(status.NOT_ACCEPTABLE).json(
-                    new APIResponse("Not Allowed, Email Already Exist", "false", 406, "0")
+                res.status(status.CONFLICT).json(
+                    new APIResponse("Not Allowed, Email Already Exist", "false", 409, "0")
                 )
             } else {
 
@@ -1410,10 +1410,6 @@ exports.getAllUser = async (req, res, next) => {
                             user2: id._id ? id._id : null
                         }]
                     })
-
-
-                    console.log("findAllUserWithIchat1", findAllUserWithIchat1);
-
                     const findAllUserWithIchat2 = await chatRoomModel.findOne({
                         $and: [{
                             user1: id._id
@@ -1421,10 +1417,6 @@ exports.getAllUser = async (req, res, next) => {
                             user2: getOriginalData._id
                         }]
                     })
-
-
-                    console.log("findAllUserWithIchat2", findAllUserWithIchat2);
-
 
                     if (findAllUserWithIchat1) {
                         chatRoomId.push(findAllUserWithIchat1._id)
@@ -2146,7 +2138,7 @@ exports.getDataUserWise = async (req, res, next) => {
                         getAllPosts.push(response);
                     }
                 }
-            }   
+            }
 
 
 
@@ -2182,9 +2174,6 @@ exports.getDataUserWise = async (req, res, next) => {
 
 
             }
-
-            console.log("statusCode", statusCode);
-
             let birthDate = new Date(data[0].birthDate);
             birthDate = birthDate.getFullYear();
             let currentDate = new Date(Date.now());
@@ -2192,67 +2181,61 @@ exports.getDataUserWise = async (req, res, next) => {
 
             const age = currentDate - birthDate;
 
-            const chatRoomId =  [];
+            const chatRoomId = [];
             const findChatRoomId1 = await chatRoomModel.findOne({
-                user1 : req.params.user_id,
-                user2 : req.params.req_user_id
+                user1: req.params.user_id,
+                user2: req.params.req_user_id
             }).select("_id")
 
-            const findChatRoomId2 =  await chatRoomModel.findOne({
-                user1 : req.params.req_user_id,
-                user2 : req.params.user_id
+            const findChatRoomId2 = await chatRoomModel.findOne({
+                user1: req.params.req_user_id,
+                user2: req.params.user_id
             }).select("_id")
 
-
-            console.log("findChatRoomId2" , findChatRoomId2);
-            console.log("findChatRoomId1" , findChatRoomId1);
-            if(findChatRoomId1){
+            if (findChatRoomId1) {
 
                 chatRoomId.push(findChatRoomId1._id)
-            }else if(findChatRoomId2){
+            } else if (findChatRoomId2) {
 
                 chatRoomId.push(findChatRoomId2._id)
-            }else{
+            } else {
 
                 chatRoomId.push()
             }
-          
+
             const basketSetting = await basketModel.findOne({
                 userId: req.params.user_id
             })
+            const response = {
+                userId: data[0]._id,
+                polyDating: data[0].polyDating,
+                email: data[0].email,
+                loveToGive: data[0].loveToGive,
+                polyRelationship: data[0].polyRelationship,
+                firstName: data[0].firstName,
+                birthDate: data[0].birthDate,
+                age: age,
+                identity: data[0].identity,
+                relationshipSatus: data[0].relationshipSatus,
+                IntrestedIn: data[0].IntrestedIn,
+                Bio: data[0].Bio,
+                photo: data[0].photo,
+                fcm_token: data[0].fcm_token,
+                hopingToFind: data[0].hopingToFind,
+                longitude: data[0].location.coordinates[0],
+                latitude: data[0].location.coordinates[1],
+                jobTitle: data[0].jobTitle,
+                wantChildren: data[0].wantChildren,
+                countryCode: data[0].countryCode,
+                phoneNumber: data[0].phoneNumber,
+                extraAtrribute: data[0].extraAtrribute,
+                Posts: getAllPosts,
+                friendStatus: statusCode[0],
+                chatRoomId: chatRoomId[0] == undefined ? "" : chatRoomId[0],
+                fullAccess: basketSetting == null ? true : basketSetting.fullAccess,
+                thumbUpDownAccess: basketSetting == null ? false : basketSetting.thumpsUpAndDown,
+            }
 
-            console.log("basketSetting" , basketSetting);
-
-                const response = {
-                    userId: data[0]._id,
-                    polyDating: data[0].polyDating,
-                    email: data[0].email,
-                    loveToGive: data[0].loveToGive,
-                    polyRelationship: data[0].polyRelationship,
-                    firstName: data[0].firstName,
-                    birthDate: data[0].birthDate,
-                    age: age,
-                    identity: data[0].identity,
-                    relationshipSatus: data[0].relationshipSatus,
-                    IntrestedIn: data[0].IntrestedIn,
-                    Bio: data[0].Bio,
-                    photo: data[0].photo,
-                    fcm_token: data[0].fcm_token,
-                    hopingToFind: data[0].hopingToFind,
-                    longitude: data[0].location.coordinates[0],
-                    latitude: data[0].location.coordinates[1],
-                    jobTitle: data[0].jobTitle,
-                    wantChildren: data[0].wantChildren,
-                    countryCode: data[0].countryCode,
-                    phoneNumber: data[0].phoneNumber,
-                    extraAtrribute: data[0].extraAtrribute,
-                    Posts: getAllPosts,
-                    friendStatus: statusCode[0],
-                    chatRoomId: chatRoomId[0] == undefined ? "" : chatRoomId[0],
-                    fullAccess:basketSetting == null ? true : basketSetting.fullAccess,
-                    thumbUpDownAccess:basketSetting == null ? false : basketSetting.thumpsUpAndDown,
-                }
-        
 
 
 
@@ -2362,8 +2345,6 @@ exports.storeBasketValue = async (req, res, next) => {
                 const matchProfile = local / 5 * 100;
 
                 const profileMatch = `${parseInt(matchProfile)}`
-
-                // console.log("chechUser", chechUser);
 
                 const findUser = await userModel.findOne({
                     _id: req.params.user_id,
@@ -2495,7 +2476,6 @@ exports.yesBasket = async (req, res, next) => {
                         const finalData = [];
                         const responseData = [];
                         for (const allrequestedDataNotAcceptedRequestAndNotFriend of reaquestedAllEmail) {
-                            // console.log("allrequestedDataNotAcceptedRequestAndNotFriend", allrequestedDataNotAcceptedRequestAndNotFriend);
                             const userDetail = await userModel.findOne({ email: allrequestedDataNotAcceptedRequestAndNotFriend });
                             finalData.push(userDetail)
                         }
@@ -2523,10 +2503,10 @@ exports.yesBasket = async (req, res, next) => {
                                 })
 
 
-                                if(findInThumbUp){
+                                if (findInThumbUp) {
                                     const findThumbData = findThumb.userId
                                     const orginalData = getOriginalData._id
-    
+
                                     if (orginalData.toString() == findThumbData.toString()) {
                                         const response = {
                                             _id: getOriginalData._id,
@@ -2539,14 +2519,14 @@ exports.yesBasket = async (req, res, next) => {
                                             thumbUpStatus: 1,
                                             thumbDownStatus: 0
                                         }
-    
-    
+
+
                                         responseData.push(response);
                                     }
-                                }else if(findInThumbDown){
+                                } else if (findInThumbDown) {
                                     const findThumbData = findThumb.userId
                                     const orginalData = getOriginalData._id
-    
+
                                     if (orginalData.toString() == findThumbData.toString()) {
                                         const response = {
                                             _id: getOriginalData._id,
@@ -2559,14 +2539,14 @@ exports.yesBasket = async (req, res, next) => {
                                             thumbUpStatus: 0,
                                             thumbDownStatus: 1
                                         }
-    
-    
+
+
                                         responseData.push(response);
                                     }
-                                }else{
+                                } else {
                                     const findThumbData = findThumb.userId
                                     const orginalData = getOriginalData._id
-    
+
                                     if (orginalData.toString() == findThumbData.toString()) {
                                         const response = {
                                             _id: getOriginalData._id,
@@ -2581,12 +2561,12 @@ exports.yesBasket = async (req, res, next) => {
                                             thumbUpStatus: 0,
                                             thumbDownStatus: 0
                                         }
-    
-    
+
+
                                         responseData.push(response);
                                     }
                                 }
-                              
+
                             }
 
 
@@ -2950,7 +2930,6 @@ exports.yesBasket = async (req, res, next) => {
                         const finalStatus = []
                         for (const [key, finalData] of meageAllTable.entries()) {
 
-                            console.log("finalData", finalData);
                             for (const [key, final1Data] of statusByEmail.entries())
                                 if (finalData.email === final1Data.email) {
                                     const response = {
@@ -2972,9 +2951,6 @@ exports.yesBasket = async (req, res, next) => {
                                     user2: req.params.user_id
                                 }]
                             })
-
-
-                            console.log("findAllUserWithIchat1", findAllUserWithIchat1);
 
                             const findAllUserWithIchat2 = await chatRoomModel.findOne({
                                 $and: [{
@@ -3585,9 +3561,6 @@ exports.yesBasket = async (req, res, next) => {
                                 }]
                             })
 
-
-                            console.log("findAllUserWithIchat1", findAllUserWithIchat1);
-
                             const findAllUserWithIchat2 = await chatRoomModel.findOne({
                                 $and: [{
                                     user1: req.params.user_id
@@ -3860,7 +3833,6 @@ exports.noBasket = async (req, res, next) => {
                         const finalData = [];
                         const responseData = [];
                         for (const allrequestedDataNotAcceptedRequestAndNotFriend of reaquestedAllEmail) {
-                            // console.log("allrequestedDataNotAcceptedRequestAndNotFriend", allrequestedDataNotAcceptedRequestAndNotFriend);
                             const userDetail = await userModel.findOne({ email: allrequestedDataNotAcceptedRequestAndNotFriend });
                             finalData.push(userDetail)
                         }
@@ -4866,15 +4838,9 @@ exports.moveBasket = async (req, res, next) => {
                 "noBasket.userId": req.params.request_user_id
             })
 
-            console.log("findYesBasketUser", findYesBasketUser);
-            console.log("findNoBasketUser", findNoBasketUser);
-
             if (findYesBasketUser) {
-                console.log("xcasdfwef");
                 const yesData = [];
                 for (const dataFind of findYesBasketUser.yesBasket) {
-                    console.log("dataFind");
-
                     if ((dataFind.userId).toString() == (req.params.request_user_id).toString()) {
                         yesData.push(dataFind)
                     }
@@ -4920,9 +4886,6 @@ exports.moveBasket = async (req, res, next) => {
 
 
                 for (const dataFind of findNoBasketUser.noBasket) {
-
-                    console.log("dataFind", dataFind);
-
                     if ((dataFind.userId).toString() == (req.params.request_user_id).toString()) {
                         noData.push(dataFind)
                     }
@@ -5012,17 +4975,16 @@ exports.getAllNotification = async (req, res, next) => {
                         })
 
                         const data = new Date(getNotification.createdAt).toString().split(" ")
-                        console.log(data);
+
                         const data1 = data[4].split(":")
 
-                        console.log(data1);
                         const response = {
                             _id: getNotification.userId,
                             notification: getNotification.notifications,
                             name: findUserDetail.firstName,
                             profile: findUserDetail.photo[0] ? findUserDetail.photo[0].res : "",
                             status: getNotification.status,
-                            time: `${data[0]} ${data[1]} ${data[2]} ${data[3]} ${parseInt((data1[0]))+ 5} hourse ${parseInt((data1[1]))+ 5} minute ${parseInt((data1[1]))} second `
+                            time: `${data[0]} ${data[1]} ${data[2]} ${data[3]} ${parseInt((data1[0])) + 5} hourse ${parseInt((data1[1])) + 5} minute ${parseInt((data1[1]))} second `
                         }
                         allNotification.push(response)
 
@@ -5054,3 +5016,108 @@ exports.getAllNotification = async (req, res, next) => {
 }
 
 
+exports.forGetPassword = async (req, res) => {
+    try {
+
+        const findUser = await userModel.findOne({
+            email: req.params.email
+        })
+
+        if (findUser) {
+
+            var chars = "0123456789abcdefghijklmnopqrstuvwxyz!@#$%^&*()ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+            var passwordLength = 7;
+            var password = "";
+            for (var i = 0; i <= passwordLength; i++) {
+                var randomNumber = Math.floor(Math.random() * chars.length);
+                password += chars.substring(randomNumber, randomNumber + 1);
+            }
+
+
+            const email = req.params.email
+            var transporter = nodemailer.createTransport({
+                host: 'smtp.gmail.com',
+                port: 587,
+                auth: {
+                    user: 'dobariyakrishna79@gmail.com',
+                    pass: 'cqcalljcuizvnath',
+                }
+            });
+
+            var mailOptions = {
+                from: `dobariyakrishna79@gmail.com`,
+                to: `${email}`,
+                subject: 'n2you forget password mail',
+                html: `
+                <html>
+                <body> 
+                <h4> Hello ${findUser.firstName},</h4>
+
+                <p>Did you forgot your password? Don't worry we have reset your password.</p>
+            
+                <p>Your new password is : <b>${password}</b></p>
+            
+                <p>Please use above password to login in to the app.</p>
+            
+                <p>If you did not request a new password, please let us know immediately by replying to this email.</p>
+            
+                <p>Thanks</p>
+                <p>The N2You team</p>
+                </body>
+                </html>`
+            };
+
+            await userModel.updateOne({
+                email: req.params.email
+            }, {
+                $set: {
+                    password: password
+                }
+            })
+
+            transporter.sendMail(mailOptions, function (error, info) {
+                if (error) {
+                    console.log(error);
+                } else {
+                    console.log('Email sent: ' + info.response);
+                }
+            });
+
+            res.status(status.OK).json(
+                new APIResponse("successfully message send", "true", 200, "1")
+            );
+        } else {
+            res.status(status.NOT_FOUND).json(
+                new APIResponse("email not found", "false", 404, "0")
+            );
+        }
+    } catch (error) {
+        res.status(status.INTERNAL_SERVER_ERROR).json(
+            new APIResponse("Something Went Wrong", "false", 500, error.message)
+        );
+    }
+}
+
+exports.checkMailExiesOrNot = async (req, res) => {
+    try {
+
+        const findUser = await userModel.findOne({
+            email: req.params.email
+        }).select("email")
+
+
+        if (findUser) {
+            res.status(status.NOT_FOUND).json(
+                new APIResponse("you can't use this email, already exist", "true", 200, "1")
+            );
+        } else {
+            res.status(status.CONFLICT).json(
+                new APIResponse("you can user this email", "flase", 409, "0")
+            );
+        }
+    } catch (error) {
+        res.status(status.INTERNAL_SERVER_ERROR).json(
+            new APIResponse("Something Went Wrong", "false", 500, error.message)
+        );
+    }
+}

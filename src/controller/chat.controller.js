@@ -120,7 +120,6 @@ exports.allUserListWithUnreadCount = async (req, res, next) => {
 
                 for (const getChat of findRoom.chat) {
 
-                    console.log("getChat", getChat);
                     var count = count + getChat.read;
                     const lastUnreadMessage = {
                         text: getChat.text,
