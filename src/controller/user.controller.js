@@ -4666,6 +4666,10 @@ exports.noBasket = async (req, res, next) => {
                             }
                         }
 
+                        if(finalExistUser[0] == undefined){
+                            
+                        }
+
                         for (const emailData of finalExistUser[0].result) {
 
                             for (const requestEmail of emailData) {

@@ -122,11 +122,11 @@ exports.allUserListWithUnreadCount = async (req, res, next) => {
 
                     var s_id = (getChat.sender).toString();
                     var u_id = (req.params.user_id).toString();
-                    
-                    if (s_id == u_id) {
 
-                    } else {
+                    if (s_id == u_id) {
                         count = count + getChat.read;
+                    } else {
+
                     }
 
 
