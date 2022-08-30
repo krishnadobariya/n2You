@@ -90,7 +90,6 @@ exports.allUserListWithUnreadCount = async (req, res, next) => {
             }]
         })
 
-        console.log();
         const unReadMessage = [];
 
         for (const roomId of findAllUserWithIchat) {
@@ -121,18 +120,26 @@ exports.allUserListWithUnreadCount = async (req, res, next) => {
 
                 for (const getChat of findRoom.chat) {
 
-                    console.log("getChat", getChat);
-                    var count = count + getChat.read;
+                    var s_id = (getChat.sender).toString();
+                    var u_id = (req.params.user_id).toString();
+                    
+                    if (s_id == u_id) {
+
+                    } else {
+                        count = count + getChat.read;
+                    }
+
+
                     const lastUnreadMessage = {
                         text: getChat.text,
                         createdAt: getChat.createdAt,
                         dateAndTime: getChat.dateAndTime
                     }
 
-                    console.log("lastUnreadMessage", lastUnreadMessage);
+                    // console.log("lastUnreadMessage", lastUnreadMessage);
                     lastMessage.push(lastUnreadMessage);
                     const lastValue = lastMessage[lastMessage.length - 1];
-                    console.log("lastValue", lastValue);
+                    // console.log("lastValue", lastValue);
                     const response = {
                         chatRoomId: findRoom.chatRoomId,
                         _id: userDetail[0]._id,
@@ -159,11 +166,11 @@ exports.allUserListWithUnreadCount = async (req, res, next) => {
         const endIndex = page * limit;
 
 
-        console.log("uniqueObjArray", uniqueObjArray);
+        // console.log("uniqueObjArray", uniqueObjArray);
 
         const data = uniqueObjArray[0].dateAndTime
-        console.log(data);
-        console.log("date is", new Date(data));
+        // console.log(data);
+        // console.log("date is", new Date(data));
         res.status(status.OK).json(
             new APIResponse("all group", true, 200, 1, uniqueObjArray.slice(startIndex, endIndex).sort((a, b) => new Date(b.dateAndTime) - new Date(a.dateAndTime)))
         );
