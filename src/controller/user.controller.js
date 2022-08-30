@@ -3327,8 +3327,8 @@ exports.yesBasket = async (req, res, next) => {
                             for (const findThumb of findThumbUp.yesBasket) {
 
                                 const findInThumbUp = await thumbUpModel.findOne({
-                                    adminUserId: req.params.user_id,
-                                    "thumbDetail.reqUserId": req.params.request_user_id,
+                                    adminUserId: req.params.request_user_id,
+                                    "thumbDetail.reqUserId": req.params.user_id,
                                     "thumbDetail.userId": findThumb.userId
                                 })
 
@@ -3483,8 +3483,8 @@ exports.yesBasket = async (req, res, next) => {
 
 
                                             const findInThumbUp = await thumbUpModel.findOne({
-                                                adminUserId: req.params.user_id,
-                                                "thumbDetail.reqUserId": req.params.request_user_id,
+                                                adminUserId: req.params.request_user_id,
+                                                "thumbDetail.reqUserId": req.params.user_id,
                                                 "thumbDetail.userId": findThumb.userId
                                             })
                                             if (findInThumbUp) {
@@ -5131,8 +5131,8 @@ exports.checkMailExiesOrNot = async (req, res) => {
 
 
         if (findUser) {
-            res.status(status.CONFLICT).json(
-                new APIResponse("you can't use this email, already exist", "false", 409, "0")
+            res.status(status.OK).json(
+                new APIResponse("you can't use this email, already exist", "true", 200, "1")
             );
         } else {
             res.status(status.OK).json(
