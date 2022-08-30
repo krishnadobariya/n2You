@@ -760,8 +760,8 @@ exports.inviteFriends = async (req, res, next) => {
                         );
 
                     } else {
-                        res.status(status.CONFLICT).json(
-                            new APIResponse("aleardy Invited!", "false", 409, "0")
+                        res.status(status.ALREADY_REPORTED).json(
+                            new APIResponse("aleardy Invited!", "false", 208, "0")
                         );
                     }
 

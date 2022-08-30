@@ -42,8 +42,8 @@ exports.userRegister = async (req, res, next) => {
 
         const findEmail = await userModel.findOne({ email: req.body.email });
         if (findEmail) {
-            res.status(status.CONFLICT).json(
-                new APIResponse("Not Allowed, Email Already Exist", "false", 409, "0")
+            res.status(status.ALREADY_REPORTED).json(
+                new APIResponse("Not Allowed, Email Already Exist", "false", 208, "0")
             )
         } else {
             const phoneNum = req.body.phone_num;
@@ -52,8 +52,8 @@ exports.userRegister = async (req, res, next) => {
 
 
             if (findNumber) {
-                res.status(status.CONFLICT).json(
-                    new APIResponse("Number Already Exist, It must be Unique", "false", 409, "0")
+                res.status(status.ALREADY_REPORTED).json(
+                    new APIResponse("Number Already Exist, It must be Unique", "false", 208, "0")
                 )
             } else {
                 const user = userModel({
@@ -429,12 +429,12 @@ exports.userUpdate = async (req, res, next) => {
             const resultForEmail = findEmailUnique.includes("yes")
 
             if (resultForNumber) {
-                res.status(status.CONFLICT).json(
-                    new APIResponse("Number Already Exist, It must be Unique", "false", 409, "0")
+                res.status(status.ALREADY_REPORTED).json(
+                    new APIResponse("Number Already Exist, It must be Unique", "false", 208, "0")
                 )
             } else if (resultForEmail) {
-                res.status(status.CONFLICT).json(
-                    new APIResponse("Not Allowed, Email Already Exist", "false", 409, "0")
+                res.status(status.ALREADY_REPORTED).json(
+                    new APIResponse("Not Allowed, Email Already Exist", "false", 208, "0")
                 )
             } else {
 

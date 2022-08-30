@@ -91,8 +91,8 @@ exports.LikeOrDislikeInUserPost = async (req, res, next) => {
 
                     } else {
                         const status_code = 2
-                        res.status(status.CONFLICT).json(
-                            new APIResponse("Already Liked Post", "true", 409, "1", status_code)
+                        res.status(status.ALREADY_REPORTED).json(
+                            new APIResponse("Already Liked Post", "true", 208, "1", status_code)
                         );
                     }
 
@@ -357,7 +357,7 @@ exports.showAllUserWhichIsLikePost = async (req, res, next) => {
 
                     const finalStatus = []
                     for (const [key, finalData] of meageAllTable.entries()) {
-                        
+
                         for (const [key, final1Data] of statusByEmail.entries())
                             if ((finalData._id).toString() === (final1Data._id).toString()) {
                                 finalStatus.push(final1Data.status)

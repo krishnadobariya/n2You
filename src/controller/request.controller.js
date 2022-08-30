@@ -165,8 +165,8 @@ exports.sendRequest = async (req, res, next) => {
 
                     }
                     if (inRequested[0] == true) {
-                        res.status(status.CONFLICT).json(
-                            new APIResponse("Already requesed!", "false", 409, "0")
+                        res.status(status.ALREADY_REPORTED).json(
+                            new APIResponse("Already requesed!", "false", 208, "0")
                         )
                     } else {
                         const updatePosts = await requestModel.updateOne({ userId: req.params.user_id },
