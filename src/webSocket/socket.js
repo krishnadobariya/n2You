@@ -195,6 +195,9 @@ function socket(io) {
                             }
 
                             io.to(userRoom).emit("chatReceive", chat);
+                            if (chat.receiver) {
+                                await chatModels.updateMany({ chatRoomId: getChatRoom._id }, { $set: { "chat.$[].read": 0 } });
+                            }
 
                             const title = "n2you Notification";
                             const body = `${arg.sender_id} send request to `;
@@ -255,6 +258,10 @@ function socket(io) {
                                 text: arg.text,
                                 sender: arg.sender_id,
                                 receiver: receiver_id[0]
+                            }
+
+                            if (chat.receiver) {
+                                await chatModels.updateMany({ chatRoomId: getChatRoom._id }, { $set: { "chat.$[].read": 0 } });
                             }
 
                             io.to(userRoom).emit("chatReceive", chat);
@@ -340,6 +347,10 @@ function socket(io) {
                                 }
 
                                 io.to(userRoom).emit("chatReceive", chat);
+
+                                if (chat.receiver) {
+                                    await chatModels.updateMany({ chatRoomId: getChatRoom._id }, { $set: { "chat.$[].read": 0 } });
+                                }
                                 const title = "n2you Notification";
                                 const body = `${arg.sender_id} send request to`;
 
@@ -399,7 +410,9 @@ function socket(io) {
                                     receiver: receiver_id[0]
                                 }
                                 io.to(userRoom).emit("chatReceive", chat);
-
+                                if (chat.receiver) {
+                                    await chatModels.updateMany({ chatRoomId: getChatRoom._id }, { $set: { "chat.$[].read": 0 } });
+                                }
                                 const title = "n2you Notification";
                                 const body = `${arg.sender_id} send request to `;
 
@@ -459,7 +472,9 @@ function socket(io) {
                                     receiver: receiver_id[0]
                                 }
                                 io.to(userRoom).emit("chatReceive", chat);
-
+                                if (chat.receiver) {
+                                    await chatModels.updateMany({ chatRoomId: getChatRoom._id }, { $set: { "chat.$[].read": 0 } });
+                                }
                                 const title = "n2you Notification";
                                 const body = `${arg.sender_id} send request to `;
 
@@ -517,7 +532,9 @@ function socket(io) {
                                     receiver: receiver_id[0]
                                 }
                                 io.to(userRoom).emit("chatReceive", chat);
-
+                                if (chat.receiver) {
+                                    await chatModels.updateMany({ chatRoomId: getChatRoom._id }, { $set: { "chat.$[].read": 0 } });
+                                }
                                 const title = "n2you Notification";
                                 const body = `${arg.sender_id} send request to `;
                                 const text = arg.text;
@@ -804,7 +821,7 @@ function socket(io) {
                 chatRoomId: arg.chat_room,
                 receiverId: arg.receiver_id
             })
-            
+
             if (findRoom == null) {
                 io.emit("readChat", "chat room not found");
             } else {
