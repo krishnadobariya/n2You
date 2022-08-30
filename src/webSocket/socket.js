@@ -805,10 +805,10 @@ function socket(io) {
             })
 
             if (findRoom == null) {
-                io.emit("chatReceive", "chat room not found");
+                io.emit("readChat", "chat room not found");
             } else {
                 await chatModels.updateMany({ chatRoomId: arg.chat_room }, { $set: { "chat.$[].read": 0 } });
-                io.emit("chatReceive", "read All chat");
+                io.emit("readChat", "read All chat");
             }
         })
 
