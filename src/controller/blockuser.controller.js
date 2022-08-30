@@ -2,6 +2,7 @@ const APIResponse = require("../helper/APIResponse");
 const status = require("http-status");
 const userModel = require("../model/user.model");
 const blockUnblockUserModel = require("../model/blockuser.model");
+const requestsModel = require("../model/requests.model");
 
 exports.blockUnblockUser = async (req, res, next) => {
     try {
@@ -31,10 +32,42 @@ exports.blockUnblockUser = async (req, res, next) => {
                             }
                         })
 
+
+                        const findInRequestModel1 = await requestsModel.findOne({
+                            userId: req.params.block_user_id
+                        })
+
+                        const findInRequestModel2 = await requestsModel.findOne({
+                            userId: req.params.user_id
+                        })
+
+                        await requestsModel.updateOne({
+                            userId: findInRequestModel1.userId
+                        }, {
+                            $pull: {
+                                RequestedEmails: {
+                                    userId: findInRequestModel2.userId
+                                }
+                            }
+                        })
+
+                        await requestsModel.updateOne({
+                            userId: findInRequestModel2.userId
+                        }, {
+                            $pull: {
+                                RequestedEmails: {
+                                    userId: findInRequestModel1.userId
+                                }
+                            }
+                        })
+
+
                         const saveData = await blockUser.save();
                         res.status(status.CREATED).json(
-                            new APIResponse("block Added", "true", 201, "1")
+                            new APIResponse("block Added", "true", 201, "1", saveData)
                         )
+
+
                     } else {
                         const finalData = {
                             blockUserId: req.params.block_user_id,
@@ -42,6 +75,35 @@ exports.blockUnblockUser = async (req, res, next) => {
                         }
 
                         await blockUnblockUserModel.updateOne({ userId: req.params.user_id }, { $push: { blockUnblockUser: finalData } });
+
+                        const findInRequestModel1 = await requestsModel.findOne({
+                            userId: req.params.block_user_id
+                        })
+
+                        const findInRequestModel2 = await requestsModel.findOne({
+                            userId: req.params.user_id
+                        })
+
+                        await requestsModel.updateOne({
+                            userId: findInRequestModel1.userId
+                        }, {
+                            $pull: {
+                                RequestedEmails: {
+                                    userId: findInRequestModel2.userId
+                                }
+                            }
+                        })
+
+                        await requestsModel.updateOne({
+                            userId: findInRequestModel2.userId
+                        }, {
+                            $pull: {
+                                RequestedEmails: {
+                                    userId: findInRequestModel1.userId
+                                }
+                            }
+                        })
+
 
                         res.status(status.OK).json(
                             new APIResponse("block added successfully!", "false", 201, "1")

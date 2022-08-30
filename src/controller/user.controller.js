@@ -14,6 +14,7 @@ const thumbUpModel = require("../model/thumbUp.model");
 const thumbDownModel = require("../model/thumDown.model");
 var nodemailer = require('nodemailer');
 const { updateOne } = require("../model/user.model");
+const { blockUnblockUser } = require("./blockuser.controller");
 
 exports.userRegister = async (req, res, next) => {
     try {
@@ -2519,8 +2520,6 @@ exports.yesBasket = async (req, res, next) => {
                                             thumbUpStatus: 1,
                                             thumbDownStatus: 0
                                         }
-
-
                                         responseData.push(response);
                                     }
                                 } else if (findInThumbDown) {
@@ -3191,8 +3190,6 @@ exports.yesBasket = async (req, res, next) => {
                 for (const allBakest of findUser.yesBasket) {
 
                     YesBasketData.push((allBakest.userId).toString())
-
-
                 }
 
                 for (const allyesBasketData of YesBasketData) {
@@ -3253,7 +3250,6 @@ exports.yesBasket = async (req, res, next) => {
                                     "thumbDetail.userId": findThumb.userId
                                 })
 
-                                console.log("findInThumbUp", findInThumbUp);
 
                                 if (findInThumbUp) {
                                     const findThumbData = findThumb.userId
