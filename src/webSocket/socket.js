@@ -801,13 +801,14 @@ function socket(io) {
 
         socket.on("readUnread", async (arg) => {
             const findRoom = await chatModels.findOne({
-                chatRoomId: arg.chat_room
+                chatRoomId: arg.chat_room,
+                receiverId: arg.receiver_id
             })
 
             if (findRoom == null) {
                 io.emit("readChat", "chat room not found");
             } else {
-                await chatModels.updateMany({ chatRoomId: arg.chat_room }, { $set: { "chat.$[].read": 0 } });
+                await chatModels.updateMany({ chatRoomId: arg.chat_room, receiverId: arg.receiver_id }, { $set: { "chat.$[].read": 0 } });
                 io.emit("readChat", "read All chat");
             }
         })
