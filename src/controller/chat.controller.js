@@ -129,7 +129,6 @@ exports.allUserListWithUnreadCount = async (req, res, next) => {
 
                     }
 
-
                     const lastUnreadMessage = {
                         text: getChat.text,
                         createdAt: getChat.createdAt,

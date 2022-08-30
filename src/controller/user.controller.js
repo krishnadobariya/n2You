@@ -14,7 +14,7 @@ const thumbUpModel = require("../model/thumbUp.model");
 const thumbDownModel = require("../model/thumDown.model");
 var nodemailer = require('nodemailer');
 const { updateOne } = require("../model/user.model");
-const { blockUnblockUser } = require("./blockuser.controller");
+const blockuserModel = require("../model/blockuser.model");
 
 exports.userRegister = async (req, res, next) => {
     try {
@@ -2436,7 +2436,18 @@ exports.yesBasket = async (req, res, next) => {
                 const YesBasketData = [];
                 for (const allBakest of findUser.yesBasket) {
 
-                    YesBasketData.push((allBakest.userId).toString())
+                    const findInBlockUserModel = await blockuserModel.findOne({
+                        userId: req.params.request_user_id,
+                        "blockUnblockUser.blockUserId": allBakest.userId
+                    })
+
+                    console.log("findInBlockUserModel", findInBlockUserModel);
+                    if (findInBlockUserModel) {
+
+                    } else {
+                        YesBasketData.push((allBakest.userId).toString())
+                    }
+
                 }
 
                 for (const allyesBasketData of YesBasketData) {
@@ -2520,6 +2531,8 @@ exports.yesBasket = async (req, res, next) => {
                                             thumbUpStatus: 1,
                                             thumbDownStatus: 0
                                         }
+
+
                                         responseData.push(response);
                                     }
                                 } else if (findInThumbDown) {
@@ -3189,7 +3202,15 @@ exports.yesBasket = async (req, res, next) => {
                 const YesBasketData = [];
                 for (const allBakest of findUser.yesBasket) {
 
-                    YesBasketData.push((allBakest.userId).toString())
+                    const findInBlockUserModel = await blockuserModel.findOne({
+                        userId: req.params.request_user_id,
+                        "blockUnblockUser.blockUserId": allBakest.userId
+                    })
+                    if (findInBlockUserModel) {
+
+                    } else {
+                        YesBasketData.push((allBakest.userId).toString())
+                    }
                 }
 
                 for (const allyesBasketData of YesBasketData) {
@@ -3805,7 +3826,15 @@ exports.noBasket = async (req, res, next) => {
                 const allMeargeData = [];
                 const NoBasketData = [];
                 for (const allBakest of findUser.noBasket) {
-                    NoBasketData.push(allBakest.userId)
+                    const findInBlockUserModel = await blockuserModel.findOne({
+                        userId: req.params.request_user_id,
+                        "blockUnblockUser.blockUserId": allBakest.userId
+                    })
+                    if (findInBlockUserModel) {
+
+                    } else {
+                        NoBasketData.push((allBakest.userId).toString())
+                    }
                 }
 
                 for (const allNoBasketData of NoBasketData) {
@@ -4401,7 +4430,15 @@ exports.noBasket = async (req, res, next) => {
                 const allMeargeData = [];
                 const NoBasketData = [];
                 for (const allBakest of findUser.noBasket) {
-                    NoBasketData.push(allBakest.userId)
+                    const findInBlockUserModel = await blockuserModel.findOne({
+                        userId: req.params.request_user_id,
+                        "blockUnblockUser.blockUserId": allBakest.userId
+                    })
+                    if (findInBlockUserModel) {
+
+                    } else {
+                        NoBasketData.push((allBakest.userId).toString())
+                    }
                 }
 
                 for (const allNoBasketData of NoBasketData) {
@@ -4664,10 +4701,6 @@ exports.noBasket = async (req, res, next) => {
                                     finalExistUser.push(DataDetail)
                                 }
                             }
-                        }
-
-                        if(finalExistUser[0] == undefined){
-                            
                         }
 
                         for (const emailData of finalExistUser[0].result) {
