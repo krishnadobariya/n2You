@@ -3248,8 +3248,8 @@ exports.yesBasket = async (req, res, next) => {
                             for (const findThumb of findThumbUp.yesBasket) {
 
                                 const findInThumbUp = await thumbUpModel.findOne({
-                                    adminUserId: req.params.user_id,
-                                    "thumbDetail.reqUserId": req.params.request_user_id,
+                                    adminUserId: req.params.request_user_id,
+                                    "thumbDetail.reqUserId": req.params.user_id,
                                     "thumbDetail.userId": findThumb.userId
                                 })
 
@@ -3865,14 +3865,14 @@ exports.noBasket = async (req, res, next) => {
                             for (const findThumb of findThumbUp.noBasket) {
 
                                 const findInThumbUp = await thumbUpModel.findOne({
-                                    adminUserId: req.params.user_id,
-                                    "thumbDetail.reqUserId": req.params.request_user_id,
+                                    adminUserId: req.params.request_user_id,
+                                    "thumbDetail.reqUserId": req.params.user_id,
                                     "thumbDetail.userId": findThumb.userId
                                 })
 
                                 const findInThumbDown = await thumbDownModel.findOne({
-                                    adminUserId: req.params.user_id,
-                                    "thumbDetail.reqUserId": req.params.request_user_id,
+                                    adminUserId: req.params.request_user_id,
+                                    "thumbDetail.reqUserId": req.params.user_id,
                                     "thumbDetail.userId": findThumb.userId
                                 })
 
@@ -3984,14 +3984,14 @@ exports.noBasket = async (req, res, next) => {
 
 
                                 const findInThumbUp = await thumbUpModel.findOne({
-                                    adminUserId: req.params.user_id,
-                                    "thumbDetail.reqUserId": req.params.request_user_id,
+                                    adminUserId: req.params.request_user_id,
+                                    "thumbDetail.reqUserId": req.params.user_id,
                                     "thumbDetail.userId": findThumb.userId
                                 })
 
                                 const findInThumbDown = await thumbDownModel.findOne({
-                                    adminUserId: req.params.user_id,
-                                    "thumbDetail.reqUserId": req.params.request_user_id,
+                                    adminUserId: req.params.request_user_id,
+                                    "thumbDetail.reqUserId": req.params.user_id,
                                     "thumbDetail.userId": findThumb.userId
                                 })
 
@@ -4177,14 +4177,14 @@ exports.noBasket = async (req, res, next) => {
                                         for (const findThumb of findThumbUp.noBasket) {
 
                                             const findInThumbUp = await thumbUpModel.findOne({
-                                                adminUserId: req.params.user_id,
-                                                "thumbDetail.reqUserId": req.params.request_user_id,
+                                                adminUserId: req.params.request_user_id,
+                                                "thumbDetail.reqUserId": req.params.user_id,
                                                 "thumbDetail.userId": findThumb.userId
                                             })
 
                                             const findInThumbDown = await thumbDownModel.findOne({
-                                                adminUserId: req.params.user_id,
-                                                "thumbDetail.reqUserId": req.params.request_user_id,
+                                                adminUserId: req.params.request_user_id,
+                                                "thumbDetail.reqUserId": req.params.user_id,
                                                 "thumbDetail.userId": findThumb.userId
                                             })
 
@@ -4461,8 +4461,8 @@ exports.noBasket = async (req, res, next) => {
                             for (const findThumb of findThumbUp.noBasket) {
 
                                 const findInThumbUp = await thumbUpModel.findOne({
-                                    adminUserId: req.params.user_id,
-                                    "thumbDetail.reqUserId": req.params.request_user_id,
+                                    adminUserId: req.params.request_user_id,
+                                    "thumbDetail.reqUserId": req.params.user_id,
                                     "thumbDetail.userId": findThumb.userId
                                 })
 
@@ -4538,8 +4538,8 @@ exports.noBasket = async (req, res, next) => {
                             for (const findThumb of findThumbUp.noBasket) {
 
                                 const findInThumbUp = await thumbUpModel.findOne({
-                                    adminUserId: req.params.user_id,
-                                    "thumbDetail.reqUserId": req.params.request_user_id,
+                                    adminUserId: req.params.request_user_id,
+                                    "thumbDetail.reqUserId": req.params.user_id,
                                     "thumbDetail.userId": findThumb.userId
                                 })
 
@@ -4686,8 +4686,8 @@ exports.noBasket = async (req, res, next) => {
 
 
                                             const findInThumbUp = await thumbUpModel.findOne({
-                                                adminUserId: req.params.user_id,
-                                                "thumbDetail.reqUserId": req.params.request_user_id,
+                                                adminUserId: req.params.request_user_id,
+                                                "thumbDetail.reqUserId": req.params.user_id,
                                                 "thumbDetail.userId": findThumb.userId
                                             })
 
@@ -5111,8 +5111,8 @@ exports.forGetPassword = async (req, res) => {
                 new APIResponse("successfully message send", "true", 200, "1")
             );
         } else {
-            res.status(status.NOT_FOUND).json(
-                new APIResponse("email not found", "false", 404, "0")
+            res.status(status.OK).json(
+                new APIResponse("email not found", "true", 200, "1")
             );
         }
     } catch (error) {
@@ -5132,11 +5132,11 @@ exports.checkMailExiesOrNot = async (req, res) => {
 
         if (findUser) {
             res.status(status.OK).json(
-                new APIResponse("you can't use this email, already exist", "true", 200, "1")
+                new APIResponse("you can't use this email, already exist", "true", 200, "1", { emailExistOrNot: true })
             );
         } else {
             res.status(status.OK).json(
-                new APIResponse("you can use this email", "true", 200, "1")
+                new APIResponse("you can use this email", "true", 200, "1", { emailExistOrNot: false })
             );
         }
     } catch (error) {
