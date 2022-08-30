@@ -4998,19 +4998,114 @@ exports.getAllNotification = async (req, res, next) => {
                             _id: getNotification.userId
                         })
 
-                        const data = new Date(getNotification.createdAt).toString().split(" ")
 
-                        const data1 = data[4].split(":")
+                        var userNotificationDate = new Date(getNotification.createdAt);
+                        now = new Date();
+                        var sec_num = (now - userNotificationDate) / 1000;
+                        var days = Math.floor(sec_num / (3600 * 24));
+                        var hours = Math.floor((sec_num - (days * (3600 * 24))) / 3600) + 5;
+                        var minutes = Math.floor((sec_num - (days * (3600 * 24)) - (hours * 3600)) / 60) + 5;
+                        var seconds = Math.floor(sec_num - (days * (3600 * 24)) - (hours * 3600) - (minutes * 60));
 
-                        const response = {
-                            _id: getNotification.userId,
-                            notification: getNotification.notifications,
-                            name: findUserDetail.firstName,
-                            profile: findUserDetail.photo[0] ? findUserDetail.photo[0].res : "",
-                            status: getNotification.status,
-                            time: `${data[0]} ${data[1]} ${data[2]} ${data[3]} ${parseInt((data1[0])) + 5} hourse ${parseInt((data1[1])) + 5} minute ${parseInt((data1[1]))} second `
+                        if (hours < 10) { hours = "0" + hours; }
+                        if (minutes < 10) { minutes = "0" + minutes; }
+                        if (seconds < 10) { seconds = "0" + seconds; }
+
+                        const notificationTime = [];
+                        if (days > 28) {
+                            const response = {
+                                _id: getNotification.userId,
+                                notification: getNotification.notifications,
+                                name: findUserDetail.firstName,
+                                profile: findUserDetail.photo[0] ? findUserDetail.photo[0].res : "",
+                                status: getNotification.status,
+                                time: new Date(userNotificationDate).toDateString()
+                            }
+                            allNotification.push(response)
+                        } else if (days > 21 && days < 28) {
+                            const response = {
+                                _id: getNotification.userId,
+                                notification: getNotification.notifications,
+                                name: findUserDetail.firstName,
+                                profile: findUserDetail.photo[0] ? findUserDetail.photo[0].res : "",
+                                status: getNotification.status,
+                                time: '4 week ago'
+                            }
+                            allNotification.push(response)
+                        } else if (days > 14 && days < 21) {
+                            const response = {
+                                _id: getNotification.userId,
+                                notification: getNotification.notifications,
+                                name: findUserDetail.firstName,
+                                profile: findUserDetail.photo[0] ? findUserDetail.photo[0].res : "",
+                                status: getNotification.status,
+                                time: '3 week ago'
+                            }
+                            allNotification.push(response)
+                        } else if (days > 7 && days < 14) {
+                            const response = {
+                                _id: getNotification.userId,
+                                notification: getNotification.notifications,
+                                name: findUserDetail.firstName,
+                                profile: findUserDetail.photo[0] ? findUserDetail.photo[0].res : "",
+                                status: getNotification.status,
+                                time: '2 week ago'
+                            }
+                            allNotification.push(response)
+                        } else if (days > 0 && days < 7) {
+                            const response = {
+                                _id: getNotification.userId,
+                                notification: getNotification.notifications,
+                                name: findUserDetail.firstName,
+                                profile: findUserDetail.photo[0] ? findUserDetail.photo[0].res : "",
+                                status: getNotification.status,
+                                time: '1 week ago'
+                            }
+                            allNotification.push(response)
+                        } else if (hours > 0 && days == 0) {
+                            const response = {
+                                _id: getNotification.userId,
+                                notification: getNotification.notifications,
+                                name: findUserDetail.firstName,
+                                profile: findUserDetail.photo[0] ? findUserDetail.photo[0].res : "",
+                                status: getNotification.status,
+                                time: `${hours} hourse ago`
+                            }
+                            allNotification.push(response)
+                        } else if (minutes > 0 && hours == 0) {
+                            const response = {
+                                _id: getNotification.userId,
+                                notification: getNotification.notifications,
+                                name: findUserDetail.firstName,
+                                profile: findUserDetail.photo[0] ? findUserDetail.photo[0].res : "",
+                                status: getNotification.status,
+                                time: `${minutes} minutes ago`
+                            }
+                            allNotification.push(response)
+                        } else if (seconds > 0 && minutes == 0 && hours == 0 && days === 0) {
+                            const response = {
+                                _id: getNotification.userId,
+                                notification: getNotification.notifications,
+                                name: findUserDetail.firstName,
+                                profile: findUserDetail.photo[0] ? findUserDetail.photo[0].res : "",
+                                status: getNotification.status,
+                                time: `${seconds} seconds ago`
+                            }
+                            allNotification.push(response)
+                        } else if (seconds == 0 && minutes == 0 && hours == 0 && days === 0) {
+                            const response = {
+                                _id: getNotification.userId,
+                                notification: getNotification.notifications,
+                                name: findUserDetail.firstName,
+                                profile: findUserDetail.photo[0] ? findUserDetail.photo[0].res : "",
+                                status: getNotification.status,
+                                time: `just now`
+                            }
+                            allNotification.push(response)
                         }
-                        allNotification.push(response)
+
+
+
 
                     } else {
 
