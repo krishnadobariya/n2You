@@ -116,7 +116,7 @@ function socket(io) {
             minutes = minutes.toString().padStart(2, '0');
 
             let time = 'At' + ' ' + hours + ':' + minutes + ' ' + ampm + ' ' + 'on' + ' ' + month + ' ' + dates + ',' + year;
-       
+
 
             const fcm_token = [];
             if (arg.sender_id == arg.user_1) {
@@ -158,7 +158,7 @@ function socket(io) {
                 } else {
 
                     if (getChatRoom) {
-                       
+
                         if (arg.sender_id == arg.user_1 || arg.sender_id == arg.user_2) {
 
                             const findUser = await userModel.findOne({
@@ -306,7 +306,7 @@ function socket(io) {
                                 const findUser = await userModel.findOne({
                                     _id: arg.sender_id
                                 }).select('name, photo').lean();
-                         
+
                                 const data = chatModels({
                                     chatRoomId: getChatRoom._id,
                                     chat: {
@@ -465,7 +465,7 @@ function socket(io) {
 
                                 const text = arg.text;
                                 const sendBy = arg.sender_id;
-                          
+
                                 const registrationToken = fcm_token[0]
                                 Notification.sendPushNotificationFCM(
                                     registrationToken,
@@ -524,7 +524,7 @@ function socket(io) {
                                 const sendBy = arg.sender_id;
 
                                 const registrationToken = fcm_token[0]
-                      
+
                                 Notification.sendPushNotificationFCM(
                                     registrationToken,
                                     title,
@@ -808,7 +808,7 @@ function socket(io) {
                 io.emit("chatReceive", "chat room not found");
             } else {
                 await chatModels.updateMany({ chatRoomId: arg.chat_room }, { $set: { "chat.$[].read": 0 } });
-                io.emit("readChat", "read All chat");
+                io.emit("chatReceive", "read All chat");
             }
         })
 
