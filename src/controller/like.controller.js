@@ -259,8 +259,8 @@ exports.showAllUserWhichIsLikePost = async (req, res, next) => {
                     {
                         $lookup: {
                             from: 'posts',
-                            localField: 'email',
-                            foreignField: 'email',
+                            localField: '_id',
+                            foreignField: 'userId',
                             as: 'req_data'
                         }
                     },
@@ -270,7 +270,7 @@ exports.showAllUserWhichIsLikePost = async (req, res, next) => {
                             let: {
 
                                 userId: mongoose.Types.ObjectId(req.params.user_id),
-                                email: "$email"
+                                id: "$_id"
                             },
                             pipeline: [
                                 {
@@ -285,7 +285,7 @@ exports.showAllUserWhichIsLikePost = async (req, res, next) => {
                                                 {
                                                     $in:
                                                         [
-                                                            "$$email", "$RequestedEmails.requestedEmail"
+                                                            "$$id", "$RequestedEmails.userId"
                                                         ]
                                                 }
                                             ]
@@ -333,18 +333,18 @@ exports.showAllUserWhichIsLikePost = async (req, res, next) => {
 
                             for (const meageAllTableEmail of finalExistUser) {
 
-                                if (requestEmail.requestedEmail == meageAllTableEmail.email) {
+                                if ((requestEmail.userId).toString() == (meageAllTableEmail._id).toString()) {
 
                                     if (requestEmail.accepted == 1) {
                                         var status1 = {
                                             status: 1,
-                                            email: requestEmail.requestedEmail
+                                            _id: requestEmail.userId
                                         }
                                         statusByEmail.push(status1)
                                     } else {
                                         var status2 = {
                                             status: 2,
-                                            email: requestEmail.requestedEmail
+                                            _id: requestEmail.userId
                                         }
                                         statusByEmail.push(status2)
                                     }
@@ -357,12 +357,12 @@ exports.showAllUserWhichIsLikePost = async (req, res, next) => {
 
                     const finalStatus = []
                     for (const [key, finalData] of meageAllTable.entries()) {
+                        
                         for (const [key, final1Data] of statusByEmail.entries())
-                            if (finalData.email === final1Data.email) {
+                            if ((finalData._id).toString() === (final1Data._id).toString()) {
                                 finalStatus.push(final1Data.status)
                             }
                     }
-
 
                     for (const [key, finalData] of finalExistUser.entries()) {
 
@@ -387,7 +387,7 @@ exports.showAllUserWhichIsLikePost = async (req, res, next) => {
                         if (findAllUserWithIchat1) {
                             const response = {
                                 _id: finalData._id,
-                                chatRoomId: findAllUserWithIchat1._id,
+                                chatRoomId: findAllUserWithIchat1 ? findAllUserWithIchat1._id : "",
                                 // polyDating: finalData.polyDating,
                                 // HowDoYouPoly: finalData.HowDoYouPoly,
                                 // loveToGive: finalData.loveToGive,
@@ -406,7 +406,7 @@ exports.showAllUserWhichIsLikePost = async (req, res, next) => {
                         } else {
                             const response = {
                                 _id: finalData._id,
-                                chatRoomId: findAllUserWithIchat2._id,
+                                chatRoomId: findAllUserWithIchat2 ? findAllUserWithIchat2._id : "",
                                 // polyDating: finalData.polyDating,
                                 // HowDoYouPoly: finalData.HowDoYouPoly,
                                 // loveToGive: finalData.loveToGive,

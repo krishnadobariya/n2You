@@ -263,15 +263,14 @@ exports.getUserWithFriend = async (req, res, next) => {
 
 
                     if (allRequestEmail) {
-                        if (allRequestEmail.requestedEmail == findUser.email) {
+                        if ((allRequestEmail.userId).toString() == (findUser._id).toString) {
 
                         } else {
-                            reaquestedAllEmail.push(allRequestEmail.requestedEmail)
+                            reaquestedAllEmail.push((allRequestEmail.userId).toString())
                         }
 
                     } else {
                         reaquestedAllEmail.push()
-
                     }
                 }
             } else {
@@ -289,7 +288,7 @@ exports.getUserWithFriend = async (req, res, next) => {
                         userId: req.params.user_id,
                         RequestedEmails: {
                             $elemMatch: {
-                                requestedEmail: {
+                                userId: {
                                     $in: reaquestedAllEmail
                                 }
                             }
@@ -301,7 +300,7 @@ exports.getUserWithFriend = async (req, res, next) => {
                     const finalData = [];
                     const responseData = [];
                     for (const allrequestedDataNotAcceptedRequestAndNotFriend of reaquestedAllEmail) {
-                        const userDetail = await userModel.findOne({ email: allrequestedDataNotAcceptedRequestAndNotFriend });
+                        const userDetail = await userModel.findOne({ _id: allrequestedDataNotAcceptedRequestAndNotFriend });
                         finalData.push(userDetail)
                     }
 
@@ -333,14 +332,15 @@ exports.getUserWithFriend = async (req, res, next) => {
                     const emailGet = [];
                     const finalData = [];
                     for (const getEmail of RequestedEmailExiestInUser.RequestedEmails) {
-                        emailGet.push(getEmail.requestedEmail)
+                        emailGet.push((getEmail.userId).toString())
                     }
 
                     var difference = reaquestedAllEmail.filter(x => emailGet.indexOf(x) === -1);
                     const UniqueEmail = [];
 
+
                     for (const uniqueEmail of difference) {
-                        const userDetail = await userModel.findOne({ email: uniqueEmail });
+                        const userDetail = await userModel.findOne({ _id: uniqueEmail });
                         finalData.push(userDetail)
                     }
 
@@ -356,23 +356,20 @@ exports.getUserWithFriend = async (req, res, next) => {
                         }
 
                         UniqueEmail.push(response);
-
-
                     }
-
 
 
                     const statusByEmail = [];
                     const allRequestedEmail = RequestedEmailExiestInUser.RequestedEmails
                     const requestedEmailWitchIsInuserRequeted = [];
                     allRequestedEmail.map((result, next) => {
-                        const resultEmail = result.requestedEmail
+                        const resultEmail = result.userId
                         requestedEmailWitchIsInuserRequeted.push(resultEmail);
                     })
 
                     const meageAllTable = await userModel.aggregate([{
                         $match: {
-                            email: {
+                            _id: {
                                 $in: requestedEmailWitchIsInuserRequeted
                             }
                         }
@@ -380,8 +377,8 @@ exports.getUserWithFriend = async (req, res, next) => {
                     {
                         $lookup: {
                             from: 'posts',
-                            localField: 'email',
-                            foreignField: 'email',
+                            localField: '_id',
+                            foreignField: 'userId',
                             as: 'req_data'
                         }
                     },
@@ -390,7 +387,7 @@ exports.getUserWithFriend = async (req, res, next) => {
                             from: 'requests',
                             let: {
                                 userId: mongoose.Types.ObjectId(req.params.user_id),
-                                email: "$email"
+                                id: "$_id"
                             },
                             pipeline: [
                                 {
@@ -405,7 +402,7 @@ exports.getUserWithFriend = async (req, res, next) => {
                                                 {
                                                     $in:
                                                         [
-                                                            "$$email", "$RequestedEmails.requestedEmail"
+                                                            "$$id", "$RequestedEmails.userId"
                                                         ]
                                                 }
                                             ]
@@ -446,7 +443,7 @@ exports.getUserWithFriend = async (req, res, next) => {
                     for (const DataDetail of emailDataDetail) {
 
                         for (const reqEmail of reaquestedAllEmail) {
-                            if (DataDetail.email == reqEmail) {
+                            if ((DataDetail._id).toString() == (reqEmail).toString()) {
                                 finalExistUser.push(DataDetail)
                             }
                         }
@@ -458,7 +455,7 @@ exports.getUserWithFriend = async (req, res, next) => {
 
                             for (const meageAllTableEmail of finalExistUser) {
 
-                                if (requestEmail.requestedEmail == meageAllTableEmail.email) {
+                                if ((requestEmail.userId).toString() == (meageAllTableEmail._id).toString()) {
 
                                     const user = await userModel.findOne({
                                         _id: req.params.req_user_id,
@@ -467,6 +464,7 @@ exports.getUserWithFriend = async (req, res, next) => {
 
                                     if (requestEmail.accepted == 1) {
                                         var status1 = {
+                                            _id: requestEmail.userId,
                                             status: requestEmail.accepted,
                                             email: requestEmail.requestedEmail,
                                             firstName: user.firstName,
@@ -476,6 +474,7 @@ exports.getUserWithFriend = async (req, res, next) => {
                                         statusByEmail.push(status1)
                                     } else {
                                         var status2 = {
+                                            _id: requestEmail.userId,
                                             status: requestEmail.accepted,
                                             email: requestEmail.requestedEmail,
                                             firstName: user.firstName,
@@ -497,7 +496,7 @@ exports.getUserWithFriend = async (req, res, next) => {
 
 
                         for (const [key, final1Data] of statusByEmail.entries())
-                            if (finalData.email === final1Data.email) {
+                            if ((finalData._id).toString() === (final1Data._id).toString()) {
                                 const response = {
                                     status: final1Data.status,
                                 }
@@ -564,7 +563,7 @@ exports.getUserWithFriend = async (req, res, next) => {
                             } else {
                                 const responses = {
                                     _id: finalData._id,
-                                    chatRoomId: findAllUserWithIchat1._id,
+                                    chatRoomId: findAllUserWithIchat1 ? findAllUserWithIchat1._id : "",
                                     // polyDating: finalData.polyDating,
                                     // HowDoYouPoly: finalData.HowDoYouPoly,
                                     // loveToGive: finalData.loveToGive,
@@ -647,7 +646,7 @@ exports.getUserWithFriend = async (req, res, next) => {
                             } else {
                                 const responses = {
                                     _id: finalData._id,
-                                    chatRoomId: findAllUserWithIchat2._id,
+                                    chatRoomId: findAllUserWithIchat2 ? findAllUserWithIchat2._id : "",
                                     // polyDating: finalData.polyDating,
                                     // HowDoYouPoly: finalData.HowDoYouPoly,
                                     // loveToGive: finalData.loveToGive,
@@ -725,7 +724,7 @@ exports.getRequestUserWise = async (req, res, next) => {
             const Requests = [];
             for (const allRequestEmail of RequestEmail) {
                 const finalResponse = {
-                    RequestEmail: allRequestEmail.requestedEmail,
+                    userId: allRequestEmail.userId,
                     accepted: allRequestEmail.accepted
                 }
                 Requests.push(finalResponse)
@@ -733,13 +732,13 @@ exports.getRequestUserWise = async (req, res, next) => {
 
             for (const notAcceptedRequest of Requests) {
                 const userDeatil = await userModel.findOne({
-                    email: notAcceptedRequest.RequestEmail
+                    _id: notAcceptedRequest.userId
                 });
 
                 if (notAcceptedRequest.accepted == 2) {
                     const response = {
                         id: userDeatil._id,
-                        requestUser: notAcceptedRequest.RequestEmail,
+                        requestUser: userDeatil.email,
                         name: userDeatil.firstName,
                         profile: userDeatil.photo ? userDeatil.photo[0].res : ""
                     }
