@@ -2495,6 +2495,7 @@ exports.yesBasket = async (req, res, next) => {
                                     "thumbDetail.userId": mongoose.Types.ObjectId(findThumb.userId)
                                 })
 
+
                                 const findInThumbDown = await thumbDownModel.findOne({
                                     adminUserId: req.params.user_id,
                                     "thumbDetail.reqUserId": req.params.request_user_id,
@@ -3252,6 +3253,8 @@ exports.yesBasket = async (req, res, next) => {
                                     "thumbDetail.userId": findThumb.userId
                                 })
 
+                                console.log("findInThumbUp", findInThumbUp);
+
                                 if (findInThumbUp) {
                                     const findThumbData = findThumb.userId
                                     const orginalData = getOriginalData._id
@@ -3328,6 +3331,11 @@ exports.yesBasket = async (req, res, next) => {
                                     "thumbDetail.reqUserId": req.params.request_user_id,
                                     "thumbDetail.userId": findThumb.userId
                                 })
+
+                                console.log(" req.params.user_id", req.params.user_id);
+                                console.log("req.params.request_user_id", req.params.request_user_id);
+                                console.log("findThumb.userId", findThumb.userId);
+                                console.log("findInThumbUp", findInThumbUp);
 
                                 if (findInThumbUp) {
                                     const findThumbData = findThumb.userId
@@ -5123,12 +5131,12 @@ exports.checkMailExiesOrNot = async (req, res) => {
 
 
         if (findUser) {
-            res.status(status.NOT_FOUND).json(
-                new APIResponse("you can't use this email, already exist", "true", 200, "1")
+            res.status(status.CONFLICT).json(
+                new APIResponse("you can't use this email, already exist", "false", 409, "0")
             );
         } else {
-            res.status(status.CONFLICT).json(
-                new APIResponse("you can user this email", "flase", 409, "0")
+            res.status(status.OK).json(
+                new APIResponse("you can use this email", "true", 200, "1")
             );
         }
     } catch (error) {
