@@ -817,8 +817,8 @@ exports.userAcceptedRequesteOrNot = async (req, res, next) => {
                 })
 
                 await notificationModel.updateOne({
-                    userId: req.params.id,
-                    "notifications.userId": req.params.user_id,
+                    userId: req.params.user_id,
+                    "notifications.userId": req.params.id,
                     "notifications.status": 1
                 }, {
                     $set: {
