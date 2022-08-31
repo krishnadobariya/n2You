@@ -822,7 +822,8 @@ exports.userAcceptedRequesteOrNot = async (req, res, next) => {
                     "notifications.status": 1
                 }, {
                     $set: {
-                        "notifications.$.status": 9
+                        "notifications.$.status": 9,
+                        "notifications.$.notifications": `${findUserWhichAcceptRequest.firstName} accepted request`
                     }
                 })
 
