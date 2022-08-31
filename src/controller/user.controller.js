@@ -3289,15 +3289,20 @@ exports.yesBasket = async (req, res, next) => {
                             for (const findThumb of findThumbUp.yesBasket) {
 
                                 const findInThumbUp = await thumbUpModel.findOne({
-                                    adminUserId: req.params.user_id,
+                                    adminUserId: req.params.request_user_id,
                                     thumbDetail: {
                                         $elemMatch: {
-                                            reqUserId: req.params.request_user_id,
+                                            reqUserId: req.params.user_id,
                                             userId: findThumb.userId
                                         }
                                     }
                                 })
 
+                                console.log("reqUserId" , req.params.user_id);
+                                console.log(" adminUserId" ,  req.params.request_user_id);
+                                console.log("userId" ,  findThumb.userId);
+
+                                console.log("findInThumbUp", findInThumbUp);
 
                                 if (findInThumbUp) {
                                     const findThumbData = findThumb.userId
@@ -3370,10 +3375,10 @@ exports.yesBasket = async (req, res, next) => {
                             for (const findThumb of findThumbUp.yesBasket) {
 
                                 const findInThumbUp = await thumbUpModel.findOne({
-                                    adminUserId: req.params.user_id,
+                                    adminUserId: req.params.request_user_id,
                                     thumbDetail: {
                                         $elemMatch: {
-                                            reqUserId: req.params.request_user_id,
+                                            reqUserId: req.params.user_id,
                                             userId: findThumb.userId
                                         }
                                     }
@@ -3525,10 +3530,10 @@ exports.yesBasket = async (req, res, next) => {
 
 
                                             const findInThumbUp = await thumbUpModel.findOne({
-                                                adminUserId: req.params.user_id,
+                                                adminUserId: req.params.request_user_id,
                                                 thumbDetail: {
                                                     $elemMatch: {
-                                                        reqUserId: req.params.request_user_id,
+                                                        reqUserId: req.params.user_id,
                                                         userId: findThumb.userId
                                                     }
                                                 }
