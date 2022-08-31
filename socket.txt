@@ -24,7 +24,8 @@ chatReceive
 readUnread
 
 {
-    "chat_room": "62b937124b8657af236232c5"
+    "chat_room": "62b937124b8657af236232c5",
+    "user_id": ""
 }
 
 chatReceive

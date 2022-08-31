@@ -804,14 +804,47 @@ function socket(io) {
             console.log("arg.chat_room", arg.chat_room);
             const findRoom = await chatModels.findOne({
                 chatRoomId: arg.chat_room,
+                "chat.sender": arg.user_id
             })
 
-            console.log("findRoom", findRoom);
+            for (const [key, getSenderChat] of findRoom.chat.entries()) {
+
+                if ((getSenderChat.sender).toString() == (arg.user_id).toString()) {
+                    console.log(getSenderChat.text);
+
+                    // await chatModels.updateOne({
+                    //     sender: mongoose.Types.ObjectId(arg.user_id)
+                    // }, {
+                    //     $set: {
+                    //         read: 0
+                    //     }
+                    // }).then(() => {
+                    //     console.log("success");
+                    // }).catch((err) => {
+                    //     console.log(err);
+                    // })
+
+                    const updatePosts = await chatModels.updateOne({
+                        chatRoomId: arg.chat_room, chat: {
+                            $elemMatch: {
+                                sender: mongoose.Types.ObjectId(arg.user_id)
+                            }
+                        }
+                    },
+                        {
+                            $set: {
+                                "chat.$[chat].read": 0
+                            }
+                        }, { arrayFilters: [{ 'chat.sender': mongoose.Types.ObjectId(arg.user_id) }] })
+                } else {
+
+                }
+            }
 
             if (findRoom == null) {
                 io.emit("readChat", "chat room not found");
             } else {
-                await chatModels.updateMany({ chatRoomId: arg.chat_room }, { $set: { "chat.$[].read": 0 } });
+                // await chatModels.updateMany({ chatRoomId: arg.chat_room }, { $set: { "chat.$[].read": 0 } });
                 io.emit("readChat", "read All chat");
             }
         })
