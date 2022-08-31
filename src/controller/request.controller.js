@@ -816,6 +816,16 @@ exports.userAcceptedRequesteOrNot = async (req, res, next) => {
                     userId: findUser._id
                 })
 
+                await notificationModel.updateOne({
+                    userId: req.params.id,
+                    "notifications.userId": req.params.user_id,
+                    "notifications.status": 1
+                }, {
+                    $set: {
+                        "notifications.$.status": 9
+                    }
+                })
+
                 if (findUserInNotiofication) {
                     await notificationModel.updateOne({
                         userId: findUser._id
@@ -872,21 +882,39 @@ exports.userAcceptedRequesteOrNot = async (req, res, next) => {
                     new APIResponse("request accepted successfully!", "true", 200, "1")
                 )
             } else {
-                const updatePosts = await requestModel.updateOne({ userId: req.params.user_id, "RequestedEmails.userId": reqestId },
+
+                const updatePosts = await requestModel.updateOne(
+                    { userId: req.params.user_id },
                     {
-                        $set: {
-                            "RequestedEmails.$.accepted": 3
+                        $pull: {
+                            RequestedEmails: {
+                                userId: reqestId,
+                            }
+                        }
+                    })
+
+                const updatePosts1 = await requestModel.updateOne({ userId: reqestId },
+                    {
+                        $pull: {
+                            RequestedEmails: {
+                                userId: req.params.user_id,
+                            }
                         }
                     })
 
 
+                await notificationModel.updateOne({
+                    userId: req.params.id,
 
-                const updatePosts1 = await requestModel.updateOne({ userId: reqestId, "RequestedEmails.userId": req.params.user_id },
-                    {
-                        $set: {
-                            "RequestedEmails.$.accepted": 3
+                }, {
+                    $pull: {
+                        notifications: {
+                            userId: req.params.user_id,
+                            status: 1
                         }
-                    })
+                    }
+                })
+
 
                 const findUserWhichAcceptRequest = await userModel.findOne({
                     _id: req.params.user_id

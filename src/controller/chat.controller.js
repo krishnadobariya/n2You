@@ -139,19 +139,148 @@ exports.allUserListWithUnreadCount = async (req, res, next) => {
                     lastMessage.push(lastUnreadMessage);
                     const lastValue = lastMessage[lastMessage.length - 1];
                     // console.log("lastValue", lastValue);
-                    const response = {
-                        chatRoomId: findRoom.chatRoomId,
-                        _id: userDetail[0]._id,
-                        countUnreadMessage: count,
-                        lastMessage: lastValue.text,
-                        createdAt: lastValue.createdAt,
-                        name: userDetail[0].firstName,
-                        dateAndTime: lastValue.dateAndTime,
-                        profile: userDetail[0].photo[0] == undefined ? "" : userDetail[0].photo[0].res,
 
+                    var userNotificationDate = new Date(lastValue.dateAndTime);
+                    now = new Date();
+                    var sec_num = (now - userNotificationDate) / 1000;
+                    var days = Math.floor(sec_num / (3600 * 24));
+                    var hours = Math.floor((sec_num - (days * (3600 * 24))) / 3600);
+                    var minutes = Math.floor((sec_num - (days * (3600 * 24)) - (hours * 3600)) / 60);
+                    var seconds = Math.floor(sec_num - (days * (3600 * 24)) - (hours * 3600) - (minutes * 60));
+
+                    if (hours < 10) { hours = "0" + hours; }
+                    if (minutes < 10) { minutes = "0" + minutes; }
+                    if (seconds < 10) { seconds = "0" + seconds; }
+
+                    if (days > 28) {
+                        const response = {
+                            chatRoomId: findRoom.chatRoomId,
+                            _id: userDetail[0]._id,
+                            countUnreadMessage: count,
+                            lastMessage: lastValue.text,
+                            name: userDetail[0].firstName,
+                            dateAndTime: new Date(userNotificationDate).toDateString(),
+                            profile: userDetail[0].photo[0] == undefined ? "" : userDetail[0].photo[0].res,
+
+                        }
+
+                        unReadMessage.push(response);
+                    } else if (days > 21 && days < 28) {
+                        const response = {
+                            chatRoomId: findRoom.chatRoomId,
+                            _id: userDetail[0]._id,
+                            countUnreadMessage: count,
+                            lastMessage: lastValue.text,
+                            createdAt: lastValue.createdAt,
+                            name: userDetail[0].firstName,
+                            dateAndTime: '4 week ago',
+                            profile: userDetail[0].photo[0] == undefined ? "" : userDetail[0].photo[0].res,
+
+                        }
+
+                        unReadMessage.push(response);
+                    } else if (days > 14 && days < 21) {
+                        const response = {
+                            chatRoomId: findRoom.chatRoomId,
+                            _id: userDetail[0]._id,
+                            countUnreadMessage: count,
+                            lastMessage: lastValue.text,
+                            createdAt: lastValue.createdAt,
+                            name: userDetail[0].firstName,
+                            dateAndTime: '3 week ago',
+                            profile: userDetail[0].photo[0] == undefined ? "" : userDetail[0].photo[0].res,
+
+                        }
+
+                        unReadMessage.push(response);
+                    } else if (days > 7 && days < 14) {
+                        const response = {
+                            chatRoomId: findRoom.chatRoomId,
+                            _id: userDetail[0]._id,
+                            countUnreadMessage: count,
+                            lastMessage: lastValue.text,
+                            createdAt: lastValue.createdAt,
+                            name: userDetail[0].firstName,
+                            dateAndTime: '2 week ago',
+                            profile: userDetail[0].photo[0] == undefined ? "" : userDetail[0].photo[0].res,
+
+                        }
+
+                        unReadMessage.push(response);
+                    } else if (days > 0 && days < 7) {
+                        const response = {
+                            chatRoomId: findRoom.chatRoomId,
+                            _id: userDetail[0]._id,
+                            countUnreadMessage: count,
+                            lastMessage: lastValue.text,
+                            createdAt: lastValue.createdAt,
+                            name: userDetail[0].firstName,
+                            dateAndTime: '1 week ago',
+                            profile: userDetail[0].photo[0] == undefined ? "" : userDetail[0].photo[0].res,
+
+                        }
+
+                        unReadMessage.push(response);
+                    } else if (hours > 0 && days == 0) {
+                        const response = {
+                            chatRoomId: findRoom.chatRoomId,
+                            _id: userDetail[0]._id,
+                            countUnreadMessage: count,
+                            lastMessage: lastValue.text,
+                            createdAt: lastValue.createdAt,
+                            name: userDetail[0].firstName,
+                            dateAndTime: `${hours} hourse ago`,
+                            profile: userDetail[0].photo[0] == undefined ? "" : userDetail[0].photo[0].res,
+
+                        }
+
+                        unReadMessage.push(response);
+                    } else if (minutes > 0 && hours == 0) {
+                        const response = {
+                            chatRoomId: findRoom.chatRoomId,
+                            _id: userDetail[0]._id,
+                            countUnreadMessage: count,
+                            lastMessage: lastValue.text,
+                            createdAt: lastValue.createdAt,
+                            name: userDetail[0].firstName,
+                            dateAndTime: `${minutes} minutes ago`,
+                            profile: userDetail[0].photo[0] == undefined ? "" : userDetail[0].photo[0].res,
+
+                        }
+
+                        unReadMessage.push(response);
+                    } else if (seconds > 0 && minutes == 0 && hours == 0 && days === 0) {
+
+                        const response = {
+                            chatRoomId: findRoom.chatRoomId,
+                            _id: userDetail[0]._id,
+                            countUnreadMessage: count,
+                            lastMessage: lastValue.text,
+                            createdAt: lastValue.createdAt,
+                            name: userDetail[0].firstName,
+                            dateAndTime: `${seconds} seconds ago`,
+                            profile: userDetail[0].photo[0] == undefined ? "" : userDetail[0].photo[0].res,
+
+                        }
+
+                        unReadMessage.push(response);
+                    } else if (seconds == 0 && minutes == 0 && hours == 0 && days === 0) {
+                        const response = {
+                            chatRoomId: findRoom.chatRoomId,
+                            _id: userDetail[0]._id,
+                            countUnreadMessage: count,
+                            lastMessage: lastValue.text,
+                            createdAt: lastValue.createdAt,
+                            name: userDetail[0].firstName,
+                            dateAndTime: `just now`,
+                            profile: userDetail[0].photo[0] == undefined ? "" : userDetail[0].photo[0].res,
+
+                        }
+
+                        unReadMessage.push(response);
                     }
 
-                    unReadMessage.push(response);
+
 
                 }
             }

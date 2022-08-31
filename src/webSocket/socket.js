@@ -109,7 +109,7 @@ function socket(io) {
             let hours = date.getHours();
             let minutes = date.getMinutes();
             let second = date.getSeconds();
-            let mon = date.getMonth();
+            let mon = date.getMonth() + 1;
             let ampm = hours >= 12 ? 'pm' : 'am';
             hours = hours % 12;
             hours = hours ? hours : 12;
@@ -824,18 +824,20 @@ function socket(io) {
                     //     console.log(err);
                     // })
 
-                    const updatePosts = await chatModels.updateOne({
-                        chatRoomId: arg.chat_room, chat: {
-                            $elemMatch: {
-                                sender: mongoose.Types.ObjectId(arg.user_id)
+                    const updatePosts = await chatModels.updateOne(
+                        {
+                            chatRoomId: arg.chat_room, chat: {
+                                $elemMatch: {
+                                    sender: mongoose.Types.ObjectId(arg.user_id)
+                                }
                             }
-                        }
-                    },
+                        },
                         {
                             $set: {
                                 "chat.$[chat].read": 0
                             }
-                        }, { arrayFilters: [{ 'chat.sender': mongoose.Types.ObjectId(arg.user_id) }] })
+                        },
+                        { arrayFilters: [{ 'chat.sender': mongoose.Types.ObjectId(arg.user_id) }] })
                 } else {
 
                 }

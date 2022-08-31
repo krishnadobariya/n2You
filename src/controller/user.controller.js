@@ -3271,8 +3271,30 @@ exports.yesBasket = async (req, res, next) => {
                                     "thumbDetail.userId": findThumb.userId
                                 })
 
+                                const findInThumbUp1 = await thumbUpModel.findOne({
+                                    adminUserId: req.params.user_id,
+                                    "thumbDetail.reqUserId": req.params.request_user_id,
+                                    "thumbDetail.userId": findThumb.userId
+                                })
 
                                 if (findInThumbUp) {
+                                    const findThumbData = findThumb.userId
+                                    const orginalData = getOriginalData._id
+
+                                    if (orginalData.toString() == findThumbData.toString()) {
+                                        const response = {
+                                            _id: getOriginalData._id,
+                                            email: getOriginalData.email,
+                                            firstName: getOriginalData.firstName,
+                                            profile: getOriginalData.photo[0] ? getOriginalData.photo[0].res : "",
+                                            status: 3,
+                                            thumbUp: findThumb.thumbUp,
+                                            thumbUpStatus: 1
+                                        }
+
+                                        responseData.push(response);
+                                    }
+                                } else if (findInThumbUp1) {
                                     const findThumbData = findThumb.userId
                                     const orginalData = getOriginalData._id
 
@@ -3307,7 +3329,6 @@ exports.yesBasket = async (req, res, next) => {
                                         responseData.push(response);
                                     }
                                 }
-
                             }
 
                         }
@@ -3349,12 +3370,30 @@ exports.yesBasket = async (req, res, next) => {
                                     "thumbDetail.userId": findThumb.userId
                                 })
 
-                                console.log(" req.params.user_id", req.params.user_id);
-                                console.log("req.params.request_user_id", req.params.request_user_id);
-                                console.log("findThumb.userId", findThumb.userId);
-                                console.log("findInThumbUp", findInThumbUp);
+                                const findInThumbUp1 = await thumbUpModel.findOne({
+                                    adminUserId: req.params.user_id,
+                                    "thumbDetail.reqUserId": req.params.request_user_id,
+                                    "thumbDetail.userId": findThumb.userId
+                                })
 
                                 if (findInThumbUp) {
+                                    const findThumbData = findThumb.userId
+                                    const orginalData = getOriginalData._id
+
+                                    if (orginalData.toString() == findThumbData.toString()) {
+                                        const response = {
+                                            _id: getOriginalData._id,
+                                            email: getOriginalData.email,
+                                            firstName: getOriginalData.firstName,
+                                            profile: getOriginalData.photo[0] ? getOriginalData.photo[0].res : "",
+                                            status: 3,
+                                            thumbUp: findThumb.thumbUp,
+                                            thumbUpStatus: 1
+                                        }
+
+                                        UniqueEmail.push(response);
+                                    }
+                                } else if (findInThumbUp1) {
                                     const findThumbData = findThumb.userId
                                     const orginalData = getOriginalData._id
 
@@ -3895,9 +3934,22 @@ exports.noBasket = async (req, res, next) => {
                                     "thumbDetail.userId": findThumb.userId
                                 })
 
+
+                                const findInThumbUp1 = await thumbUpModel.findOne({
+                                    adminUserId: req.params.user_id,
+                                    "thumbDetail.reqUserId": req.params.request_user_id,
+                                    "thumbDetail.userId": findThumb.userId
+                                })
+
                                 const findInThumbDown = await thumbDownModel.findOne({
                                     adminUserId: req.params.request_user_id,
                                     "thumbDetail.reqUserId": req.params.user_id,
+                                    "thumbDetail.userId": findThumb.userId
+                                })
+
+                                const findInThumbDown1 = await thumbUpModel.findOne({
+                                    adminUserId: req.params.user_id,
+                                    "thumbDetail.reqUserId": req.params.request_user_id,
                                     "thumbDetail.userId": findThumb.userId
                                 })
 
@@ -3922,6 +3974,46 @@ exports.noBasket = async (req, res, next) => {
                                         responseData.push(response);
                                     }
 
+                                } else if (findInThumbUp1) {
+                                    const findThumbData = findThumb.userId
+                                    const orginalData = getOriginalData._id
+
+                                    if (orginalData.toString() == findThumbData.toString()) {
+                                        const response = {
+                                            _id: getOriginalData._id,
+                                            email: getOriginalData.email,
+                                            profile: getOriginalData.photo[0] ? getOriginalData.photo[0].res : "",
+                                            firstName: getOriginalData.firstName,
+                                            status: 3,
+                                            thumbUp: findThumb.thumbUp,
+                                            thumbDown: findThumb.thumbDown,
+                                            thumbUpStatus: 1,
+                                            thumbDownStatus: 0
+                                        }
+
+
+                                        responseData.push(response);
+                                    }
+                                } else if (findInThumbDown1) {
+                                    const findThumbData = findThumb.userId
+                                    const orginalData = getOriginalData._id
+
+                                    if (orginalData.toString() == findThumbData.toString()) {
+                                        const response = {
+                                            _id: getOriginalData._id,
+                                            email: getOriginalData.email,
+                                            profile: getOriginalData.photo[0] ? getOriginalData.photo[0].res : "",
+                                            firstName: getOriginalData.firstName,
+                                            status: 3,
+                                            thumbUp: findThumb.thumbUp,
+                                            thumbDown: findThumb.thumbDown,
+                                            thumbUpStatus: 0,
+                                            thumbDownStatus: 1
+                                        }
+
+
+                                        responseData.push(response);
+                                    }
                                 } else if (findInThumbDown) {
 
                                     const findThumbData = findThumb.userId
@@ -4013,10 +4105,20 @@ exports.noBasket = async (req, res, next) => {
                                     "thumbDetail.reqUserId": req.params.user_id,
                                     "thumbDetail.userId": findThumb.userId
                                 })
+                                const findInThumbUp1 = await thumbUpModel.findOne({
+                                    adminUserId: req.params.user_id,
+                                    "thumbDetail.reqUserId": req.params.request_user_id,
+                                    "thumbDetail.userId": findThumb.userId
+                                })
 
                                 const findInThumbDown = await thumbDownModel.findOne({
                                     adminUserId: req.params.request_user_id,
                                     "thumbDetail.reqUserId": req.params.user_id,
+                                    "thumbDetail.userId": findThumb.userId
+                                })
+                                const findInThumbDown1 = await thumbUpModel.findOne({
+                                    adminUserId: req.params.user_id,
+                                    "thumbDetail.reqUserId": req.params.request_user_id,
                                     "thumbDetail.userId": findThumb.userId
                                 })
 
@@ -4036,6 +4138,44 @@ exports.noBasket = async (req, res, next) => {
                                             thumbDown: findThumb.thumbDown,
                                             thumbUpStatus: 1,
                                             thumbDownStatus: 0
+                                        }
+
+                                        UniqueEmail.push(response);
+                                    }
+                                } else if (findInThumbUp1) {
+                                    const findThumbData = findThumb.userId
+                                    const orginalData = getOriginalData._id
+
+                                    if (orginalData.toString() == findThumbData.toString()) {
+                                        const response = {
+                                            _id: getOriginalData._id,
+                                            email: getOriginalData.email,
+                                            firstName: getOriginalData.firstName,
+                                            profile: getOriginalData.photo[0] ? getOriginalData.photo[0].res : "",
+                                            status: 3,
+                                            thumbUp: findThumb.thumbUp,
+                                            thumbDown: findThumb.thumbDown,
+                                            thumbUpStatus: 1,
+                                            thumbDownStatus: 0
+                                        }
+
+                                        UniqueEmail.push(response);
+                                    }
+                                } else if (findInThumbDown1) {
+                                    const findThumbData = findThumb.userId
+                                    const orginalData = getOriginalData._id
+
+                                    if (orginalData.toString() == findThumbData.toString()) {
+                                        const response = {
+                                            _id: getOriginalData._id,
+                                            email: getOriginalData.email,
+                                            firstName: getOriginalData.firstName,
+                                            profile: getOriginalData.photo[0] ? getOriginalData.photo[0].res : "",
+                                            status: 3,
+                                            thumbUp: findThumb.thumbUp,
+                                            thumbDown: findThumb.thumbDown,
+                                            thumbUpStatus: 0,
+                                            thumbDownStatus: 1
                                         }
 
                                         UniqueEmail.push(response);
@@ -4499,7 +4639,30 @@ exports.noBasket = async (req, res, next) => {
                                     "thumbDetail.userId": findThumb.userId
                                 })
 
+                                const findInThumbUp1 = await thumbUpModel.findOne({
+                                    adminUserId: req.params.user_id,
+                                    "thumbDetail.reqUserId": req.params.request_user_id,
+                                    "thumbDetail.userId": findThumb.userId
+                                })
+
                                 if (findInThumbUp) {
+                                    const findThumbData = findThumb.userId
+                                    const orginalData = getOriginalData._id
+
+                                    if (orginalData.toString() == findThumbData.toString()) {
+                                        const response = {
+                                            _id: getOriginalData._id,
+                                            email: getOriginalData.email,
+                                            firstName: getOriginalData.firstName,
+                                            profile: getOriginalData.photo[0] ? getOriginalData.photo[0].res : "",
+                                            status: 3,
+                                            thumbUp: findThumb.thumbUp,
+                                            thumbUpStatus: 1,
+                                        }
+
+                                        responseData.push(response);
+                                    }
+                                } else if (findInThumbUp1) {
                                     const findThumbData = findThumb.userId
                                     const orginalData = getOriginalData._id
 
@@ -4575,8 +4738,31 @@ exports.noBasket = async (req, res, next) => {
                                     "thumbDetail.reqUserId": req.params.user_id,
                                     "thumbDetail.userId": findThumb.userId
                                 })
+                                const findInThumbUp1 = await thumbUpModel.findOne({
+                                    adminUserId: req.params.user_id,
+                                    "thumbDetail.reqUserId": req.params.request_user_id,
+                                    "thumbDetail.userId": findThumb.userId
+                                })
+
 
                                 if (findInThumbUp) {
+                                    const findThumbData = findThumb.userId
+                                    const orginalData = getOriginalData._id
+
+                                    if (orginalData.toString() == findThumbData.toString()) {
+                                        const response = {
+                                            _id: getOriginalData._id,
+                                            email: getOriginalData.email,
+                                            firstName: getOriginalData.firstName,
+                                            profile: getOriginalData.photo[0] ? getOriginalData.photo[0].res : "",
+                                            status: 3,
+                                            thumbUp: findThumb.thumbUp,
+                                            thumbUpStatus: 1,
+                                        }
+
+                                        UniqueEmail.push(response);
+                                    }
+                                } else if (findInThumbUp1) {
                                     const findThumbData = findThumb.userId
                                     const orginalData = getOriginalData._id
 
@@ -5044,7 +5230,6 @@ exports.getAllNotification = async (req, res, next) => {
                         if (minutes < 10) { minutes = "0" + minutes; }
                         if (seconds < 10) { seconds = "0" + seconds; }
 
-                        const notificationTime = [];
                         if (days > 28) {
                             const response = {
                                 _id: getNotification.userId,
