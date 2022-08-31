@@ -38,230 +38,244 @@ exports.thumbCount = async (req, res, next) => {
 
             } else {
 
-                if (req.query.value == 1) { 
-                    
-                            const checkInThumbModel = await thumbUpModel.find({
+                if (req.query.value == 1) {
+
+                    const checkInThumbModel = await thumbUpModel.find({
+                        adminUserId: req.params.admin_user_id,
+                    })
+
+
+                    if (checkInThumbModel[0] == undefined) {
+
+
+
+                        const findData = await thumbDownModel.findOne(
+                            {
                                 adminUserId: req.params.admin_user_id,
-                            })
-
-                          
-                            if (checkInThumbModel[0] == undefined) {
-
-
-
-                                const findData =  await thumbDownModel.findOne(
-                                    { 
-                                        adminUserId: req.params.admin_user_id,
-                                        "thumbDetail.reqUserId": req.params.req_user_id,
-                                        "thumbDetail.userId": req.params.user_id
-                                    }
-                                );
-
-                            
-        
-                                if(findData){
-        
-                                    await thumbDownModel.updateOne(
-                                        {
-                                            adminUserId: req.params.admin_user_id
-                                        },
-                                        {
-                                            $pull: {
-                                                thumbDetail: {
-                                                    reqUserId: req.params.req_user_id,
-                                                    userId: req.params.user_id
-            
-                                                }
-                                            }
-                                        }
-                                    );
-        
-                                    const updateThumbYes = await userModel.updateOne(
-                                        {
-                                            _id: req.params.admin_user_id, "yesBasket.userId": req.params.user_id
-                                        },
-            
-                                        { $inc: { "yesBasket.$.thumbDown": -1 } }
-                                    )
-            
-                                   
-                                    const updateThumbNo = await userModel.updateOne(
-                                        {
-                                            _id: req.params.admin_user_id, "noBasket.userId": req.params.user_id
-                                        },
-            
-                                        { $inc: { "noBasket.$.thumbDown": -1 } }
-                                    )
-        
-                                }else{
-        
-                                }
-        
-
-                                const insertThumbUp = thumbUpModel({
-                                    adminUserId: req.params.admin_user_id,
-                                    thumbDetail: {
+                                thumbDetail: {
+                                    $elemMatch: {
                                         reqUserId: req.params.req_user_id,
                                         userId: req.params.user_id
                                     }
-                                });
+                                }
 
-                                await insertThumbUp.save();
-                              
+                            }
+                        );
+
+
+
+                        if (findData) {
+
+                            await thumbDownModel.updateOne(
+                                {
+                                    adminUserId: req.params.admin_user_id
+                                },
+                                {
+                                    $pull: {
+                                        thumbDetail: {
+                                            reqUserId: req.params.req_user_id,
+                                            userId: req.params.user_id
+
+                                        }
+                                    }
+                                }
+                            );
+
+                            const updateThumbYes = await userModel.updateOne(
+                                {
+                                    _id: req.params.admin_user_id, "yesBasket.userId": req.params.user_id
+                                },
+
+                                { $inc: { "yesBasket.$.thumbDown": -1 } }
+                            )
+
+
+                            const updateThumbNo = await userModel.updateOne(
+                                {
+                                    _id: req.params.admin_user_id, "noBasket.userId": req.params.user_id
+                                },
+
+                                { $inc: { "noBasket.$.thumbDown": -1 } }
+                            )
+
+                        } else {
+
+                        }
+
+
+                        const insertThumbUp = thumbUpModel({
+                            adminUserId: req.params.admin_user_id,
+                            thumbDetail: {
+                                reqUserId: req.params.req_user_id,
+                                userId: req.params.user_id
+                            }
+                        });
+
+                        await insertThumbUp.save();
+
+                        const updateThumbYes = await userModel.updateOne(
+                            {
+                                _id: req.params.admin_user_id, "yesBasket.userId": req.params.user_id
+                            },
+
+                            { $inc: { "yesBasket.$.thumbUp": 1 } }
+                        )
+
+
+                        const updateThumbNo = await userModel.updateOne(
+                            {
+                                _id: req.params.admin_user_id, "noBasket.userId": req.params.user_id
+                            },
+
+                            { $inc: { "noBasket.$.thumbUp": 1 } }
+                        )
+
+
+                        const findThumb = await userModel.findOne({
+                            _id: req.params.admin_user_id
+                        })
+
+                        const thumb = []
+                        for (const data of findThumb.yesBasket) {
+                            if ((data.userId).toString() == (req.params.user_id)) {
+                                thumb.push(data.thumbUp)
+                            }
+                        }
+
+                        for (const data of findThumb.noBasket) {
+                            if ((data.userId).toString() == (req.params.user_id)) {
+                                thumb.push(data.thumbUp)
+                            }
+                        }
+
+
+
+                        res.status(status.CREATED).json(
+                            new APIResponse("thumbUp Added", "true", 201, "1", { thumUp: thumb[0] })
+                        );
+                    } else {
+
+                        const checkExiestReqUserId = await thumbUpModel.findOne({
+                            adminUserId: req.params.admin_user_id,
+                            thumbDetail: {
+                                $elemMatch: {
+                                    reqUserId: req.params.req_user_id,
+                                    userId: req.params.user_id
+                                }
+                            }
+
+                        })
+
+                        if (checkExiestReqUserId == null) {
+
+
+                            const updateThumbYes = await userModel.updateOne(
+                                {
+                                    _id: req.params.admin_user_id, "yesBasket.userId": req.params.user_id
+                                },
+
+                                { $inc: { "yesBasket.$.thumbUp": 1 } }
+                            )
+
+
+                            const updateThumbNo = await userModel.updateOne(
+                                {
+                                    _id: req.params.admin_user_id, "noBasket.userId": req.params.user_id
+                                },
+
+                                { $inc: { "noBasket.$.thumbUp": 1 } }
+                            )
+
+                            const findData = await thumbDownModel.findOne(
+                                {
+                                    adminUserId: req.params.admin_user_id,
+                                    thumbDetail: {
+                                        $elemMatch: {
+                                            reqUserId: req.params.req_user_id,
+                                            userId: req.params.user_id
+                                        }
+                                    }
+                                }
+                            );
+
+                            if (findData) {
+
+                                await thumbDownModel.updateOne(
+                                    {
+                                        adminUserId: req.params.admin_user_id
+                                    },
+                                    {
+                                        $pull: {
+                                            thumbDetail: {
+                                                reqUserId: req.params.req_user_id,
+                                                userId: req.params.user_id
+
+                                            }
+                                        }
+                                    }
+                                );
+
                                 const updateThumbYes = await userModel.updateOne(
                                     {
                                         _id: req.params.admin_user_id, "yesBasket.userId": req.params.user_id
                                     },
-    
-                                    { $inc: { "yesBasket.$.thumbUp": 1 } }
+
+                                    { $inc: { "yesBasket.$.thumbDown": -1 } }
                                 )
-    
-                               
+
+
                                 const updateThumbNo = await userModel.updateOne(
                                     {
                                         _id: req.params.admin_user_id, "noBasket.userId": req.params.user_id
                                     },
-    
-                                    { $inc: { "noBasket.$.thumbUp": 1 } }
+
+                                    { $inc: { "noBasket.$.thumbDown": -1 } }
                                 )
 
-
-                                const findThumb = await userModel.findOne({
-                                    _id: req.params.admin_user_id
-                                })
-
-                                const thumb = []
-                                for(const data of findThumb.yesBasket){
-                                    if((data.userId).toString() == (req.params.user_id)){
-                                        thumb.push(data.thumbUp)
-                                    }
-                                }
-
-                                for(const data of findThumb.noBasket){
-                                    if((data.userId).toString() == (req.params.user_id)){
-                                        thumb.push(data.thumbUp)
-                                    }
-                                }
-
-
-                                
-                                res.status(status.CREATED).json(
-                                    new APIResponse("thumbUp Added", "true", 201, "1", {thumUp: thumb[0]})
-                                );
                             } else {
 
-                                const checkExiestReqUserId = await thumbUpModel.findOne({
-                                    adminUserId: req.params.admin_user_id,
-                                    "thumbDetail.reqUserId": req.params.req_user_id,
-                                    "thumbDetail.userId": req.params.user_id
+                            }
+
+
+                            const thumbAdd = await thumbUpModel.updateOne({ adminUserId: req.params.admin_user_id },
+                                {
+                                    $push: {
+                                        thumbDetail: {
+                                            reqUserId: req.params.req_user_id,
+                                            userId: req.params.user_id
+                                        }
+                                    }
                                 })
 
-                                if (checkExiestReqUserId == null) {
+                            const findThumb = await userModel.findOne({
+                                _id: req.params.admin_user_id
+                            })
 
-
-                                    const updateThumbYes = await userModel.updateOne(
-                                        {
-                                            _id: req.params.admin_user_id, "yesBasket.userId": req.params.user_id
-                                        },
-        
-                                        { $inc: { "yesBasket.$.thumbUp": 1 } }
-                                    )
-        
-                                   
-                                    const updateThumbNo = await userModel.updateOne(
-                                        {
-                                            _id: req.params.admin_user_id, "noBasket.userId": req.params.user_id
-                                        },
-        
-                                        { $inc: { "noBasket.$.thumbUp": 1 } }
-                                    )
-
-                                    const findData =  await thumbDownModel.findOne(
-                                        { 
-                                            adminUserId: req.params.admin_user_id,
-                                            "thumbDetail.reqUserId": req.params.req_user_id,
-                                            "thumbDetail.userId": req.params.user_id
-                                        }
-                                    );
-            
-                                    if(findData){
-            
-                                        await thumbDownModel.updateOne(
-                                            {
-                                                adminUserId: req.params.admin_user_id
-                                            },
-                                            {
-                                                $pull: {
-                                                    thumbDetail: {
-                                                        reqUserId: req.params.req_user_id,
-                                                        userId: req.params.user_id
-                
-                                                    }
-                                                }
-                                            }
-                                        );
-            
-                                        const updateThumbYes = await userModel.updateOne(
-                                            {
-                                                _id: req.params.admin_user_id, "yesBasket.userId": req.params.user_id
-                                            },
-                
-                                            { $inc: { "yesBasket.$.thumbDown": -1 } }
-                                        )
-                
-                                       
-                                        const updateThumbNo = await userModel.updateOne(
-                                            {
-                                                _id: req.params.admin_user_id, "noBasket.userId": req.params.user_id
-                                            },
-                
-                                            { $inc: { "noBasket.$.thumbDown": -1 } }
-                                        )
-            
-                                    }else{
-            
-                                    }
-            
-
-                                        const thumbAdd = await thumbUpModel.updateOne({ adminUserId: req.params.admin_user_id },
-                                            {
-                                                $push: {
-                                                    thumbDetail: {
-                                                        reqUserId: req.params.req_user_id,
-                                                        userId: req.params.user_id
-                                                    }
-                                                }
-                                            })
-
-                                            const findThumb = await userModel.findOne({
-                                                _id: req.params.admin_user_id
-                                            })
-
-                                            const thumb = []
-                                for(const data of findThumb.yesBasket){
-                                    if((data.userId).toString() == (req.params.user_id)){
-                                        thumb.push(data.thumbUp)
-                                    }
+                            const thumb = []
+                            for (const data of findThumb.yesBasket) {
+                                if ((data.userId).toString() == (req.params.user_id)) {
+                                    thumb.push(data.thumbUp)
                                 }
-
-                                for(const data of findThumb.noBasket){
-                                    if((data.userId).toString() == (req.params.user_id)){
-                                        thumb.push(data.thumbUp)
-                                    }
-                                }
-
-                                    res.status(status.CREATED).json(
-                                        new APIResponse("ThumbUp added", "true", 201, "1" , {thumbup : thumb[0]})
-                                    );
-
-                                } else {
-                                    res.status(status.CREATED).json(
-                                        new APIResponse("Already add ThumbUp", "true", 201, "1")
-                                    );
-                                }
-
-
                             }
+
+                            for (const data of findThumb.noBasket) {
+                                if ((data.userId).toString() == (req.params.user_id)) {
+                                    thumb.push(data.thumbUp)
+                                }
+                            }
+
+                            res.status(status.CREATED).json(
+                                new APIResponse("ThumbUp added", "true", 201, "1", { thumbup: thumb[0] })
+                            );
+
+                        } else {
+                            res.status(status.CREATED).json(
+                                new APIResponse("Already add ThumbUp", "true", 201, "1")
+                            );
+                        }
+
+
+                    }
                 } else if (req.query.value == 0) {
 
 
@@ -272,15 +286,19 @@ exports.thumbCount = async (req, res, next) => {
                     if (checkDownThumbModel[0] == undefined) {
 
 
-                        const findData =  await thumbUpModel.findOne(
-                            { 
+                        const findData = await thumbUpModel.findOne(
+                            {
                                 adminUserId: req.params.admin_user_id,
-                                "thumbDetail.reqUserId": req.params.req_user_id,
-                                "thumbDetail.userId": req.params.user_id
+                                thumbDetail: {
+                                    $elemMatch: {
+                                        reqUserId: req.params.req_user_id,
+                                        userId: req.params.user_id
+                                    }
+                                }
                             }
                         );
 
-                        if(findData){
+                        if (findData) {
 
                             await thumbUpModel.updateOne(
                                 {
@@ -291,7 +309,7 @@ exports.thumbCount = async (req, res, next) => {
                                         thumbDetail: {
                                             reqUserId: req.params.req_user_id,
                                             userId: req.params.user_id
-    
+
                                         }
                                     }
                                 }
@@ -301,20 +319,20 @@ exports.thumbCount = async (req, res, next) => {
                                 {
                                     _id: req.params.admin_user_id, "yesBasket.userId": req.params.user_id
                                 },
-    
+
                                 { $inc: { "yesBasket.$.thumbUp": -1 } }
                             )
-    
-                           
+
+
                             const updateThumbNo = await userModel.updateOne(
                                 {
                                     _id: req.params.admin_user_id, "noBasket.userId": req.params.user_id
                                 },
-    
+
                                 { $inc: { "noBasket.$.thumbUp": -1 } }
                             )
 
-                        }else{
+                        } else {
 
                         }
 
@@ -327,7 +345,7 @@ exports.thumbCount = async (req, res, next) => {
                         });
 
                         await insertThumbDown.save();
-                      
+
                         const updateThumbYes = await userModel.updateOne(
                             {
                                 _id: req.params.admin_user_id, "yesBasket.userId": req.params.user_id
@@ -336,7 +354,7 @@ exports.thumbCount = async (req, res, next) => {
                             { $inc: { "yesBasket.$.thumbDown": 1 } }
                         )
 
-                       
+
                         const updateThumbNo = await userModel.updateOne(
                             {
                                 _id: req.params.admin_user_id, "noBasket.userId": req.params.user_id
@@ -351,28 +369,32 @@ exports.thumbCount = async (req, res, next) => {
                         })
 
                         const thumb = []
-            for(const data of findThumb.yesBasket){
-                if((data.userId).toString() == (req.params.user_id)){
-                    thumb.push(data.thumbDown)
-                }
-            }
+                        for (const data of findThumb.yesBasket) {
+                            if ((data.userId).toString() == (req.params.user_id)) {
+                                thumb.push(data.thumbDown)
+                            }
+                        }
 
-            for(const data of findThumb.noBasket){
-                if((data.userId).toString() == (req.params.user_id)){
-                    thumb.push(data.thumbDown)
-                }
-            }
+                        for (const data of findThumb.noBasket) {
+                            if ((data.userId).toString() == (req.params.user_id)) {
+                                thumb.push(data.thumbDown)
+                            }
+                        }
 
-                        
+
                         res.status(status.CREATED).json(
-                            new APIResponse("thumbDown Added", "true", 201, "1", {thumbDown : thumb[0]})
+                            new APIResponse("thumbDown Added", "true", 201, "1", { thumbDown: thumb[0] })
                         );
                     } else {
 
                         const checkExiestReqUserId = await thumbDownModel.findOne({
                             adminUserId: req.params.admin_user_id,
-                            "thumbDetail.reqUserId": req.params.req_user_id,
-                            "thumbDetail.userId": req.params.user_id
+                            thumbDetail: {
+                                $elemMatch: {
+                                    reqUserId: req.params.req_user_id,
+                                    userId: req.params.user_id
+                                }
+                            }
                         })
 
                         if (checkExiestReqUserId == null) {
@@ -386,7 +408,7 @@ exports.thumbCount = async (req, res, next) => {
                                 { $inc: { "yesBasket.$.thumbDown": 1 } }
                             )
 
-                           
+
                             const updateThumbNo = await userModel.updateOne(
                                 {
                                     _id: req.params.admin_user_id, "noBasket.userId": req.params.user_id
@@ -394,16 +416,20 @@ exports.thumbCount = async (req, res, next) => {
 
                                 { $inc: { "noBasket.$.thumbDown": 1 } }
                             )
-                            const findData =  await thumbUpModel.findOne(
-                                { 
+                            const findData = await thumbUpModel.findOne(
+                                {
                                     adminUserId: req.params.admin_user_id,
-                                    "thumbDetail.reqUserId": req.params.req_user_id,
-                                    "thumbDetail.userId": req.params.user_id
+                                    thumbDetail: {
+                                        $elemMatch: {
+                                            reqUserId: req.params.req_user_id,
+                                            userId: req.params.user_id
+                                        }
+                                    }
                                 }
                             );
-    
-                            if(findData){
-    
+
+                            if (findData) {
+
                                 await thumbUpModel.updateOne(
                                     {
                                         adminUserId: req.params.admin_user_id
@@ -413,64 +439,64 @@ exports.thumbCount = async (req, res, next) => {
                                             thumbDetail: {
                                                 reqUserId: req.params.req_user_id,
                                                 userId: req.params.user_id
-        
+
                                             }
                                         }
                                     }
                                 );
-    
+
                                 const updateThumbYes = await userModel.updateOne(
                                     {
                                         _id: req.params.admin_user_id, "yesBasket.userId": req.params.user_id
                                     },
-        
+
                                     { $inc: { "yesBasket.$.thumbUp": -1 } }
                                 )
-        
-                               
+
+
                                 const updateThumbNo = await userModel.updateOne(
                                     {
                                         _id: req.params.admin_user_id, "noBasket.userId": req.params.user_id
                                     },
-        
+
                                     { $inc: { "noBasket.$.thumbUp": -1 } }
                                 )
-    
-                            }else{
-    
+
+                            } else {
+
                             }
 
-                                const thumbAdd = await thumbDownModel.updateOne({ adminUserId: req.params.admin_user_id },
-                                    {
-                                        $push: {
-                                            thumbDetail: {
-                                                reqUserId: req.params.req_user_id,
-                                                userId: req.params.user_id
-                                            }
+                            const thumbAdd = await thumbDownModel.updateOne({ adminUserId: req.params.admin_user_id },
+                                {
+                                    $push: {
+                                        thumbDetail: {
+                                            reqUserId: req.params.req_user_id,
+                                            userId: req.params.user_id
                                         }
-                                    })
+                                    }
+                                })
 
 
-                                    const findThumb = await userModel.findOne({
-                                        _id: req.params.admin_user_id
-                                    })
-            
-                                    const thumb = []
-                        for(const data of findThumb.yesBasket){
-                            if((data.userId).toString() == (req.params.user_id)){
-                                thumb.push(data.thumbDown)
+                            const findThumb = await userModel.findOne({
+                                _id: req.params.admin_user_id
+                            })
+
+                            const thumb = []
+                            for (const data of findThumb.yesBasket) {
+                                if ((data.userId).toString() == (req.params.user_id)) {
+                                    thumb.push(data.thumbDown)
+                                }
                             }
-                        }
-            
-                        for(const data of findThumb.noBasket){
-                            if((data.userId).toString() == (req.params.user_id)){
-                                thumb.push(data.thumbDown)
+
+                            for (const data of findThumb.noBasket) {
+                                if ((data.userId).toString() == (req.params.user_id)) {
+                                    thumb.push(data.thumbDown)
+                                }
                             }
-                        }
-            
-                        res.status(status.CREATED).json(
-                            new APIResponse("thumbDown Added", "true", 201, "1", {thumbDown : thumb[0]})
-                        );
+
+                            res.status(status.CREATED).json(
+                                new APIResponse("thumbDown Added", "true", 201, "1", { thumbDown: thumb[0] })
+                            );
 
                         } else {
                             res.status(status.CREATED).json(
