@@ -2441,7 +2441,6 @@ exports.yesBasket = async (req, res, next) => {
                         "blockUnblockUser.blockUserId": allBakest.userId
                     })
 
-                    console.log("findInBlockUserModel", findInBlockUserModel);
                     if (findInBlockUserModel) {
 
                     } else {
@@ -2484,6 +2483,8 @@ exports.yesBasket = async (req, res, next) => {
 
 
                     if (reaquestedAllEmail && RequestedEmailExiestInUser == null) {
+
+                        console.log("asdwqsde");
                         const finalData = [];
                         const responseData = [];
                         for (const allrequestedDataNotAcceptedRequestAndNotFriend of reaquestedAllEmail) {
@@ -2503,15 +2504,23 @@ exports.yesBasket = async (req, res, next) => {
 
                                 const findInThumbUp = await thumbUpModel.findOne({
                                     adminUserId: req.params.user_id,
-                                    "thumbDetail.reqUserId": req.params.request_user_id,
-                                    "thumbDetail.userId": mongoose.Types.ObjectId(findThumb.userId)
+                                    thumbDetail: {
+                                        $elemMatch: {
+                                            reqUserId: req.params.request_user_id,
+                                            userId: findThumb.userId
+                                        }
+                                    }
                                 })
 
 
                                 const findInThumbDown = await thumbDownModel.findOne({
                                     adminUserId: req.params.user_id,
-                                    "thumbDetail.reqUserId": req.params.request_user_id,
-                                    "thumbDetail.userId": mongoose.Types.ObjectId(findThumb.userId)
+                                    thumbDetail: {
+                                        $elemMatch: {
+                                            reqUserId: req.params.request_user_id,
+                                            userId: findThumb.userId
+                                        }
+                                    }
                                 })
 
 
@@ -2597,13 +2606,7 @@ exports.yesBasket = async (req, res, next) => {
                             emailGet.push((getEmail.userId).toString())
                         }
 
-
-                        console.log("reaquestedAllEmail", reaquestedAllEmail);
-                        console.log("emailGet", emailGet);
                         var difference = reaquestedAllEmail.filter(x => emailGet.indexOf(x) === -1);
-
-                        console.log("difference", difference);
-
 
                         const UniqueEmail = [];
 
@@ -2623,16 +2626,28 @@ exports.yesBasket = async (req, res, next) => {
 
                             for (const findThumb of findThumbUp.yesBasket) {
 
+
+                                console.log("req.params.request_user_id", req.params.request_user_id);
+                                console.log("findThumb.userId", findThumb.userId);
                                 const findInThumbUp = await thumbUpModel.findOne({
                                     adminUserId: req.params.user_id,
-                                    "thumbDetail.reqUserId": req.params.request_user_id,
-                                    "thumbDetail.userId": findThumb.userId
+                                    thumbDetail: {
+                                        $elemMatch: {
+                                            reqUserId: req.params.request_user_id,
+                                            userId: findThumb.userId
+                                        }
+                                    }
                                 })
+
 
                                 const findInThumbDown = await thumbDownModel.findOne({
                                     adminUserId: req.params.user_id,
-                                    "thumbDetail.reqUserId": req.params.request_user_id,
-                                    "thumbDetail.userId": findThumb.userId
+                                    thumbDetail: {
+                                        $elemMatch: {
+                                            reqUserId: req.params.request_user_id,
+                                            userId: findThumb.userId
+                                        }
+                                    }
                                 })
 
 
@@ -2820,14 +2835,22 @@ exports.yesBasket = async (req, res, next) => {
 
                                             const findInThumbUp = await thumbUpModel.findOne({
                                                 adminUserId: req.params.user_id,
-                                                "thumbDetail.reqUserId": req.params.request_user_id,
-                                                "thumbDetail.userId": findThumb.userId
+                                                thumbDetail: {
+                                                    $elemMatch: {
+                                                        reqUserId: req.params.request_user_id,
+                                                        userId: findThumb.userId
+                                                    }
+                                                }
                                             })
 
                                             const findInThumbDown = await thumbDownModel.findOne({
                                                 adminUserId: req.params.user_id,
-                                                "thumbDetail.reqUserId": req.params.request_user_id,
-                                                "thumbDetail.userId": findThumb.userId
+                                                thumbDetail: {
+                                                    $elemMatch: {
+                                                        reqUserId: req.params.request_user_id,
+                                                        userId: findThumb.userId
+                                                    }
+                                                }
                                             })
 
                                             if (findInThumbUp) {
@@ -3266,12 +3289,16 @@ exports.yesBasket = async (req, res, next) => {
                             for (const findThumb of findThumbUp.yesBasket) {
 
                                 const findInThumbUp = await thumbUpModel.findOne({
-                                    adminUserId: req.params.request_user_id,
-                                    "thumbDetail.reqUserId": req.params.user_id,
-                                    "thumbDetail.userId": findThumb.userId
+                                    adminUserId: req.params.user_id,
+                                    thumbDetail: {
+                                        $elemMatch: {
+                                            reqUserId: req.params.request_user_id,
+                                            userId: findThumb.userId
+                                        }
+                                    }
                                 })
 
-                              
+
                                 if (findInThumbUp) {
                                     const findThumbData = findThumb.userId
                                     const orginalData = getOriginalData._id
@@ -3343,9 +3370,13 @@ exports.yesBasket = async (req, res, next) => {
                             for (const findThumb of findThumbUp.yesBasket) {
 
                                 const findInThumbUp = await thumbUpModel.findOne({
-                                    adminUserId: req.params.request_user_id,
-                                    "thumbDetail.reqUserId": req.params.user_id,
-                                    "thumbDetail.userId": findThumb.userId
+                                    adminUserId: req.params.user_id,
+                                    thumbDetail: {
+                                        $elemMatch: {
+                                            reqUserId: req.params.request_user_id,
+                                            userId: findThumb.userId
+                                        }
+                                    }
                                 })
 
                                 if (findInThumbUp) {
@@ -3470,7 +3501,7 @@ exports.yesBasket = async (req, res, next) => {
                         const emailDataDetail = meageAllTable;
                         for (const DataDetail of emailDataDetail) {
 
-                           
+
                             for (const reqEmail of reaquestedAllEmail) {
                                 if ((DataDetail._id).toString() == (reqEmail).toString()) {
                                     finalExistUser.push(DataDetail)
@@ -3494,9 +3525,13 @@ exports.yesBasket = async (req, res, next) => {
 
 
                                             const findInThumbUp = await thumbUpModel.findOne({
-                                                adminUserId: req.params.request_user_id,
-                                                "thumbDetail.reqUserId": req.params.user_id,
-                                                "thumbDetail.userId": findThumb.userId
+                                                adminUserId: req.params.user_id,
+                                                thumbDetail: {
+                                                    $elemMatch: {
+                                                        reqUserId: req.params.request_user_id,
+                                                        userId: findThumb.userId
+                                                    }
+                                                }
                                             })
                                             if (findInThumbUp) {
                                                 const findThumbData = findThumb.userId
@@ -3884,29 +3919,26 @@ exports.noBasket = async (req, res, next) => {
                             for (const findThumb of findThumbUp.noBasket) {
 
                                 const findInThumbUp = await thumbUpModel.findOne({
-                                    adminUserId: req.params.request_user_id,
-                                    "thumbDetail.reqUserId": req.params.user_id,
-                                    "thumbDetail.userId": findThumb.userId
-                                })
-
-
-                                const findInThumbUp1 = await thumbUpModel.findOne({
                                     adminUserId: req.params.user_id,
-                                    "thumbDetail.reqUserId": req.params.request_user_id,
-                                    "thumbDetail.userId": findThumb.userId
+                                    thumbDetail: {
+                                        $elemMatch: {
+                                            reqUserId: req.params.request_user_id,
+                                            userId: findThumb.userId
+                                        }
+                                    }
                                 })
+
 
                                 const findInThumbDown = await thumbDownModel.findOne({
-                                    adminUserId: req.params.request_user_id,
-                                    "thumbDetail.reqUserId": req.params.user_id,
-                                    "thumbDetail.userId": findThumb.userId
+                                    adminUserId: req.params.user_id,
+                                    thumbDetail: {
+                                        $elemMatch: {
+                                            reqUserId: req.params.request_user_id,
+                                            userId: findThumb.userId
+                                        }
+                                    }
                                 })
 
-                                const findInThumbDown1 = await thumbUpModel.findOne({
-                                    adminUserId: req.params.user_id,
-                                    "thumbDetail.reqUserId": req.params.request_user_id,
-                                    "thumbDetail.userId": findThumb.userId
-                                })
 
                                 if (findInThumbUp) {
                                     const findThumbData = findThumb.userId
@@ -3929,46 +3961,6 @@ exports.noBasket = async (req, res, next) => {
                                         responseData.push(response);
                                     }
 
-                                } else if (findInThumbUp1) {
-                                    const findThumbData = findThumb.userId
-                                    const orginalData = getOriginalData._id
-
-                                    if (orginalData.toString() == findThumbData.toString()) {
-                                        const response = {
-                                            _id: getOriginalData._id,
-                                            email: getOriginalData.email,
-                                            profile: getOriginalData.photo[0] ? getOriginalData.photo[0].res : "",
-                                            firstName: getOriginalData.firstName,
-                                            status: 3,
-                                            thumbUp: findThumb.thumbUp,
-                                            thumbDown: findThumb.thumbDown,
-                                            thumbUpStatus: 1,
-                                            thumbDownStatus: 0
-                                        }
-
-
-                                        responseData.push(response);
-                                    }
-                                } else if (findInThumbDown1) {
-                                    const findThumbData = findThumb.userId
-                                    const orginalData = getOriginalData._id
-
-                                    if (orginalData.toString() == findThumbData.toString()) {
-                                        const response = {
-                                            _id: getOriginalData._id,
-                                            email: getOriginalData.email,
-                                            profile: getOriginalData.photo[0] ? getOriginalData.photo[0].res : "",
-                                            firstName: getOriginalData.firstName,
-                                            status: 3,
-                                            thumbUp: findThumb.thumbUp,
-                                            thumbDown: findThumb.thumbDown,
-                                            thumbUpStatus: 0,
-                                            thumbDownStatus: 1
-                                        }
-
-
-                                        responseData.push(response);
-                                    }
                                 } else if (findInThumbDown) {
 
                                     const findThumbData = findThumb.userId
@@ -4056,26 +4048,25 @@ exports.noBasket = async (req, res, next) => {
 
 
                                 const findInThumbUp = await thumbUpModel.findOne({
-                                    adminUserId: req.params.request_user_id,
-                                    "thumbDetail.reqUserId": req.params.user_id,
-                                    "thumbDetail.userId": findThumb.userId
-                                })
-                                const findInThumbUp1 = await thumbUpModel.findOne({
                                     adminUserId: req.params.user_id,
-                                    "thumbDetail.reqUserId": req.params.request_user_id,
-                                    "thumbDetail.userId": findThumb.userId
+                                    thumbDetail: {
+                                        $elemMatch: {
+                                            reqUserId: req.params.request_user_id,
+                                            userId: findThumb.userId
+                                        }
+                                    }
                                 })
 
                                 const findInThumbDown = await thumbDownModel.findOne({
-                                    adminUserId: req.params.request_user_id,
-                                    "thumbDetail.reqUserId": req.params.user_id,
-                                    "thumbDetail.userId": findThumb.userId
-                                })
-                                const findInThumbDown1 = await thumbUpModel.findOne({
                                     adminUserId: req.params.user_id,
-                                    "thumbDetail.reqUserId": req.params.request_user_id,
-                                    "thumbDetail.userId": findThumb.userId
+                                    thumbDetail: {
+                                        $elemMatch: {
+                                            reqUserId: req.params.request_user_id,
+                                            userId: findThumb.userId
+                                        }
+                                    }
                                 })
+
 
                                 if (findInThumbUp) {
 
@@ -4093,44 +4084,6 @@ exports.noBasket = async (req, res, next) => {
                                             thumbDown: findThumb.thumbDown,
                                             thumbUpStatus: 1,
                                             thumbDownStatus: 0
-                                        }
-
-                                        UniqueEmail.push(response);
-                                    }
-                                } else if (findInThumbUp1) {
-                                    const findThumbData = findThumb.userId
-                                    const orginalData = getOriginalData._id
-
-                                    if (orginalData.toString() == findThumbData.toString()) {
-                                        const response = {
-                                            _id: getOriginalData._id,
-                                            email: getOriginalData.email,
-                                            firstName: getOriginalData.firstName,
-                                            profile: getOriginalData.photo[0] ? getOriginalData.photo[0].res : "",
-                                            status: 3,
-                                            thumbUp: findThumb.thumbUp,
-                                            thumbDown: findThumb.thumbDown,
-                                            thumbUpStatus: 1,
-                                            thumbDownStatus: 0
-                                        }
-
-                                        UniqueEmail.push(response);
-                                    }
-                                } else if (findInThumbDown1) {
-                                    const findThumbData = findThumb.userId
-                                    const orginalData = getOriginalData._id
-
-                                    if (orginalData.toString() == findThumbData.toString()) {
-                                        const response = {
-                                            _id: getOriginalData._id,
-                                            email: getOriginalData.email,
-                                            firstName: getOriginalData.firstName,
-                                            profile: getOriginalData.photo[0] ? getOriginalData.photo[0].res : "",
-                                            status: 3,
-                                            thumbUp: findThumb.thumbUp,
-                                            thumbDown: findThumb.thumbDown,
-                                            thumbUpStatus: 0,
-                                            thumbDownStatus: 1
                                         }
 
                                         UniqueEmail.push(response);
@@ -4297,15 +4250,23 @@ exports.noBasket = async (req, res, next) => {
                                         for (const findThumb of findThumbUp.noBasket) {
 
                                             const findInThumbUp = await thumbUpModel.findOne({
-                                                adminUserId: req.params.request_user_id,
-                                                "thumbDetail.reqUserId": req.params.user_id,
-                                                "thumbDetail.userId": findThumb.userId
+                                                adminUserId: req.params.user_id,
+                                                thumbDetail: {
+                                                    $elemMatch: {
+                                                        reqUserId: req.params.request_user_id,
+                                                        userId: findThumb.userId
+                                                    }
+                                                }
                                             })
 
                                             const findInThumbDown = await thumbDownModel.findOne({
-                                                adminUserId: req.params.request_user_id,
-                                                "thumbDetail.reqUserId": req.params.user_id,
-                                                "thumbDetail.userId": findThumb.userId
+                                                adminUserId: req.params.user_id,
+                                                thumbDetail: {
+                                                    $elemMatch: {
+                                                        reqUserId: req.params.request_user_id,
+                                                        userId: findThumb.userId
+                                                    }
+                                                }
                                             })
 
                                             if (findInThumbUp) {
@@ -4589,35 +4550,16 @@ exports.noBasket = async (req, res, next) => {
                             for (const findThumb of findThumbUp.noBasket) {
 
                                 const findInThumbUp = await thumbUpModel.findOne({
-                                    adminUserId: req.params.request_user_id,
-                                    "thumbDetail.reqUserId": req.params.user_id,
-                                    "thumbDetail.userId": findThumb.userId
-                                })
-
-                                const findInThumbUp1 = await thumbUpModel.findOne({
                                     adminUserId: req.params.user_id,
-                                    "thumbDetail.reqUserId": req.params.request_user_id,
-                                    "thumbDetail.userId": findThumb.userId
+                                    thumbDetail: {
+                                        $elemMatch: {
+                                            reqUserId: req.params.request_user_id,
+                                            userId: findThumb.userId
+                                        }
+                                    }
                                 })
 
                                 if (findInThumbUp) {
-                                    const findThumbData = findThumb.userId
-                                    const orginalData = getOriginalData._id
-
-                                    if (orginalData.toString() == findThumbData.toString()) {
-                                        const response = {
-                                            _id: getOriginalData._id,
-                                            email: getOriginalData.email,
-                                            firstName: getOriginalData.firstName,
-                                            profile: getOriginalData.photo[0] ? getOriginalData.photo[0].res : "",
-                                            status: 3,
-                                            thumbUp: findThumb.thumbUp,
-                                            thumbUpStatus: 1,
-                                        }
-
-                                        responseData.push(response);
-                                    }
-                                } else if (findInThumbUp1) {
                                     const findThumbData = findThumb.userId
                                     const orginalData = getOriginalData._id
 
@@ -4689,35 +4631,17 @@ exports.noBasket = async (req, res, next) => {
                             for (const findThumb of findThumbUp.noBasket) {
 
                                 const findInThumbUp = await thumbUpModel.findOne({
-                                    adminUserId: req.params.request_user_id,
-                                    "thumbDetail.reqUserId": req.params.user_id,
-                                    "thumbDetail.userId": findThumb.userId
-                                })
-                                const findInThumbUp1 = await thumbUpModel.findOne({
                                     adminUserId: req.params.user_id,
-                                    "thumbDetail.reqUserId": req.params.request_user_id,
-                                    "thumbDetail.userId": findThumb.userId
+                                    thumbDetail: {
+                                        $elemMatch: {
+                                            reqUserId: req.params.request_user_id,
+                                            userId: findThumb.userId
+                                        }
+                                    }
                                 })
 
 
                                 if (findInThumbUp) {
-                                    const findThumbData = findThumb.userId
-                                    const orginalData = getOriginalData._id
-
-                                    if (orginalData.toString() == findThumbData.toString()) {
-                                        const response = {
-                                            _id: getOriginalData._id,
-                                            email: getOriginalData.email,
-                                            firstName: getOriginalData.firstName,
-                                            profile: getOriginalData.photo[0] ? getOriginalData.photo[0].res : "",
-                                            status: 3,
-                                            thumbUp: findThumb.thumbUp,
-                                            thumbUpStatus: 1,
-                                        }
-
-                                        UniqueEmail.push(response);
-                                    }
-                                } else if (findInThumbUp1) {
                                     const findThumbData = findThumb.userId
                                     const orginalData = getOriginalData._id
 
@@ -4860,9 +4784,13 @@ exports.noBasket = async (req, res, next) => {
 
 
                                             const findInThumbUp = await thumbUpModel.findOne({
-                                                adminUserId: req.params.request_user_id,
-                                                "thumbDetail.reqUserId": req.params.user_id,
-                                                "thumbDetail.userId": findThumb.userId
+                                                adminUserId: req.params.user_id,
+                                                thumbDetail: {
+                                                    $elemMatch: {
+                                                        reqUserId: req.params.request_user_id,
+                                                        userId: findThumb.userId
+                                                    }
+                                                }
                                             })
 
                                             if (findInThumbUp) {
