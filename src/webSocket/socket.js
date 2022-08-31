@@ -1207,6 +1207,19 @@ function socket(io) {
             }
         })
 
+        socket.on("sendFriendRequest", async (arg) => {
+
+            const userRoom = `User${arg.user_id}`
+
+            console.log("userRoom", userRoom);
+            const findUser = await userModel.findOne({
+                _id: arg.request_user,
+                polyDating: 0
+            })
+
+            io.to(userRoom).emit("getRequest", `${findUser.firstName} send request to follow you`);
+        })
+
         socket.on('sendRequest', async (arg) => {
 
             const findUser = await userModel.findOne({
