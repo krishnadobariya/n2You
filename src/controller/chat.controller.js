@@ -140,6 +140,7 @@ exports.allUserListWithUnreadCount = async (req, res, next) => {
                     const lastValue = lastMessage[lastMessage.length - 1];
                     // console.log("lastValue", lastValue);
 
+                    console.log(lastValue);
                     var userNotificationDate = new Date(lastValue.dateAndTime);
                     now = new Date();
                     var sec_num = (now - userNotificationDate) / 1000;
@@ -288,7 +289,6 @@ exports.allUserListWithUnreadCount = async (req, res, next) => {
 
         // console.log("uniqueObjArray", uniqueObjArray);
 
-        const data = uniqueObjArray[0].dateAndTime
         // console.log(data);
         // console.log("date is", new Date(data));
         res.status(status.OK).json(
