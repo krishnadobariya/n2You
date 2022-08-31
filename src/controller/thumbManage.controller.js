@@ -18,7 +18,6 @@ exports.thumbCount = async (req, res, next) => {
                 new APIResponse("User not found and not Social Meida & Dating type user", "false", 404, "0")
             )
         } else {
-
             const findExistUser = await userModel.findOne({
                 _id: req.params.user_id,
                 polyDating: 0

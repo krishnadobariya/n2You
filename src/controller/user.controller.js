@@ -3271,30 +3271,8 @@ exports.yesBasket = async (req, res, next) => {
                                     "thumbDetail.userId": findThumb.userId
                                 })
 
-                                const findInThumbUp1 = await thumbUpModel.findOne({
-                                    adminUserId: req.params.user_id,
-                                    "thumbDetail.reqUserId": req.params.request_user_id,
-                                    "thumbDetail.userId": findThumb.userId
-                                })
-
+                              
                                 if (findInThumbUp) {
-                                    const findThumbData = findThumb.userId
-                                    const orginalData = getOriginalData._id
-
-                                    if (orginalData.toString() == findThumbData.toString()) {
-                                        const response = {
-                                            _id: getOriginalData._id,
-                                            email: getOriginalData.email,
-                                            firstName: getOriginalData.firstName,
-                                            profile: getOriginalData.photo[0] ? getOriginalData.photo[0].res : "",
-                                            status: 3,
-                                            thumbUp: findThumb.thumbUp,
-                                            thumbUpStatus: 1
-                                        }
-
-                                        responseData.push(response);
-                                    }
-                                } else if (findInThumbUp1) {
                                     const findThumbData = findThumb.userId
                                     const orginalData = getOriginalData._id
 
@@ -3370,30 +3348,7 @@ exports.yesBasket = async (req, res, next) => {
                                     "thumbDetail.userId": findThumb.userId
                                 })
 
-                                const findInThumbUp1 = await thumbUpModel.findOne({
-                                    adminUserId: req.params.user_id,
-                                    "thumbDetail.reqUserId": req.params.request_user_id,
-                                    "thumbDetail.userId": findThumb.userId
-                                })
-
                                 if (findInThumbUp) {
-                                    const findThumbData = findThumb.userId
-                                    const orginalData = getOriginalData._id
-
-                                    if (orginalData.toString() == findThumbData.toString()) {
-                                        const response = {
-                                            _id: getOriginalData._id,
-                                            email: getOriginalData.email,
-                                            firstName: getOriginalData.firstName,
-                                            profile: getOriginalData.photo[0] ? getOriginalData.photo[0].res : "",
-                                            status: 3,
-                                            thumbUp: findThumb.thumbUp,
-                                            thumbUpStatus: 1
-                                        }
-
-                                        UniqueEmail.push(response);
-                                    }
-                                } else if (findInThumbUp1) {
                                     const findThumbData = findThumb.userId
                                     const orginalData = getOriginalData._id
 
@@ -3515,7 +3470,7 @@ exports.yesBasket = async (req, res, next) => {
                         const emailDataDetail = meageAllTable;
                         for (const DataDetail of emailDataDetail) {
 
-                            console.log("DataDetail", DataDetail);
+                           
                             for (const reqEmail of reaquestedAllEmail) {
                                 if ((DataDetail._id).toString() == (reqEmail).toString()) {
                                     finalExistUser.push(DataDetail)

@@ -27,7 +27,7 @@ exports.sendRequest = async (req, res, next) => {
                         userEmail: checkUserExist.email,
                         RequestedEmails: [{
                             requestedEmail: checkRequestedEmail.email,
-                            accepted: 4,
+                            accepted: 2,
                             userId: checkRequestedEmail._id
                         }],
 
@@ -76,7 +76,7 @@ exports.sendRequest = async (req, res, next) => {
                             userEmail: checkRequestedEmail.email,
                             RequestedEmails: [{
                                 requestedEmail: checkUserExist.email,
-                                accepted: 2,
+                                accepted: 4,
                                 userId: checkUserExist._id
                             }],
 
@@ -103,7 +103,7 @@ exports.sendRequest = async (req, res, next) => {
                                     $push: {
                                         RequestedEmails: [{
                                             requestedEmail: checkUserExist.email,
-                                            accepted: 2,
+                                            accepted: 4,
                                             userId: checkUserExist._id
                                         }]
                                     }
@@ -131,7 +131,7 @@ exports.sendRequest = async (req, res, next) => {
                             userEmail: checkRequestedEmail.email,
                             RequestedEmails: [{
                                 requestedEmail: checkUserExist.email,
-                                accepted: 2,
+                                accepted: 4,
                                 userId: checkUserExist._id
                             }],
                         })
@@ -156,7 +156,7 @@ exports.sendRequest = async (req, res, next) => {
                                     $push: {
                                         RequestedEmails: [{
                                             requestedEmail: checkUserExist.email,
-                                            accepted: 2,
+                                            accepted: 4,
                                             userId: checkUserExist._id
                                         }]
                                     }
@@ -174,7 +174,7 @@ exports.sendRequest = async (req, res, next) => {
                                 $push: {
                                     RequestedEmails: [{
                                         requestedEmail: checkRequestedEmail.email,
-                                        accepted: 4,
+                                        accepted: 2,
                                         userId: checkRequestedEmail._id
                                     }]
                                 }
