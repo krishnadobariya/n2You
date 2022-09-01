@@ -124,6 +124,8 @@ function socket(io) {
 
 
             const fcm_token = userFind.fcm_token;
+
+            console.log("fcm_token==>" , fcm_token);
             // if (arg.sender_id == arg.user_1) {
             //     const userFind = await userModel.findOne({ _id: arg.user_2, polyDating: 0 }).select('name, photo,fcm_token');
             //     fcm_token.push(userFind.fcm_token)
@@ -1525,3 +1527,4 @@ function socket(io) {
 }
 
 module.exports = socket
+
