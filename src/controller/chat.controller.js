@@ -83,6 +83,7 @@ exports.getUserWithChat = async (req, res, next) => {
         const findRoom = await chatModels.findOne({
             chatRoomId: req.params.user_id
         });
+        
         chatRoom.push(findRoom)
 
         const page = parseInt(req.query.page)

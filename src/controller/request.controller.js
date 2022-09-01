@@ -112,14 +112,7 @@ exports.sendRequest = async (req, res, next) => {
                         }
 
                     }
-
-                    const userRoom = `User${req.params.requested_id}`
-
-                    io.to(userRoom).emit("getRequest", `${checkUserExist.firstName} send request to follow you`);
-
-                    res.status(status.CREATED).json(
-                        new APIResponse("Request Send successfully!", true, 201, 1)
-                    )
+                    
                 } else {
                     const inRequested = [];
                     const allRequestedEmail = emailExitInRequestedModel.RequestedEmails

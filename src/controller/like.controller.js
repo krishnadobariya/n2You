@@ -148,8 +148,6 @@ exports.showAllUserWhichIsLikePost = async (req, res, next) => {
             );
 
         } else {
-
-
             // all user which is liked post
             const allRequestedId = [];
 
@@ -337,14 +335,15 @@ exports.showAllUserWhichIsLikePost = async (req, res, next) => {
 
                                     if (requestEmail.accepted == 1) {
                                         var status1 = {
-                                            status: 1,
-                                            _id: requestEmail.userId
+                                            status: requestEmail.accepted,
+                                            _id: requestEmail.userId,
                                         }
                                         statusByEmail.push(status1)
                                     } else {
                                         var status2 = {
-                                            status: 2,
-                                            _id: requestEmail.userId
+                                            status: requestEmail.accepted,
+                                            _id: requestEmail.userId,
+                                            request_id: req.params.user_id
                                         }
                                         statusByEmail.push(status2)
                                     }
@@ -360,7 +359,7 @@ exports.showAllUserWhichIsLikePost = async (req, res, next) => {
 
                         for (const [key, final1Data] of statusByEmail.entries())
                             if ((finalData._id).toString() === (final1Data._id).toString()) {
-                                finalStatus.push(final1Data.status)
+                                finalStatus.push({ status: final1Data.status, request_id: final1Data.request_id })
                             }
                     }
 
@@ -400,7 +399,9 @@ exports.showAllUserWhichIsLikePost = async (req, res, next) => {
                                 // hopingToFind: finalData.hopingToFind,
                                 // jobTitle: finalData.jobTitle,
                                 // wantChildren: finalData.wantChildren,
-                                status: finalStatus[key]
+                                status: finalStatus[key].status,
+                                request_id: finalStatus[key].request_id
+
                             }
                             final_data.push(response);
                         } else {
@@ -419,7 +420,8 @@ exports.showAllUserWhichIsLikePost = async (req, res, next) => {
                                 // hopingToFind: finalData.hopingToFind,
                                 // jobTitle: finalData.jobTitle,
                                 // wantChildren: finalData.wantChildren,
-                                status: finalStatus[key]
+                                status: finalStatus[key].status,
+                                request_id: finalStatus[key].request_id
                             }
                             final_data.push(response);
                         }

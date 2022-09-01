@@ -124,7 +124,7 @@ function socket(io) {
 
             const fcm_token = userFind.fcm_token;
 
-            console.log("fcm_token==>" , fcm_token);
+            console.log("fcm_token==>", fcm_token);
             // if (arg.sender_id == arg.user_1) {
             //     const userFind = await userModel.findOne({ _id: arg.user_2, polyDating: 0 }).select('name, photo,fcm_token');
             //     fcm_token.push(userFind.fcm_token)
@@ -1209,17 +1209,238 @@ function socket(io) {
 
         socket.on("sendFriendRequest", async (arg) => {
 
-            const findUser1 = await userModel.findOne({
-                _id: arg.user_id,
-            })
-            const findUser = await userModel.findOne({
-                _id: arg.request_user,
-                polyDating: 0
-            })
+            const checkUserExist = await userModel.findOne({ _id: arg.user_id, polyDating: 0 });
+            const checkRequestedEmail = await userModel.findOne({ _id: arg.requested_id, polyDating: 0 })
+
+            if (checkUserExist && checkRequestedEmail) {
+
+                if (checkRequestedEmail) {
+                    const emailExitInRequestedModel = await requestModel.findOne({ userId: arg.user_id })
+
+                    const emailExitInRequestedModel1 = await requestModel.findOne({ userId: arg.requested_id })
+
+
+                    if (!emailExitInRequestedModel) {
+                        const request = requestModel({
+                            userId: checkUserExist._id,
+                            userEmail: checkUserExist.email,
+                            RequestedEmails: [{
+                                requestedEmail: checkRequestedEmail.email,
+                                accepted: 2,
+                                userId: checkRequestedEmail._id
+                            }],
+
+                        })
+
+                        const saveData = await request.save();
+
+                        const findUserInNotification = await notificationModel.findOne({
+                            userId: checkRequestedEmail._id
+                        })
+
+                        if (findUserInNotification) {
+                            await notificationModel.updateOne({
+                                userId: checkRequestedEmail._id
+                            }, {
+                                $push: {
+                                    notifications: {
+                                        notifications: `${checkUserExist.firstName} request to follow you`,
+                                        userId: checkUserExist._id,
+                                        status: 1
+                                    }
+                                }
+                            })
+                        } else {
+
+                            const data = notificationModel({
+                                userId: checkRequestedEmail._id,
+                                notifications: {
+                                    notifications: `${checkUserExist.firstName} request to follow you`,
+                                    userId: checkUserExist._id,
+                                    status: 1
+                                }
+                            })
+
+                            await data.save();
+                        }
+
+
+
+                        if (!emailExitInRequestedModel1) {
+
+
+
+                            const request = requestModel({
+                                userId: checkRequestedEmail._id,
+                                userEmail: checkRequestedEmail.email,
+                                RequestedEmails: [{
+                                    requestedEmail: checkUserExist.email,
+                                    accepted: 4,
+                                    userId: checkUserExist._id
+                                }],
+
+                            })
+
+                            const saveData = await request.save();
+
+                        } else {
+
+
+                            const inRequested = [];
+                            const allRequestedEmail = emailExitInRequestedModel1.RequestedEmails
+                            allRequestedEmail.map((result, index) => {
+
+                                if (result.requestedEmail == checkUserExist.email) {
+                                    inRequested.push(true)
+                                }
+                            })
+                            if (inRequested[0] == true) {
+
+                            } else {
+                                const updatePosts = await requestModel.updateOne({ userId: emailExitInRequestedModel1.userId },
+                                    {
+                                        $push: {
+                                            RequestedEmails: [{
+                                                requestedEmail: checkUserExist.email,
+                                                accepted: 4,
+                                                userId: checkUserExist._id
+                                            }]
+                                        }
+                                    })
+                            }
+
+                        }
+
+                    } else {
+                        const inRequested = [];
+                        const allRequestedEmail = emailExitInRequestedModel.RequestedEmails
+                        allRequestedEmail.map((result, index) => {
+
+                            if (result.requestedEmail == checkRequestedEmail.email) {
+                                inRequested.push(true)
+                            }
+                        })
+
+                        if (!emailExitInRequestedModel1) {
+
+                            const request = requestModel({
+                                userId: checkRequestedEmail._id,
+                                userEmail: checkRequestedEmail.email,
+                                RequestedEmails: [{
+                                    requestedEmail: checkUserExist.email,
+                                    accepted: 4,
+                                    userId: checkUserExist._id
+                                }],
+                            })
+
+                            const saveData = await request.save();
+
+                        } else {
+                            const inRequested = [];
+
+                            const allRequestedEmail = emailExitInRequestedModel1.RequestedEmails
+                            allRequestedEmail.map((result, index) => {
+
+                                if (result.requestedEmail == checkUserExist.email) {
+                                    inRequested.push(true)
+                                }
+                            })
+                            if (inRequested[0] == true) {
+
+                            } else {
+                                const updatePosts = await requestModel.updateOne({ userId: emailExitInRequestedModel1.userId },
+                                    {
+                                        $push: {
+                                            RequestedEmails: [{
+                                                requestedEmail: checkUserExist.email,
+                                                accepted: 4,
+                                                userId: checkUserExist._id
+                                            }]
+                                        }
+                                    })
+                            }
+
+                        }
+                        if (inRequested[0] == true) {
+                            const userRoom = `User${arg.requested_id}`
+                            io.to(userRoom).emit("getRequest", `Already Requested!`);
+                        } else {
+                            const updatePosts = await requestModel.updateOne({ userId: arg.user_id },
+                                {
+                                    $push: {
+                                        RequestedEmails: [{
+                                            requestedEmail: checkRequestedEmail.email,
+                                            accepted: 2,
+                                            userId: checkRequestedEmail._id
+                                        }]
+                                    }
+                                })
+                            const findUserInNotification = await notificationModel.findOne({
+                                userId: checkRequestedEmail._id
+                            })
+                            if (findUserInNotification) {
+                                await notificationModel.updateOne({
+                                    userId: checkRequestedEmail._id
+                                }, {
+                                    $push: {
+                                        notifications: {
+                                            notifications: `${checkUserExist.firstName} request to follow you`,
+                                            userId: checkUserExist._id,
+                                            status: 1
+                                        }
+                                    }
+                                })
+                            } else {
+                                const data = notificationModel({
+                                    userId: checkRequestedEmail._id,
+                                    notifications: {
+                                        notifications: `${checkUserExist.firstName} request to follow you`,
+                                        userId: checkUserExist._id,
+                                        status: 1
+                                    }
+                                })
+
+                                await data.save();
+                            }
+
+                            const userRoom = `User${arg.requested_id}`
+                            io.to(userRoom).emit("getRequest", `Request Send successfully!`);
+
+
+                            checkRequestedEmail
+                            const fcm_token = checkRequestedEmail.fcm_token
+                            const title = checkRequestedEmail.firstName;
+                            const body = `friend request`;
+                            const text = `${checkUserExist.firstName} request to follow you`;
+                            const sendBy = arg.user_id;
+                            const registrationToken = fcm_token
+
+                            Notification.sendPushNotificationFCM(
+                                registrationToken,
+                                title,
+                                body,
+                                text,
+                                sendBy,
+                                true
+                            );
+
+                        }
+
+                    }
+
+                } else {
+
+                }
+            } else {
+                const userRoom = `User${arg.requested_id}`
+                io.to(userRoom).emit("getRequest", `not found!`);
+
+            }
+
+
 
             if (findUser) {
                 const userRoom = `User${findUser._id}`
-                socket.join(userRoom)
                 io.to(userRoom).emit("getRequest", `${findUser1.firstName} send request to follow you`);
             }
         })

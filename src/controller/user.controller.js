@@ -1706,6 +1706,7 @@ exports.getAllUser = async (req, res, next) => {
                                     statusByEmail.push(status1)
                                 } else {
                                     var status2 = {
+                                        request_id: req.params.user_id,
                                         status: requestEmail.accepted,
                                         email: requestEmail.requestedEmail
                                     }
@@ -1722,7 +1723,7 @@ exports.getAllUser = async (req, res, next) => {
                 for (const [key, finalData] of meageAllTable.entries()) {
                     for (const [key, final1Data] of statusByEmail.entries())
                         if (finalData.email === final1Data.email) {
-                            finalStatus.push(final1Data.status)
+                            finalStatus.push({ status: final1Data.status, request_id: final1Data.request_id })
                         }
                 }
                 for (const [key, finalData] of finalExistUser.entries()) {
@@ -1745,7 +1746,8 @@ exports.getAllUser = async (req, res, next) => {
                         wantChildren: finalData.wantChildren,
                         posts: finalData.posts,
                         distance: (req.query.long && req.query.lat) == undefined ? "no distance found" : distance,
-                        status: finalStatus[key]
+                        status: finalStatus[key].status,
+                        request_id: finalStatus[key].request_id
                     }
 
 
@@ -1779,7 +1781,8 @@ exports.getAllUser = async (req, res, next) => {
                             email: finalData.email,
                             profile: finalData.photo[0] ? finalData.photo[0].res : "",
                             distance: (req.query.long && req.query.lat) == undefined ? "no distance found" : distance,
-                            status: finalStatus[key]
+                            status: finalStatus[key].status,
+                            request_id: finalStatus[key].request_id
                         }
 
                         final_data.push(getDetail);
@@ -1794,7 +1797,8 @@ exports.getAllUser = async (req, res, next) => {
                             email: finalData.email,
                             profile: finalData.photo[0] ? finalData.photo[0].res : "",
                             distance: (req.query.long && req.query.lat) == undefined ? "no distance found" : distance,
-                            status: finalStatus[key]
+                            status: finalStatus[key].status,
+                            request_id: finalStatus[key].request_id
                         }
 
                         final_data.push(getDetail);
@@ -1808,7 +1812,8 @@ exports.getAllUser = async (req, res, next) => {
                             email: finalData.email,
                             profile: finalData.photo[0] ? finalData.photo[0].res : "",
                             distance: (req.query.long && req.query.lat) == undefined ? "no distance found" : distance,
-                            status: finalStatus[key]
+                            status: finalStatus[key].status,
+                            request_id: finalStatus[key].request_id
                         }
 
                         final_data.push(getDetail);
@@ -2627,8 +2632,6 @@ exports.yesBasket = async (req, res, next) => {
                             for (const findThumb of findThumbUp.yesBasket) {
 
 
-                                console.log("req.params.request_user_id", req.params.request_user_id);
-                                console.log("findThumb.userId", findThumb.userId);
                                 const findInThumbUp = await thumbUpModel.findOne({
                                     adminUserId: req.params.user_id,
                                     thumbDetail: {
@@ -2862,7 +2865,7 @@ exports.yesBasket = async (req, res, next) => {
 
                                                     if (requestEmail.accepted == 1) {
                                                         var status1 = {
-                                                            status: 1,
+                                                            status: requestEmail.accepted,
                                                             email: requestEmail.requestedEmail,
                                                             firstName: findThumbUp.firstName,
                                                             profile: findThumbUp.photo[0] ? findThumbUp.photo[0].res : "",
@@ -2874,14 +2877,15 @@ exports.yesBasket = async (req, res, next) => {
                                                         statusByEmail.push(status1)
                                                     } else {
                                                         var status2 = {
-                                                            status: 2,
+                                                            status: requestEmail.accepted,
                                                             email: requestEmail.requestedEmail,
                                                             firstName: findThumbUp.firstName,
                                                             profile: findThumbUp.photo[0] ? findThumbUp.photo[0].res : "",
                                                             thumbUp: findThumb.thumbUp,
                                                             thumbDown: findThumb.thumbDown,
                                                             thumbUpStatus: 1,
-                                                            thumbDownStatus: 0
+                                                            thumbDownStatus: 0,
+                                                            request_id: req.params.user_id
                                                         }
                                                         statusByEmail.push(status2)
                                                     }
@@ -2896,7 +2900,8 @@ exports.yesBasket = async (req, res, next) => {
 
                                                     if (requestEmail.accepted == 1) {
                                                         var status1 = {
-                                                            status: 1,
+
+                                                            status: requestEmail.accepted,
                                                             email: requestEmail.requestedEmail,
                                                             firstName: findThumbUp.firstName,
                                                             profile: findThumbUp.photo[0] ? findThumbUp.photo[0].res : "",
@@ -2908,14 +2913,15 @@ exports.yesBasket = async (req, res, next) => {
                                                         statusByEmail.push(status1)
                                                     } else {
                                                         var status2 = {
-                                                            status: 2,
+                                                            status: requestEmail.accepted,
                                                             email: requestEmail.requestedEmail,
                                                             firstName: findThumbUp.firstName,
                                                             profile: findThumbUp.photo[0] ? findThumbUp.photo[0].res : "",
                                                             thumbUp: findThumb.thumbUp,
                                                             thumbDown: findThumb.thumbDown,
                                                             thumbUpStatus: 0,
-                                                            thumbDownStatus: 1
+                                                            thumbDownStatus: 1,
+                                                            request_id: req.params.user_id
                                                         }
                                                         statusByEmail.push(status2)
                                                     }
@@ -2930,7 +2936,7 @@ exports.yesBasket = async (req, res, next) => {
 
                                                     if (requestEmail.accepted == 1) {
                                                         var status1 = {
-                                                            status: 1,
+                                                            status: requestEmail.accepted,
                                                             email: requestEmail.requestedEmail,
                                                             firstName: findThumbUp.firstName,
                                                             profile: findThumbUp.photo[0] ? findThumbUp.photo[0].res : "",
@@ -2942,14 +2948,15 @@ exports.yesBasket = async (req, res, next) => {
                                                         statusByEmail.push(status1)
                                                     } else {
                                                         var status2 = {
-                                                            status: 2,
+                                                            status: requestEmail.accepted,
                                                             email: requestEmail.requestedEmail,
                                                             firstName: findThumbUp.firstName,
                                                             profile: findThumbUp.photo[0] ? findThumbUp.photo[0].res : "",
                                                             thumbUp: findThumb.thumbUp,
                                                             thumbDown: findThumb.thumbDown,
                                                             thumbUpStatus: 0,
-                                                            thumbDownStatus: 0
+                                                            thumbDownStatus: 0,
+                                                            request_id: req.params.user_id
                                                         }
                                                         statusByEmail.push(status2)
                                                     }
@@ -2975,7 +2982,8 @@ exports.yesBasket = async (req, res, next) => {
                                         thumbUp: final1Data.thumbUp,
                                         thumbDown: final1Data.thumbDown,
                                         thumbUpStatus: final1Data.thumbUpStatus,
-                                        thumbDownStatus: final1Data.thumbDownStatus
+                                        thumbDownStatus: final1Data.thumbDownStatus,
+                                        request_id: final1Data.request_id
                                     }
                                     finalStatus.push(response)
                                 }
@@ -3039,7 +3047,8 @@ exports.yesBasket = async (req, res, next) => {
                                         thumbUp: responses.statusAndTumbCount.thumbUp,
                                         thumbDown: responses.statusAndTumbCount.thumbDown,
                                         thumbUpStatus: responses.statusAndTumbCount.thumbUpStatus,
-                                        thumbDownStatus: responses.statusAndTumbCount.thumbDownStatus
+                                        thumbDownStatus: responses.statusAndTumbCount.thumbDownStatus,
+                                        request_id: responses.statusAndTumbCount.request_id
                                     }
 
                                     final_data.push(response);
@@ -3082,7 +3091,8 @@ exports.yesBasket = async (req, res, next) => {
                                         thumbUp: responses.statusAndTumbCount.thumbUp,
                                         thumbDown: responses.statusAndTumbCount.thumbDown,
                                         thumbUpStatus: responses.statusAndTumbCount.thumbUpStatus,
-                                        thumbDownStatus: responses.statusAndTumbCount.thumbDownStatus
+                                        thumbDownStatus: responses.statusAndTumbCount.thumbDownStatus,
+                                        request_id: responses.statusAndTumbCount.request_id
                                     }
 
                                     final_data.push(response);
@@ -3127,7 +3137,8 @@ exports.yesBasket = async (req, res, next) => {
                                         thumbUp: responses.statusAndTumbCount.thumbUp,
                                         thumbDown: responses.statusAndTumbCount.thumbDown,
                                         thumbUpStatus: responses.statusAndTumbCount.thumbUpStatus,
-                                        thumbDownStatus: responses.statusAndTumbCount.thumbDownStatus
+                                        thumbDownStatus: responses.statusAndTumbCount.thumbDownStatus,
+                                        request_id: responses.statusAndTumbCount.request_id
                                     }
 
                                     final_data.push(response);
@@ -3170,7 +3181,8 @@ exports.yesBasket = async (req, res, next) => {
                                         thumbUp: responses.statusAndTumbCount.thumbUp,
                                         thumbDown: responses.statusAndTumbCount.thumbDown,
                                         thumbUpStatus: responses.statusAndTumbCount.thumbUpStatus,
-                                        thumbDownStatus: responses.statusAndTumbCount.thumbDownStatus
+                                        thumbDownStatus: responses.statusAndTumbCount.thumbDownStatus,
+                                        request_id: responses.statusAndTumbCount.request_id
                                     }
 
                                     final_data.push(response);
@@ -3297,12 +3309,6 @@ exports.yesBasket = async (req, res, next) => {
                                         }
                                     }
                                 })
-
-                                console.log("reqUserId" , req.params.user_id);
-                                console.log(" adminUserId" ,  req.params.request_user_id);
-                                console.log("userId" ,  findThumb.userId);
-
-                                console.log("findInThumbUp", findInThumbUp);
 
                                 if (findInThumbUp) {
                                     const findThumbData = findThumb.userId
@@ -3546,7 +3552,7 @@ exports.yesBasket = async (req, res, next) => {
                                                     if (requestEmail.accepted == 1) {
                                                         var status1 = {
                                                             _id: requestEmail.userId,
-                                                            status: 1,
+                                                            status: requestEmail.accepted,
                                                             firstName: findThumbUp.firstName,
                                                             profile: findThumbUp.photo[0] ? findThumbUp.photo[0].res : "",
                                                             email: requestEmail.requestedEmail,
@@ -3557,12 +3563,13 @@ exports.yesBasket = async (req, res, next) => {
                                                     } else {
                                                         var status2 = {
                                                             _id: requestEmail.userId,
-                                                            status: 2,
+                                                            status: requestEmail.accepted,
                                                             email: requestEmail.requestedEmail,
                                                             firstName: findThumbUp.firstName,
                                                             profile: findThumbUp.photo[0] ? findThumbUp.photo[0].res : "",
                                                             thumbUp: findThumb.thumbUp,
-                                                            thumbUpStatus: 1
+                                                            thumbUpStatus: 1,
+                                                            request_id: req.params.user_id
                                                         }
                                                         statusByEmail.push(status2)
                                                     }
@@ -3575,7 +3582,7 @@ exports.yesBasket = async (req, res, next) => {
                                                     if (requestEmail.accepted == 1) {
                                                         var status1 = {
                                                             _id: requestEmail.userId,
-                                                            status: 1,
+                                                            status: requestEmail.accepted,
                                                             firstName: findThumbUp.firstName,
                                                             profile: findThumbUp.photo[0] ? findThumbUp.photo[0].res : "",
                                                             email: requestEmail.requestedEmail,
@@ -3586,12 +3593,13 @@ exports.yesBasket = async (req, res, next) => {
                                                     } else {
                                                         var status2 = {
                                                             _id: requestEmail.userId,
-                                                            status: 2,
+                                                            status: requestEmail.accepted,
                                                             email: requestEmail.requestedEmail,
                                                             firstName: findThumbUp.firstName,
                                                             profile: findThumbUp.photo[0] ? findThumbUp.photo[0].res : "",
                                                             thumbUp: findThumb.thumbUp,
-                                                            thumbUpStatus: 0
+                                                            thumbUpStatus: 0,
+                                                            request_id: req.params.user_id
                                                         }
                                                         statusByEmail.push(status2)
                                                     }
@@ -3614,7 +3622,8 @@ exports.yesBasket = async (req, res, next) => {
                                     const response = {
                                         status: final1Data.status,
                                         thumbUp: final1Data.thumbUp,
-                                        thumbUpStatus: final1Data.thumbUpStatus
+                                        thumbUpStatus: final1Data.thumbUpStatus,
+                                        request_id: final1Data.request_id
                                     }
                                     finalStatus.push(response)
                                 }
@@ -3674,7 +3683,8 @@ exports.yesBasket = async (req, res, next) => {
                                         // posts_data: finalData.posts,
                                         status: responses.statusAndTumbCount.status,
                                         thumbUp: responses.statusAndTumbCount.thumbUp,
-                                        thumbUpStatus: responses.statusAndTumbCount.thumbUpStatus
+                                        thumbUpStatus: responses.statusAndTumbCount.thumbUpStatus,
+                                        request_id: responses.statusAndTumbCount.request_id
                                     }
 
                                     final_data.push(response);
