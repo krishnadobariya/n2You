@@ -230,7 +230,7 @@ exports.publicSession = async (req, res, next) => {
 
         if (findPublicSession[0] == null) {
             res.status(status.OK).json(
-                new APIResponse("Not Found Any Public Session", "true", 200, "1")
+                new APIResponse("Not Found Any Public Session", "true", 200, "1", [])
             )
         } else {
 
@@ -504,7 +504,7 @@ exports.invitedInSession = async (req, res, next) => {
 
         if (allInvited[0] == undefined) {
             res.status(status.OK).json(
-                new APIResponse("Not have any Invited!", "true", 200, "1")
+                new APIResponse("Not have any Invited!", "true", 200, "1" , [])
             )
         } else {
             res.status(status.OK).json(
@@ -592,7 +592,7 @@ exports.mySession = async (req, res, next) => {
 
         if (mySession[0] == undefined) {
             res.status(status.OK).json(
-                new APIResponse("I don't create Any Session!", "true", 200, "1")
+                new APIResponse("I don't create Any Session!", "true", 200, "1", [])
             )
         } else {
             res.status(status.OK).json(
