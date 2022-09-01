@@ -6,6 +6,7 @@ const postModel = require("../model/post.model");
 const notificationModel = require("../model/polyamorous/notification.model");
 const chatRoomModel = require("../webSocket/models/chatRoom.model");
 const { Mongoose, default: mongoose } = require("mongoose");
+const { Socket } = require("socket.io");
 
 exports.sendRequest = async (req, res, next) => {
     try {
@@ -111,6 +112,11 @@ exports.sendRequest = async (req, res, next) => {
                         }
 
                     }
+
+                    const userRoom = `User${req.params.requested_id}`
+
+                    io.to(userRoom).emit("getRequest", `${checkUserExist.firstName} send request to follow you`);
+
                     res.status(status.CREATED).json(
                         new APIResponse("Request Send successfully!", true, 201, 1)
                     )
@@ -206,6 +212,7 @@ exports.sendRequest = async (req, res, next) => {
 
                             await data.save();
                         }
+                        
                         res.status(status.CREATED).json(
                             new APIResponse("Request Send successfully!", "true", 201, "1")
                         )

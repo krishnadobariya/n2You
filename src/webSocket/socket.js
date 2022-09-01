@@ -9,7 +9,6 @@ const groupChatModel = require("./models/groupChat.model");
 const { default: mongoose } = require("mongoose");
 const linkProfileModel = require("../model/polyamorous/linkProfile.model");
 const conflictModel = require("../model/polyamorous/conflict.model");
-const { findOne } = require("../model/user.model");
 const notificationModel = require("../model/polyamorous/notification.model");
 function socket(io) {
 
@@ -801,7 +800,6 @@ function socket(io) {
 
         socket.on("readUnread", async (arg) => {
 
-            console.log("arg.chat_room", arg.chat_room);
             const findRoom = await chatModels.findOne({
                 chatRoomId: arg.chat_room,
                 "chat.sender": arg.user_id
@@ -1209,15 +1207,19 @@ function socket(io) {
 
         socket.on("sendFriendRequest", async (arg) => {
 
-            const userRoom = `User${arg.user_id}`
-
-            console.log("userRoom", userRoom);
+            const findUser1 = await userModel.findOne({
+                _id: arg.user_id,
+            })
             const findUser = await userModel.findOne({
                 _id: arg.request_user,
                 polyDating: 0
             })
 
-            io.to(userRoom).emit("getRequest", `${findUser.firstName} send request to follow you`);
+            if (findUser) {
+                const userRoom = `User${findUser._id}`
+                socket.join(userRoom)
+                io.to(userRoom).emit("getRequest", `${findUser1.firstName} send request to follow you`);
+            }
         })
 
         socket.on('sendRequest', async (arg) => {

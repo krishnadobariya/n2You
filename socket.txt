@@ -131,3 +131,17 @@ readUnreadInGroup
 
 chatReceive
 
+==================================================
+
+==> sendFriendRequest
+
+===================================================
+
+sendFriendRequest
+
+{
+    user_id:"",
+    request_user:""
+}
+
+getRequest
