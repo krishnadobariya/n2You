@@ -117,14 +117,20 @@ function socket(io) {
             let time = 'At' + ' ' + hours + ':' + minutes + ' ' + ampm + ' ' + 'on' + ' ' + month + ' ' + dates + ',' + year;
 
 
-            const fcm_token = [];
-            if (arg.sender_id == arg.user_1) {
-                const userFind = await userModel.findOne({ _id: arg.user_2, polyDating: 0 }).select('name, photo,fcm_token');
-                fcm_token.push(userFind.fcm_token)
-            } else {
-                const userFind = await userModel.findOne({ _id: arg.user_1, polyDating: 0 }).select('name, photo, fcm_token')
-                fcm_token.push(userFind.fcm_token)
-            }
+
+
+
+            const userFind = await userModel.findOne({ _id: arg.user_2, polyDating: 0 }).select('name, photo,fcm_token');
+
+
+            const fcm_token = userFind.fcm_token;
+            // if (arg.sender_id == arg.user_1) {
+            //     const userFind = await userModel.findOne({ _id: arg.user_2, polyDating: 0 }).select('name, photo,fcm_token');
+            //     fcm_token.push(userFind.fcm_token)
+            // } else {
+            //     const userFind = await userModel.findOne({ _id: arg.user_1, polyDating: 0 }).select('name, photo, fcm_token')
+            //     fcm_token.push(userFind.fcm_token)
+            // }
 
             const addInChatRoom = await chatRoomModel.findOne({
                 user1: arg.user_1,
@@ -200,7 +206,7 @@ function socket(io) {
 
                             const text = arg.text;
                             const sendBy = arg.sender_id;
-                            const registrationToken = fcm_token[0]
+                            const registrationToken = fcm_token
 
                             Notification.sendPushNotificationFCM(
                                 registrationToken,
@@ -262,7 +268,7 @@ function socket(io) {
 
                             const text = arg.text;
                             const sendBy = arg.sender_id;
-                            const registrationToken = fcm_token[0]
+                            const registrationToken = fcm_token
                             Notification.sendPushNotificationFCM(
                                 registrationToken,
                                 title,
@@ -344,7 +350,7 @@ function socket(io) {
 
                                 const text = arg.text;
                                 const sendBy = arg.sender_id;
-                                const registrationToken = fcm_token[0]
+                                const registrationToken = fcm_token
                                 Notification.sendPushNotificationFCM(
                                     registrationToken,
                                     title,
@@ -404,7 +410,7 @@ function socket(io) {
 
                                 const text = arg.text;
                                 const sendBy = arg.sender_id;
-                                const registrationToken = fcm_token[0]
+                                const registrationToken = fcm_token
                                 Notification.sendPushNotificationFCM(
                                     registrationToken,
                                     title,
@@ -465,7 +471,7 @@ function socket(io) {
                                 const text = arg.text;
                                 const sendBy = arg.sender_id;
 
-                                const registrationToken = fcm_token[0]
+                                const registrationToken = fcm_token
                                 Notification.sendPushNotificationFCM(
                                     registrationToken,
                                     title,
@@ -522,7 +528,7 @@ function socket(io) {
                                 const text = arg.text;
                                 const sendBy = arg.sender_id;
 
-                                const registrationToken = fcm_token[0]
+                                const registrationToken = fcm_token
 
                                 Notification.sendPushNotificationFCM(
                                     registrationToken,
@@ -603,7 +609,7 @@ function socket(io) {
 
                 const text = 'room Created';
                 const sendBy = arg.user_1;
-                const registrationToken = fcm_token.fcm_token[0]
+                const registrationToken = fcm_token.fcm_token
 
                 Notification.sendPushNotificationFCM(
                     registrationToken,
@@ -696,7 +702,7 @@ function socket(io) {
 
                             const text = arg.text;
                             const sendBy = arg.sender_id;
-                            const registrationToken = fcm_token.fcm_token[0]
+                            const registrationToken = fcm_token.fcm_token
 
                             Notification.sendPushNotificationFCM(
                                 registrationToken,
@@ -755,7 +761,7 @@ function socket(io) {
 
                             const text = arg.text;
                             const sendBy = arg.sender_id;
-                            const registrationToken = fcm_token.fcm_token[0]
+                            const registrationToken = fcm_token.fcm_token
 
                             Notification.sendPushNotificationFCM(
                                 registrationToken,
