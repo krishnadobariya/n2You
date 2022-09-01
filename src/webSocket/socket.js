@@ -120,7 +120,7 @@ function socket(io) {
 
 
 
-            const userFind = await userModel.findOne({ _id: arg.user_2, polyDating: 0 }).select('name, photo,fcm_token');
+            const userFind = await userModel.findOne({ _id: arg.user_2, polyDating: 0 });
 console.log("arg.user_2,", arg.user_2);
 
             console.log("userFind", userFind);
