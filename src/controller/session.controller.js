@@ -133,7 +133,7 @@ exports.sessionCreate = async (req, res, next) => {
                     } else {
 
                         const savedata = notificationModel({
-                            userId: notification,
+                            userId: invitedUser,
                             notifications: {
                                 notifications: `${findUserInUserModel.firstName} invited you in session ${timeSession}`,
                                 userId: findUserInUserModel._id,
