@@ -121,12 +121,8 @@ function socket(io) {
 
 
             const userFind = await userModel.findOne({ _id: arg.user_2, polyDating: 0 });
-console.log("arg.user_2,", arg.user_2);
 
-            console.log("userFind", userFind);
             const fcm_token = userFind.fcm_token;
-            
-            
 
             console.log("fcm_token==>" , fcm_token);
             // if (arg.sender_id == arg.user_1) {
@@ -206,9 +202,8 @@ console.log("arg.user_2,", arg.user_2);
 
                             io.to(userRoom).emit("chatReceive", chat);
 
-                            const title = "n2you Notification";
-                            const body = `${arg.sender_id} send request to `;
-
+                            const title = userFind.firstName;
+                            const body = arg.text;
                             const text = arg.text;
                             const sendBy = arg.sender_id;
                             const registrationToken = fcm_token
@@ -268,8 +263,8 @@ console.log("arg.user_2,", arg.user_2);
                             }
 
                             io.to(userRoom).emit("chatReceive", chat);
-                            const title = "n2you Notification";
-                            const body = `${arg.sender_id} send request to `;
+                            const title = userFind.firstName;
+                            const body = arg.text;
 
                             const text = arg.text;
                             const sendBy = arg.sender_id;
@@ -350,9 +345,8 @@ console.log("arg.user_2,", arg.user_2);
                                 }
 
                                 io.to(userRoom).emit("chatReceive", chat);
-                                const title = "n2you Notification";
-                                const body = `${arg.sender_id} send request to`;
-
+                                const title = userFind.firstName;
+                                const body = arg.text;
                                 const text = arg.text;
                                 const sendBy = arg.sender_id;
                                 const registrationToken = fcm_token
@@ -409,10 +403,8 @@ console.log("arg.user_2,", arg.user_2);
                                     receiver: receiver_id[0]
                                 }
                                 io.to(userRoom).emit("chatReceive", chat);
-
-                                const title = "n2you Notification";
-                                const body = `${arg.sender_id} send request to `;
-
+                                const title = userFind.firstName;
+                                const body = arg.text;
                                 const text = arg.text;
                                 const sendBy = arg.sender_id;
                                 const registrationToken = fcm_token
@@ -470,9 +462,8 @@ console.log("arg.user_2,", arg.user_2);
                                 }
                                 io.to(userRoom).emit("chatReceive", chat);
 
-                                const title = "n2you Notification";
-                                const body = `${arg.sender_id} send request to `;
-
+                                const title = userFind.firstName;
+                                const body = arg.text;
                                 const text = arg.text;
                                 const sendBy = arg.sender_id;
 
@@ -528,8 +519,8 @@ console.log("arg.user_2,", arg.user_2);
                                 }
                                 io.to(userRoom).emit("chatReceive", chat);
 
-                                const title = "n2you Notification";
-                                const body = `${arg.sender_id} send request to `;
+                                const title = userFind.firstName;
+                                const body = arg.text;
                                 const text = arg.text;
                                 const sendBy = arg.sender_id;
 
