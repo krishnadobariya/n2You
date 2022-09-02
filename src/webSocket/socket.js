@@ -1752,41 +1752,47 @@ function socket(io) {
 
         })
 
-        socket.on('videoCall' , async(arg) => {
-            
-            const findChatRoom = await chatRoomModel.findOne({
-                _id : arg.chat_room_id
-            })
-            if(findChatRoom){
+        socket.on('videoCall', async (arg) => {
 
-                const findData  = await videoCallModel.findOne({
+            const findChatRoom = await chatRoomModel.findOne({
+                _id: arg.chat_room_id
+            })
+            if (findChatRoom) {
+
+                const findData = await videoCallModel.findOne({
                     chatRoomId: arg.chat_room_id,
                     senderId: arg.sender_id,
                     receiverId: arg.receiver_id
                 })
 
-                if(findData){
-                    io.emit("videoCallReceive" , "already ceated video call!")
-                }else{
+                if (findData) {
+                    io.emit("videoCallReceive", "already ceated video call!")
+                } else {
                     const saveData = videoCallModel({
                         chatRoomId: arg.chat_room_id,
                         senderId: arg.sender_id,
                         receiverId: arg.receiver_id
-                    })   
+                    })
 
                     await saveData.save();
 
-                    
+
                     const userRoom = `User${arg.receiver_id}`
                     io.to(userRoom).emit("videoCallReceive", `create video call!`);
 
+                    const receiver = await userModel.findOne({
+                        _id: arg.receiver_id
+                    })
 
+                    const sender = await userModel.findOne({
+                        _id: arg.sender_id
+                    })
                     checkRequestedEmail
-                    const fcm_token = checkRequestedEmail.fcm_token
-                    const title = "Friend Request";
-                    const body = `${checkUserExist.firstName} sent you a friend request.`;
-                    const text = `${checkUserExist.firstName} sent you a friend request.`;
-                    const sendBy = arg.user_id;
+                    const fcm_token = receiver.fcm_token
+                    const title = "video call Request";
+                    const body = `${sender.firstName} join video call.`;
+                    const text = `${sender.firstName} join video call.`;
+                    const sendBy = arg.sender_id;
                     const registrationToken = fcm_token
 
                     Notification.sendPushNotificationFCM(
@@ -1799,8 +1805,8 @@ function socket(io) {
                     );
                 }
 
-            }else{
-                io.emit("videoCallReceive" , "Room not Found!")
+            } else {
+                io.emit("videoCallReceive", "Room not Found!")
             }
 
         })
