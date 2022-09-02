@@ -1,5 +1,5 @@
 class APIResponse {
-    constructor(message = '', status = false, code = 200, statusCode = 1, data = null, error = null) {
+    constructor(message = '', status = false, code = 200, statusCode = 1, data = null, notificationCount = 0, error = null) {
         if (message) {
             this.message = message
         }
@@ -15,7 +15,9 @@ class APIResponse {
         if (data) {
             this.data = data
         }
-
+        if (notificationCount) {
+            this.notificationCount = notificationCount
+        }
         if (error) {
             this.error = error
         }

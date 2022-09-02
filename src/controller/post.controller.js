@@ -1887,6 +1887,8 @@ exports.userAllFriendPost = async (req, res, next) => {
         console.log(data);
         const user = await userModal.findOne({ _id: req.params.user_id })
         if (data != null && user != null) {
+
+
             const allRequestedEmail = data.RequestedEmails
             const requestedEmailWitchIsInuserRequeted = [];
             const allData = [];
@@ -2808,14 +2810,22 @@ exports.userAllFriendPost = async (req, res, next) => {
 
             }
 
+            const getNotification = await notificationModel.findOne({
+                userId: req.params.user_id
+            })
 
-
-
+            console.log("getNotification", getNotification);
+            var count = 0
+            for (const allNotification of getNotification.notifications) {
+                count = count + allNotification.read;
+            }
+            console.log("count", count);
             res.status(status.OK).json(
-                new APIResponse("show all post When accept by the user", "true", 201, "1", final_data.sort((a, b) => b.posts.createdAt - a.posts.createdAt))
+                new APIResponse("show all post When accept by the user", "true", 201, "1", final_data.sort((a, b) => b.posts.createdAt - a.posts.createdAt), count.toString())
             )
         } else if (user) {
 
+            console.log("fwefwefwerf");
             const meargAllTable = await userModal.aggregate([{
                 $match: {
                     _id: mongoose.Types.ObjectId(req.params.user_id)
@@ -3221,8 +3231,19 @@ exports.userAllFriendPost = async (req, res, next) => {
                 final_data.push(...finalStatus);
 
             }
+
+            const getNotification = await notificationModel.findOne({
+                userId: req.params.user_id
+            })
+
+            console.log("getNotification", getNotification);
+            var count = 0
+            for (const allNotification of getNotification.notifications) {
+                count = count + allNotification.read;
+            }
+
             res.status(status.OK).json(
-                new APIResponse("show all post When accept by the user", "true", 201, "1", final_data.sort((a, b) => b.posts.createdAt - a.posts.createdAt))
+                new APIResponse("show all post When accept by the user", "true", 201, "1", final_data.sort((a, b) => b.posts.createdAt - a.posts.createdAt), count.toString())
             )
         }
 

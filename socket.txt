@@ -145,3 +145,20 @@ sendFriendRequest
 }
 
 getRequest
+
+=======================================================
+
+==> videoCall
+
+========================================================
+
+videoCall
+
+{
+"chatRoomId" :"",
+"senderId":"",
+"receiverId": "",
+}
+
+
+videoCallReceive

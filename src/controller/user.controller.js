@@ -918,7 +918,7 @@ exports.searchFriend = async (req, res, next) => {
                     }
                 ).maxTimeMS(10)
 
-
+                console.log("RequestedEmailExiestInUser", RequestedEmailExiestInUser);
                 if (reaquestedAllEmail && RequestedEmailExiestInUser == null) {
                     const finalData = [];
                     const responseData = [];
@@ -2162,31 +2162,29 @@ exports.getDataUserWise = async (req, res, next) => {
 
             } else {
 
-                console.log("findUser", findUser);
                 if (findUser) {
 
                     if (findUser.RequestedEmails[0] == undefined) {
                         statusCode.push({ status: 3 })
                     } else {
-                        console.log("findStatus", findUser.RequestedEmails);
+
                         for (const findStatus of findUser.RequestedEmails) {
-
-
-
                             if (findStatus.userId == req.params.req_user_id) {
                                 statusCode.push({ status: 10 })
                             } else {
                                 if ((findStatus.userId).toString() == (req.params.user_id).toString()) {
-
+                                    console.log("true");
                                     if (findStatus.accepted == 4) {
+
+                                        console.log("indStatus.accepted", findStatus.accepted);
                                         statusCode.push({ status: findStatus.accepted })
                                     } else {
+                                        console.log("indStatus.accepted", findStatus.accepted);
                                         statusCode.push({ status: findStatus.accepted })
                                     }
 
                                 } else {
 
-                                    statusCode.push({ status: 3 })
                                 }
 
                             }
@@ -2200,6 +2198,8 @@ exports.getDataUserWise = async (req, res, next) => {
 
 
             }
+
+            console.log("statusCode", statusCode);
             let birthDate = new Date(data[0].birthDate);
             birthDate = birthDate.getFullYear();
             let currentDate = new Date(Date.now());
@@ -2256,7 +2256,7 @@ exports.getDataUserWise = async (req, res, next) => {
                 phoneNumber: data[0].phoneNumber,
                 extraAtrribute: data[0].extraAtrribute,
                 Posts: getAllPosts,
-                friendStatus: statusCode[0].status,
+                friendStatus: statusCode[0] == undefined ? 3 : statusCode[0].status,
                 chatRoomId: chatRoomId[0] == undefined ? "" : chatRoomId[0],
                 fullAccess: basketSetting == null ? true : basketSetting.fullAccess,
                 thumbUpDownAccess: basketSetting == null ? false : basketSetting.thumpsUpAndDown,
@@ -5959,6 +5959,41 @@ exports.unFriend = async (req, res) => {
                 )
 
             }
+        }
+
+    } catch (error) {
+        console.log(error);
+        res.status(status.INTERNAL_SERVER_ERROR).json(
+            new APIResponse("Something Went Wrong", "false", 500, error.message)
+        );
+    }
+}
+
+exports.readNotification = async (req, res) => {
+    try {
+
+        const findUserInNotification = await notificationModel.findOne({
+            userId: req.params.user_id
+        })
+
+        if (findUserInNotification) {
+
+            await notificationModel.updateMany({
+                userId: req.params.user_id
+            }, {
+                $set: {
+                    "notifications.$[].read": 0
+                }
+            })
+
+            res.status(status.OK).json(
+                new APIResponse("read all notification", "true", 200, "1")
+            )
+
+        } else {
+            res.status(status.NOT_FOUND).json(
+                new APIResponse("user Not foud", "false", 404, "0")
+            )
         }
 
     } catch (error) {
