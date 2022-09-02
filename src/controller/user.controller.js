@@ -2457,12 +2457,17 @@ exports.yesBasket = async (req, res, next) => {
                 const YesBasketData = [];
                 for (const allBakest of findUser.yesBasket) {
 
-                    const findInBlockUserModel = await blockuserModel.findOne({
+                    const findInBlockUserModel1 = await blockuserModel.findOne({
                         userId: req.params.request_user_id,
                         "blockUnblockUser.blockUserId": allBakest.userId
                     })
 
-                    if (findInBlockUserModel) {
+                    const findInBlockUserModel2 = await blockuserModel.findOne({
+                        userId: allBakest.userId,
+                        "blockUnblockUser.blockUserId": req.params.request_user_id
+                    })
+
+                    if (findInBlockUserModel1 || findInBlockUserModel2) {
 
                     } else {
                         YesBasketData.push((allBakest.userId).toString())
@@ -3245,11 +3250,16 @@ exports.yesBasket = async (req, res, next) => {
                 const YesBasketData = [];
                 for (const allBakest of findUser.yesBasket) {
 
-                    const findInBlockUserModel = await blockuserModel.findOne({
+                    const findInBlockUserModel1 = await blockuserModel.findOne({
                         userId: req.params.request_user_id,
                         "blockUnblockUser.blockUserId": allBakest.userId
                     })
-                    if (findInBlockUserModel) {
+
+                    const findInBlockUserModel2 = await blockuserModel.findOne({
+                        userId: allBakest.userId,
+                        "blockUnblockUser.blockUserId": req.params.request_user_id,
+                    })
+                    if (findInBlockUserModel1 || findInBlockUserModel2) {
 
                     } else {
                         YesBasketData.push((allBakest.userId).toString())
@@ -3983,11 +3993,16 @@ exports.noBasket = async (req, res, next) => {
                 const allMeargeData = [];
                 const NoBasketData = [];
                 for (const allBakest of findUser.noBasket) {
-                    const findInBlockUserModel = await blockuserModel.findOne({
+                    const findInBlockUserModel1 = await blockuserModel.findOne({
                         userId: req.params.request_user_id,
                         "blockUnblockUser.blockUserId": allBakest.userId
                     })
-                    if (findInBlockUserModel) {
+
+                    const findInBlockUserModel2 = await blockuserModel.findOne({
+                        userId: allBakest.userId,
+                        "blockUnblockUser.blockUserId": req.params.request_user_id
+                    })
+                    if (findInBlockUserModel1 || findInBlockUserModel2) {
 
                     } else {
                         NoBasketData.push((allBakest.userId).toString())
@@ -4765,11 +4780,16 @@ exports.noBasket = async (req, res, next) => {
                 const allMeargeData = [];
                 const NoBasketData = [];
                 for (const allBakest of findUser.noBasket) {
-                    const findInBlockUserModel = await blockuserModel.findOne({
+                    const findInBlockUserModel1 = await blockuserModel.findOne({
                         userId: req.params.request_user_id,
                         "blockUnblockUser.blockUserId": allBakest.userId
                     })
-                    if (findInBlockUserModel) {
+
+                    const findInBlockUserModel2 = await blockuserModel.findOne({
+                        userId: allBakest.userId,
+                        "blockUnblockUser.blockUserId": req.params.request_user_id
+                    })
+                    if (findInBlockUserModel1 || findInBlockUserModel2) {
 
                     } else {
                         NoBasketData.push((allBakest.userId).toString())

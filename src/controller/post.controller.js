@@ -1902,10 +1902,15 @@ exports.userAllFriendPost = async (req, res, next) => {
                     "blockUnblockUser.blockUserId": resultEmail
                 })
 
+                console.log("findInBlockUser", findInBlockUser);
+
+
                 const findInBlockUsers = await blockUnblockModel.findOne({
                     userId: resultEmail,
                     "blockUnblockUser.blockUserId": req.params.user_id
                 })
+
+                console.log("findInBlockUser", findInBlockUsers);
 
                 if (findInBlockUser || findInBlockUsers) {
 
@@ -2329,7 +2334,7 @@ exports.userAllFriendPost = async (req, res, next) => {
                                         userId: data.userId
                                     })
 
-                                    var access = accessforComment.commentAccess
+                                    var access = accessforComment == null ? true : accessforComment.commentAccess
 
                                     const findUser = await userModal.findOne({
                                         email: finalData.email
