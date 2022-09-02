@@ -1912,8 +1912,6 @@ exports.userAllFriendPost = async (req, res, next) => {
             };
             allData.push(user._id)
 
-            console.log("requestedEmailWitchIsInuserRequeted", requestedEmailWitchIsInuserRequeted);
-
             const meargAllTable = await userModal.aggregate([{
                 $match: {
                     _id: {
@@ -1975,7 +1973,6 @@ exports.userAllFriendPost = async (req, res, next) => {
     
     
             const final_data = [];
-            console.log("meargAllTable" , meargAllTable);
             if(meargAllTable[0] == undefined){
 
             }else{

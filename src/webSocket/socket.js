@@ -10,6 +10,7 @@ const { default: mongoose } = require("mongoose");
 const linkProfileModel = require("../model/polyamorous/linkProfile.model");
 const conflictModel = require("../model/polyamorous/conflict.model");
 const notificationModel = require("../model/polyamorous/notification.model");
+const requestModel = require("../model/requests.model");
 function socket(io) {
 
     console.log("socket connected...");
