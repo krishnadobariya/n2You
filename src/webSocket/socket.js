@@ -1318,8 +1318,8 @@ function socket(io) {
 
                         checkRequestedEmail
                         const fcm_token = checkRequestedEmail.fcm_token
-                        const title = checkRequestedEmail.firstName;
-                        const body = `friend request`;
+                        const title = "Friend Request";
+                        const body = `${checkUserExist.firstName} sent you a friend request.`;
                         const text = `${checkUserExist.firstName} request to follow you`;
                         const sendBy = arg.user_id;
                         const registrationToken = fcm_token
@@ -1431,8 +1431,8 @@ function socket(io) {
 
                             checkRequestedEmail
                             const fcm_token = checkRequestedEmail.fcm_token
-                            const title = checkRequestedEmail.firstName;
-                            const body = `friend request`;
+                            const title = "Friend Request";
+                            const body = `${checkUserExist.firstName} sent you a friend request.`;
                             const text = `${checkUserExist.firstName} request to follow you`;
                             const sendBy = arg.user_id;
                             const registrationToken = fcm_token
@@ -1445,11 +1445,8 @@ function socket(io) {
                                 sendBy,
                                 true
                             );
-
                         }
-
                     }
-
                 } else {
 
                 }
