@@ -339,13 +339,20 @@ exports.showAllUserWhichIsLikePost = async (req, res, next) => {
                                             _id: requestEmail.userId,
                                         }
                                         statusByEmail.push(status1)
-                                    } else {
-                                        var status2 = {
+                                    } 
+                                    if (requestEmail.accepted == 4) {
+                                        var status1 = {
                                             status: requestEmail.accepted,
                                             _id: requestEmail.userId,
                                             request_id: req.params.user_id
                                         }
-                                        statusByEmail.push(status2)
+                                        statusByEmail.push(status1)
+                                    } else {
+                                        var status3 = {
+                                            status: requestEmail.accepted,
+                                            _id: requestEmail.userId,
+                                        }
+                                        statusByEmail.push(status3)
                                     }
                                 }
                             }

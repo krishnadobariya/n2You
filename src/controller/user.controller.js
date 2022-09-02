@@ -1704,13 +1704,20 @@ exports.getAllUser = async (req, res, next) => {
                                         email: requestEmail.requestedEmail
                                     }
                                     statusByEmail.push(status1)
-                                } else {
+                                }
+                                if (requestEmail.accepted == 4) {
                                     var status2 = {
+                                        status: requestEmail.accepted,
+                                        email: requestEmail.requestedEmail,
                                         request_id: req.params.user_id,
+                                    }
+                                    statusByEmail.push(status2)
+                                } else {
+                                    var status3 = {
                                         status: requestEmail.accepted,
                                         email: requestEmail.requestedEmail
                                     }
-                                    statusByEmail.push(status2)
+                                    statusByEmail.push(status3)
                                 }
                             }
                         }
@@ -2165,18 +2172,31 @@ exports.getDataUserWise = async (req, res, next) => {
                     if (findUser.RequestedEmails[0] == undefined) {
                         statusCode.push(3)
                     } else {
+                        console.log("ERGFERGTF");
+
                         for (const findStatus of findUser.RequestedEmails) {
+
+                            console.log("findStatus", findStatus);
                             if (findStatus.userId == req.params.req_user_id) {
                                 statusCode.push(10)
                             } else {
-                                statusCode.push(findStatus.accepted)
+                                if ((findStatus.userId).toString() == (req.params.user_id).toString()) {
+                                    if (findStatus.accepted == 4) {
+                                        statusCode.push({ status: findStatus.accepted, request_id: req.params.req_user_id })
+                                    } else {
+                                        statusCode.push({ status: findStatus.accepted })
+                                    }
+
+                                }
+
                             }
                         }
                     }
 
                 } else {
-                    statusCode.push(3)
+                    statusCode.push({ status: 3 })
                 }
+
 
 
             }
@@ -2236,7 +2256,8 @@ exports.getDataUserWise = async (req, res, next) => {
                 phoneNumber: data[0].phoneNumber,
                 extraAtrribute: data[0].extraAtrribute,
                 Posts: getAllPosts,
-                friendStatus: statusCode[0],
+                friendStatus: statusCode[0].status,
+                request_id: statusCode[0].request_id,
                 chatRoomId: chatRoomId[0] == undefined ? "" : chatRoomId[0],
                 fullAccess: basketSetting == null ? true : basketSetting.fullAccess,
                 thumbUpDownAccess: basketSetting == null ? false : basketSetting.thumpsUpAndDown,
@@ -2875,8 +2896,9 @@ exports.yesBasket = async (req, res, next) => {
                                                             thumbDownStatus: 0
                                                         }
                                                         statusByEmail.push(status1)
-                                                    } else {
+                                                    } else if (requestEmail.accepted == 4) {
                                                         var status2 = {
+                                                            _id: requestEmail.userId,
                                                             status: requestEmail.accepted,
                                                             email: requestEmail.requestedEmail,
                                                             firstName: findThumbUp.firstName,
@@ -2888,6 +2910,18 @@ exports.yesBasket = async (req, res, next) => {
                                                             request_id: req.params.user_id
                                                         }
                                                         statusByEmail.push(status2)
+                                                    } else {
+                                                        var status3 = {
+                                                            status: requestEmail.accepted,
+                                                            email: requestEmail.requestedEmail,
+                                                            firstName: findThumbUp.firstName,
+                                                            profile: findThumbUp.photo[0] ? findThumbUp.photo[0].res : "",
+                                                            thumbUp: findThumb.thumbUp,
+                                                            thumbDown: findThumb.thumbDown,
+                                                            thumbUpStatus: 1,
+                                                            thumbDownStatus: 0
+                                                        }
+                                                        statusByEmail.push(status3)
                                                     }
                                                 }
                                             } else if (findInThumbDown) {
@@ -2911,8 +2945,9 @@ exports.yesBasket = async (req, res, next) => {
                                                             thumbDownStatus: 1
                                                         }
                                                         statusByEmail.push(status1)
-                                                    } else {
+                                                    } else if (requestEmail.accepted == 4) {
                                                         var status2 = {
+                                                            _id: requestEmail.userId,
                                                             status: requestEmail.accepted,
                                                             email: requestEmail.requestedEmail,
                                                             firstName: findThumbUp.firstName,
@@ -2924,6 +2959,18 @@ exports.yesBasket = async (req, res, next) => {
                                                             request_id: req.params.user_id
                                                         }
                                                         statusByEmail.push(status2)
+                                                    } else {
+                                                        var status3 = {
+                                                            status: requestEmail.accepted,
+                                                            email: requestEmail.requestedEmail,
+                                                            firstName: findThumbUp.firstName,
+                                                            profile: findThumbUp.photo[0] ? findThumbUp.photo[0].res : "",
+                                                            thumbUp: findThumb.thumbUp,
+                                                            thumbDown: findThumb.thumbDown,
+                                                            thumbUpStatus: 0,
+                                                            thumbDownStatus: 1,
+                                                        }
+                                                        statusByEmail.push(status3)
                                                     }
                                                 }
                                             } else {
@@ -2946,8 +2993,9 @@ exports.yesBasket = async (req, res, next) => {
                                                             thumbDownStatus: 0
                                                         }
                                                         statusByEmail.push(status1)
-                                                    } else {
+                                                    } else if (requestEmail.accepted == 4) {
                                                         var status2 = {
+                                                            _id: requestEmail.userId,
                                                             status: requestEmail.accepted,
                                                             email: requestEmail.requestedEmail,
                                                             firstName: findThumbUp.firstName,
@@ -2959,6 +3007,18 @@ exports.yesBasket = async (req, res, next) => {
                                                             request_id: req.params.user_id
                                                         }
                                                         statusByEmail.push(status2)
+                                                    } else {
+                                                        var status3 = {
+                                                            status: requestEmail.accepted,
+                                                            email: requestEmail.requestedEmail,
+                                                            firstName: findThumbUp.firstName,
+                                                            profile: findThumbUp.photo[0] ? findThumbUp.photo[0].res : "",
+                                                            thumbUp: findThumb.thumbUp,
+                                                            thumbDown: findThumb.thumbDown,
+                                                            thumbUpStatus: 0,
+                                                            thumbDownStatus: 0
+                                                        }
+                                                        statusByEmail.push(status3)
                                                     }
                                                 }
                                             }
@@ -3560,7 +3620,7 @@ exports.yesBasket = async (req, res, next) => {
                                                             thumbUpStatus: 1
                                                         }
                                                         statusByEmail.push(status1)
-                                                    } else {
+                                                    } else if (requestEmail.accepted == 4) {
                                                         var status2 = {
                                                             _id: requestEmail.userId,
                                                             status: requestEmail.accepted,
@@ -3568,10 +3628,22 @@ exports.yesBasket = async (req, res, next) => {
                                                             firstName: findThumbUp.firstName,
                                                             profile: findThumbUp.photo[0] ? findThumbUp.photo[0].res : "",
                                                             thumbUp: findThumb.thumbUp,
+                                                            thumbDown: findThumb.thumbDown,
                                                             thumbUpStatus: 1,
                                                             request_id: req.params.user_id
                                                         }
                                                         statusByEmail.push(status2)
+                                                    } else {
+                                                        var status3 = {
+                                                            _id: requestEmail.userId,
+                                                            status: requestEmail.accepted,
+                                                            email: requestEmail.requestedEmail,
+                                                            firstName: findThumbUp.firstName,
+                                                            profile: findThumbUp.photo[0] ? findThumbUp.photo[0].res : "",
+                                                            thumbUp: findThumb.thumbUp,
+                                                            thumbUpStatus: 1,
+                                                        }
+                                                        statusByEmail.push(status3)
                                                     }
                                                 }
                                             } else {
@@ -3590,7 +3662,7 @@ exports.yesBasket = async (req, res, next) => {
                                                             thumbUpStatus: 0
                                                         }
                                                         statusByEmail.push(status1)
-                                                    } else {
+                                                    } else if (requestEmail.accepted == 4) {
                                                         var status2 = {
                                                             _id: requestEmail.userId,
                                                             status: requestEmail.accepted,
@@ -3598,10 +3670,22 @@ exports.yesBasket = async (req, res, next) => {
                                                             firstName: findThumbUp.firstName,
                                                             profile: findThumbUp.photo[0] ? findThumbUp.photo[0].res : "",
                                                             thumbUp: findThumb.thumbUp,
+                                                            thumbDown: findThumb.thumbDown,
                                                             thumbUpStatus: 0,
                                                             request_id: req.params.user_id
                                                         }
                                                         statusByEmail.push(status2)
+                                                    } else {
+                                                        var status3 = {
+                                                            _id: requestEmail.userId,
+                                                            status: requestEmail.accepted,
+                                                            email: requestEmail.requestedEmail,
+                                                            firstName: findThumbUp.firstName,
+                                                            profile: findThumbUp.photo[0] ? findThumbUp.photo[0].res : "",
+                                                            thumbUp: findThumb.thumbUp,
+                                                            thumbUpStatus: 0,
+                                                        }
+                                                        statusByEmail.push(status3)
                                                     }
                                                 }
                                             }
@@ -3725,7 +3809,8 @@ exports.yesBasket = async (req, res, next) => {
                                         // posts_data: finalData.posts,
                                         status: responses.statusAndTumbCount.status,
                                         thumbUp: responses.statusAndTumbCount.thumbUp,
-                                        thumbUpStatus: responses.statusAndTumbCount.thumbUpStatus
+                                        thumbUpStatus: responses.statusAndTumbCount.thumbUpStatus,
+                                        request_id: responses.statusAndTumbCount.request_id
                                     }
 
                                     final_data.push(response);
@@ -3768,7 +3853,8 @@ exports.yesBasket = async (req, res, next) => {
                                         // posts_data: finalData.posts,
                                         status: responses.statusAndTumbCount.status,
                                         thumbUp: responses.statusAndTumbCount.thumbUp,
-                                        thumbUpStatus: responses.statusAndTumbCount.thumbUpStatus
+                                        thumbUpStatus: responses.statusAndTumbCount.thumbUpStatus,
+                                        request_id: responses.statusAndTumbCount.request_id
                                     }
 
                                     final_data.push(response);
@@ -3809,7 +3895,8 @@ exports.yesBasket = async (req, res, next) => {
                                         // posts_data: finalData.posts,
                                         status: responses.statusAndTumbCount.status,
                                         thumbUp: responses.statusAndTumbCount.thumbUp,
-                                        thumbUpStatus: responses.statusAndTumbCount.thumbUpStatus
+                                        thumbUpStatus: responses.statusAndTumbCount.thumbUpStatus,
+                                        request_id: responses.statusAndTumbCount.request_id
                                     }
 
                                     final_data.push(response);
@@ -4293,7 +4380,7 @@ exports.noBasket = async (req, res, next) => {
                                                     if (requestEmail.accepted == 1) {
                                                         var status1 = {
                                                             _id: requestEmail.userId,
-                                                            status: 1,
+                                                            status: requestEmail.accepted,
                                                             email: requestEmail.requestedEmail,
                                                             firstName: findThumbUp.firstName,
                                                             profile: findThumbUp.photo[0] ? findThumbUp.photo[0].res : "",
@@ -4304,10 +4391,24 @@ exports.noBasket = async (req, res, next) => {
 
                                                         }
                                                         statusByEmail.push(status1)
-                                                    } else {
+                                                    } else if (requestEmail.accepted == 4) {
                                                         var status2 = {
                                                             _id: requestEmail.userId,
-                                                            status: 2,
+                                                            status: requestEmail.accepted,
+                                                            email: requestEmail.requestedEmail,
+                                                            firstName: findThumbUp.firstName,
+                                                            profile: findThumbUp.photo[0] ? findThumbUp.photo[0].res : "",
+                                                            thumbUp: findThumb.thumbUp,
+                                                            thumbDown: findThumb.thumbDown,
+                                                            thumbUpStatus: 1,
+                                                            thumbDownStatus: 0,
+                                                            request_id: req.params.user_id
+                                                        }
+                                                        statusByEmail.push(status2)
+                                                    } else {
+                                                        var status3 = {
+                                                            _id: requestEmail.userId,
+                                                            status: requestEmail.accepted,
                                                             email: requestEmail.requestedEmail,
                                                             firstName: findThumbUp.firstName,
                                                             profile: findThumbUp.photo[0] ? findThumbUp.photo[0].res : "",
@@ -4316,7 +4417,7 @@ exports.noBasket = async (req, res, next) => {
                                                             thumbUpStatus: 1,
                                                             thumbDownStatus: 0
                                                         }
-                                                        statusByEmail.push(status2)
+                                                        statusByEmail.push(status3)
                                                     }
                                                 }
                                             } else if (findInThumbDown) {
@@ -4328,7 +4429,7 @@ exports.noBasket = async (req, res, next) => {
                                                     if (requestEmail.accepted == 1) {
                                                         var status1 = {
                                                             _id: requestEmail.userId,
-                                                            status: 1,
+                                                            status: requestEmail.accepted,
                                                             email: requestEmail.requestedEmail,
                                                             firstName: findThumbUp.firstName,
                                                             profile: findThumbUp.photo[0] ? findThumbUp.photo[0].res : "",
@@ -4338,19 +4439,33 @@ exports.noBasket = async (req, res, next) => {
                                                             thumbDownStatus: 1
                                                         }
                                                         statusByEmail.push(status1)
-                                                    } else {
+                                                    } else if (requestEmail.accepted == 4) {
                                                         var status2 = {
                                                             _id: requestEmail.userId,
-                                                            status: 2,
+                                                            status: requestEmail.accepted,
                                                             email: requestEmail.requestedEmail,
                                                             firstName: findThumbUp.firstName,
                                                             profile: findThumbUp.photo[0] ? findThumbUp.photo[0].res : "",
                                                             thumbUp: findThumb.thumbUp,
                                                             thumbDown: findThumb.thumbDown,
                                                             thumbUpStatus: 0,
-                                                            thumbDownStatus: 1
+                                                            thumbDownStatus: 1,
+                                                            request_id: req.params.user_id
                                                         }
                                                         statusByEmail.push(status2)
+                                                    } else {
+                                                        var status3 = {
+                                                            _id: requestEmail.userId,
+                                                            status: requestEmail.accepted,
+                                                            email: requestEmail.requestedEmail,
+                                                            firstName: findThumbUp.firstName,
+                                                            profile: findThumbUp.photo[0] ? findThumbUp.photo[0].res : "",
+                                                            thumbUp: findThumb.thumbUp,
+                                                            thumbDown: findThumb.thumbDown,
+                                                            thumbUpStatus: 0,
+                                                            thumbDownStatus: 1,
+                                                        }
+                                                        statusByEmail.push(status3)
                                                     }
                                                 }
                                             } else {
@@ -4362,7 +4477,7 @@ exports.noBasket = async (req, res, next) => {
                                                     if (requestEmail.accepted == 1) {
                                                         var status1 = {
                                                             _id: requestEmail.userId,
-                                                            status: 1,
+                                                            status: requestEmail.accepted,
                                                             email: requestEmail.requestedEmail,
                                                             firstName: findThumbUp.firstName,
                                                             profile: findThumbUp.photo[0] ? findThumbUp.photo[0].res : "",
@@ -4372,23 +4487,37 @@ exports.noBasket = async (req, res, next) => {
                                                             thumbDownStatus: 0
                                                         }
                                                         statusByEmail.push(status1)
-                                                    } else {
+                                                    } else if (requestEmail.accepted == 4) {
                                                         var status2 = {
                                                             _id: requestEmail.userId,
-                                                            status: 2,
+                                                            status: requestEmail.accepted,
                                                             email: requestEmail.requestedEmail,
                                                             firstName: findThumbUp.firstName,
                                                             profile: findThumbUp.photo[0] ? findThumbUp.photo[0].res : "",
                                                             thumbUp: findThumb.thumbUp,
                                                             thumbDown: findThumb.thumbDown,
                                                             thumbUpStatus: 0,
-                                                            thumbDownStatus: 0
+                                                            thumbDownStatus: 0,
+                                                            request_id: req.params.user_id
                                                         }
                                                         statusByEmail.push(status2)
                                                     }
+                                                    else {
+                                                        var status3 = {
+                                                            _id: requestEmail.userId,
+                                                            status: requestEmail.accepted,
+                                                            email: requestEmail.requestedEmail,
+                                                            firstName: findThumbUp.firstName,
+                                                            profile: findThumbUp.photo[0] ? findThumbUp.photo[0].res : "",
+                                                            thumbUp: findThumb.thumbUp,
+                                                            thumbDown: findThumb.thumbDown,
+                                                            thumbUpStatus: 0,
+                                                            thumbDownStatus: 0,
+                                                        }
+                                                        statusByEmail.push(status3)
+                                                    }
                                                 }
                                             }
-
 
                                         }
 
@@ -4408,7 +4537,8 @@ exports.noBasket = async (req, res, next) => {
                                         thumbUp: final1Data.thumbUp,
                                         thumbDown: final1Data.thumbDown,
                                         thumbUpStatus: final1Data.thumbUpStatus,
-                                        thumbDownStatus: final1Data.thumbDownStatus
+                                        thumbDownStatus: final1Data.thumbDownStatus,
+                                        request_id: final1Data.request_id
                                     }
                                     finalStatus.push(response)
                                 }
@@ -4451,7 +4581,8 @@ exports.noBasket = async (req, res, next) => {
                                 thumbUp: responses.statusAndTumbCount.thumbUp,
                                 thumbDown: responses.statusAndTumbCount.thumbDown,
                                 thumbUpStatus: responses.statusAndTumbCount.thumbUpStatus,
-                                thumbDownStatus: responses.statusAndTumbCount.thumbDownStatus
+                                thumbDownStatus: responses.statusAndTumbCount.thumbDownStatus,
+                                request_id: responses.statusAndTumbCount.request_id
                             }
 
                             final_data.push(response);
@@ -4816,7 +4947,7 @@ exports.noBasket = async (req, res, next) => {
                                                     if (requestEmail.accepted == 1) {
                                                         var status1 = {
                                                             _id: requestEmail.userId,
-                                                            status: 1,
+                                                            status: requestEmail.accepted,
                                                             firstName: findThumbUp.firstName,
                                                             profile: findThumbUp.photo[0] ? findThumbUp.photo[0].res : "",
                                                             email: requestEmail.requestedEmail,
@@ -4824,17 +4955,29 @@ exports.noBasket = async (req, res, next) => {
                                                             thumbUpStatus: 1,
                                                         }
                                                         statusByEmail.push(status1)
-                                                    } else {
+                                                    } else if (requestEmail.accepted == 4) {
                                                         var status2 = {
                                                             _id: requestEmail.userId,
-                                                            status: 2,
+                                                            status: requestEmail.accepted,
                                                             email: requestEmail.requestedEmail,
                                                             firstName: findThumbUp.firstName,
                                                             profile: findThumbUp.photo[0] ? findThumbUp.photo[0].res : "",
                                                             thumbUp: findThumb.thumbUp,
                                                             thumbUpStatus: 1,
+                                                            request_id: req.params.user_id
                                                         }
                                                         statusByEmail.push(status2)
+                                                    } else {
+                                                        var status3 = {
+                                                            _id: requestEmail.userId,
+                                                            status: requestEmail.accepted,
+                                                            firstName: findThumbUp.firstName,
+                                                            profile: findThumbUp.photo[0] ? findThumbUp.photo[0].res : "",
+                                                            email: requestEmail.requestedEmail,
+                                                            thumbUp: findThumb.thumbUp,
+                                                            thumbUpStatus: 1,
+                                                        }
+                                                        statusByEmail.push(status3)
                                                     }
                                                 }
                                             } else {
@@ -4845,7 +4988,7 @@ exports.noBasket = async (req, res, next) => {
                                                     if (requestEmail.accepted == 1) {
                                                         var status1 = {
                                                             _id: requestEmail.userId,
-                                                            status: 1,
+                                                            status: requestEmail.accepted,
                                                             firstName: findThumbUp.firstName,
                                                             profile: findThumbUp.photo[0] ? findThumbUp.photo[0].res : "",
                                                             email: requestEmail.requestedEmail,
@@ -4853,17 +4996,29 @@ exports.noBasket = async (req, res, next) => {
                                                             thumbUpStatus: 0,
                                                         }
                                                         statusByEmail.push(status1)
-                                                    } else {
+                                                    } else if (requestEmail.accepted == 4) {
                                                         var status2 = {
                                                             _id: requestEmail.userId,
-                                                            status: 2,
+                                                            status: requestEmail.accepted,
                                                             email: requestEmail.requestedEmail,
                                                             firstName: findThumbUp.firstName,
                                                             profile: findThumbUp.photo[0] ? findThumbUp.photo[0].res : "",
                                                             thumbUp: findThumb.thumbUp,
                                                             thumbUpStatus: 0,
+                                                            request_id: req.params.user_id
                                                         }
                                                         statusByEmail.push(status2)
+                                                    } else {
+                                                        var status3 = {
+                                                            _id: requestEmail.userId,
+                                                            status: requestEmail.accepted,
+                                                            firstName: findThumbUp.firstName,
+                                                            profile: findThumbUp.photo[0] ? findThumbUp.photo[0].res : "",
+                                                            email: requestEmail.requestedEmail,
+                                                            thumbUp: findThumb.thumbUp,
+                                                            thumbUpStatus: 0,
+                                                        }
+                                                        statusByEmail.push(status3)
                                                     }
                                                 }
                                             }
@@ -4884,6 +5039,7 @@ exports.noBasket = async (req, res, next) => {
                                         status: final1Data.status,
                                         thumbUp: final1Data.thumbUp,
                                         thumbUpStatus: final1Data.thumbUpStatus,
+                                        request_id: final1Data.request_id
                                     }
                                     finalStatus.push(response)
                                 }
@@ -4925,7 +5081,7 @@ exports.noBasket = async (req, res, next) => {
                                 status: responses.statusAndTumbCount.status,
                                 thumbUp: responses.statusAndTumbCount.thumbUp,
                                 thumbUpStatus: responses.statusAndTumbCount.thumbUpStatus,
-
+                                request_id: responses.statusAndTumbCount.request_id
                             }
 
                             final_data.push(response);

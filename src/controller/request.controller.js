@@ -472,8 +472,18 @@ exports.getUserWithFriend = async (req, res, next) => {
 
                                         }
                                         statusByEmail.push(status1)
-                                    } else {
+                                    } else if(requestEmail.accepted == 4){
                                         var status2 = {
+                                            _id: requestEmail.userId,
+                                            status: requestEmail.accepted,
+                                            email: requestEmail.requestedEmail,
+                                            firstName: user.firstName,
+                                            profile: user.photo[0] ? user.photo[0].res : "",
+                                            request_id: req.params.user_id
+                                        }
+                                        statusByEmail.push(status2)
+                                    } else {
+                                        var status3 = {
                                             _id: requestEmail.userId,
                                             status: requestEmail.accepted,
                                             email: requestEmail.requestedEmail,
@@ -481,7 +491,7 @@ exports.getUserWithFriend = async (req, res, next) => {
                                             profile: user.photo[0] ? user.photo[0].res : "",
 
                                         }
-                                        statusByEmail.push(status2)
+                                        statusByEmail.push(status3)
                                     }
 
                                 }
@@ -499,6 +509,7 @@ exports.getUserWithFriend = async (req, res, next) => {
                             if ((finalData._id).toString() === (final1Data._id).toString()) {
                                 const response = {
                                     status: final1Data.status,
+                                    requset_id : final1Data.request_id
                                 }
                                 finalStatus.push(response)
                             }
@@ -560,7 +571,44 @@ exports.getUserWithFriend = async (req, res, next) => {
 
                                 }
                                 final_data.push(response);
-                            } else {
+                            } if (finalStatus[key].status == 4) {
+                                const responses = {
+                                    _id: finalData._id,
+                                    // polyDating: finalData.polyDating,
+                                    // HowDoYouPoly: finalData.HowDoYouPoly,
+                                    // loveToGive: finalData.loveToGive,
+                                    // polyRelationship: finalData.polyRelationship,
+                                    firstName: finalData.firstName,
+                                    email: finalData.email,
+                                    profile: finalData.photo[0] ? finalData.photo[0].res : "",
+                                    // relationshipSatus: finalData.relationshipSatus,
+                                    // Bio: finalData.Bio,
+                                    // hopingToFind: finalData.hopingToFind,
+                                    // jobTitle: finalData.jobTitle,
+                                    // wantChildren: finalData.wantChildren,
+                                    // posts_data: finalData.posts,
+                                    statusAndTumbCount: finalStatus[key]
+                                }
+                                const response = {
+                                    _id: finalData._id,
+                                    // polyDating: finalData.polyDating,
+                                    // HowDoYouPoly: finalData.HowDoYouPoly,
+                                    // loveToGive: finalData.loveToGive,
+                                    // polyRelationship: finalData.polyRelationship,
+                                    firstName: finalData.firstName,
+                                    email: finalData.email,
+                                    profile: finalData.photo[0] ? finalData.photo[0].res : "",
+                                    // relationshipSatus: finalData.relationshipSatus,
+                                    // Bio: finalData.Bio,
+                                    // hopingToFind: finalData.hopingToFind,
+                                    // jobTitle: finalData.jobTitle,
+                                    // wantChildren: finalData.wantChildren,
+                                    // posts_data: finalData.posts,
+                                    status: responses.statusAndTumbCount.status,
+                                    request_id: responses.statusAndTumbCount.requset_id
+                                }
+                                final_data.push(response);
+                            }  else {
                                 const responses = {
                                     _id: finalData._id,
                                     chatRoomId: findAllUserWithIchat1 ? findAllUserWithIchat1._id : "",
@@ -643,6 +691,44 @@ exports.getUserWithFriend = async (req, res, next) => {
                                 }
 
                                 final_data.push(response);
+                            } if (finalStatus[key].status == 4) {
+                                const responses = {
+                                    _id: finalData._id,
+                                    // polyDating: finalData.polyDating,
+                                    // HowDoYouPoly: finalData.HowDoYouPoly,
+                                    // loveToGive: finalData.loveToGive,
+                                    // polyRelationship: finalData.polyRelationship,
+                                    firstName: finalData.firstName,
+                                    email: finalData.email,
+                                    profile: finalData.photo[0] ? finalData.photo[0].res : "",
+                                    // relationshipSatus: finalData.relationshipSatus,
+                                    // Bio: finalData.Bio,
+                                    // hopingToFind: finalData.hopingToFind,
+                                    // jobTitle: finalData.jobTitle,
+                                    // wantChildren: finalData.wantChildren,
+                                    // posts_data: finalData.posts,
+                                    statusAndTumbCount: finalStatus[key]
+                                }
+                                const response = {
+                                    _id: finalData._id,
+                                    // polyDating: finalData.polyDating,
+                                    // HowDoYouPoly: finalData.HowDoYouPoly,
+                                    // loveToGive: finalData.loveToGive,
+                                    // polyRelationship: finalData.polyRelationship,
+                                    firstName: finalData.firstName,
+                                    email: finalData.email,
+                                    profile: finalData.photo[0] ? finalData.photo[0].res : "",
+                                    // relationshipSatus: finalData.relationshipSatus,
+                                    // Bio: finalData.Bio,
+                                    // hopingToFind: finalData.hopingToFind,
+                                    // jobTitle: finalData.jobTitle,
+                                    // wantChildren: finalData.wantChildren,
+                                    // posts_data: finalData.posts,
+                                    status: responses.statusAndTumbCount.status,
+                                    request_id : responses.statusAndTumbCount.requset_id
+                                }
+
+                                final_data.push(response);
                             } else {
                                 const responses = {
                                     _id: finalData._id,
@@ -699,9 +785,7 @@ exports.getUserWithFriend = async (req, res, next) => {
                     )
                 }
             }
-
         }
-
 
     } catch (error) {
         console.log("error", error);
