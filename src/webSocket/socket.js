@@ -11,6 +11,7 @@ const linkProfileModel = require("../model/polyamorous/linkProfile.model");
 const conflictModel = require("../model/polyamorous/conflict.model");
 const notificationModel = require("../model/polyamorous/notification.model");
 const requestModel = require("../model/requests.model");
+const videoCallModel = require("./models/videoCall.model");
 function socket(io) {
 
     console.log("socket connected...");
@@ -1753,6 +1754,55 @@ function socket(io) {
 
         socket.on('videoCall' , async(arg) => {
             
+            const findChatRoom = await chatRoomModel.findOne({
+                _id : arg.chat_room_id
+            })
+            if(findChatRoom){
+
+                const findData  = await videoCallModel.findOne({
+                    chatRoomId: arg.chat_room_id,
+                    senderId: arg.sender_id,
+                    receiverId: arg.receiver_id
+                })
+
+                if(findData){
+                    io.emit("videoCallReceive" , "already ceated video call!")
+                }else{
+                    const saveData = videoCallModel({
+                        chatRoomId: arg.chat_room_id,
+                        senderId: arg.sender_id,
+                        receiverId: arg.receiver_id
+                    })   
+
+                    await saveData.save();
+
+                    
+                    const userRoom = `User${arg.receiver_id}`
+                    io.to(userRoom).emit("videoCallReceive", `create video call!`);
+
+
+                    checkRequestedEmail
+                    const fcm_token = checkRequestedEmail.fcm_token
+                    const title = "Friend Request";
+                    const body = `${checkUserExist.firstName} sent you a friend request.`;
+                    const text = `${checkUserExist.firstName} sent you a friend request.`;
+                    const sendBy = arg.user_id;
+                    const registrationToken = fcm_token
+
+                    Notification.sendPushNotificationFCM(
+                        registrationToken,
+                        title,
+                        body,
+                        text,
+                        sendBy,
+                        true
+                    );
+                }
+
+            }else{
+                io.emit("videoCallReceive" , "Room not Found!")
+            }
+
         })
     })
 }

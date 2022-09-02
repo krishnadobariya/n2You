@@ -2181,7 +2181,7 @@ exports.getDataUserWise = async (req, res, next) => {
                                     }
 
                                 } else {
-                                    statusCode.push({ status: 3 })
+                                    statusCode.push({ status: findStatus ? findStatus.accepted : 3 })
                                 }
 
                             }
