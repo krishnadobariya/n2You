@@ -3,6 +3,7 @@ const status = require("http-status");
 const userModel = require("../model/user.model");
 const blockUnblockUserModel = require("../model/blockuser.model");
 const requestsModel = require("../model/requests.model");
+const notificationModel = require("../model/polyamorous/notification.model");
 
 exports.blockUnblockUser = async (req, res, next) => {
     try {
@@ -61,6 +62,50 @@ exports.blockUnblockUser = async (req, res, next) => {
                             }
                         })
 
+                        await notificationModel.updateOne({
+                            userId: findInRequestModel1.userId
+                        }, {
+                            $pull: {
+                                notifications: {
+                                    userId: findInRequestModel2.userId,
+                                    status: 9
+                                }
+                            }
+                        })
+
+                        await notificationModel.updateOne({
+                            userId: findInRequestModel1.userId
+                        }, {
+                            $pull: {
+                                notifications: {
+                                    userId: findInRequestModel2.userId,
+                                    status: 2
+                                }
+                            }
+                        })
+
+
+                        await notificationModel.updateOne({
+                            userId: findInRequestModel2.userId
+                        }, {
+                            $pull: {
+                                notifications: {
+                                    userId: findInRequestModel1.userId,
+                                    status: 9
+                                }
+                            }
+                        })
+
+                        await notificationModel.updateOne({
+                            userId: findInRequestModel2.userId
+                        }, {
+                            $pull: {
+                                notifications: {
+                                    userId: findInRequestModel1.userId,
+                                    status: 2
+                                }
+                            }
+                        })
 
                         const saveData = await blockUser.save();
                         res.status(status.CREATED).json(
