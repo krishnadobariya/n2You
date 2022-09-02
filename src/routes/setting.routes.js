@@ -3,6 +3,6 @@ const router = express.Router();
 
 const settingController = require("../controller/setting.controller");
 
-router.put('/setting/:user_id', settingController.settingBasket);
+router.put('/basket/:user_id', settingController.settingBasket);
 
 module.exports = router;

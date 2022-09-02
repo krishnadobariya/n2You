@@ -1311,6 +1311,27 @@ function socket(io) {
 
                         }
 
+                        const userRoom = `User${arg.requested_id}`
+                        io.to(userRoom).emit("getRequest", `Request Send successfully!`);
+
+
+                        checkRequestedEmail
+                        const fcm_token = checkRequestedEmail.fcm_token
+                        const title = checkRequestedEmail.firstName;
+                        const body = `friend request`;
+                        const text = `${checkUserExist.firstName} request to follow you`;
+                        const sendBy = arg.user_id;
+                        const registrationToken = fcm_token
+
+                        Notification.sendPushNotificationFCM(
+                            registrationToken,
+                            title,
+                            body,
+                            text,
+                            sendBy,
+                            true
+                        );
+
                     } else {
                         const inRequested = [];
                         const allRequestedEmail = emailExitInRequestedModel.RequestedEmails

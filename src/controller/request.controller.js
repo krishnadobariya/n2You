@@ -85,6 +85,8 @@ exports.sendRequest = async (req, res, next) => {
 
                         const saveData = await request.save();
 
+                        
+
                     } else {
 
 
@@ -112,6 +114,10 @@ exports.sendRequest = async (req, res, next) => {
                         }
 
                     }
+
+                    res.status(status.CREATED).json(
+                        new APIResponse("Request Send successfully!", "true", 201, "1")
+                    )
                     
                 } else {
                     const inRequested = [];
