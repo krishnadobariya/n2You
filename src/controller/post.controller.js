@@ -2047,8 +2047,6 @@ exports.userAllFriendPost = async (req, res, next) => {
     
                                             } else {
     
-    
-    
                                                 post.push({
                                                     post: [],
                                                     description: getallposts.description,
@@ -2058,8 +2056,6 @@ exports.userAllFriendPost = async (req, res, next) => {
                                                     _id: getallposts._id,
                                                     createdAt: getallposts.createdAt
                                                 })
-    
-    
     
                                             }
     

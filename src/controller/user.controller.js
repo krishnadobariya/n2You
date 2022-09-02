@@ -2157,7 +2157,7 @@ exports.getDataUserWise = async (req, res, next) => {
             const statusCode = [];
 
             if ((req.params.req_user_id).toString() == (req.params.user_id).toString()) {
-
+             
                 statusCode.push({ status: 10 })
 
             } else {
@@ -2169,17 +2169,19 @@ exports.getDataUserWise = async (req, res, next) => {
                     } else {
                         for (const findStatus of findUser.RequestedEmails) {
 
-                            console.log("findStatus", findStatus);
                             if (findStatus.userId == req.params.req_user_id) {
                                 statusCode.push({ status: 10 })
                             } else {
                                 if ((findStatus.userId).toString() == (req.params.user_id).toString()) {
+                                   
                                     if (findStatus.accepted == 4) {
                                         statusCode.push({ status: findStatus.accepted })
                                     } else {
                                         statusCode.push({ status: findStatus.accepted })
                                     }
 
+                                } else {
+                                    statusCode.push({ status: 3 })
                                 }
 
                             }
@@ -2264,6 +2266,7 @@ exports.getDataUserWise = async (req, res, next) => {
         }
 
     } catch (error) {
+        console.log(error);
         res.status(status.INTERNAL_SERVER_ERROR).json(
             new APIResponse("Something Went Wrong", "false", 500, "0", error.message)
         )
@@ -5312,7 +5315,7 @@ exports.noBasket = async (req, res, next) => {
                                         thumbUpStatus: responses.statusAndTumbCount.thumbUpStatus,
                                         thumbDownStatus: responses.statusAndTumbCount.thumbDownStatus
                                     }
-        
+
                                     final_data.push(response);
                                 } else {
                                     const responses = {
@@ -5353,7 +5356,7 @@ exports.noBasket = async (req, res, next) => {
                                         thumbUpStatus: responses.statusAndTumbCount.thumbUpStatus,
                                         thumbDownStatus: responses.statusAndTumbCount.thumbDownStatus
                                     }
-        
+
                                     final_data.push(response);
                                 }
 
@@ -5396,7 +5399,7 @@ exports.noBasket = async (req, res, next) => {
                                         thumbUpStatus: responses.statusAndTumbCount.thumbUpStatus,
                                         thumbDownStatus: responses.statusAndTumbCount.thumbDownStatus
                                     }
-        
+
                                     final_data.push(response);
                                 } else {
                                     const responses = {
@@ -5437,12 +5440,12 @@ exports.noBasket = async (req, res, next) => {
                                         thumbUpStatus: responses.statusAndTumbCount.thumbUpStatus,
                                         thumbDownStatus: responses.statusAndTumbCount.thumbDownStatus
                                     }
-        
+
                                     final_data.push(response);
                                 }
                             }
 
-                            
+
                         }
 
                         const final_response = [...final_data, ...UniqueEmail]
