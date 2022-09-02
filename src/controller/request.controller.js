@@ -46,7 +46,7 @@ exports.sendRequest = async (req, res, next) => {
                         }, {
                             $push: {
                                 notifications: {
-                                    notifications: `${checkUserExist.firstName} request to follow you`,
+                                    notifications: `${checkUserExist.firstName} sent you a friend request.`,
                                     userId: checkUserExist._id,
                                     status: 1
                                 }
@@ -57,7 +57,7 @@ exports.sendRequest = async (req, res, next) => {
                         const data = notificationModel({
                             userId: checkRequestedEmail._id,
                             notifications: {
-                                notifications: `${checkUserExist.firstName} request to follow you`,
+                                notifications: `${checkUserExist.firstName} sent you a friend request.`,
                                 userId: checkUserExist._id,
                                 status: 1
                             }
@@ -193,7 +193,7 @@ exports.sendRequest = async (req, res, next) => {
                             }, {
                                 $push: {
                                     notifications: {
-                                        notifications: `${checkUserExist.firstName} request to follow you`,
+                                        notifications: `${checkUserExist.firstName} sent you a friend request.`,
                                         userId: checkUserExist._id,
                                         status: 1
                                     }
@@ -203,7 +203,7 @@ exports.sendRequest = async (req, res, next) => {
                             const data = notificationModel({
                                 userId: checkRequestedEmail._id,
                                 notifications: {
-                                    notifications: `${checkUserExist.firstName} request to follow you`,
+                                    notifications: `${checkUserExist.firstName} sent you a friend request.`,
                                     userId: checkUserExist._id,
                                     status: 1
                                 }

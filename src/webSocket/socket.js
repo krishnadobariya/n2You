@@ -1245,7 +1245,7 @@ function socket(io) {
                             }, {
                                 $push: {
                                     notifications: {
-                                        notifications: `${checkUserExist.firstName} request to follow you`,
+                                        notifications: `${checkUserExist.firstName} sent you a friend request.`,
                                         userId: checkUserExist._id,
                                         status: 1
                                     }
@@ -1256,7 +1256,7 @@ function socket(io) {
                             const data = notificationModel({
                                 userId: checkRequestedEmail._id,
                                 notifications: {
-                                    notifications: `${checkUserExist.firstName} request to follow you`,
+                                    notifications: `${checkUserExist.firstName} sent you a friend request.`,
                                     userId: checkUserExist._id,
                                     status: 1
                                 }
@@ -1320,7 +1320,7 @@ function socket(io) {
                         const fcm_token = checkRequestedEmail.fcm_token
                         const title = "Friend Request";
                         const body = `${checkUserExist.firstName} sent you a friend request.`;
-                        const text = `${checkUserExist.firstName} request to follow you`;
+                        const text = `${checkUserExist.firstName} sent you a friend request.`;
                         const sendBy = arg.user_id;
                         const registrationToken = fcm_token
 
@@ -1406,7 +1406,7 @@ function socket(io) {
                                 }, {
                                     $push: {
                                         notifications: {
-                                            notifications: `${checkUserExist.firstName} request to follow you`,
+                                            notifications: `${checkUserExist.firstName} sent you a friend request.`,
                                             userId: checkUserExist._id,
                                             status: 1
                                         }
@@ -1416,7 +1416,7 @@ function socket(io) {
                                 const data = notificationModel({
                                     userId: checkRequestedEmail._id,
                                     notifications: {
-                                        notifications: `${checkUserExist.firstName} request to follow you`,
+                                        notifications: `${checkUserExist.firstName} sent you a friend request.`,
                                         userId: checkUserExist._id,
                                         status: 1
                                     }
@@ -1433,7 +1433,7 @@ function socket(io) {
                             const fcm_token = checkRequestedEmail.fcm_token
                             const title = "Friend Request";
                             const body = `${checkUserExist.firstName} sent you a friend request.`;
-                            const text = `${checkUserExist.firstName} request to follow you`;
+                            const text = `${checkUserExist.firstName} sent you a friend request.`;
                             const sendBy = arg.user_id;
                             const registrationToken = fcm_token
 
