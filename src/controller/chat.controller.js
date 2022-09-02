@@ -7,16 +7,12 @@ const userModel = require("../model/user.model");
 
 exports.readChat = async (req, res, next) => {
     try {
-
-
-
         const findRoom = await chatModels.findOne({
             chatRoomId: req.params.chat_room_id,
             "chat.sender": req.params.user_id
         })
-
         for (const [key, getSenderChat] of findRoom.chat.entries()) {
-
+            
             if ((getSenderChat.sender).toString() == (req.params.user_id).toString()) {
 
                 const updatePosts = await chatModels.updateOne(
@@ -48,7 +44,6 @@ exports.readChat = async (req, res, next) => {
             )
         }
 
-
         // const findChatId = await chatModels.findOne({ chatRoomId: mongoose.Types.ObjectId(req.params.chat_room_id) })
 
         // if (findChatId == null) {
@@ -75,15 +70,11 @@ exports.readChat = async (req, res, next) => {
 
 exports.getUserWithChat = async (req, res, next) => {
     try {
-
-
         const allChat = [];
         const chatRoom = [];
-
         const findRoom = await chatModels.findOne({
             chatRoomId: req.params.user_id
         });
-
         chatRoom.push(findRoom)
 
         const page = parseInt(req.query.page)
@@ -93,8 +84,6 @@ exports.getUserWithChat = async (req, res, next) => {
         console.log(findRoom);
         if (findRoom != null) {
             const chat = findRoom.chat;
-
-
             for (const finalchat of chat) {
                 const response = {
                     _id: finalchat.sender,
@@ -102,7 +91,6 @@ exports.getUserWithChat = async (req, res, next) => {
                     time: finalchat.createdAt,
                     photo: finalchat.photo
                 }
-
                 allChat.push(response)
             }
             res.status(status.OK).json(
@@ -113,9 +101,6 @@ exports.getUserWithChat = async (req, res, next) => {
                 new APIResponse("show all record with chat", "true", 201, "1", [])
             )
         }
-
-
-
     } catch (error) {
         console.log("Error:", error);
         res.status(status.INTERNAL_SERVER_ERROR).json(
@@ -127,13 +112,11 @@ exports.getUserWithChat = async (req, res, next) => {
 
 exports.allUserListWithUnreadCount = async (req, res, next) => {
     try {
-
         // const findData = await chatRoomModel.findOne({
         //     _id: mongoose.Types.ObjectId(req.params.chat_room),
         //     user1: mongoose.Types.ObjectId(req.params.user_1),
         //     user2: mongoose.Types.ObjectId(req.params.user_2)
         // })
-
         const findAllUserWithIchat = await chatRoomModel.find({
             $or: [{
                 user1: req.params.user_id
@@ -145,13 +128,11 @@ exports.allUserListWithUnreadCount = async (req, res, next) => {
         const unReadMessage = [];
 
         for (const roomId of findAllUserWithIchat) {
-
             const findRoom = await chatModels.findOne({
                 chatRoomId: roomId._id
             })
 
             if (findRoom) {
-
                 const userDetail = [];
                 if (roomId.user1 == req.params.user_id) {
                     const userProfile = await userModel.findOne({
@@ -162,11 +143,8 @@ exports.allUserListWithUnreadCount = async (req, res, next) => {
                     const userProfile = await userModel.findOne({
                         _id: roomId.user1
                     })
-
                     userDetail.push(userProfile)
                 }
-
-
                 var count = 0;
                 const lastMessage = [];
 
@@ -319,26 +297,19 @@ exports.allUserListWithUnreadCount = async (req, res, next) => {
                             name: userDetail[0].firstName,
                             dateAndTime: `just now`,
                             profile: userDetail[0].photo[0] == undefined ? "" : userDetail[0].photo[0].res,
-
                         }
 
                         unReadMessage.push(response);
                     }
-
-
-
                 }
             }
         }
-
 
         let uniqueObjArray = [...new Map(unReadMessage.map((item) => [item["_id"], item])).values()];
         const page = parseInt(req.query.page)
         const limit = parseInt(req.query.limit)
         const startIndex = (page - 1) * limit;
         const endIndex = page * limit;
-
-
         // console.log("uniqueObjArray", uniqueObjArray);
 
         // console.log(data);
@@ -347,8 +318,6 @@ exports.allUserListWithUnreadCount = async (req, res, next) => {
             new APIResponse("all group", true, 200, 1, uniqueObjArray.slice(startIndex, endIndex).sort((a, b) => new Date(b.dateAndTime) - new Date(a.dateAndTime)))
         );
         // getAllChrRoomForPericularUser =
-
-
         // if (findData == null) {
         //     const findData = await chatRoomModel.findOne({
         //         _id: mongoose.Types.ObjectId(req.params.chat_room),
