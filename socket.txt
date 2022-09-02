@@ -141,7 +141,7 @@ sendFriendRequest
 
 {
     user_id:"",
-    request_user:""
+    requested_id:""
 }
 
 getRequest

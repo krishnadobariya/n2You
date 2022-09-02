@@ -64,7 +64,7 @@ exports.blockUnblockUser = async (req, res, next) => {
                         })
 
                         await notificationModel.updateOne({
-                            userId: findInRequestModel1.userId
+                            userId: findInRequestModel1.userId,
                         }, {
                             $pull: {
                                 notifications: {
@@ -108,15 +108,15 @@ exports.blockUnblockUser = async (req, res, next) => {
                             }
                         })
 
-                        
-                        await chatRoomModel.deleteOne({
+
+                        const data1 = await chatRoomModel.deleteOne({
                             user1: findInRequestModel1.userId,
                             user2: findInRequestModel2.userId
                         })
 
-                        await chatRoomModel.deleteOne({
-                            user1: findInRequestModel2.userId,
-                            user2: findInRequestModel1.userId
+                        const data2 = await chatRoomModel.deleteOne({
+                            user2: findInRequestModel1.userId,
+                            user1: findInRequestModel2.userId
                         })
 
                         const saveData = await blockUser.save();
@@ -162,60 +162,15 @@ exports.blockUnblockUser = async (req, res, next) => {
                             }
                         })
 
-                        await notificationModel.updateOne({
-                            userId: findInRequestModel1.userId
-                        }, {
-                            $pull: {
-                                notifications: {
-                                    userId: findInRequestModel2.userId,
-                                    status: 9
-                                }
-                            }
-                        })
 
-                        await notificationModel.updateOne({
-                            userId: findInRequestModel1.userId
-                        }, {
-                            $pull: {
-                                notifications: {
-                                    userId: findInRequestModel2.userId,
-                                    status: 2
-                                }
-                            }
-                        })
-
-
-                        await notificationModel.updateOne({
-                            userId: findInRequestModel2.userId
-                        }, {
-                            $pull: {
-                                notifications: {
-                                    userId: findInRequestModel1.userId,
-                                    status: 9
-                                }
-                            }
-                        })
-
-                        await notificationModel.updateOne({
-                            userId: findInRequestModel2.userId
-                        }, {
-                            $pull: {
-                                notifications: {
-                                    userId: findInRequestModel1.userId,
-                                    status: 2
-                                }
-                            }
-                        })
-
-                        
-                        await chatRoomModel.deleteOne({
+                        const data1 = await chatRoomModel.deleteOne({
                             user1: findInRequestModel1.userId,
                             user2: findInRequestModel2.userId
                         })
 
-                        await chatRoomModel.deleteOne({
-                            user1: findInRequestModel2.userId,
-                            user2: findInRequestModel1.userId
+                        const data2 = await chatRoomModel.deleteOne({
+                            user2: findInRequestModel1.userId,
+                            user1: findInRequestModel2.userId
                         })
 
                         res.status(status.OK).json(

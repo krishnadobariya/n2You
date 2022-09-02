@@ -83,28 +83,38 @@ exports.getUserWithChat = async (req, res, next) => {
         const findRoom = await chatModels.findOne({
             chatRoomId: req.params.user_id
         });
-        
+
         chatRoom.push(findRoom)
 
         const page = parseInt(req.query.page)
         const limit = parseInt(req.query.limit)
         const startIndex = (page - 1) * limit;
         const endIndex = page * limit;
+        console.log(findRoom);
+        if (findRoom != null) {
+            const chat = findRoom.chat;
 
-        const chat = findRoom.chat;
-        for (const finalchat of chat) {
-            const response = {
-                _id: finalchat.sender,
-                text: finalchat.text,
-                time: finalchat.createdAt,
-                photo: finalchat.photo
+
+            for (const finalchat of chat) {
+                const response = {
+                    _id: finalchat.sender,
+                    text: finalchat.text,
+                    time: finalchat.createdAt,
+                    photo: finalchat.photo
+                }
+
+                allChat.push(response)
             }
-
-            allChat.push(response)
+            res.status(status.OK).json(
+                new APIResponse("show all record with chat", "true", 201, "1", startIndex ? allChat.slice(startIndex, endIndex) : allChat)
+            )
+        } else {
+            res.status(status.OK).json(
+                new APIResponse("show all record with chat", "true", 201, "1", [])
+            )
         }
-        res.status(status.OK).json(
-            new APIResponse("show all record with chat", "true", 201, "1", startIndex ? allChat.slice(startIndex, endIndex) : allChat)
-        )
+
+
 
     } catch (error) {
         console.log("Error:", error);

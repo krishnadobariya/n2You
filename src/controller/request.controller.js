@@ -85,7 +85,7 @@ exports.sendRequest = async (req, res, next) => {
 
                         const saveData = await request.save();
 
-                        
+
 
                     } else {
 
@@ -118,7 +118,7 @@ exports.sendRequest = async (req, res, next) => {
                     res.status(status.CREATED).json(
                         new APIResponse("Request Send successfully!", "true", 201, "1")
                     )
-                    
+
                 } else {
                     const inRequested = [];
                     const allRequestedEmail = emailExitInRequestedModel.RequestedEmails
@@ -211,7 +211,7 @@ exports.sendRequest = async (req, res, next) => {
 
                             await data.save();
                         }
-                        
+
                         res.status(status.CREATED).json(
                             new APIResponse("Request Send successfully!", "true", 201, "1")
                         )
@@ -264,13 +264,17 @@ exports.getUserWithFriend = async (req, res, next) => {
                 userId: req.params.req_user_id
             })
 
+
+
             if (requestEmail) {
                 for (const allRequestEmail of requestEmail.RequestedEmails) {
 
+                    console.log("allRequestEmail", allRequestEmail);
 
                     if (allRequestEmail) {
-                        if ((allRequestEmail.userId).toString() == (findUser._id).toString) {
 
+                        if ((allRequestEmail.userId).toString() == (req.params.user_id).toString()) {
+                         
                         } else {
                             reaquestedAllEmail.push((allRequestEmail.userId).toString())
                         }
@@ -328,6 +332,7 @@ exports.getUserWithFriend = async (req, res, next) => {
 
                     }
                     let uniqueObjArray = [...new Map(responseData.map((item) => [item["_id"], item])).values()];
+
 
                     res.status(status.OK).json(
                         new APIResponse("show all friend record", true, 201, 1, uniqueObjArray)
@@ -478,7 +483,7 @@ exports.getUserWithFriend = async (req, res, next) => {
 
                                         }
                                         statusByEmail.push(status1)
-                                    } else if(requestEmail.accepted == 4){
+                                    } else if (requestEmail.accepted == 4) {
                                         var status2 = {
                                             _id: requestEmail.userId,
                                             status: requestEmail.accepted,
@@ -575,7 +580,7 @@ exports.getUserWithFriend = async (req, res, next) => {
 
                                 }
                                 final_data.push(response);
-                            }  else {
+                            } else {
                                 const responses = {
                                     _id: finalData._id,
                                     chatRoomId: findAllUserWithIchat1 ? findAllUserWithIchat1._id : "",
@@ -831,8 +836,12 @@ exports.userAcceptedRequesteOrNot = async (req, res, next) => {
 
                 await notificationModel.updateOne({
                     userId: req.params.user_id,
-                    "notifications.userId": req.params.id,
-                    "notifications.status": 1
+                    notifications: {
+                        $elemMatch: {
+                            userId: req.params.id,
+                            status: 1
+                        }
+                    }
                 }, {
                     $set: {
                         "notifications.$.status": 9,
