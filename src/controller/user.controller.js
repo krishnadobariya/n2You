@@ -2162,12 +2162,16 @@ exports.getDataUserWise = async (req, res, next) => {
 
             } else {
 
+                console.log("findUser", findUser);
                 if (findUser) {
 
                     if (findUser.RequestedEmails[0] == undefined) {
                         statusCode.push({ status: 3 })
                     } else {
+                        console.log("findStatus", findUser.RequestedEmails);
                         for (const findStatus of findUser.RequestedEmails) {
+
+
 
                             if (findStatus.userId == req.params.req_user_id) {
                                 statusCode.push({ status: 10 })
@@ -2181,7 +2185,8 @@ exports.getDataUserWise = async (req, res, next) => {
                                     }
 
                                 } else {
-                                    statusCode.push({ status: findStatus ? findStatus.accepted : 3 })
+
+                                    statusCode.push({ status: 3 })
                                 }
 
                             }
@@ -2189,7 +2194,7 @@ exports.getDataUserWise = async (req, res, next) => {
                     }
 
                 } else {
-                    statusCode.push({ status: 3 })
+                    // statusCode.push({ status: 3 })
                 }
 
 
