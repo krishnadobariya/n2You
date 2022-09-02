@@ -1884,6 +1884,7 @@ exports.userAllFriendPost = async (req, res, next) => {
         const statusByEmail = [];
         const data = await requestsModel.findOne({ userId: req.params.user_id });
 
+        console.log(data);
         const user = await userModal.findOne({ _id: req.params.user_id })
         if (data != null && user != null) {
             const allRequestedEmail = data.RequestedEmails
@@ -1901,7 +1902,12 @@ exports.userAllFriendPost = async (req, res, next) => {
                     "blockUnblockUser.blockUserId": resultEmail
                 })
 
-                if (findInBlockUser) {
+                const findInBlockUsers = await blockUnblockModel.findOne({
+                    userId: resultEmail,
+                    "blockUnblockUser.blockUserId": req.params.user_id
+                })
+
+                if (findInBlockUser || findInBlockUsers) {
 
                 } else {
                     requestedEmailWitchIsInuserRequeted.push(resultEmail);

@@ -1750,6 +1750,10 @@ function socket(io) {
             }
 
         })
+
+        socket.on('videoCall' , async(arg) => {
+            
+        })
     })
 }
 
