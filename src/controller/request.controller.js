@@ -479,7 +479,6 @@ exports.getUserWithFriend = async (req, res, next) => {
                                             email: requestEmail.requestedEmail,
                                             firstName: user.firstName,
                                             profile: user.photo[0] ? user.photo[0].res : "",
-                                            request_id: req.params.user_id
                                         }
                                         statusByEmail.push(status2)
                                     } else {
@@ -508,8 +507,7 @@ exports.getUserWithFriend = async (req, res, next) => {
                         for (const [key, final1Data] of statusByEmail.entries())
                             if ((finalData._id).toString() === (final1Data._id).toString()) {
                                 const response = {
-                                    status: final1Data.status,
-                                    requset_id : final1Data.request_id
+                                    status: final1Data.status
                                 }
                                 finalStatus.push(response)
                             }
@@ -569,43 +567,6 @@ exports.getUserWithFriend = async (req, res, next) => {
                                     // posts_data: finalData.posts,
                                     status: responses.statusAndTumbCount.status,
 
-                                }
-                                final_data.push(response);
-                            } if (finalStatus[key].status == 4) {
-                                const responses = {
-                                    _id: finalData._id,
-                                    // polyDating: finalData.polyDating,
-                                    // HowDoYouPoly: finalData.HowDoYouPoly,
-                                    // loveToGive: finalData.loveToGive,
-                                    // polyRelationship: finalData.polyRelationship,
-                                    firstName: finalData.firstName,
-                                    email: finalData.email,
-                                    profile: finalData.photo[0] ? finalData.photo[0].res : "",
-                                    // relationshipSatus: finalData.relationshipSatus,
-                                    // Bio: finalData.Bio,
-                                    // hopingToFind: finalData.hopingToFind,
-                                    // jobTitle: finalData.jobTitle,
-                                    // wantChildren: finalData.wantChildren,
-                                    // posts_data: finalData.posts,
-                                    statusAndTumbCount: finalStatus[key]
-                                }
-                                const response = {
-                                    _id: finalData._id,
-                                    // polyDating: finalData.polyDating,
-                                    // HowDoYouPoly: finalData.HowDoYouPoly,
-                                    // loveToGive: finalData.loveToGive,
-                                    // polyRelationship: finalData.polyRelationship,
-                                    firstName: finalData.firstName,
-                                    email: finalData.email,
-                                    profile: finalData.photo[0] ? finalData.photo[0].res : "",
-                                    // relationshipSatus: finalData.relationshipSatus,
-                                    // Bio: finalData.Bio,
-                                    // hopingToFind: finalData.hopingToFind,
-                                    // jobTitle: finalData.jobTitle,
-                                    // wantChildren: finalData.wantChildren,
-                                    // posts_data: finalData.posts,
-                                    status: responses.statusAndTumbCount.status,
-                                    request_id: responses.statusAndTumbCount.requset_id
                                 }
                                 final_data.push(response);
                             }  else {
@@ -688,44 +649,6 @@ exports.getUserWithFriend = async (req, res, next) => {
                                     // posts_data: finalData.posts,
                                     status: responses.statusAndTumbCount.status,
 
-                                }
-
-                                final_data.push(response);
-                            } if (finalStatus[key].status == 4) {
-                                const responses = {
-                                    _id: finalData._id,
-                                    // polyDating: finalData.polyDating,
-                                    // HowDoYouPoly: finalData.HowDoYouPoly,
-                                    // loveToGive: finalData.loveToGive,
-                                    // polyRelationship: finalData.polyRelationship,
-                                    firstName: finalData.firstName,
-                                    email: finalData.email,
-                                    profile: finalData.photo[0] ? finalData.photo[0].res : "",
-                                    // relationshipSatus: finalData.relationshipSatus,
-                                    // Bio: finalData.Bio,
-                                    // hopingToFind: finalData.hopingToFind,
-                                    // jobTitle: finalData.jobTitle,
-                                    // wantChildren: finalData.wantChildren,
-                                    // posts_data: finalData.posts,
-                                    statusAndTumbCount: finalStatus[key]
-                                }
-                                const response = {
-                                    _id: finalData._id,
-                                    // polyDating: finalData.polyDating,
-                                    // HowDoYouPoly: finalData.HowDoYouPoly,
-                                    // loveToGive: finalData.loveToGive,
-                                    // polyRelationship: finalData.polyRelationship,
-                                    firstName: finalData.firstName,
-                                    email: finalData.email,
-                                    profile: finalData.photo[0] ? finalData.photo[0].res : "",
-                                    // relationshipSatus: finalData.relationshipSatus,
-                                    // Bio: finalData.Bio,
-                                    // hopingToFind: finalData.hopingToFind,
-                                    // jobTitle: finalData.jobTitle,
-                                    // wantChildren: finalData.wantChildren,
-                                    // posts_data: finalData.posts,
-                                    status: responses.statusAndTumbCount.status,
-                                    request_id : responses.statusAndTumbCount.requset_id
                                 }
 
                                 final_data.push(response);

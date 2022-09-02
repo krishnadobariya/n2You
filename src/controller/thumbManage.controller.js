@@ -3,7 +3,7 @@ const status = require("http-status");
 const userModel = require("../model/user.model");
 const thumbUpModel = require("../model/thumbUp.model");
 const thumbDownModel = require("../model/thumDown.model");
-const basketModel = require("../model/basket.model");
+const basketModel = require("../model/setting.model");
 
 exports.thumbCount = async (req, res, next) => {
     try {

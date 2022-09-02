@@ -23,7 +23,7 @@ const blockUnblockUserRoutes = require("./src/routes/blockuser.routes");
 const chatRoutes = require("./src/routes/chat.routes");
 const sessionRoutes = require('./src/routes/session.routes');
 const thumbManageRoutes = require("./src/routes/thumbManage.routes");
-const basketRoutes = require("./src/routes/basket.routes");
+const settingRoutes = require("./src/routes/setting.routes");
 
 
 // polyamorous
@@ -43,7 +43,7 @@ app.use('/blockUnblockUser', blockUnblockUserRoutes);
 app.use('/chat', chatRoutes);
 app.use('/session', sessionRoutes);
 app.use('/thumb', thumbManageRoutes);
-app.use('/basket', basketRoutes);
+app.use('/setting', settingRoutes);
 
 // polyamorous
 app.use('/dating', datingRoutes);

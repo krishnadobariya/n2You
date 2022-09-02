@@ -1,7 +1,7 @@
 const APIResponse = require("../helper/APIResponse");
 const status = require("http-status");
 const userModel = require("../model/user.model");
-const basketModel = require("../model/basket.model");
+const settingModel = require("../model/setting.model");
 
 exports.settingBasket = async (req, res, next) => {
     try {
@@ -17,25 +17,25 @@ exports.settingBasket = async (req, res, next) => {
             );
         } else {
 
-            const findUserInBasket = await basketModel.findOne({
+            const findUserInBasket = await settingModel.findOne({
                 userId: req.params.user_id
             })
 
             if (findUserInBasket == null) {
-                const basketModelDetail = await basketModel({
+                const settingModelDetail = await settingModel({
                     userId: req.params.user_id,
                     fullAccess: req.body.fullAccess,
                     thumpsUpAndDown: req.body.thumpsUpAndDown
                 })
 
-                await basketModelDetail.save();
+                await settingModelDetail.save();
 
                 res.status(status.CREATED).json(
                     new APIResponse("basket setting updated", "true", 201, "1")
                 );
             } else {
 
-                await basketModel.updateOne({
+                await settingModel.updateOne({
                     userId: req.params.user_id
                 }, {
                     $set: {

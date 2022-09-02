@@ -344,7 +344,6 @@ exports.showAllUserWhichIsLikePost = async (req, res, next) => {
                                         var status1 = {
                                             status: requestEmail.accepted,
                                             _id: requestEmail.userId,
-                                            request_id: req.params.user_id
                                         }
                                         statusByEmail.push(status1)
                                     } else {
@@ -366,7 +365,7 @@ exports.showAllUserWhichIsLikePost = async (req, res, next) => {
 
                         for (const [key, final1Data] of statusByEmail.entries())
                             if ((finalData._id).toString() === (final1Data._id).toString()) {
-                                finalStatus.push({ status: final1Data.status, request_id: final1Data.request_id })
+                                finalStatus.push({ status: final1Data.status})
                             }
                     }
 
@@ -406,8 +405,7 @@ exports.showAllUserWhichIsLikePost = async (req, res, next) => {
                                 // hopingToFind: finalData.hopingToFind,
                                 // jobTitle: finalData.jobTitle,
                                 // wantChildren: finalData.wantChildren,
-                                status: finalStatus[key].status,
-                                request_id: finalStatus[key].request_id
+                                status: finalStatus[key].status
 
                             }
                             final_data.push(response);
@@ -427,8 +425,7 @@ exports.showAllUserWhichIsLikePost = async (req, res, next) => {
                                 // hopingToFind: finalData.hopingToFind,
                                 // jobTitle: finalData.jobTitle,
                                 // wantChildren: finalData.wantChildren,
-                                status: finalStatus[key].status,
-                                request_id: finalStatus[key].request_id
+                                status: finalStatus[key].status
                             }
                             final_data.push(response);
                         }

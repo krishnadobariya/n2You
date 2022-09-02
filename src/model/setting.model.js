@@ -1,6 +1,6 @@
 const mongoose = require("mongoose");
 
-const basketSchema = mongoose.Schema({
+const settingSchema = mongoose.Schema({
     userId: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'User',
@@ -13,13 +13,17 @@ const basketSchema = mongoose.Schema({
     thumpsUpAndDown: {
         type: Boolean,
         default: false
+    },
+    commentAccess: {
+        type: Boolean,
+        default: true
     }
 
 }, {
     timestamps: true
 }, {
-    collection: 'basket'
+    collection: 'setting'
 })
 
 
-module.exports = mongoose.model('basket', basketSchema);
+module.exports = mongoose.model('setting', settingSchema);
