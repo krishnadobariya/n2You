@@ -2157,7 +2157,7 @@ exports.getDataUserWise = async (req, res, next) => {
             const statusCode = [];
 
             if ((req.params.req_user_id).toString() == (req.params.user_id).toString()) {
-             
+
                 statusCode.push({ status: 10 })
 
             } else {
@@ -2173,7 +2173,7 @@ exports.getDataUserWise = async (req, res, next) => {
                                 statusCode.push({ status: 10 })
                             } else {
                                 if ((findStatus.userId).toString() == (req.params.user_id).toString()) {
-                                   
+
                                     if (findStatus.accepted == 4) {
                                         statusCode.push({ status: findStatus.accepted })
                                     } else {
@@ -5868,6 +5868,76 @@ exports.checkMailExiesOrNot = async (req, res) => {
             );
         }
     } catch (error) {
+        res.status(status.INTERNAL_SERVER_ERROR).json(
+            new APIResponse("Something Went Wrong", "false", 500, error.message)
+        );
+    }
+}
+
+exports.unFriend = async (req, res) => {
+    try {
+
+        const userFind = await userModel.findOne({ _id: req.params.user_id, polyDating: 0 });
+        if (userFind == null) {
+            res.status(status.NOT_FOUND).json(
+                new APIResponse("User Not Found and not Social Meida & Dating type user", "false", 404, "0")
+            );
+        } else {
+            const unFriendUserFound = await userModel.findOne({ _id: req.params.unfriend_user_id, polyDating: 0 })
+
+            if (unFriendUserFound == null) {
+                res.status(status.NOT_FOUND).json(
+                    new APIResponse("User Not Found which is Social Meida & Dating type user", "false", 404, "0")
+                );
+
+            } else {
+                const findInRequestModel1 = await requestsModel.findOne({
+                    userId: req.params.unfriend_user_id
+                })
+
+                const findInRequestModel2 = await requestsModel.findOne({
+                    userId: req.params.user_id
+                })
+
+                await requestsModel.updateOne({
+                    userId: findInRequestModel1.userId
+                }, {
+                    $pull: {
+                        RequestedEmails: {
+                            userId: findInRequestModel2.userId
+                        }
+                    }
+                })
+
+                await requestsModel.updateOne({
+                    userId: findInRequestModel2.userId
+                }, {
+                    $pull: {
+                        RequestedEmails: {
+                            userId: findInRequestModel1.userId
+                        }
+                    }
+                })
+
+                await chatRoomModel.deleteOne({
+                    user1: findInRequestModel1.userId,
+                    user2: findInRequestModel2.userId
+                })
+
+                await chatRoomModel.deleteOne({
+                    user2: findInRequestModel1.userId,
+                    user1: findInRequestModel2.userId
+                })
+
+                res.status(status.CREATED).json(
+                    new APIResponse("unfriend success", "true", 201, "1")
+                )
+
+            }
+        }
+
+    } catch (error) {
+        console.log(error);
         res.status(status.INTERNAL_SERVER_ERROR).json(
             new APIResponse("Something Went Wrong", "false", 500, error.message)
         );

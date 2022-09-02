@@ -2290,7 +2290,6 @@ exports.userAllFriendPost = async (req, res, next) => {
                                                 commentData: commentData[0] == null ? [] : commentData
                                             }
                                             finalResponse.push(response);
-
                                         }
                                     }
 

@@ -63,51 +63,16 @@ exports.blockUnblockUser = async (req, res, next) => {
                             }
                         })
 
-                        await notificationModel.updateOne({
-                            userId: findInRequestModel1.userId,
-                        }, {
-                            $pull: {
-                                notifications: {
-                                    userId: findInRequestModel2.userId,
-                                    status: 9
-                                }
-                            }
-                        })
-
-                        await notificationModel.updateOne({
-                            userId: findInRequestModel1.userId
-                        }, {
-                            $pull: {
-                                notifications: {
-                                    userId: findInRequestModel2.userId,
-                                    status: 2
-                                }
-                            }
-                        })
-
-
-                        await notificationModel.updateOne({
-                            userId: findInRequestModel2.userId
-                        }, {
-                            $pull: {
-                                notifications: {
-                                    userId: findInRequestModel1.userId,
-                                    status: 9
-                                }
-                            }
-                        })
-
-                        await notificationModel.updateOne({
-                            userId: findInRequestModel2.userId
-                        }, {
-                            $pull: {
-                                notifications: {
-                                    userId: findInRequestModel1.userId,
-                                    status: 2
-                                }
-                            }
-                        })
-
+                        // await notificationModel.updateOne({
+                        //     userId: findInRequestModel2.userId
+                        // }, {
+                        //     $pull: {
+                        //         notifications: {
+                        //             userId: findInRequestModel1.userId,
+                        //             status: 2
+                        //         }
+                        //     }
+                        // })
 
                         const data1 = await chatRoomModel.deleteOne({
                             user1: findInRequestModel1.userId,
