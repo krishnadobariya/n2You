@@ -1458,13 +1458,11 @@ function socket(io) {
                 io.to(userRoom).emit("getRequest", `not found!`);
 
             }
+ 
 
-
-
-            if (findUser) {
-                const userRoom = `User${findUser._id}`
-                io.to(userRoom).emit("getRequest", `${findUser1.firstName} send request to follow you`);
-            }
+                const userRoom = `User${arg.requested_id}`
+                io.to(userRoom).emit("getRequest", `${checkUserExist.firstName} send request to follow you`);
+            
         })
 
         socket.on('sendRequest', async (arg) => {
