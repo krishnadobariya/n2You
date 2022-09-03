@@ -2,6 +2,7 @@ const APIResponse = require("../helper/APIResponse");
 const status = require("http-status");
 const userModel = require("../model/user.model");
 const settingModel = require("../model/setting.model");
+const router = require("../routes/user.routes");
 
 exports.settingBasket = async (req, res, next) => {
     try {
@@ -107,5 +108,104 @@ exports.settingComment = async (req, res, next) => {
             new APIResponse("Something Went Wrong", false, 500, error.message)
         );
 
+    }
+}
+
+exports.getBasketSetting = async (req, res, next) => {
+    try {
+
+        const findUser = await userModel.findOne({
+            _id: req.params.user_id
+        })
+
+        if (findUser) {
+            const findUserInBasket = await settingModel.findOne({
+                userId: req.params.user_id
+            })
+
+            if (findUserInBasket) {
+                const data = {
+                    userId: findUserInBasket.userId,
+                    fullAccess: findUserInBasket.fullAccess,
+                    thumpsUpAndDown: findUserInBasket.thumpsUpAndDown
+                }
+                res.status(status.OK).json(
+                    new APIResponse("get Basket Setting", "true", 200, "1", data)
+                );
+            } else {
+
+                const data = {
+                    userId: req.params.user_id,
+                    fullAccess: true,
+                    thumpsUpAndDown: false
+                }
+
+                res.status(status.OK).json(
+                    new APIResponse("get Basket Setting", "true", 200, "1", data)
+                );
+            }
+        } else {
+            res.status(status.OK).json(
+                new APIResponse("user not found", "false", 404, "0")
+            );
+        }
+
+
+    } catch (error) {
+
+        console.log("Error:", error);
+        res.status(status.INTERNAL_SERVER_ERROR).json(
+            new APIResponse("Something Went Wrong", false, 500, error.message)
+        );
+    }
+}
+
+exports.getCommentSetting = async (req, res, next) => {
+    try {
+        const findUser = await userModel.findOne({
+            _id: req.params.user_id
+        })
+
+        if (findUser) {
+
+            const findUserInSetting = await settingModel.findOne({
+                userId: req.params.user_id
+            })
+
+            console.log("findUserInSetting", findUserInSetting);
+
+            if (findUserInSetting) {
+                const data = {
+                    userId: findUserInSetting.userId,
+                    commentAccess: findUserInSetting.fullAccess,
+                }
+
+                console.log(data);
+                res.status(status.OK).json(
+                    new APIResponse("get comment Setting", "true", 200, "1", data)
+                );
+            } else {
+
+                const data = {
+                    userId: req.params.user_id,
+                    commentAccess: true,
+                }
+
+                console.log(data);
+
+                res.status(status.OK).json(
+                    new APIResponse("get comment Setting", "true", 200, "1", data)
+                );
+            }
+        } else {
+            res.status(status.OK).json(
+                new APIResponse("user not found", "false", 404, "0")
+            );
+        }
+    } catch (error) {
+        console.log("Error:", error);
+        res.status(status.INTERNAL_SERVER_ERROR).json(
+            new APIResponse("Something Went Wrong", false, 500, error.message)
+        );
     }
 }
