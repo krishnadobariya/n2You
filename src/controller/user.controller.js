@@ -1695,9 +1695,11 @@ exports.getAllUser = async (req, res, next) => {
 
                         for (const meageAllTableEmail of finalExistUser) {
 
-
+                            console.log("meageAllTableEmail", meageAllTableEmail);
 
                             if (requestEmail.requestedEmail == meageAllTableEmail.email) {
+
+                                console.log("requestEmail", requestEmail);
                                 if (requestEmail.accepted == 1) {
                                     var status1 = {
                                         status: requestEmail.accepted,
@@ -1712,6 +1714,7 @@ exports.getAllUser = async (req, res, next) => {
                                     }
                                     statusByEmail.push(status2)
                                 } else {
+
                                     var status3 = {
                                         status: requestEmail.accepted,
                                         email: requestEmail.requestedEmail
@@ -1726,11 +1729,16 @@ exports.getAllUser = async (req, res, next) => {
                 const final_data = [];
 
                 const finalStatus = []
+
+                console.log("meageAllTable", meageAllTable);
+                const uniqueObjArray = [...new Map(statusByEmail.map((item) => [item["email"], item])).values()];
                 for (const [key, finalData] of meageAllTable.entries()) {
-                    for (const [key, final1Data] of statusByEmail.entries())
+                    for (const [key, final1Data] of uniqueObjArray.entries()) {
                         if (finalData.email === final1Data.email) {
+                            console.log(finalData.email, final1Data.email);
                             finalStatus.push({ status: final1Data.status })
                         }
+                    }
                 }
                 for (const [key, finalData] of finalExistUser.entries()) {
 

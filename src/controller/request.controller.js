@@ -905,6 +905,7 @@ exports.userAcceptedRequesteOrNot = async (req, res, next) => {
                     new APIResponse("request accepted successfully!", "true", 200, "1")
                 )
             } else {
+                
                 const updatePosts = await requestModel.updateOne(
                     { userId: req.params.user_id },
                     {

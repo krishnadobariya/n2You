@@ -3237,11 +3237,15 @@ exports.userAllFriendPost = async (req, res, next) => {
             })
 
             console.log("getNotification", getNotification);
-            var count = 0
-            for (const allNotification of getNotification.notifications) {
-                count = count + allNotification.read;
-            }
 
+            if (getNotification == null) {
+                var count = 0
+            } else {
+                var count = 0
+                for (const allNotification of getNotification.notifications) {
+                    count = count + allNotification.read;
+                }
+            }
             res.status(status.OK).json(
                 new APIResponse("show all post When accept by the user", "true", 201, "1", final_data.sort((a, b) => b.posts.createdAt - a.posts.createdAt), count.toString())
             )
