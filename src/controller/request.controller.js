@@ -274,7 +274,7 @@ exports.getUserWithFriend = async (req, res, next) => {
                     if (allRequestEmail) {
 
                         if ((allRequestEmail.userId).toString() == (req.params.user_id).toString()) {
-                         
+
                         } else {
                             reaquestedAllEmail.push((allRequestEmail.userId).toString())
                         }
@@ -543,44 +543,44 @@ exports.getUserWithFriend = async (req, res, next) => {
 
                         if (findAllUserWithIchat1) {
 
-                            if (finalStatus[key].status == 2) {
-                                const responses = {
-                                    _id: finalData._id,
-                                    // polyDating: finalData.polyDating,
-                                    // HowDoYouPoly: finalData.HowDoYouPoly,
-                                    // loveToGive: finalData.loveToGive,
-                                    // polyRelationship: finalData.polyRelationship,
-                                    firstName: finalData.firstName,
-                                    email: finalData.email,
-                                    profile: finalData.photo[0] ? finalData.photo[0].res : "",
-                                    // relationshipSatus: finalData.relationshipSatus,
-                                    // Bio: finalData.Bio,
-                                    // hopingToFind: finalData.hopingToFind,
-                                    // jobTitle: finalData.jobTitle,
-                                    // wantChildren: finalData.wantChildren,
-                                    // posts_data: finalData.posts,
-                                    statusAndTumbCount: finalStatus[key]
-                                }
-                                const response = {
-                                    _id: finalData._id,
-                                    // polyDating: finalData.polyDating,
-                                    // HowDoYouPoly: finalData.HowDoYouPoly,
-                                    // loveToGive: finalData.loveToGive,
-                                    // polyRelationship: finalData.polyRelationship,
-                                    firstName: finalData.firstName,
-                                    email: finalData.email,
-                                    profile: finalData.photo[0] ? finalData.photo[0].res : "",
-                                    // relationshipSatus: finalData.relationshipSatus,
-                                    // Bio: finalData.Bio,
-                                    // hopingToFind: finalData.hopingToFind,
-                                    // jobTitle: finalData.jobTitle,
-                                    // wantChildren: finalData.wantChildren,
-                                    // posts_data: finalData.posts,
-                                    status: responses.statusAndTumbCount.status,
+                            if (finalStatus[key].status == 1) {
+                                // const responses = {
+                                //     _id: finalData._id,
+                                //     // polyDating: finalData.polyDating,
+                                //     // HowDoYouPoly: finalData.HowDoYouPoly,
+                                //     // loveToGive: finalData.loveToGive,
+                                //     // polyRelationship: finalData.polyRelationship,
+                                //     firstName: finalData.firstName,
+                                //     email: finalData.email,
+                                //     profile: finalData.photo[0] ? finalData.photo[0].res : "",
+                                //     // relationshipSatus: finalData.relationshipSatus,
+                                //     // Bio: finalData.Bio,
+                                //     // hopingToFind: finalData.hopingToFind,
+                                //     // jobTitle: finalData.jobTitle,
+                                //     // wantChildren: finalData.wantChildren,
+                                //     // posts_data: finalData.posts,
+                                //     statusAndTumbCount: finalStatus[key]
+                                // }
+                                // const response = {
+                                //     _id: finalData._id,
+                                //     // polyDating: finalData.polyDating,
+                                //     // HowDoYouPoly: finalData.HowDoYouPoly,
+                                //     // loveToGive: finalData.loveToGive,
+                                //     // polyRelationship: finalData.polyRelationship,
+                                //     firstName: finalData.firstName,
+                                //     email: finalData.email,
+                                //     profile: finalData.photo[0] ? finalData.photo[0].res : "",
+                                //     // relationshipSatus: finalData.relationshipSatus,
+                                //     // Bio: finalData.Bio,
+                                //     // hopingToFind: finalData.hopingToFind,
+                                //     // jobTitle: finalData.jobTitle,
+                                //     // wantChildren: finalData.wantChildren,
+                                //     // posts_data: finalData.posts,
+                                //     status: responses.statusAndTumbCount.status,
 
-                                }
-                                final_data.push(response);
-                            } else {
+                                // }
+                                // final_data.push(response);
+
                                 const responses = {
                                     _id: finalData._id,
                                     chatRoomId: findAllUserWithIchat1 ? findAllUserWithIchat1._id : "",
@@ -619,51 +619,53 @@ exports.getUserWithFriend = async (req, res, next) => {
                                 }
 
                                 final_data.push(response);
+                            } else {
+
                             }
 
 
 
                         } else {
 
-                            if (finalStatus[key].status == 2) {
-                                const responses = {
-                                    _id: finalData._id,
-                                    // polyDating: finalData.polyDating,
-                                    // HowDoYouPoly: finalData.HowDoYouPoly,
-                                    // loveToGive: finalData.loveToGive,
-                                    // polyRelationship: finalData.polyRelationship,
-                                    firstName: finalData.firstName,
-                                    email: finalData.email,
-                                    profile: finalData.photo[0] ? finalData.photo[0].res : "",
-                                    // relationshipSatus: finalData.relationshipSatus,
-                                    // Bio: finalData.Bio,
-                                    // hopingToFind: finalData.hopingToFind,
-                                    // jobTitle: finalData.jobTitle,
-                                    // wantChildren: finalData.wantChildren,
-                                    // posts_data: finalData.posts,
-                                    statusAndTumbCount: finalStatus[key]
-                                }
-                                const response = {
-                                    _id: finalData._id,
-                                    // polyDating: finalData.polyDating,
-                                    // HowDoYouPoly: finalData.HowDoYouPoly,
-                                    // loveToGive: finalData.loveToGive,
-                                    // polyRelationship: finalData.polyRelationship,
-                                    firstName: finalData.firstName,
-                                    email: finalData.email,
-                                    profile: finalData.photo[0] ? finalData.photo[0].res : "",
-                                    // relationshipSatus: finalData.relationshipSatus,
-                                    // Bio: finalData.Bio,
-                                    // hopingToFind: finalData.hopingToFind,
-                                    // jobTitle: finalData.jobTitle,
-                                    // wantChildren: finalData.wantChildren,
-                                    // posts_data: finalData.posts,
-                                    status: responses.statusAndTumbCount.status,
+                            if (finalStatus[key].status == 1) {
+                                // const responses = {
+                                //     _id: finalData._id,
+                                //     // polyDating: finalData.polyDating,
+                                //     // HowDoYouPoly: finalData.HowDoYouPoly,
+                                //     // loveToGive: finalData.loveToGive,
+                                //     // polyRelationship: finalData.polyRelationship,
+                                //     firstName: finalData.firstName,
+                                //     email: finalData.email,
+                                //     profile: finalData.photo[0] ? finalData.photo[0].res : "",
+                                //     // relationshipSatus: finalData.relationshipSatus,
+                                //     // Bio: finalData.Bio,
+                                //     // hopingToFind: finalData.hopingToFind,
+                                //     // jobTitle: finalData.jobTitle,
+                                //     // wantChildren: finalData.wantChildren,
+                                //     // posts_data: finalData.posts,
+                                //     statusAndTumbCount: finalStatus[key]
+                                // }
+                                // const response = {
+                                //     _id: finalData._id,
+                                //     // polyDating: finalData.polyDating,
+                                //     // HowDoYouPoly: finalData.HowDoYouPoly,
+                                //     // loveToGive: finalData.loveToGive,
+                                //     // polyRelationship: finalData.polyRelationship,
+                                //     firstName: finalData.firstName,
+                                //     email: finalData.email,
+                                //     profile: finalData.photo[0] ? finalData.photo[0].res : "",
+                                //     // relationshipSatus: finalData.relationshipSatus,
+                                //     // Bio: finalData.Bio,
+                                //     // hopingToFind: finalData.hopingToFind,
+                                //     // jobTitle: finalData.jobTitle,
+                                //     // wantChildren: finalData.wantChildren,
+                                //     // posts_data: finalData.posts,
+                                //     status: responses.statusAndTumbCount.status,
 
-                                }
+                                // }
 
-                                final_data.push(response);
-                            } else {
+                                // final_data.push(response);
+
                                 const responses = {
                                     _id: finalData._id,
                                     chatRoomId: findAllUserWithIchat2 ? findAllUserWithIchat2._id : "",
@@ -702,6 +704,8 @@ exports.getUserWithFriend = async (req, res, next) => {
                                 }
 
                                 final_data.push(response);
+                            } else {
+
                             }
 
                         }
@@ -905,7 +909,7 @@ exports.userAcceptedRequesteOrNot = async (req, res, next) => {
                     new APIResponse("request accepted successfully!", "true", 200, "1")
                 )
             } else {
-                
+
                 const updatePosts = await requestModel.updateOne(
                     { userId: req.params.user_id },
                     {
