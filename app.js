@@ -14,54 +14,65 @@ app.use(express.static('public'));
 app.use('/images', express.static('images'));
 
 
-cron.schedule("*/1 * * * * *", async function () {
+cron.schedule("*/60 * * * * *", async function () {
 
     const findSession = await sessionModel.find()
     for (const getDate of findSession) {
         var userSessionDate = new Date(getDate.selectedDate);
-        now = new Date();
-        var sec_num = (now - userSessionDate) / 1000;
+        now = new Date()
+
+
+        var sec_num = (userSessionDate - now) / 1000;
         var days = Math.floor(sec_num / (3600 * 24));
         var hours = Math.floor((sec_num - (days * (3600 * 24))) / 3600);
         var minutes = Math.floor((sec_num - (days * (3600 * 24)) - (hours * 3600)) / 60);
 
-        if (minutes == 30) {
+        console.log("minutes", minutes);
+        if (hours == 0 && days == 0 && minutes == 30) {
+
+
+            const findUserInUserModel = await userModel.findOne({
+                _id: getDate.cretedSessionUser
+            })
 
             if (getDate.RoomType == "public") {
+
                 const allRequestedEmails = [];
                 const findAllFriend = await requestsModel.findOne({
                     userId: getDate.cretedSessionUser
                 })
 
-                const p1 = participants.participants_1 == null ? "" : participants.participants_1
-                const p2 = participants.participants_2 == null ? "" : participants.participants_2
-                const p3 = participants.participants_3 == null ? "" : participants.participants_3
+                const p1 = getDate.participants[0].participants_1 == null ? "" : getDate.participants[0].participants_1
+                const p2 = getDate.participants[0].participants_2 == null ? "" : getDate.participants[0].participants_2
+                const p3 = getDate.participants[0].participants_3 == null ? "" : getDate.participants[0].participants_3
 
 
                 for (const allRequestedEmail of findAllFriend.RequestedEmails) {
 
                     if (((allRequestedEmail.userId).toString() != (p1).toString()) && ((allRequestedEmail.userId).toString() != (p2).toString()) && ((allRequestedEmail.userId).toString() != (p3).toString())) {
+
                         allRequestedEmails.push(allRequestedEmail.userId)
                     }
 
                 }
                 const invitedUsers = [];
-                if (p1 != "") {
-                    invitedUsers.push(mongoose.Types.ObjectId(req.body.participants_1))
-                }
-                if (p2 != "") {
-                    invitedUsers.push(mongoose.Types.ObjectId(req.body.participants_2))
-                }
-                if (p3 != "") {
-                    invitedUsers.push(mongoose.Types.ObjectId(req.body.participants_3))
-                }
 
-
+                if (p1 != null) {
+                    invitedUsers.push(getDate.participants[0].participants_1)
+                }
+                if (p2 != null) {
+                    invitedUsers.push(getDate.participants[0].participants_2)
+                }
+                if (p3 != null) {
+                    invitedUsers.push(getDate.participants[0].participants_3)
+                }
                 for (const notification of allRequestedEmails) {
+                    console.log("feeedw");
                     const findInNotification = await notificationModel.findOne({
                         userId: notification
                     })
 
+                    console.log("findInNotification", findInNotification);
                     if (findInNotification) {
 
                         await notificationModel.updateOne({
@@ -69,9 +80,9 @@ cron.schedule("*/1 * * * * *", async function () {
                         }, {
                             $push: {
                                 notifications: {
-                                    notifications: `${findUserInUserModel.firstName} create session ${timeSession}`,
+                                    notifications: `after 30 min join session`,
                                     userId: findUserInUserModel._id,
-                                    status: 8
+                                    status: 9
                                 }
                             }
                         })
@@ -80,9 +91,9 @@ cron.schedule("*/1 * * * * *", async function () {
                         const savedata = notificationModel({
                             userId: notification,
                             notifications: {
-                                notifications: `${findUserInUserModel.firstName} create session ${timeSession}`,
+                                notifications: `after 30 min join session`,
                                 userId: findUserInUserModel._id,
-                                status: 8
+                                status: 9
                             }
                         })
 
@@ -104,9 +115,9 @@ cron.schedule("*/1 * * * * *", async function () {
                         }, {
                             $push: {
                                 notifications: {
-                                    notifications: `${findUserInUserModel.firstName} invited you in session ${timeSession}`,
+                                    notifications: `after 30 min join session`,
                                     userId: findUserInUserModel._id,
-                                    status: 8
+                                    status: 9
                                 }
                             }
                         })
@@ -115,9 +126,9 @@ cron.schedule("*/1 * * * * *", async function () {
                         const savedata = notificationModel({
                             userId: invitedUser,
                             notifications: {
-                                notifications: `${findUserInUserModel.firstName} invited you in session ${timeSession}`,
+                                notifications: `after 30 min join session`,
                                 userId: findUserInUserModel._id,
-                                status: 8
+                                status: 9
                             }
                         })
 
@@ -128,8 +139,62 @@ cron.schedule("*/1 * * * * *", async function () {
 
             } else {
 
+                const allRequestedEmails = [];
+
+                const p1 = getDate.participants[0].participants_1 == null ? "" : getDate.participants[0].participants_1
+                const p2 = getDate.participants[0].participants_2 == null ? "" : getDate.participants[0].participants_2
+                const p3 = getDate.participants[0].participants_3 == null ? "" : getDate.participants[0].participants_3
+
+
+
+                if (p1 != null) {
+                    allRequestedEmails.push(getDate.participants[0].participants_1)
+                }
+                if (p2 != null) {
+                    allRequestedEmails.push(getDate.participants[0].participants_2)
+                }
+                if (p3 != null) {
+                    allRequestedEmails.push(getDate.participants[0].participants_3)
+                }
+
+                for (const notification of allRequestedEmails) {
+                    const findInNotification = await notificationModel.findOne({
+                        userId: notification
+                    })
+
+                    console.log("findInNotification", findInNotification);
+                    if (findInNotification) {
+
+                        await notificationModel.updateOne({
+                            userId: notification
+                        }, {
+                            $push: {
+                                notifications: {
+                                    notifications: `after 30 min join session`,
+                                    userId: findUserInUserModel._id,
+                                    status: 9
+                                }
+                            }
+                        })
+
+                    } else {
+
+                        const savedata = notificationModel({
+                            userId: notification,
+                            notifications: {
+                                notifications: `after 30 min join session`,
+                                userId: findUserInUserModel._id,
+                                status: 9
+                            }
+                        })
+
+                        await savedata.save();
+
+                    }
+                }
             }
 
+        } else {
         }
     }
     console.log("running a task every 10 second");
@@ -156,6 +221,9 @@ const notificationRoutes = require('./src/routes/polyamorous/notification.routes
 const conflictRoutes = require('./src/routes/polyamorous/conflict.routes');
 const relastionShipHistoryRoutes = require('./src/routes/polyamorous/relationShipHistory.routes');
 const sessionModel = require("./src/model/session.model");
+const userModel = require("./src/model/user.model");
+const requestsModel = require("./src/model/requests.model");
+const notificationModel = require("./src/model/polyamorous/notification.model");
 
 app.use('/user', userRoutes);
 app.use('/posts', postRoutes);
