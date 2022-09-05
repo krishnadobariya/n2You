@@ -14,50 +14,126 @@ app.use(express.static('public'));
 app.use('/images', express.static('images'));
 
 
-// cron.schedule("*/1 * * * * *", async function () {
+cron.schedule("*/1 * * * * *", async function () {
 
-//     const findSession = await sessionModel.find()
-//     for (const getDate of findSession) {
-//         var userSessionDate = new Date(getDate.selectedDate);
-//         now = new Date();
-//         var sec_num = (now - userSessionDate) / 1000;
-//         var days = Math.floor(sec_num / (3600 * 24));
-//         var hours = Math.floor((sec_num - (days * (3600 * 24))) / 3600);
-//         var minutes = Math.floor((sec_num - (days * (3600 * 24)) - (hours * 3600)) / 60);
+    const findSession = await sessionModel.find()
+    for (const getDate of findSession) {
+        var userSessionDate = new Date(getDate.selectedDate);
+        now = new Date();
+        var sec_num = (now - userSessionDate) / 1000;
+        var days = Math.floor(sec_num / (3600 * 24));
+        var hours = Math.floor((sec_num - (days * (3600 * 24))) / 3600);
+        var minutes = Math.floor((sec_num - (days * (3600 * 24)) - (hours * 3600)) / 60);
 
-//         if (minutes == 30) {
-//             const allRequestedEmails = [];
-//             const findAllFriend = await requestsModel.findOne({
-//                 userId: getDate.cretedSessionUser
-//             })
+        if (minutes == 30) {
 
-//             const p1 = participants.participants_1 == null ? "" : participants.participants_1
-//             const p2 = participants.participants_2 == null ? "" : participants.participants_2
-//             const p3 = participants.participants_3 == null ? "" : participants.participants_3
+            if (getDate.RoomType == "public") {
+                const allRequestedEmails = [];
+                const findAllFriend = await requestsModel.findOne({
+                    userId: getDate.cretedSessionUser
+                })
+
+                const p1 = participants.participants_1 == null ? "" : participants.participants_1
+                const p2 = participants.participants_2 == null ? "" : participants.participants_2
+                const p3 = participants.participants_3 == null ? "" : participants.participants_3
 
 
-//             for (const allRequestedEmail of findAllFriend.RequestedEmails) {
+                for (const allRequestedEmail of findAllFriend.RequestedEmails) {
 
-//                 if (((allRequestedEmail.userId).toString() != (p1).toString()) && ((allRequestedEmail.userId).toString() != (p2).toString()) && ((allRequestedEmail.userId).toString() != (p3).toString())) {
-//                     allRequestedEmails.push(allRequestedEmail.userId)
-//                 }
+                    if (((allRequestedEmail.userId).toString() != (p1).toString()) && ((allRequestedEmail.userId).toString() != (p2).toString()) && ((allRequestedEmail.userId).toString() != (p3).toString())) {
+                        allRequestedEmails.push(allRequestedEmail.userId)
+                    }
 
-//             }
-//             const invitedUsers = [];
-//             if (p1 != "") {
-//                 invitedUsers.push(mongoose.Types.ObjectId(req.body.participants_1))
-//             }
-//             if (p2 != "") {
-//                 invitedUsers.push(mongoose.Types.ObjectId(req.body.participants_2))
-//             }
-//             if (p3 != "") {
-//                 invitedUsers.push(mongoose.Types.ObjectId(req.body.participants_3))
-//             }
+                }
+                const invitedUsers = [];
+                if (p1 != "") {
+                    invitedUsers.push(mongoose.Types.ObjectId(req.body.participants_1))
+                }
+                if (p2 != "") {
+                    invitedUsers.push(mongoose.Types.ObjectId(req.body.participants_2))
+                }
+                if (p3 != "") {
+                    invitedUsers.push(mongoose.Types.ObjectId(req.body.participants_3))
+                }
 
-//         }
-//     }
-//     console.log("running a task every 10 second");
-// });
+
+                for (const notification of allRequestedEmails) {
+                    const findInNotification = await notificationModel.findOne({
+                        userId: notification
+                    })
+
+                    if (findInNotification) {
+
+                        await notificationModel.updateOne({
+                            userId: notification
+                        }, {
+                            $push: {
+                                notifications: {
+                                    notifications: `${findUserInUserModel.firstName} create session ${timeSession}`,
+                                    userId: findUserInUserModel._id,
+                                    status: 8
+                                }
+                            }
+                        })
+                    } else {
+
+                        const savedata = notificationModel({
+                            userId: notification,
+                            notifications: {
+                                notifications: `${findUserInUserModel.firstName} create session ${timeSession}`,
+                                userId: findUserInUserModel._id,
+                                status: 8
+                            }
+                        })
+
+                        await savedata.save();
+
+                    }
+                }
+
+                for (const invitedUser of invitedUsers) {
+
+                    const findInNotification = await notificationModel.findOne({
+                        userId: invitedUser
+                    })
+
+                    if (findInNotification) {
+
+                        await notificationModel.updateOne({
+                            userId: invitedUser
+                        }, {
+                            $push: {
+                                notifications: {
+                                    notifications: `${findUserInUserModel.firstName} invited you in session ${timeSession}`,
+                                    userId: findUserInUserModel._id,
+                                    status: 8
+                                }
+                            }
+                        })
+                    } else {
+
+                        const savedata = notificationModel({
+                            userId: invitedUser,
+                            notifications: {
+                                notifications: `${findUserInUserModel.firstName} invited you in session ${timeSession}`,
+                                userId: findUserInUserModel._id,
+                                status: 8
+                            }
+                        })
+
+                        await savedata.save();
+
+                    }
+                }
+
+            } else {
+
+            }
+
+        }
+    }
+    console.log("running a task every 10 second");
+});
 
 
 const userRoutes = require("./src/routes/user.routes");

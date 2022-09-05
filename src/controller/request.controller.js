@@ -859,7 +859,7 @@ exports.userAcceptedRequesteOrNot = async (req, res, next) => {
                     }, {
                         $push: {
                             notifications: {
-                                notifications: `${findUserWhichAcceptRequest.firstName}, ${findUser.firstName} both are become friend`,
+                                notifications: `${findUser1InNotiofication.firstName} accepted your request`,
                                 userId: findUserWhichAcceptRequest._id,
                                 status: 2
                             }
@@ -869,7 +869,7 @@ exports.userAcceptedRequesteOrNot = async (req, res, next) => {
                     const data = notificationModel({
                         userId: findUser._id,
                         notifications: {
-                            notifications: `${findUserWhichAcceptRequest.firstName}, ${findUser.firstName} both are become friend`,
+                            notifications: `${findUser1InNotiofication.firstName} accepted your request`,
                             userId: findUserWhichAcceptRequest._id,
                             status: 2
                         }
