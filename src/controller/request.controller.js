@@ -269,7 +269,7 @@ exports.getUserWithFriend = async (req, res, next) => {
             if (requestEmail) {
                 for (const allRequestEmail of requestEmail.RequestedEmails) {
 
-                    console.log("allRequestEmail", allRequestEmail);
+                    // console.log("allRequestEmail", allRequestEmail);
 
                     if (allRequestEmail) {
 
@@ -357,16 +357,16 @@ exports.getUserWithFriend = async (req, res, next) => {
 
                     for (const getOriginalData of finalData) {
 
-                        const response = {
-                            _id: getOriginalData._id,
-                            email: getOriginalData.email,
-                            firstName: getOriginalData.firstName,
-                            profile: getOriginalData.photo[0] ? getOriginalData.photo[0].res : "",
-                            status: 3,
+                        // const response = {
+                        //     _id: getOriginalData._id,
+                        //     email: getOriginalData.email,
+                        //     firstName: getOriginalData.firstName,
+                        //     profile: getOriginalData.photo[0] ? getOriginalData.photo[0].res : "",
+                        //     status: 3,
 
-                        }
+                        // }
 
-                        UniqueEmail.push(response);
+                        // UniqueEmail.push(response);
                     }
 
 
