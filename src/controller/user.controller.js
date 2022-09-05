@@ -5680,8 +5680,8 @@ exports.getAllNotification = async (req, res, next) => {
                         now = new Date();
                         var sec_num = (now - userNotificationDate) / 1000;
                         var days = Math.floor(sec_num / (3600 * 24));
-                        var hours = Math.floor((sec_num - (days * (3600 * 24))) / 3600) + 5;
-                        var minutes = Math.floor((sec_num - (days * (3600 * 24)) - (hours * 3600)) / 60) + 5;
+                        var hours = Math.floor((sec_num - (days * (3600 * 24))) / 3600);
+                        var minutes = Math.floor((sec_num - (days * (3600 * 24)) - (hours * 3600)) / 60);
                         var seconds = Math.floor(sec_num - (days * (3600 * 24)) - (hours * 3600) - (minutes * 60));
 
                         if (hours < 10) { hours = "0" + hours; }
