@@ -177,7 +177,7 @@ exports.getCommentSetting = async (req, res, next) => {
             if (findUserInSetting) {
                 const data = {
                     userId: findUserInSetting.userId,
-                    commentAccess: findUserInSetting.fullAccess,
+                    commentAccess: findUserInSetting.commentAccess,
                 }
 
                 console.log(data);

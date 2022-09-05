@@ -547,7 +547,7 @@ exports.invitedInSession = async (req, res, next) => {
                     const createdSessionUserDetail = {
                         _id: findInvited._id,
                         cretedSessionUserId: createdSessionUser._id,
-                        cretedSessionUsername: createdSessionUser.firstName,
+                        cretedSessionUsername: createdSessionUser.firstName,    
                         isLive: findInvited.isLive,
                         RoomType: findInvited.RoomType,
                         selectedTime: findInvited.selectedTime,
