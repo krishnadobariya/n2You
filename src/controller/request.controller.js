@@ -834,21 +834,26 @@ exports.userAcceptedRequesteOrNot = async (req, res, next) => {
                 const findUser1InNotiofication = await notificationModel.findOne({
                     userId: findUserWhichAcceptRequest._id
                 })
-
-                console.log("findUser1InNotiofication", findUser1InNotiofication);
                 const findUserInNotiofication = await notificationModel.findOne({
                     userId: findUser._id
                 })
 
-                await notificationModel.deleteOne({
-                    userId: req.params.user_id,
-                    notifications: {
-                        $elemMatch: {
-                            userId: req.params.id,
-                            status: 1
+
+
+                await notificationModel.updateOne(
+                    {
+                        userId: req.params.id
+                    },
+                    {
+                        $pull: {
+                            notifications: {
+                                userId: req.params.user_id,
+                                status: 1
+                            }
                         }
                     }
-                })
+
+                )
 
                 if (findUserInNotiofication) {
                     await notificationModel.updateOne({
@@ -889,7 +894,6 @@ exports.userAcceptedRequesteOrNot = async (req, res, next) => {
                         }
                     })
                 } else {
-                    console.log("sdf");
                     const data = notificationModel({
                         userId: findUserWhichAcceptRequest._id,
                         notifications: {
