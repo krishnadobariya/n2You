@@ -838,22 +838,22 @@ exports.userAcceptedRequesteOrNot = async (req, res, next) => {
                     userId: findUser._id
                 })
 
+                console.log("findUser1InNotiofication", findUser1InNotiofication);
 
-
-                await notificationModel.updateOne(
-                    {
-                        userId: req.params.id
-                    },
-                    {
-                        $pull: {
-                            notifications: {
-                                userId: req.params.user_id,
-                                status: 1
-                            }
+                await notificationModel.updateOne({
+                    userId: req.params.user_id,
+                    notifications: {
+                        $elemMatch: {
+                            userId: req.params.id,
+                            status: 1
                         }
                     }
-
-                )
+                }, {
+                    $set: {
+                        "notifications.$.status": 9,
+                        "notifications.$.notifications": `${findUserWhichAcceptRequest.firstName} accepted your request`
+                    }
+                })
 
                 if (findUserInNotiofication) {
                     await notificationModel.updateOne({
@@ -868,11 +868,10 @@ exports.userAcceptedRequesteOrNot = async (req, res, next) => {
                         }
                     })
                 } else {
-                    console.log("findUser1InNotiofication", findUser1InNotiofication);
                     const data = notificationModel({
                         userId: findUser._id,
                         notifications: {
-                            notifications: `${findUserWhichAcceptRequest.firstName} accepted your request`,
+                            notifications: `${findUser1InNotiofication.firstName} accepted your request`,
                             userId: findUserWhichAcceptRequest._id,
                             status: 2
                         }
@@ -895,7 +894,7 @@ exports.userAcceptedRequesteOrNot = async (req, res, next) => {
                     })
                 } else {
                     const data = notificationModel({
-                        userId: findUserWhichAcceptRequest._id,
+                        userId: findUser._id,
                         notifications: {
                             notifications: `${findUser.firstName}, ${findUserWhichAcceptRequest.firstName}  both are become friend`,
                             userId: findUser._id,
