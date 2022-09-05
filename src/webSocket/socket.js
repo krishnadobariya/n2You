@@ -12,6 +12,7 @@ const conflictModel = require("../model/polyamorous/conflict.model");
 const notificationModel = require("../model/polyamorous/notification.model");
 const requestModel = require("../model/requests.model");
 const videoCallModel = require("./models/videoCall.model");
+const { deleteOne } = require("../model/user.model");
 function socket(io) {
 
     console.log("socket connected...");
@@ -1776,18 +1777,25 @@ function socket(io) {
 
                     await saveData.save();
 
+                    const sender = await userModel.findOne({
+                        _id: arg.sender_id
+                    })
+
+                    const videoCallData = {
+                        chatRoomId: arg.chat_room_id,
+                        senderId: arg.sender_id,
+                        receiverId: arg.receiver_id,
+                        userName: sender.firstName,
+                        image: sender.photo ? sender.photo[0].res : ''
+                    }
 
                     const userRoom = `User${arg.receiver_id}`
-                    io.to(userRoom).emit("videoCallReceive", `create video call!`);
+                    io.to(userRoom).emit("videoCallReceive", videoCallData);
 
                     const receiver = await userModel.findOne({
                         _id: arg.receiver_id
                     })
 
-                    const sender = await userModel.findOne({
-                        _id: arg.sender_id
-                    })
-                    checkRequestedEmail
                     const fcm_token = receiver.fcm_token
                     const title = "video call Request";
                     const body = `${sender.firstName} join video call.`;
@@ -1810,8 +1818,81 @@ function socket(io) {
             }
 
         })
+
+        socket.on('videoCallEnd', async (arg) => {
+
+            const findChatRoom = await chatRoomModel.findOne({
+                _id: arg.chat_room_id
+            })
+            if (findChatRoom) {
+
+                const findData = await videoCallModel.findOne({
+                    chatRoomId: arg.chat_room_id,
+                    senderId: arg.sender_id,
+                    receiverId: arg.receiver_id
+                })
+
+                if (findData) {
+
+                    await videoCallModel.deleteOne({
+                        chatRoomId: arg.chat_room_id,
+                        senderId: arg.sender_id,
+                        receiverId: arg.receiver_id
+                    })
+
+                    const sender = await userModel.findOne({
+                        _id: arg.sender_id
+                    })
+
+                    const videoCallData = {
+                        chatRoomId: arg.chat_room_id,
+                        senderId: arg.sender_id,
+                        receiverId: arg.receiver_id,
+                        userName: sender.firstName,
+                        image: sender.photo ? sender.photo[0].res : ''
+                    }
+
+                    const userRoom = `User${arg.receiver_id}`
+                    io.to(userRoom).emit("endVideoCall", videoCallData);
+
+                    const receiver = await userModel.findOne({
+                        _id: arg.receiver_id
+                    })
+                    const fcm_token = receiver.fcm_token
+                    const title = "video call End Request";
+                    const body = `${sender.firstName} End video call.`;
+                    const text = `${sender.firstName} End video call.`;
+                    const sendBy = arg.sender_id;
+                    const registrationToken = fcm_token
+
+                    Notification.sendPushNotificationFCM(
+                        registrationToken,
+                        title,
+                        body,
+                        text,
+                        sendBy,
+                        true
+                    );
+
+
+                    io.emit("endVideoCall", "already ceated video call!")
+                } else {
+
+                    io.emit("endVideoCall", "not Create Any Video Call!")
+
+                }
+
+            } else {
+                io.emit("endVideoCall", "Room not Found!")
+            }
+
+        })
+
     })
 }
+
+
+
 
 module.exports = socket
 

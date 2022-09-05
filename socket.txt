@@ -155,10 +155,28 @@ getRequest
 videoCall
 
 {
-"chatRoomId" :"",
-"senderId":"",
-"receiverId": "",
+     "chat_room_id": "6311f53df07be0cc369baa0d",
+     "sender_id" : "6311b1315bc32c9f0595d9db",
+     "receiver_id": "630d85c3135e093447567161"
 }
 
 
 videoCallReceive
+
+
+=====================================================
+
+==> videoCallEnd
+
+=====================================================
+
+videoCallEnd
+
+{
+     "chat_room_id": "6311f53df07be0cc369baa0d",
+     "sender_id" : "6311b1315bc32c9f0595d9db",
+     "receiver_id": "630d85c3135e093447567161"
+}
+
+
+endVideoCall
