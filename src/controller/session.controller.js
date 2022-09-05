@@ -6,6 +6,7 @@ const e = require("express");
 const notificationModel = require("../model/polyamorous/notification.model");
 const requestsModel = require("../model/requests.model");
 const { default: mongoose } = require("mongoose");
+const cron = require("node-cron");
 
 exports.sessionCreate = async (req, res, next) => {
     try {
@@ -71,6 +72,7 @@ exports.sessionCreate = async (req, res, next) => {
                 if (p3 != "") {
                     invitedUsers.push(mongoose.Types.ObjectId(req.body.participants_3))
                 }
+
 
 
                 for (const notification of allRequestedEmails) {
@@ -214,8 +216,6 @@ exports.sessionCreate = async (req, res, next) => {
         )
     }
 }
-
-
 
 exports.publicSession = async (req, res, next) => {
     try {
@@ -451,7 +451,7 @@ exports.invitedInSession = async (req, res, next) => {
                         RoomType: findInvited.RoomType,
                         selectedTime: findInvited.selectedTime,
                         selectedDate: findInvited.selectedDate,
-                        cretedSessionUserphoto:  createdSessionUser.photo ? createdSessionUser.photo[0].res : "",
+                        cretedSessionUserphoto: createdSessionUser.photo ? createdSessionUser.photo[0].res : "",
                         participants: [{
                             _id: participants_2 == null ? "" : participants_2._id,
                             photo: participants_2.photo ? participants_2.photo[0].res : "",
@@ -582,7 +582,7 @@ exports.invitedInSession = async (req, res, next) => {
                 }
 
             } else if (findInvited.participants[0].participants_3 == req.params.user_id) {
-              
+
                 const createdSessionUser = await userModel.findOne({
                     _id: findInvited.cretedSessionUser,
                     polyDating: 0

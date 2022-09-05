@@ -2814,18 +2814,22 @@ exports.userAllFriendPost = async (req, res, next) => {
                 userId: req.params.user_id
             })
 
-            console.log("getNotification", getNotification);
-            var count = 0
-            for (const allNotification of getNotification.notifications) {
-                count = count + allNotification.read;
+            if (getNotification) {
+                var count = 0
+                for (const allNotification of getNotification.notifications) {
+                    count = count + allNotification.read;
+                }
+            } else {
+                var count = 0
             }
-            console.log("count", count);
+
+
             res.status(status.OK).json(
                 new APIResponse("show all post When accept by the user", "true", 201, "1", final_data.sort((a, b) => b.posts.createdAt - a.posts.createdAt), count.toString())
             )
         } else if (user) {
 
-            console.log("fwefwefwerf");
+
             const meargAllTable = await userModal.aggregate([{
                 $match: {
                     _id: mongoose.Types.ObjectId(req.params.user_id)
