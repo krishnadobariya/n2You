@@ -1838,12 +1838,17 @@ exports.getAllUser = async (req, res, next) => {
                 const limit = parseInt(req.query.limit)
                 const startIndex = (page - 1) * limit;
                 const endIndex = page * limit;
+                const data = final_response.length;
+                const pageCount = Math.ceil(data / limit);
+                res.status(status.OK).json({
+                    "message": "show all record searchwise",
+                    "status": true,
+                    "code": 201,
+                    "statusCode": 1,
+                    "pageCount": pageCount,
+                    "data": final_response.slice(startIndex, endIndex)
 
-
-
-                res.status(status.OK).json(
-                    new APIResponse("show all record searchwise", true, 201, 1, final_response.slice(startIndex, endIndex))
-                )
+                })
             }
         }
 

@@ -1,5 +1,5 @@
 class APIResponse {
-    constructor(message = '', status = false, code = 200, statusCode = 1, data = null, notificationCount = 0, error = null) {
+    constructor(message = '', status = false, code = 200, statusCode = 1, data = null,  notificationCount = 0,  error = null) {
         if (message) {
             this.message = message
         }
