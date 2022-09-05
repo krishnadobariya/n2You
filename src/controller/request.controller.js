@@ -838,8 +838,6 @@ exports.userAcceptedRequesteOrNot = async (req, res, next) => {
                     userId: findUser._id
                 })
 
-                console.log("findUser1InNotiofication", findUser1InNotiofication);
-
                 await notificationModel.updateOne({
                     userId: req.params.user_id,
                     notifications: {
@@ -871,7 +869,7 @@ exports.userAcceptedRequesteOrNot = async (req, res, next) => {
                     const data = notificationModel({
                         userId: findUser._id,
                         notifications: {
-                            notifications: `${findUser1InNotiofication.firstName} accepted your request`,
+                            notifications: `${findUserWhichAcceptRequest.firstName} accepted your request`,
                             userId: findUserWhichAcceptRequest._id,
                             status: 2
                         }
