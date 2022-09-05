@@ -146,11 +146,17 @@ exports.groupList = async (req, res, next) => {
         const limit = parseInt(req.query.limit)
         const startIndex = (page - 1) * limit;
         const endIndex = page * limit;
+        const data = finalData[0].length;
+        const pageCount = Math.ceil(data / limit);
+        res.status(status.OK).json({
+            "message": "all group",
+            "status": true,
+            "code": 200,
+            "statusCode": 1,
+            "pageCount": pageCount,
+            "data": finalData[0].slice(startIndex, endIndex)
 
-        res.status(status.OK).json(
-            new APIResponse("all group", true, 200, 1, finalData[0].slice(startIndex, endIndex))
-        );
-
+        })
     } catch (error) {
         console.log("Error:", error);
         res.status(status.INTERNAL_SERVER_ERROR).json(

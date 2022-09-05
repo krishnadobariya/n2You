@@ -275,7 +275,8 @@ exports.getUserWhichNotChoiceForLikeOrDislike = async (req, res, next) => {
                     const limit = parseInt(req.query.limit)
                     const startIndex = (page - 1) * limit;
                     const endIndex = page * limit;
-
+                    const data = response.length;
+                    const pageCount = Math.ceil(data / limit);
                     // if (endIndex < response.length) {
                     //     results.next = {
                     //         page: page + 1,
@@ -290,10 +291,15 @@ exports.getUserWhichNotChoiceForLikeOrDislike = async (req, res, next) => {
                     //     };
                     // }
 
-                    res.status(status.OK).json(
-                        new APIResponse("get user", "true", 200, "1", response.slice(startIndex, endIndex))
-                    );
-
+                    res.status(status.OK).json({
+                        "message": "get user",
+                        "status": true,
+                        "code": 201,
+                        "statusCode": 1,
+                        "pageCount": pageCount,
+                        "data": response.slice(startIndex, endIndex)
+    
+                    })
                 } else {
                     res.status(status.NOT_FOUND).json(
                         new APIResponse("This User Not polyamorous!", "false", 404, "0")

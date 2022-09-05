@@ -380,12 +380,17 @@ exports.publicSession = async (req, res, next) => {
             const limit = parseInt(req.query.limit)
             const startIndex = (page - 1) * limit;
             const endIndex = page * limit;
+            const data = publicSession.length;
+            const pageCount = Math.ceil(data / limit);
+            res.status(status.OK).json({
+                "message": "successfully Show All Public Session!",
+                "status": true,
+                "code": 200,
+                "statusCode": 1,
+                "pageCount": pageCount == NaN ? 0 : pageCount,
+                "data": publicSession.slice(startIndex, endIndex).sort((a, b) => new Date(a.selectedDate) - new Date(b.selectedDate))
 
-            res.status(status.OK).json(
-                new APIResponse("successfully Show All Public Session!", "true", 200, "1", publicSession.slice(startIndex, endIndex).sort((a, b) => new Date(a.selectedDate) - new Date(b.selectedDate)))
-            )
-
-
+            })
         }
 
     } catch (error) {
@@ -547,7 +552,7 @@ exports.invitedInSession = async (req, res, next) => {
                     const createdSessionUserDetail = {
                         _id: findInvited._id,
                         cretedSessionUserId: createdSessionUser._id,
-                        cretedSessionUsername: createdSessionUser.firstName,    
+                        cretedSessionUsername: createdSessionUser.firstName,
                         isLive: findInvited.isLive,
                         RoomType: findInvited.RoomType,
                         selectedTime: findInvited.selectedTime,
@@ -675,16 +680,29 @@ exports.invitedInSession = async (req, res, next) => {
         const limit = parseInt(req.query.limit)
         const startIndex = (page - 1) * limit;
         const endIndex = page * limit;
-
+        const data = allInvited.length;
+        const pageCount = Math.ceil(data / limit);
 
         if (allInvited[0] == undefined) {
-            res.status(status.OK).json(
-                new APIResponse("Not have any Invited!", "true", 200, "1", [])
-            )
+            res.status(status.OK).json({
+                "message": "Not have any Invited!",
+                "status": true,
+                "code": 200,
+                "statusCode": 1,
+                "pageCount": 0,
+                "data": []
+    
+            })
         } else {
-            res.status(status.OK).json(
-                new APIResponse("successfully Show All Invited Session!", "true", 200, "1", allInvited.slice(startIndex, endIndex).sort((a, b) => new Date(a.selectedDate) - new Date(b.selectedDate)))
-            )
+            res.status(status.OK).json({
+                "message": "successfully Show All Invited Session!",
+                "status": true,
+                "code": 200,
+                "statusCode": 1,
+                "pageCount": pageCount == NaN ? 0 : pageCount,
+                "data": allInvited.slice(startIndex, endIndex).sort((a, b) => new Date(a.selectedDate) - new Date(b.selectedDate))
+    
+            })
         }
 
 
@@ -856,16 +874,29 @@ exports.mySession = async (req, res, next) => {
         const limit = parseInt(req.query.limit)
         const startIndex = (page - 1) * limit;
         const endIndex = page * limit;
-
+        const data = mySession.length;
+        const pageCount = Math.ceil(data / limit);
 
         if (mySession[0] == undefined) {
-            res.status(status.OK).json(
-                new APIResponse("I don't create Any Session!", "true", 200, "1", [])
-            )
+            res.status(status.OK).json({
+                "message": "I don't create Any Session!",
+                "status": true,
+                "code": 200,
+                "statusCode": 1,
+                "pageCount": 0,
+                "data": []
+    
+            })
         } else {
-            res.status(status.OK).json(
-                new APIResponse("successfully Show All My Session!", "true", 200, "1", mySession.slice(startIndex, endIndex).sort((a, b) => new Date(a.selectedDate) - new Date(b.selectedDate)))
-            )
+            res.status(status.OK).json({
+                "message": "successfully Show All My Session!",
+                "status": true,
+                "code": 200,
+                "statusCode": 1,
+                "pageCount": pageCount == NaN ? 0 : pageCount,
+                "data": mySession.slice(startIndex, endIndex).sort((a, b) => new Date(a.selectedDate) - new Date(b.selectedDate))
+    
+            })
         }
 
     } catch (error) {

@@ -82,7 +82,8 @@ exports.getUserWithChat = async (req, res, next) => {
         const limit = parseInt(req.query.limit)
         const startIndex = (page - 1) * limit;
         const endIndex = page * limit;
-        console.log(findRoom);
+
+
         if (findRoom != null) {
             const chat = findRoom.chat;
             for (const finalchat of chat) {
@@ -94,13 +95,29 @@ exports.getUserWithChat = async (req, res, next) => {
                 }
                 allChat.push(response)
             }
-            res.status(status.OK).json(
-                new APIResponse("show all record with chat", "true", 201, "1", startIndex ? allChat.slice(startIndex, endIndex) : allChat)
-            )
+
+            const data = allChat.length;
+            const pageCount = Math.ceil(data / limit);
+            console.log("pageCount", pageCount);
+            res.status(status.OK).json({
+                "message": "show all record with chat",
+                "status": true,
+                "code": 201,
+                "statusCode": 1,
+                "pageCount": pageCount == NaN ? 0 : pageCount,
+                "data": startIndex ? allChat.slice(startIndex, endIndex) : allChat
+
+            })
         } else {
-            res.status(status.OK).json(
-                new APIResponse("show all record with chat", "true", 201, "1", [])
-            )
+            res.status(status.OK).json({
+                "message": "show all record with chat",
+                "status": true,
+                "code": 201,
+                "statusCode": 1,
+                "pageCount": 0,
+                "data": []
+
+            })
         }
     } catch (error) {
         console.log("Error:", error);
@@ -311,13 +328,23 @@ exports.allUserListWithUnreadCount = async (req, res, next) => {
         const limit = parseInt(req.query.limit)
         const startIndex = (page - 1) * limit;
         const endIndex = page * limit;
+        const data = uniqueObjArray.length;
+        const pageCount = Math.ceil(data / limit);
         // console.log("uniqueObjArray", uniqueObjArray);
 
         // console.log(data);
         // console.log("date is", new Date(data));
-        res.status(status.OK).json(
-            new APIResponse("all group", true, 200, 1, uniqueObjArray.slice(startIndex, endIndex).sort((a, b) => new Date(b.dateAndTime) - new Date(a.dateAndTime)))
-        );
+        res.status(status.OK).json({
+            "message": "all group",
+            "status": true,
+            "code": 200,
+            "statusCode": 1,
+            "pageCount": pageCount == NaN ? 0 : pageCount,
+            "data": uniqueObjArray.slice(startIndex, endIndex).sort((a, b) => new Date(b.dateAndTime) - new Date(a.dateAndTime))
+
+        })
+
+
         // getAllChrRoomForPericularUser =
         // if (findData == null) {
         //     const findData = await chatRoomModel.findOne({

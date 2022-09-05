@@ -1468,13 +1468,18 @@ exports.getAllUser = async (req, res, next) => {
                 const limit = parseInt(req.query.limit)
                 const startIndex = (page - 1) * limit;
                 const endIndex = page * limit;
+                const data = UniqueEmail.length;
+                const pageCount = Math.ceil(data / limit);
 
+                res.status(status.OK).json({
+                    "message": "show all User",
+                    "status": true,
+                    "code": 200,
+                    "statusCode": 1,
+                    "pageCount": pageCount == NaN ? 0 : pageCount,
+                    "data": UniqueEmail.slice(startIndex, endIndex)
 
-                res.status(status.OK).json(
-                    new APIResponse("show all User", true, 201, 1, UniqueEmail.slice(startIndex, endIndex))
-                )
-
-
+                })
             } else {
 
                 const emailGet = [];
