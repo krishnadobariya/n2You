@@ -1853,7 +1853,7 @@ function socket(io) {
                     }
 
                     const userRoom = `User${arg.receiver_id}`
-                    io.to(userRoom).emit("endVideoCall", videoCallData);
+                    io.to(userRoom).emit("videoCallEndReceive", videoCallData);
 
                     const receiver = await userModel.findOne({
                         _id: arg.receiver_id
@@ -1875,15 +1875,15 @@ function socket(io) {
                     );
 
 
-                    io.emit("endVideoCall", "already ceated video call!")
+                    io.emit("videoCallEndReceive", "already ceated video call!")
                 } else {
 
-                    io.emit("endVideoCall", "not Create Any Video Call!")
+                    io.emit("videoCallEndReceive", "not Create Any Video Call!")
 
                 }
 
             } else {
-                io.emit("endVideoCall", "Room not Found!")
+                io.emit("videoCallEndReceive", "Room not Found!")
             }
 
         })
