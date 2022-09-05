@@ -171,9 +171,7 @@ exports.getCommentSetting = async (req, res, next) => {
             const findUserInSetting = await settingModel.findOne({
                 userId: req.params.user_id
             })
-
-            console.log("findUserInSetting", findUserInSetting);
-
+            
             if (findUserInSetting) {
                 const data = {
                     userId: findUserInSetting.userId,

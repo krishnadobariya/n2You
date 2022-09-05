@@ -180,3 +180,18 @@ videoCallEnd
 
 
 videoCallEndReceive
+
+
+======================================================
+
+==> acceptVideoCall
+
+======================================================
+
+acceptVideoCall
+
+{
+    "chat_room_id" : "6311f53df07be0cc369baa0d"
+}
+
+acceptVideoCallReceive

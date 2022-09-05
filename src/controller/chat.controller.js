@@ -4,6 +4,7 @@ const chatModels = require("../webSocket/models/chat.models");
 const { default: mongoose, get } = require("mongoose");
 const chatRoomModel = require("../webSocket/models/chatRoom.model");
 const userModel = require("../model/user.model");
+const videoCallModel = require("../webSocket/models/videoCall.model");
 
 exports.readChat = async (req, res, next) => {
     try {
@@ -12,7 +13,7 @@ exports.readChat = async (req, res, next) => {
             "chat.sender": req.params.user_id
         })
         for (const [key, getSenderChat] of findRoom.chat.entries()) {
-            
+
             if ((getSenderChat.sender).toString() == (req.params.user_id).toString()) {
 
                 const updatePosts = await chatModels.updateOne(
@@ -533,6 +534,61 @@ exports.allUserListWithUnreadCount = async (req, res, next) => {
 
         // }
 
+
+
+    } catch (error) {
+        console.log("Error:", error);
+        res.status(status.INTERNAL_SERVER_ERROR).json(
+            new APIResponse("Something Went Wrong", "false", 500, "0", error.message)
+        );
+    }
+}
+
+
+exports.inAcallOrNot = async (req, res, next) => {
+    try {
+
+        const findChatRoomModel = await videoCallModel.findOne({
+            chatRoomId: req.params.chat_room_id
+        })
+
+        if (findChatRoomModel) {
+
+            if (findChatRoomModel.accepted == 1) {
+
+                const sender = await userModel.findOne({
+                    _id: findChatRoomModel.senderId
+                })
+
+                const receiver = await userModel.findOne({
+                    _id: findChatRoomModel.receiverId
+                })
+
+                const userDetail = {
+                    senderId: sender._id,
+                    senderName: sender.firstName,
+                    senderProfile: sender.photo ? sender.photo[0].res : "",
+                    receiverId: receiver._id,
+                    receiverName: receiver.firstName,
+                    receiverProfile: receiver.photo ? receiver.photo[0].res : "",
+                    chatRoomId: req.params.chat_room_id
+                }
+
+                res.status(status.OK).json(
+                    new APIResponse("not join video call!", "true", 200, "1", userDetail)
+                );
+
+            } else {
+                res.status(status.OK).json(
+                    new APIResponse("not join video call!", "true", 200, "1")
+                );
+            }
+
+        } else {
+            res.status(status.NOT_FOUND).json(
+                new APIResponse("not create video call!", "false", 404, "0")
+            );
+        }
 
 
     } catch (error) {

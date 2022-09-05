@@ -12,7 +12,7 @@ const conflictModel = require("../model/polyamorous/conflict.model");
 const notificationModel = require("../model/polyamorous/notification.model");
 const requestModel = require("../model/requests.model");
 const videoCallModel = require("./models/videoCall.model");
-const { deleteOne } = require("../model/user.model");
+const { deleteOne, updateOne } = require("../model/user.model");
 function socket(io) {
 
     console.log("socket connected...");
@@ -1825,7 +1825,6 @@ function socket(io) {
                 _id: arg.chat_room_id
             })
             if (findChatRoom) {
-
                 const findData = await videoCallModel.findOne({
                     chatRoomId: arg.chat_room_id,
                     senderId: arg.sender_id,
@@ -1884,6 +1883,40 @@ function socket(io) {
 
             } else {
                 io.emit("videoCallEndReceive", "Room not Found!")
+            }
+
+        })
+
+        socket.on('acceptVideoCall', async (arg) => {
+
+            const findChatRoom = await chatRoomModel.findOne({
+                _id: arg.chat_room_id
+            })
+            if (findChatRoom) {
+
+                const findData = await videoCallModel.findOne({
+                    chatRoomId: arg.chat_room_id
+                })
+
+                if (findData) {
+
+                    await videoCallModel.updateOne({
+                        chatRoomId: arg.chat_room_id
+                    }, {
+                        $set: {
+                            accepted: 1
+                        }
+                    })
+
+                    io.emit("acceptVideoCallReceive", "accepted request!")
+                } else {
+
+                    io.emit("acceptVideoCallReceive", "not Create Any Video Call!")
+
+                }
+
+            } else {
+                io.emit("acceptVideoCallReceive", "Room not Found!")
             }
 
         })

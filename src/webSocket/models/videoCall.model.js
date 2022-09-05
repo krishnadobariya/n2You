@@ -16,6 +16,10 @@ const videoCallSchema = mongoose.Schema({
         required: true,
         ref: 'User',
     },
+    accepted: {
+        type: Number,
+        default: 0
+    }
 }, {
     timestamps: true
 }, {
