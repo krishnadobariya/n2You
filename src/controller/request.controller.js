@@ -838,6 +838,8 @@ exports.userAcceptedRequesteOrNot = async (req, res, next) => {
                     userId: findUser._id
                 })
 
+                console.log("findUser1InNotiofication", findUser1InNotiofication);
+
                 await notificationModel.updateOne({
                     userId: req.params.user_id,
                     notifications: {
@@ -849,34 +851,34 @@ exports.userAcceptedRequesteOrNot = async (req, res, next) => {
                 }, {
                     $set: {
                         "notifications.$.status": 9,
-                        "notifications.$.notifications": `${findUserWhichAcceptRequest.firstName} accepted request`
+                        "notifications.$.notifications": `${findUserWhichAcceptRequest.firstName} accepted your request`
                     }
                 })
 
-                if (findUserInNotiofication) {
-                    await notificationModel.updateOne({
-                        userId: findUser._id
-                    }, {
-                        $push: {
-                            notifications: {
-                                notifications: `${findUser1InNotiofication.firstName} accepted your request`,
-                                userId: findUserWhichAcceptRequest._id,
-                                status: 2
-                            }
-                        }
-                    })
-                } else {
-                    const data = notificationModel({
-                        userId: findUser._id,
-                        notifications: {
-                            notifications: `${findUser1InNotiofication.firstName} accepted your request`,
-                            userId: findUserWhichAcceptRequest._id,
-                            status: 2
-                        }
-                    })
+                // if (findUserInNotiofication) {  
+                //     await notificationModel.updateOne({
+                //         userId: findUser._id
+                //     }, {
+                //         $push: {
+                //             notifications: {
+                //                 notifications: `${findUser1InNotiofication.firstName} accepted your request`,
+                //                 userId: findUserWhichAcceptRequest._id,
+                //                 status: 2
+                //             }
+                //         }
+                //     })
+                // } else {
+                //     const data = notificationModel({
+                //         userId: findUser._id,
+                //         notifications: {
+                //             notifications: `${findUser1InNotiofication.firstName} accepted your request`,
+                //             userId: findUserWhichAcceptRequest._id,
+                //             status: 2
+                //         }
+                //     })
 
-                    await data.save();
-                }
+                //     await data.save();
+                // }
 
                 if (findUser1InNotiofication) {
                     await notificationModel.updateOne({
