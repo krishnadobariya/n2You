@@ -180,7 +180,7 @@ exports.getCommentSetting = async (req, res, next) => {
 
                 console.log(data);
                 res.status(status.OK).json(
-                    new APIResponse("get comment Setting", "true", 200, "1", data)
+                    new APIResponse("get Comment Setting", "true", 200, "1", data)
                 );
             } else {
 

@@ -61,8 +61,6 @@ exports.sessionCreate = async (req, res, next) => {
                     }
 
                 }
-
-
                 const invitedUsers = [];
                 if (p1 != "") {
                     invitedUsers.push(mongoose.Types.ObjectId(req.body.participants_1))
@@ -413,7 +411,6 @@ exports.invitedInSession = async (req, res, next) => {
 
             if (findInvited.participants[0].participants_1 == req.params.user_id) {
 
-
                 const createdSessionUser = await userModel.findOne({
                     _id: findInvited.cretedSessionUser,
                     polyDating: 0
@@ -437,10 +434,10 @@ exports.invitedInSession = async (req, res, next) => {
                         RoomType: findInvited.RoomType,
                         selectedTime: findInvited.selectedTime,
                         selectedDate: findInvited.selectedDate,
-                        cretedSessionUserphoto: createdSessionUser.photo[0] ? createdSessionUser.photo[0].res : "",
+                        cretedSessionUserphoto: createdSessionUser.photo ? createdSessionUser.photo[0].res : "",
                         participants: [{
                             _id: participants_3 == null ? "" : participants_3._id,
-                            photo: participants_3 == undefined || participants_3.photo[0] ? "" : participants_3.photo ? participants_3.photo[0].res : "",
+                            photo: participants_3.photo ? participants_3.photo[0].res : "",
                             name: participants_3 == null ? "" : participants_3.firstName
                         }]
                     }
@@ -454,10 +451,10 @@ exports.invitedInSession = async (req, res, next) => {
                         RoomType: findInvited.RoomType,
                         selectedTime: findInvited.selectedTime,
                         selectedDate: findInvited.selectedDate,
-                        cretedSessionUserphoto: createdSessionUser.photo[0] ? createdSessionUser.photo[0].res : "",
+                        cretedSessionUserphoto:  createdSessionUser.photo ? createdSessionUser.photo[0].res : "",
                         participants: [{
                             _id: participants_2 == null ? "" : participants_2._id,
-                            photo: participants_2 == undefined || participants_2.photo[0] ? "" : participants_2.photo ? participants_2.photo[0].res : "",
+                            photo: participants_2.photo ? participants_2.photo[0].res : "",
                             name: participants_2 == null ? "" : participants_2.firstName
                         }]
                     }
@@ -471,15 +468,15 @@ exports.invitedInSession = async (req, res, next) => {
                         RoomType: findInvited.RoomType,
                         selectedTime: findInvited.selectedTime,
                         selectedDate: findInvited.selectedDate,
-                        cretedSessionUserphoto: createdSessionUser.photo[0] ? createdSessionUser.photo[0].res : "",
+                        cretedSessionUserphoto: createdSessionUser.photo ? createdSessionUser.photo[0].res : "",
                         participants: [{
                             _id: participants_2 == null ? "" : participants_2._id,
-                            photo: participants_2 == undefined || participants_2.photo[0] ? "" : participants_2.photo ? participants_2.photo[0].res : "",
+                            photo: participants_2.photo ? participants_2.photo[0].res : "",
                             name: participants_2 == null ? "" : participants_2.firstName
                         },
                         {
                             _id: participants_3 == null ? "" : participants_3._id,
-                            photo: participants_3 == undefined || participants_3.photo[0] ? "" : participants_3.photo ? participants_3.photo[0].res : "",
+                            photo: participants_3.photo ? participants_3.photo[0].res : "",
                             name: participants_3 == null ? "" : participants_3.firstName
                         }]
                     }
@@ -493,7 +490,7 @@ exports.invitedInSession = async (req, res, next) => {
                         RoomType: findInvited.RoomType,
                         selectedTime: findInvited.selectedTime,
                         selectedDate: findInvited.selectedDate,
-                        cretedSessionUserphoto: createdSessionUser.photo[0] ? createdSessionUser.photo[0].res : "",
+                        cretedSessionUserphoto: createdSessionUser.photo ? createdSessionUser.photo[0].res : "",
                         participants: []
                     }
                     allInvited.push(createdSessionUserDetail)
@@ -522,10 +519,10 @@ exports.invitedInSession = async (req, res, next) => {
                         RoomType: findInvited.RoomType,
                         selectedTime: findInvited.selectedTime,
                         selectedDate: findInvited.selectedDate,
-                        cretedSessionUserphoto: createdSessionUser.photo[0] ? createdSessionUser.photo[0].res : "",
+                        cretedSessionUserphoto: createdSessionUser.photo ? createdSessionUser.photo[0].res : "",
                         participants: [{
                             _id: participants_3 == null ? "" : participants_3._id,
-                            photo: participants_3 == undefined || participants_3.photo[0] ? "" : participants_3.photo ? participants_3.photo[0].res : "",
+                            photo: participants_3.photo ? participants_3.photo[0].res : "",
                             name: participants_3 == null ? "" : participants_3.firstName
                         }]
                     }
@@ -539,10 +536,10 @@ exports.invitedInSession = async (req, res, next) => {
                         RoomType: findInvited.RoomType,
                         selectedTime: findInvited.selectedTime,
                         selectedDate: findInvited.selectedDate,
-                        cretedSessionUserphoto: createdSessionUser.photo[0] ? createdSessionUser.photo[0].res : "",
+                        cretedSessionUserphoto: createdSessionUser.photo ? createdSessionUser.photo[0].res : "",
                         participants: [{
                             _id: participants_1 == null ? "" : participants_1._id,
-                            photo: participants_1 == undefined || participants_1.photo[0] ? "" : participants_1.photo ? participants_1.photo[0].res : "",
+                            photo: participants_1.photo ? participants_1.photo[0].res : "",
                             name: participants_1 == null ? "" : participants_1.firstName
                         }]
                     }
@@ -557,14 +554,14 @@ exports.invitedInSession = async (req, res, next) => {
                         RoomType: findInvited.RoomType,
                         selectedTime: findInvited.selectedTime,
                         selectedDate: findInvited.selectedDate,
-                        cretedSessionUserphoto: createdSessionUser.photo[0] ? createdSessionUser.photo[0].res : "",
+                        cretedSessionUserphoto: createdSessionUser.photo ? createdSessionUser.photo[0].res : "",
                         participants: [{
                             _id: participants_1 == null ? "" : participants_1._id,
-                            photo: participants_1 == undefined || participants_1.photo[0] ? "" : participants_1.photo ? participants_1.photo[0].res : "",
+                            photo: participants_1.photo ? participants_1.photo[0].res : "",
                             name: participants_1 == null ? "" : participants_1.firstName
                         }, {
                             _id: participants_3 == null ? "" : participants_3._id,
-                            photo: participants_3 == undefined || participants_3.photo[0] ? "" : participants_3.photo ? participants_3.photo[0].res : "",
+                            photo: participants_3.photo ? participants_3.photo[0].res : "",
                             name: participants_3 == null ? "" : participants_3.firstName
                         }]
                     }
@@ -578,13 +575,14 @@ exports.invitedInSession = async (req, res, next) => {
                         RoomType: findInvited.RoomType,
                         selectedTime: findInvited.selectedTime,
                         selectedDate: findInvited.selectedDate,
-                        cretedSessionUserphoto: createdSessionUser.photo[0] ? createdSessionUser.photo[0].res : "",
+                        cretedSessionUserphoto: createdSessionUser.photo ? createdSessionUser.photo[0].res : "",
                         participants: []
                     }
                     allInvited.push(createdSessionUserDetail)
                 }
 
             } else if (findInvited.participants[0].participants_3 == req.params.user_id) {
+              
                 const createdSessionUser = await userModel.findOne({
                     _id: findInvited.cretedSessionUser,
                     polyDating: 0
@@ -607,10 +605,10 @@ exports.invitedInSession = async (req, res, next) => {
                         RoomType: findInvited.RoomType,
                         selectedTime: findInvited.selectedTime,
                         selectedDate: findInvited.selectedDate,
-                        cretedSessionUserphoto: createdSessionUser.photo[0] ? createdSessionUser.photo[0].res : "",
+                        cretedSessionUserphoto: createdSessionUser.photo ? createdSessionUser.photo[0].res : "",
                         participants: [{
                             _id: participants_2 == null ? "" : participants_2._id,
-                            photo: participants_2 == undefined || participants_2.photo[0] ? "" : participants_2.photo ? participants_2.photo[0].res : "",
+                            photo: participants_2.photo ? participants_2.photo[0].res : "",
                             name: participants_2 == null ? "" : participants_2.firstName
                         }]
                     }
@@ -624,20 +622,16 @@ exports.invitedInSession = async (req, res, next) => {
                         RoomType: findInvited.RoomType,
                         selectedTime: findInvited.selectedTime,
                         selectedDate: findInvited.selectedDate,
-                        cretedSessionUserphoto: createdSessionUser.photo[0] ? createdSessionUser.photo[0].res : "",
+                        cretedSessionUserphoto: createdSessionUser.photo ? createdSessionUser.photo[0].res : "",
                         participants: [{
                             _id: participants_1 == null ? "" : participants_1._id,
-                            photo: participants_1 || participants_1.photo[0] == undefined ? "" : participants_1.photo ? participants_1.photo[0].res : "",
+                            photo: participants_1.photo ? participants_1.photo[0].res : "",
                             name: participants_1 == null ? "" : participants_1.firstName
                         }]
                     }
                     allInvited.push(createdSessionUserDetail)
 
                 } else if (participants_1 && participants_2) {
-
-                    console.log("participants_1", participants_1);
-
-
                     const createdSessionUserDetail = {
                         _id: findInvited._id,
                         cretedSessionUserId: createdSessionUser._id,
@@ -646,14 +640,14 @@ exports.invitedInSession = async (req, res, next) => {
                         RoomType: findInvited.RoomType,
                         selectedTime: findInvited.selectedTime,
                         selectedDate: findInvited.selectedDate,
-                        cretedSessionUserphoto: createdSessionUser.photo[0] ? createdSessionUser.photo[0].res : "",
+                        cretedSessionUserphoto: createdSessionUser.photo ? createdSessionUser.photo[0].res : "",
                         participants: [{
                             _id: participants_1 == null ? "" : participants_1._id,
-                            photo: participants_1 || participants_1.photo[0] == undefined ? "" : participants_1.photo ? participants_1.photo[0].res : "",
+                            photo: participants_1.photo ? participants_1.photo[0].res : "",
                             name: participants_1 == null ? "" : participants_1.firstName
                         }, {
                             _id: participants_2 == null ? "" : participants_2._id,
-                            photo: participants_2 || participants_2.photo[0] == undefined ? "" : participants_2.photo ? participants_2.photo[0].res : "",
+                            photo: participants_2.photo ? participants_2.photo[0].res : "",
                             name: participants_2 == null ? "" : participants_2.firstName
                         }]
                     }
@@ -668,7 +662,7 @@ exports.invitedInSession = async (req, res, next) => {
                         RoomType: findInvited.RoomType,
                         selectedTime: findInvited.selectedTime,
                         selectedDate: findInvited.selectedDate,
-                        cretedSessionUserphoto: createdSessionUser.photo[0] ? createdSessionUser.photo[0].res : "",
+                        cretedSessionUserphoto: createdSessionUser.photo ? createdSessionUser.photo[0].res : "",
                         participants: []
                     }
                     allInvited.push(createdSessionUserDetail)
@@ -691,7 +685,7 @@ exports.invitedInSession = async (req, res, next) => {
                 "statusCode": 1,
                 "pageCount": 0,
                 "data": []
-    
+
             })
         } else {
             res.status(status.OK).json({
@@ -701,7 +695,7 @@ exports.invitedInSession = async (req, res, next) => {
                 "statusCode": 1,
                 "pageCount": pageCount == NaN ? 0 : pageCount,
                 "data": allInvited.slice(startIndex, endIndex).sort((a, b) => new Date(a.selectedDate) - new Date(b.selectedDate))
-    
+
             })
         }
 
@@ -885,7 +879,7 @@ exports.mySession = async (req, res, next) => {
                 "statusCode": 1,
                 "pageCount": 0,
                 "data": []
-    
+
             })
         } else {
             res.status(status.OK).json({
@@ -895,7 +889,7 @@ exports.mySession = async (req, res, next) => {
                 "statusCode": 1,
                 "pageCount": pageCount == NaN ? 0 : pageCount,
                 "data": mySession.slice(startIndex, endIndex).sort((a, b) => new Date(a.selectedDate) - new Date(b.selectedDate))
-    
+
             })
         }
 
