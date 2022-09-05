@@ -839,17 +839,13 @@ exports.userAcceptedRequesteOrNot = async (req, res, next) => {
                 })
 
                 await notificationModel.updateOne({
-                    userId: req.params.user_id,
-                    notifications: {
-                        $elemMatch: {
+                    userId: req.params.user_id
+                }, {
+                    $pull: {
+                        notifications: {
                             userId: req.params.id,
                             status: 1
                         }
-                    }
-                }, {
-                    $set: {
-                        "notifications.$.status": 9,
-                        "notifications.$.notifications": `${findUserWhichAcceptRequest.firstName} accepted your request`
                     }
                 })
 
