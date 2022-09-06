@@ -1824,11 +1824,11 @@ function socket(io) {
             const findChatRoom = await chatRoomModel.findOne({
                 _id: arg.chat_room_id
             })
+
+            console.log("findChatRoom" , findChatRoom);
             if (findChatRoom) {
                 const findData = await videoCallModel.findOne({
-                    chatRoomId: arg.chat_room_id,
-                    senderId: arg.sender_id,
-                    receiverId: arg.receiver_id
+                    chatRoomId: arg.chat_room_id
                 })
 
                 if (findData) {
