@@ -592,14 +592,13 @@ exports.inAcallOrNot = async (req, res, next) => {
                 })
 
                 const userDetail = {
+                    chatRoomId: req.params.chat_room_id,
                     senderId: sender._id,
-                    senderName: sender.firstName,
-                    senderProfile: sender.photo ? sender.photo[0].res : "",
                     receiverId: receiver._id,
-                    receiverName: receiver.firstName,
-                    receiverProfile: receiver.photo ? receiver.photo[0].res : "",
-                    chatRoomId: req.params.chat_room_id
+                    userName: sender.firstName,
+                    image: sender.photo ? sender.photo[0].res : "",
                 }
+
 
                 res.status(status.OK).json(
                     new APIResponse("not join video call!", "true", 200, "1", userDetail)
@@ -650,10 +649,10 @@ exports.inAroomOrNot = async (req, res, next) => {
                 chatRoomId: findUserInVideoCallRoom.chatRoomId,
                 senderId: findUserInVideoCallRoom.senderId,
                 receiverId: findUserInVideoCallRoom.receiverId,
-                receiverName: receiver.firstName,
-                senderName: sender.firstName,
-                senderProfile: sender.photo ? sender.photo[0].res : "",
+                userName: sender.firstName,
+                image: sender.photo ? sender.photo[0].res : "",
             }
+
             res.status(status.OK).json(
                 new APIResponse("user in a room or not", "true", 200, "1", data)
             );
