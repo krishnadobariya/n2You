@@ -18,14 +18,23 @@ cron.schedule("*/60 * * * * *", async function () {
 
     const findSession = await sessionModel.find()
     for (const getDate of findSession) {
-        var userSessionDate = new Date(getDate.selectedDate);
-        now = new Date()
 
+        var userSessionDate = new Date(getDate.selectedDate);
+
+        const date = new Date(Date.now())
+        let dates = date.getDate();
+        let month = date.getMonth()
+        let year = date.getFullYear();
+        let hour = date.getHours();
+        let minute = date.getMinutes();
+        let second = date.getSeconds();
+        now = new Date(`${year}-${month + 1}-${dates} ${hour}:${minute}:${second}`)
 
         var sec_num = (userSessionDate - now) / 1000;
         var days = Math.floor(sec_num / (3600 * 24));
         var hours = Math.floor((sec_num - (days * (3600 * 24))) / 3600);
         var minutes = Math.floor((sec_num - (days * (3600 * 24)) - (hours * 3600)) / 60);
+
 
         console.log("minutes", minutes);
         if (hours == 0 && days == 0 && minutes == 30) {
@@ -35,6 +44,7 @@ cron.schedule("*/60 * * * * *", async function () {
                 _id: getDate.cretedSessionUser
             })
 
+            console.log("findUserInUserModel", findUserInUserModel);
             if (getDate.RoomType == "public") {
 
                 const allRequestedEmails = [];
@@ -49,12 +59,15 @@ cron.schedule("*/60 * * * * *", async function () {
 
                 for (const allRequestedEmail of findAllFriend.RequestedEmails) {
 
-                    if (((allRequestedEmail.userId).toString() != (p1).toString()) && ((allRequestedEmail.userId).toString() != (p2).toString()) && ((allRequestedEmail.userId).toString() != (p3).toString())) {
+                    if (allRequestedEmail.accepted == 1) {
+                        if (((allRequestedEmail.userId).toString() != (p1).toString()) && ((allRequestedEmail.userId).toString() != (p2).toString()) && ((allRequestedEmail.userId).toString() != (p3).toString())) {
 
-                        allRequestedEmails.push(allRequestedEmail.userId)
+                            allRequestedEmails.push(allRequestedEmail.userId)
+                        }
                     }
-
                 }
+
+                console.log("allRequestedEmail", allRequestedEmails);
                 const invitedUsers = [];
 
                 if (p1 != null) {
@@ -67,12 +80,10 @@ cron.schedule("*/60 * * * * *", async function () {
                     invitedUsers.push(getDate.participants[0].participants_3)
                 }
                 for (const notification of allRequestedEmails) {
-                    console.log("feeedw");
+
                     const findInNotification = await notificationModel.findOne({
                         userId: notification
                     })
-
-                    console.log("findInNotification", findInNotification);
                     if (findInNotification) {
 
                         await notificationModel.updateOne({
@@ -139,12 +150,14 @@ cron.schedule("*/60 * * * * *", async function () {
 
             } else {
 
+                console.log("werfdwerd");
                 const allRequestedEmails = [];
 
                 const p1 = getDate.participants[0].participants_1 == null ? "" : getDate.participants[0].participants_1
                 const p2 = getDate.participants[0].participants_2 == null ? "" : getDate.participants[0].participants_2
                 const p3 = getDate.participants[0].participants_3 == null ? "" : getDate.participants[0].participants_3
 
+                console.log("allRequestedEmails", allRequestedEmails);
 
 
                 if (p1 != null) {
