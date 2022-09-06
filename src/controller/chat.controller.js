@@ -625,3 +625,47 @@ exports.inAcallOrNot = async (req, res, next) => {
         );
     }
 }
+
+exports.inAroomOrNot = async (req, res, next) => {
+    try {
+
+
+        console.log("req.params.receiver_id", req.params.receiver_id);
+        const findUserInVideoCallRoom = await videoCallModel.findOne({
+            receiverId: mongoose.Types.ObjectId(req.params.receiver_id),
+            accepted: 0
+        })
+
+        console.log("findUserInVideoCallRoom", findUserInVideoCallRoom);
+
+        if (findUserInVideoCallRoom) {
+            const receiver = await userModel.findOne({
+                _id: findUserInVideoCallRoom.receiverId
+            })
+
+            const sender = await userModel.findOne({
+                _id: findUserInVideoCallRoom.senderId
+            })
+            const data = {
+                chatRoomId: findUserInVideoCallRoom.chatRoomId,
+                senderId: findUserInVideoCallRoom.senderId,
+                receiverId: findUserInVideoCallRoom.receiverId,
+                receiverName: receiver.firstName,
+                senderName: sender.firstName,
+                senderProfile: sender.photo ? sender.photo[0].res : "",
+            }
+            res.status(status.OK).json(
+                new APIResponse("user in a room or not", "true", 200, "1", data)
+            );
+        } else {
+            res.status(status.OK).json(
+                new APIResponse("user not in a room or not", "true", 200, "1")
+            );
+        }
+    } catch (error) {
+        console.log("Error:", error);
+        res.status(status.INTERNAL_SERVER_ERROR).json(
+            new APIResponse("Something Went Wrong", "false", 500, "0", error.message)
+        );
+    }
+}

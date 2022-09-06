@@ -1872,9 +1872,6 @@ function socket(io) {
                         sendBy,
                         true
                     );
-
-
-                    io.emit("videoCallEndReceive", "already ceated video call!")
                 } else {
 
                     io.emit("videoCallEndReceive", "not Create Any Video Call!")
