@@ -1,1924 +1,671 @@
-
-const chatModels = require("./models/chat.models");
-const chatRoomModel = require("./models/chatRoom.model");
-const Notification = require("../helper/firebaseHelper");
+const APIResponse = require("../helper/APIResponse");
+const status = require("http-status");
+const chatModels = require("../webSocket/models/chat.models");
+const { default: mongoose, get } = require("mongoose");
+const chatRoomModel = require("../webSocket/models/chatRoom.model");
 const userModel = require("../model/user.model");
-const datingLikeDislikeUserModel = require("../model/polyamorous/datingLikeDislikeUser.model");
-const groupChatRoomModels = require("./models/groupChatRoom.models");
-const groupChatModel = require("./models/groupChat.model");
-const { default: mongoose } = require("mongoose");
-const linkProfileModel = require("../model/polyamorous/linkProfile.model");
-const conflictModel = require("../model/polyamorous/conflict.model");
-const notificationModel = require("../model/polyamorous/notification.model");
-const requestModel = require("../model/requests.model");
-const videoCallModel = require("./models/videoCall.model");
-const { deleteOne, updateOne } = require("../model/user.model");
-function socket(io) {
-
-    console.log("socket connected...");
-
-    io.on('connection', (socket) => {
-
-        // socket.on("joinUser", function (data) {
-        //     const userRoom = `User${data.user_1}`
-        //     socket.join(userRoom)
-        // })
-
-        socket.on("joinUser", function (data) {
-            const userRoom = `User${data.user_id}`;
-            socket.join(userRoom);
-        });
-
-        socket.on("chat", async (arg) => {
-
-            const userRoom = `User${arg.user_2}`
-
-            if (arg.user_1 == arg.sender_id) {
-                const findUserInNotification = await notificationModel.findOne({
-                    userId: arg.user_2
-                })
-
-                const findUser = await userModel.findOne({
-                    _id: arg.user_1
-                })
-
-                if (findUserInNotification) {
-
-                    await notificationModel.updateOne({
-                        userId: arg.user_2
-                    }, {
-                        $push: {
-                            notifications: {
-                                notifications: `${findUser.firstName} message you`,
-                                userId: findUser._id,
-                                status: 7
-                            }
-                        }
-                    })
-                } else {
-
-                    const saveNotification = notificationModel({
-                        userId: arg.user_2,
-                        notifications: {
-                            notifications: `${findUser.firstName} message you`,
-                            userId: findUser._id,
-                            status: 7
-                        }
-                    })
-
-                    await saveNotification.save()
-                }
-
-            } else if (arg.user_2 == arg.sender_id) {
-                const findUserInNotification = await notificationModel.findOne({
-                    userId: arg.user_1
-                })
-
-                const findUser = await userModel.findOne({
-                    _id: arg.user_2
-                })
-
-                if (findUserInNotification) {
-                    await notificationModel.updateOne({
-                        userId: arg.user_1
-                    }, {
-                        $push: {
-                            notifications: {
-                                notifications: `${findUser.firstName} message you`,
-                                userId: findUser._id,
-                                status: 7
-                            }
-                        }
-                    })
-                } else {
-                    const saveNotification = notificationModel({
-                        userId: arg.user_1,
-                        notifications: {
-                            notifications: `${findUser.firstName} message you`,
-                            userId: findUser._id,
-                            status: 7
-                        }
-                    })
-
-                    await saveNotification.save()
-                }
-            }
-
-            const date = new Date()
-            let dates = date.getDate();
-            let month = date.toLocaleString('en-us', { month: 'long' });
-            let year = date.getFullYear();
-            let hours = date.getHours();
-            let minutes = date.getMinutes();
-            let second = date.getSeconds();
-            let mon = date.getMonth() + 1;
-            let ampm = hours >= 12 ? 'pm' : 'am';
-            hours = hours % 12;
-            hours = hours ? hours : 12;
-            minutes = minutes.toString().padStart(2, '0');
-
-            let time = 'At' + ' ' + hours + ':' + minutes + ' ' + ampm + ' ' + 'on' + ' ' + month + ' ' + dates + ',' + year;
-
-
-
-
-
-            const userFind = await userModel.findOne({ _id: arg.user_2, polyDating: 0 });
-
-            const fcm_token = userFind.fcm_token;
-
-            console.log("fcm_token==>", fcm_token);
-            // if (arg.sender_id == arg.user_1) {
-            //     const userFind = await userModel.findOne({ _id: arg.user_2, polyDating: 0 }).select('name, photo,fcm_token');
-            //     fcm_token.push(userFind.fcm_token)
-            // } else {
-            //     const userFind = await userModel.findOne({ _id: arg.user_1, polyDating: 0 }).select('name, photo, fcm_token')
-            //     fcm_token.push(userFind.fcm_token)
-            // }
-
-            const addInChatRoom = await chatRoomModel.findOne({
-                user1: arg.user_1,
-                user2: arg.user_2,
-            }).select('user1, user2').lean();
-
-            const checkUsers = await chatRoomModel.findOne({
-                user1: arg.user_2,
-                user2: arg.user_1,
-            }).select('user1, user2').lean();
-
-            if (addInChatRoom == null && checkUsers == null) {
-                const insertChatRoom = chatRoomModel({
-                    user1: arg.user_1,
-                    user2: arg.user_2
-                });
-                await insertChatRoom.save();
-
-                const getChatRoom = await chatRoomModel.findOne({
-                    user1: arg.user_1,
-                    user2: arg.user_2
-                }).select('user1, user2').lean();
-                const alterNateChatRoom = await chatRoomModel.findOne({
-                    user1: arg.user_2,
-                    user2: arg.user_1
-                }).select('user1, user2').lean();
-
-                if (getChatRoom == null && alterNateChatRoom == null) {
-                    io.emit("chatReceive", "chat room not found");
-                } else {
-
-                    if (getChatRoom) {
-
-                        if (arg.sender_id == arg.user_1 || arg.sender_id == arg.user_2) {
-
-                            const findUser = await userModel.findOne({
-                                _id: arg.sender_id
-                            }).select('name, photo').lean();
-
-                            const data = chatModels({
-                                chatRoomId: getChatRoom._id,
-                                chat: {
-                                    sender: arg.sender_id,
-                                    text: arg.text,
-                                    dateAndTime: `${year}-${mon}-${dates} ${hours}:${minutes}:${second}`,
-                                    name: findUser.name,
-                                    photo: findUser.photo[0] ? findUser.photo[0].res : "",
-                                    createdAt: time
-                                }
-                            });
-
-                            await data.save();
-                            const receiver_id = [];
-                            if (arg.sender_id == arg.user_1) {
-                                const userFind = await userModel.findOne({ _id: arg.user_2, polyDating: 0 }).select('name, photo').lean()
-                                receiver_id.push(userFind._id)
-
-                            } else {
-                                const userFind = await userModel.findOne({ _id: arg.user_1, polyDating: 0 }).select('name, photo').lean()
-                                receiver_id.push(userFind._id)
-                            }
-
-                            const chat = {
-                                text: arg.text,
-                                sender: arg.sender_id,
-                                receiver: receiver_id[0]
-                            }
-
-                            io.to(userRoom).emit("chatReceive", chat);
-
-                            const title = userFind.firstName;
-                            const body = arg.text;
-                            const text = arg.text;
-                            const sendBy = arg.sender_id;
-                            const registrationToken = fcm_token
-
-                            Notification.sendPushNotificationFCM(
-                                registrationToken,
-                                title,
-                                body,
-                                text,
-                                sendBy,
-                                true
-                            );
-
-                        } else {
-                            io.emit("chatReceive", "sender not found");
-                        }
-
-
-
-                    } else {
-
-
-                        if (arg.sender_id == arg.user_1 || arg.sender_id == arg.user_2) {
-
-                            const findUser = await userModel.findOne({
-                                _id: arg.sender_id
-                            }).select('name, photo').lean();
-
-                            const data = chatModels({
-                                chatRoomId: alterNateChatRoom._id,
-                                chat: {
-                                    sender: arg.sender_id,
-                                    text: arg.text,
-                                    name: findUser.name,
-                                    dateAndTime: `${year}-${mon}-${dates} ${hours}:${minutes}:${second}`,
-                                    photo: findUser.photo[0] ? findUser.photo[0].res : "",
-                                    createdAt: time
-                                }
-                            })
-
-
-                            await data.save();
-
-                            const receiver_id = [];
-                            if (arg.sender_id == arg.user_1) {
-                                const userFind = await userModel.findOne({ _id: arg.user_2, polyDating: 0 }).select('name, photo').lean();
-                                receiver_id.push(userFind._id)
-                            } else {
-                                const userFind = await userModel.findOne({ _id: arg.user_1, polyDating: 0 }).select('name, photo').lean();
-                                receiver_id.push(userFind._id)
-                            }
-
-                            const chat = {
-                                text: arg.text,
-                                sender: arg.sender_id,
-                                receiver: receiver_id[0]
-                            }
-
-                            io.to(userRoom).emit("chatReceive", chat);
-                            const title = userFind.firstName;
-                            const body = arg.text;
-
-                            const text = arg.text;
-                            const sendBy = arg.sender_id;
-                            const registrationToken = fcm_token
-                            Notification.sendPushNotificationFCM(
-                                registrationToken,
-                                title,
-                                body,
-                                text,
-                                sendBy,
-                                true
-                            );
-
-                        } else {
-                            io.emit("chatReceive", "sender not found");
-                        }
-                    }
-
-                }
-            } else {
-                const getChatRoom = await chatRoomModel.findOne({
-                    user1: arg.user_1,
-                    user2: arg.user_2
-                }).select('user1, user2').lean();
-
-                const alterNateChatRoom = await chatRoomModel.findOne({
-                    user1: arg.user_2,
-                    user2: arg.user_1
-                }).select('user1, user2').lean();
-
-
-                if (getChatRoom == null && alterNateChatRoom == null) {
-                    io.emit("chatReceive", "chat room not found");
-
-                } else {
-
-                    if (getChatRoom) {
-                        const find1 = await chatModels.findOne({
-                            chatRoomId: getChatRoom._id
-                        }).select('chatRoomId').lean();
-
-                        if (find1 == null) {
-                            if (arg.sender_id == arg.user_1 || arg.sender_id == arg.user_2) {
-                                const findUser = await userModel.findOne({
-                                    _id: arg.sender_id
-                                }).select('name, photo').lean();
-
-                                const data = chatModels({
-                                    chatRoomId: getChatRoom._id,
-                                    chat: {
-                                        sender: arg.sender_id,
-                                        text: arg.text,
-                                        dateAndTime: `${year}-${mon}-${dates} ${hours}:${minutes}:${second}`,
-                                        name: findUser.name,
-                                        photo: findUser.photo[0] ? findUser.photo[0].res : "",
-                                        createdAt: time
-
-                                    }
-                                })
-
-
-                                await data.save();
-
-                                const receiver_id = [];
-                                if (arg.sender_id == arg.user_1) {
-                                    const userFind = await userModel.findOne({ _id: arg.user_2, polyDating: 0 }).select('_id').lean();
-                                    receiver_id.push(userFind._id)
-
-                                } else {
-                                    const userFind = await userModel.findOne({ _id: arg.user_1, polyDating: 0 }).select('_id').lean();
-                                    receiver_id.push(userFind._id)
-
-                                }
-                                const chat = {
-                                    text: arg.text,
-                                    sender: arg.sender_id,
-                                    receiver: receiver_id[0]
-                                }
-
-                                io.to(userRoom).emit("chatReceive", chat);
-                                const title = userFind.firstName;
-                                const body = arg.text;
-                                const text = arg.text;
-                                const sendBy = arg.sender_id;
-                                const registrationToken = fcm_token
-                                Notification.sendPushNotificationFCM(
-                                    registrationToken,
-                                    title,
-                                    body,
-                                    text,
-                                    sendBy,
-                                    true
-                                );
-
-                            } else {
-                                io.emit("chatReceive", "sender not found");
-                            }
-                        } else {
-
-                            if (arg.sender_id == arg.user_1 || arg.sender_id == arg.user_2) {
-
-                                const findUser = await userModel.findOne({
-                                    _id: arg.sender_id
-                                }).select('name, photo').lean();
-
-                                const finalData = {
-                                    sender: arg.sender_id,
-                                    text: arg.text,
-                                    name: findUser.name,
-                                    dateAndTime: `${year}-${mon}-${dates} ${hours}:${minutes}:${second}`,
-                                    photo: findUser.photo[0] ? findUser.photo[0].res : "",
-                                    createdAt: time
-                                }
-
-                                await chatModels.updateOne({
-                                    chatRoomId: getChatRoom._id,
-                                }, {
-                                    $push: {
-                                        chat: finalData
-                                    }
-                                })
-
-                                const receiver_id = [];
-                                if (arg.sender_id == arg.user_1) {
-                                    const userFind = await userModel.findOne({ _id: arg.user_2, polyDating: 0 }).select('_id').lean();
-                                    receiver_id.push(userFind._id)
-
-                                } else {
-                                    const userFind = await userModel.findOne({ _id: arg.user_1, polyDating: 0 }).select('_id').lean();
-                                    receiver_id.push(userFind._id)
-
-                                }
-                                const chat = {
-                                    text: finalData.text,
-                                    sender: arg.sender_id,
-                                    receiver: receiver_id[0]
-                                }
-                                io.to(userRoom).emit("chatReceive", chat);
-                                const title = userFind.firstName;
-                                const body = arg.text;
-                                const text = arg.text;
-                                const sendBy = arg.sender_id;
-                                const registrationToken = fcm_token
-                                Notification.sendPushNotificationFCM(
-                                    registrationToken,
-                                    title,
-                                    body,
-                                    text,
-                                    sendBy,
-                                    true
-                                );
-
-                            } else {
-                                io.emit("chatReceive", "sender not found");
-                            }
-                        }
-
-
-                    } else {
-                        const find2 = await chatModels.findOne({
-                            chatRoomId: alterNateChatRoom._id
-                        }).select("chatRoomId").lean();
-
-                        if (find2 == null) {
-                            if (arg.sender_id == arg.user_1 || arg.sender_id == arg.user_2) {
-                                const findUser = await userModel.findOne({
-                                    _id: arg.sender_id
-                                }).select('name, photo').lean()
-
-                                const data = chatModels({
-                                    chatRoomId: alterNateChatRoom._id,
-                                    chat: {
-                                        sender: arg.sender_id,
-                                        text: arg.text,
-                                        name: findUser.name,
-                                        dateAndTime: `${year}-${mon}-${dates} ${hours}:${minutes}:${second}`,
-                                        photo: findUser.photo[0] ? findUser.photo[0].res : "",
-                                        createdAt: time
-                                    }
-                                })
-
-                                await data.save();
-                                const receiver_id = [];
-                                if (arg.sender_id == arg.user_1) {
-                                    const userFind = await userModel.findOne({ _id: arg.user_2, polyDating: 0 }).select('_id').lean();
-                                    receiver_id.push(userFind._id)
-                                } else {
-                                    const userFind = await userModel.findOne({ _id: arg.user_1, polyDating: 0 }).select('_id').lean();
-                                    receiver_id.push(userFind._id)
-                                }
-                                const chat = {
-                                    text: arg.text,
-                                    sender: arg.sender_id,
-                                    receiver: receiver_id[0]
-                                }
-                                io.to(userRoom).emit("chatReceive", chat);
-
-                                const title = userFind.firstName;
-                                const body = arg.text;
-                                const text = arg.text;
-                                const sendBy = arg.sender_id;
-
-                                const registrationToken = fcm_token
-                                Notification.sendPushNotificationFCM(
-                                    registrationToken,
-                                    title,
-                                    body,
-                                    text,
-                                    sendBy,
-                                    true
-                                );
-
-                            } else {
-                                io.emit("chatReceive", "sender not found");
-                            }
-                        } else {
-
-                            if (arg.sender_id == arg.user_1 || arg.sender_id == arg.user_2) {
-                                const findUser = await userModel.findOne({
-                                    _id: arg.sender_id
-                                }).select('name, photo').lean();
-
-                                const finalData = {
-                                    sender: arg.sender_id,
-                                    text: arg.text,
-                                    name: findUser.name,
-                                    dateAndTime: `${year}-${mon}-${dates} ${hours}:${minutes}:${second}`,
-                                    photo: findUser.photo[0] ? findUser.photo[0].res : "",
-                                    createdAt: time
-                                }
-
-                                await chatModels.updateOne({
-                                    chatRoomId: alterNateChatRoom._id,
-                                }, {
-                                    $push: {
-                                        chat: finalData
-                                    }
-                                }).lean()
-
-                                const receiver_id = [];
-                                if (arg.sender_id == arg.user_1) {
-                                    const userFind = await userModel.findOne({ _id: arg.user_2, polyDating: 0 }).select('_id').lean();
-                                    receiver_id.push(userFind._id)
-                                } else {
-                                    const userFind = await userModel.findOne({ _id: arg.user_1, polyDating: 0 }).select('_id').lean();
-                                    receiver_id.push(userFind._id)
-                                }
-                                const chat = {
-                                    text: finalData.text,
-                                    sender: arg.sender_id,
-                                    receiver: receiver_id[0]
-                                }
-                                io.to(userRoom).emit("chatReceive", chat);
-
-                                const title = userFind.firstName;
-                                const body = arg.text;
-                                const text = arg.text;
-                                const sendBy = arg.sender_id;
-
-                                const registrationToken = fcm_token
-
-                                Notification.sendPushNotificationFCM(
-                                    registrationToken,
-                                    title,
-                                    body,
-                                    text,
-                                    sendBy,
-                                    true
-                                );
-
-                            } else {
-                                io.emit("chatReceive", "sender not found");
-                            }
-                        }
-                    }
-                }
-            }
+const videoCallModel = require("../webSocket/models/videoCall.model");
+
+exports.readChat = async (req, res, next) => {
+    try {
+        const findRoom = await chatModels.findOne({
+            chatRoomId: req.params.chat_room_id,
+            "chat.sender": req.params.user_id
         })
+        for (const [key, getSenderChat] of findRoom.chat.entries()) {
 
-        socket.on("createGroupRoom", async (arg) => {
+            if ((getSenderChat.sender).toString() == (req.params.user_id).toString()) {
 
-            const user1 = await userModel.findOne({ _id: arg.user1, polyDating: 1 });
-            const user2 = await userModel.findOne({ _id: arg.user2, polyDating: 1 });
-            const user3 = await userModel.findOne({ _id: arg.user3, polyDating: 1 });
-            const user4 = await userModel.findOne({ _id: arg.user4, polyDating: 1 });
-            const user5 = await userModel.findOne({ _id: arg.user5, polyDating: 1 });
-            const user6 = await userModel.findOne({ _id: arg.user6, polyDating: 1 });
-            const user7 = await userModel.findOne({ _id: arg.user7, polyDating: 1 });
-            const user8 = await userModel.findOne({ _id: arg.user8, polyDating: 1 });
-
-            const userRoom = user1 ? user1._id : null || user2 ? user2._id : null || user3 ? user3._id : null || user4 ? user4._id : null || user5 ? user5._id : null || user6 ? user6._id : null || user7 ? user7._id : null || user8 ? user8._id : null
-
-            socket.join(userRoom);
-            const createGroupRoom = groupChatRoomModels({
-                groupName: arg.group_name,
-                user1: user1 ? user1._id : null,
-                user2: user2 ? user2._id : null,
-                user3: user3 ? user3._id : null,
-                user4: user4 ? user4._id : null,
-                user5: user5 ? user5._id : null,
-                user6: user6 ? user6._id : null,
-                user7: user7 ? user7._id : null,
-                user8: user8 ? user8._id : null
-            })
-
-            await createGroupRoom.save()
-            const findRoom = await userModel.find({
-                $or: [
+                const updatePosts = await chatModels.updateOne(
                     {
-                        _id: user2 ? user2._id : null
-                    },
-                    {
-                        _id: user3 ? user3._id : null
-                    },
-                    {
-                        _id: user3 ? user3._id : null
-                    },
-                    {
-                        _id: user5 ? user5._id : null
-                    },
-                    {
-                        _id: user6 ? user6._id : null
-                    },
-                    {
-                        _id: user7 ? user7._id : null
-                    },
-                    {
-                        _id: user8 ? user8._id : null
-                    }
-                ]
-            })
-
-            io.to(userRoom).emit("RoomCreated", "Chat Room Created....");
-            for (const fcm_token of findRoom) {
-
-                const title = "n2you Notification";
-                const body = 'room Created';
-
-                const text = 'room Created';
-                const sendBy = arg.user_1;
-                const registrationToken = fcm_token.fcm_token
-
-                Notification.sendPushNotificationFCM(
-                    registrationToken,
-                    title,
-                    body,
-                    text,
-                    sendBy,
-                    true
-                );
-            }
-        })
-
-        socket.on("chatByGroup", async (arg) => {
-            const userRoom = arg.chat_room_id
-            socket.join(userRoom);
-
-            const validGroupInGroupRoom = await groupChatRoomModels.findOne({
-                _id: arg.chat_room_id
-            })
-
-            if (validGroupInGroupRoom == null) {
-                io.emit("chatReceive", "chatRoom Not Found...");
-            } else {
-
-                const fcm_token = [];
-
-                const validGroup = await groupChatModel.findOne({
-                    chatRoomId: arg.chat_room_id
-                })
-
-                const allGroupUser = [];
-
-                const user1 = (validGroupInGroupRoom.user2).toString()
-
-                allGroupUser.push(validGroupInGroupRoom.user1 == undefined ? null : (validGroupInGroupRoom.user1).toString())
-                allGroupUser.push(validGroupInGroupRoom.user2 == undefined ? null : (validGroupInGroupRoom.user2).toString())
-                allGroupUser.push(validGroupInGroupRoom.user3 == undefined ? null : (validGroupInGroupRoom.user3).toString())
-                allGroupUser.push(validGroupInGroupRoom.user4 == undefined ? null : (validGroupInGroupRoom.user4).toString())
-                allGroupUser.push(validGroupInGroupRoom.user5 == undefined ? null : (validGroupInGroupRoom.user5).toString())
-                allGroupUser.push(validGroupInGroupRoom.user6 == undefined ? null : (validGroupInGroupRoom.user6).toString())
-                allGroupUser.push(validGroupInGroupRoom.user7 == undefined ? null : (validGroupInGroupRoom.user7).toString())
-                allGroupUser.push(validGroupInGroupRoom.user8 == undefined ? null : (validGroupInGroupRoom.user8).toString())
-
-                const exiestUser = allGroupUser.includes((arg.sender_id).toString())
-
-
-
-                if (exiestUser) {
-                    if (validGroup == null) {
-
-                        var newArray = allGroupUser.filter(function (f) { return f !== (arg.sender_id).toString() })
-
-                        const findAllUser = await userModel.find({
-                            _id: {
-                                $in: newArray
-                            }
-                        })
-
-
-                        const read = [];
-                        for (const user of newArray) {
-
-                            if (user == null) {
-
-                            } else {
-                                const response = {
-                                    userId: mongoose.Types.ObjectId(user),
-                                    read: 1
-                                }
-                                read.push(response)
+                        chatRoomId: req.params.chat_room_id, chat: {
+                            $elemMatch: {
+                                sender: mongoose.Types.ObjectId(req.params.user_id)
                             }
                         }
-
-                        const data = groupChatModel({
-                            chatRoomId: arg.chat_room_id,
-                            chat: {
-                                sender: arg.sender_id,
-                                text: arg.text,
-                                read: read
-                            }
-                        })
-
-                        await data.save()
-
-                        io.to(userRoom).emit("chatReceive", arg.text);
-
-                        for (const fcm_token of findAllUser) {
-                            const title = "n2you Notification";
-                            const body = `${arg.sender_id} send request to `;
-
-                            const text = arg.text;
-                            const sendBy = arg.sender_id;
-                            const registrationToken = fcm_token.fcm_token
-
-                            Notification.sendPushNotificationFCM(
-                                registrationToken,
-                                title,
-                                body,
-                                text,
-                                sendBy,
-                                true
-                            );
-                        }
-                    } else {
-
-                        var newArray = allGroupUser.filter(function (f) { return f !== (arg.sender_id).toString() })
-
-                        const read = [];
-                        for (const user of newArray) {
-
-                            if (user == null) {
-
-                            } else {
-                                const response = {
-                                    userId: mongoose.Types.ObjectId(user),
-                                    read: 1
-                                }
-                                read.push(response)
-                            }
-                        }
-
-                        const finalData = {
-                            sender: arg.sender_id,
-                            text: arg.text,
-                            read: read
-                        }
-
-                        await groupChatModel.updateOne({
-                            chatRoomId: arg.chat_room_id,
-                        }, {
-                            $push: {
-                                chat: finalData,
-                            }
-                        })
-
-                        io.to(userRoom).emit("chatReceive", arg.text);
-
-                        var newArray = allGroupUser.filter(function (f) { return f !== (arg.sender_id).toString() })
-
-                        const findAllUser = await userModel.find({
-                            _id: {
-                                $in: newArray
-                            }
-                        })
-
-                        for (const fcm_token of findAllUser) {
-                            const title = "n2you Notification";
-                            const body = `${arg.sender_id} send request to `;
-
-                            const text = arg.text;
-                            const sendBy = arg.sender_id;
-                            const registrationToken = fcm_token.fcm_token
-
-                            Notification.sendPushNotificationFCM(
-                                registrationToken,
-                                title,
-                                body,
-                                text,
-                                sendBy,
-                                true
-                            );
-                        }
-                    }
-                } else {
-                    io.to(userRoom).emit("chatReceive", "sender Not Found....");
-                }
-            }
-        })
-
-        socket.on("readUnreadInGroup", async (arg) => {
-            const findRoom = await groupChatModel.findOne({
-                chatRoomId: arg.group_chat_room
-            })
-
-            if (findRoom == null) {
-                io.emit("chatRecive", "room not found")
-            } else {
-                const updateChatRead = await groupChatModel.updateMany(
-                    {
-                        chatRoomId: arg.group_chat_room,
-                        "chat.read.userId": mongoose.Types.ObjectId(arg.user_id)
                     },
                     {
                         $set: {
-                            "chat.$[].read.$[read].read": 0
+                            "chat.$[chat].read": 0
                         }
                     },
-                    { arrayFilters: [{ "read.userId": mongoose.Types.ObjectId(arg.user_id) }] }
-                )
-            }
-
-            io.emit("chatReceive", "read All chat");
-        })
-
-        socket.on("readUnread", async (arg) => {
-
-            const findRoom = await chatModels.findOne({
-                chatRoomId: arg.chat_room,
-                "chat.sender": arg.user_id
-            })
-
-            for (const [key, getSenderChat] of findRoom.chat.entries()) {
-
-                if ((getSenderChat.sender).toString() == (arg.user_id).toString()) {
-                    console.log(getSenderChat.text);
-
-                    // await chatModels.updateOne({
-                    //     sender: mongoose.Types.ObjectId(arg.user_id)
-                    // }, {
-                    //     $set: {
-                    //         read: 0
-                    //     }
-                    // }).then(() => {
-                    //     console.log("success");
-                    // }).catch((err) => {
-                    //     console.log(err);
-                    // })
-
-                    const updatePosts = await chatModels.updateOne(
-                        {
-                            chatRoomId: arg.chat_room, chat: {
-                                $elemMatch: {
-                                    sender: mongoose.Types.ObjectId(arg.user_id)
-                                }
-                            }
-                        },
-                        {
-                            $set: {
-                                "chat.$[chat].read": 0
-                            }
-                        },
-                        { arrayFilters: [{ 'chat.sender': mongoose.Types.ObjectId(arg.user_id) }] })
-                } else {
-
-                }
-            }
-
-            if (findRoom == null) {
-                io.emit("readChat", "chat room not found");
-            } else {
-                // await chatModels.updateMany({ chatRoomId: arg.chat_room }, { $set: { "chat.$[].read": 0 } });
-                io.emit("readChat", "read All chat");
-            }
-        })
-
-        socket.on("updateLatLong", async (arg) => {
-            const findUser = await userModel.findOne({
-                _id: arg.user_id
-            })
-
-            if (findUser == null) {
-                io.emit("checkUpdate", "User Not Found!");
-            } else {
-                const updateLatLong = await userModel.updateOne({
-                    _id: arg.user_id
-                }, {
-                    $set: {
-                        location: {
-                            type: "Point",
-                            coordinates: [
-                                parseFloat(arg.longitude),
-                                parseFloat(arg.latitude),
-                            ],
-                        },
-                    }
-                }).then(() => {
-                    io.emit("checkUpdate", "User Location Updated!");
-                }).catch((error) => {
-                    io.emit("checkUpdate", error);
-                })
-            }
-        })
-
-        socket.on("LikeOrDislikeUserForDating", async (arg) => {
-
-            const findUser = await userModel.findOne({
-                _id: arg.user_id,
-            })
-
-            if (findUser == null) {
-                io.emit("likeDislikeUser", "User Not Found!");
+                    { arrayFilters: [{ 'chat.sender': mongoose.Types.ObjectId(req.params.user_id) }] })
             } else {
 
-                if (arg.like == 1) {
-
-                    const existUserInLike = await datingLikeDislikeUserModel.findOne({
-                        userId: arg.user_id,
-                        "LikeUser.LikeduserId": arg.like_user_id
-                    })
-
-                    const exisrUserIndisLike = await datingLikeDislikeUserModel.findOne({
-                        userId: arg.user_id,
-                        "disLikeUser.disLikeduserId": arg.like_user_id
-                    })
-
-
-                    if (existUserInLike == null && exisrUserIndisLike == null) {
-                        const findInUserModel = await userModel.findOne({
-                            _id: arg.like_user_id,
-                            polyDating: 1
-                        });
-
-                        const findInLinkProfileModel = await linkProfileModel.findOne({
-                            _id: arg.like_user_id
-                        })
-
-
-                        if (findInUserModel) {
-                            const findUserInDating = await datingLikeDislikeUserModel.findOne({
-                                userId: arg.user_id
-                            })
-
-                            if (findUserInDating == null) {
-                                const insertuserInDatingModel = datingLikeDislikeUserModel({
-                                    userId: arg.user_id,
-                                    LikeUser: {
-                                        LikeduserId: arg.like_user_id
-                                    }
-                                })
-
-                                await insertuserInDatingModel.save();
-                                io.emit("likeDislikeUser", "User Like Dating");
-                            } else {
-
-                                await datingLikeDislikeUserModel.updateOne({
-                                    userId: arg.user_id
-                                }, {
-                                    $push: {
-                                        LikeUser: {
-                                            LikeduserId: arg.like_user_id
-                                        }
-                                    }
-                                })
-                                io.emit("likeDislikeUser", "User Like Dating");
-                            }
-                        } else if (findInLinkProfileModel) {
-
-
-                            const findUserInDating = await datingLikeDislikeUserModel.findOne({
-                                userId: arg.user_id
-                            })
-
-
-
-                            if (findUserInDating == null) {
-                                const insertuserInDatingModel = datingLikeDislikeUserModel({
-                                    userId: arg.user_id,
-                                    LikeUser: {
-                                        LikeduserId: arg.like_user_id
-                                    }
-                                })
-
-                                await insertuserInDatingModel.save();
-
-
-
-                                io.emit("likeDislikeUser", "User Like Dating");
-
-                            } else {
-
-                                await datingLikeDislikeUserModel.updateOne({
-                                    userId: arg.user_id
-                                }, {
-                                    $push: {
-                                        LikeUser: {
-                                            LikeduserId: arg.like_user_id
-                                        }
-                                    }
-                                })
-
-
-
-
-                                const allUser = [];
-
-                                if (findInLinkProfileModel.user1 && findInLinkProfileModel.user2 && findInLinkProfileModel.user3 && findInLinkProfileModel.user4) {
-                                    allUser.push(findInLinkProfileModel.user1, findInLinkProfileModel.user2, findInLinkProfileModel.user3, findInLinkProfileModel.user4)
-                                } else if (findInLinkProfileModel.user1 && findInLinkProfileModel.user2 && findInLinkProfileModel.user3) {
-                                    allUser.push(findInLinkProfileModel.user1, findInLinkProfileModel.user2, findInLinkProfileModel.user3)
-                                } else if (findInLinkProfileModel.user1 && findInLinkProfileModel.user2) {
-                                    allUser.push(findInLinkProfileModel.user1, findInLinkProfileModel.user2)
-                                }
-
-
-
-                                for (const userInLinkProfile of allUser) {
-
-                                    const findInDatingLikeModel = await datingLikeDislikeUserModel.findOne({
-                                        userId: userInLinkProfile
-                                    })
-
-                                    if (findInDatingLikeModel == null) {
-
-                                        const insertuserInDatingModel = datingLikeDislikeUserModel({
-                                            userId: userInLinkProfile,
-                                            LikeUser: {
-                                                LikeduserId: arg.user_id
-                                            }
-                                        })
-
-                                        await insertuserInDatingModel.save();
-
-                                    } else {
-                                        const findInDatingLikeModel = await datingLikeDislikeUserModel.findOne({
-                                            userId: userInLinkProfile,
-                                            "LikeUser.LikeduserId": arg.user_id
-                                        })
-
-                                        if (findInDatingLikeModel) {
-
-                                        } else {
-                                            await datingLikeDislikeUserModel.updateOne({
-                                                userId: userInLinkProfile,
-
-                                            }, {
-                                                $pull: {
-                                                    disLikeUser: {
-                                                        disLikeduserId: arg.user_id
-                                                    }
-                                                }
-                                            })
-
-                                            await datingLikeDislikeUserModel.updateOne({
-                                                userId: userInLinkProfile,
-
-                                            }, {
-                                                $push: {
-                                                    LikeUser: {
-                                                        LikeduserId: arg.user_id
-                                                    }
-                                                }
-                                            })
-                                        }
-
-                                    }
-                                }
-
-
-                                io.emit("likeDislikeUser", "User Like Dating");
-                            }
-
-                        } else {
-                            io.emit("likeDislikeUser", "User Not polyDating...");
-                        }
-                    } else {
-                        io.emit("likeDislikeUser", "Already Liked or Dislike For Dating");
-                    }
-
-                } else if (arg.like == 0) {
-                    const existUserInLike = await datingLikeDislikeUserModel.findOne({
-                        userId: arg.user_id,
-                        "LikeUser.LikeduserId": arg.like_user_id
-                    })
-
-                    const exisrUserIndisLike = await datingLikeDislikeUserModel.findOne({
-                        userId: arg.user_id,
-                        "disLikeUser.disLikeduserId": arg.like_user_id
-                    })
-
-
-                    if (existUserInLike == null && exisrUserIndisLike == null) {
-                        const findInUserModel = await userModel.findOne({
-                            _id: arg.like_user_id,
-                            polyDating: 1
-                        });
-
-
-
-                        const findInLinkProfileModel = await linkProfileModel.findOne({
-                            _id: arg.like_user_id
-                        })
-
-                        if (findInUserModel) {
-                            const findUserInDating = await datingLikeDislikeUserModel.findOne({
-                                userId: arg.user_id
-                            })
-
-                            if (findUserInDating == null) {
-                                const insertuserInDatingModel = datingLikeDislikeUserModel({
-                                    userId: arg.user_id,
-                                    disLikeUser: {
-                                        disLikeduserId: arg.like_user_id
-                                    }
-                                })
-
-                                await insertuserInDatingModel.save();
-                                io.emit("likeDislikeUser", "User DisLike Dating");
-
-
-                            } else {
-
-                                await datingLikeDislikeUserModel.updateOne({
-                                    userId: arg.user_id
-                                }, {
-                                    $push: {
-                                        disLikeUser: {
-                                            disLikeduserId: arg.like_user_id
-                                        }
-                                    }
-                                })
-                                io.emit("likeDislikeUser", "User DisLike Dating");
-
-                            }
-                        } else if (findInLinkProfileModel) {
-
-                            const findUserInDating = await datingLikeDislikeUserModel.findOne({
-                                userId: arg.user_id
-                            })
-
-
-
-                            if (findUserInDating == null) {
-                                const insertuserInDatingModel = datingLikeDislikeUserModel({
-                                    userId: arg.user_id,
-                                    disLikeUser: {
-                                        disLikeduserId: arg.like_user_id
-                                    }
-                                })
-
-                                await insertuserInDatingModel.save();
-
-                                io.emit("likeDislikeUser", "User Like Dating");
-                            } else {
-                                await datingLikeDislikeUserModel.updateOne({
-                                    userId: arg.user_id
-                                }, {
-                                    $push: {
-                                        disLikeUser: {
-                                            disLikeduserId: arg.like_user_id
-                                        }
-                                    }
-                                })
-
-                                const allUser = [];
-
-                                if (findInLinkProfileModel.user1 && findInLinkProfileModel.user2 && findInLinkProfileModel.user3 && findInLinkProfileModel.user4) {
-                                    allUser.push(findInLinkProfileModel.user1, findInLinkProfileModel.user2, findInLinkProfileModel.user3, findInLinkProfileModel.user4)
-                                } else if (findInLinkProfileModel.user1 && findInLinkProfileModel.user2 && findInLinkProfileModel.user3) {
-                                    allUser.push(findInLinkProfileModel.user1, findInLinkProfileModel.user2, findInLinkProfileModel.user3)
-                                } else if (findInLinkProfileModel.user1 && findInLinkProfileModel.user2) {
-                                    allUser.push(findInLinkProfileModel.user1, findInLinkProfileModel.user2)
-                                }
-
-
-                                for (const userInLinkProfile of allUser) {
-                                    const findInDatingLikeModel = await datingLikeDislikeUserModel.findOne({
-                                        userId: userInLinkProfile
-                                    })
-
-                                    if (findInDatingLikeModel == null) {
-
-                                        const insertuserInDatingModel = datingLikeDislikeUserModel({
-                                            userId: userInLinkProfile,
-                                            disLikeUser: {
-                                                disLikeduserId: arg.user_id
-                                            }
-                                        })
-
-                                        await insertuserInDatingModel.save();
-
-                                    } else {
-                                        await datingLikeDislikeUserModel.updateOne({
-                                            userId: userInLinkProfile,
-
-                                        }, {
-                                            $pull: {
-                                                LikeUser: {
-                                                    LikeduserId: arg.user_id
-                                                }
-                                            }
-                                        })
-
-                                        await datingLikeDislikeUserModel.updateOne({
-                                            userId: userInLinkProfile,
-
-                                        }, {
-                                            $push: {
-                                                disLikeUser: {
-                                                    disLikeduserId: arg.user_id
-                                                }
-                                            }
-                                        })
-                                    }
-
-                                }
-
-                                io.emit("likeDislikeUser", "User Like Dating");
-                            }
-
-
-                        } else {
-                            io.emit("likeDislikeUser", "User Not polyDating...");
-                        }
-                    } else {
-                        io.emit("likeDislikeUser", "Already Liked or Dislike For Dating");
-                    }
-                }
-
             }
-        })
-
-        socket.on("sendFriendRequest", async (arg) => {
-
-            const checkUserExist = await userModel.findOne({ _id: arg.user_id, polyDating: 0 });
-            const checkRequestedEmail = await userModel.findOne({ _id: arg.requested_id, polyDating: 0 })
-
-            if (checkUserExist && checkRequestedEmail) {
-
-                if (checkRequestedEmail) {
-                    const emailExitInRequestedModel = await requestModel.findOne({ userId: arg.user_id })
-
-                    const emailExitInRequestedModel1 = await requestModel.findOne({ userId: arg.requested_id })
-
-
-                    if (!emailExitInRequestedModel) {
-                        const request = requestModel({
-                            userId: checkUserExist._id,
-                            userEmail: checkUserExist.email,
-                            RequestedEmails: [{
-                                requestedEmail: checkRequestedEmail.email,
-                                accepted: 2,
-                                userId: checkRequestedEmail._id
-                            }],
-
-                        })
-
-                        const saveData = await request.save();
-
-                        const findUserInNotification = await notificationModel.findOne({
-                            userId: checkRequestedEmail._id
-                        })
-
-                        if (findUserInNotification) {
-                            await notificationModel.updateOne({
-                                userId: checkRequestedEmail._id
-                            }, {
-                                $push: {
-                                    notifications: {
-                                        notifications: `${checkUserExist.firstName} sent you a friend request.`,
-                                        userId: checkUserExist._id,
-                                        status: 1
-                                    }
-                                }
-                            })
-                        } else {
-
-                            const data = notificationModel({
-                                userId: checkRequestedEmail._id,
-                                notifications: {
-                                    notifications: `${checkUserExist.firstName} sent you a friend request.`,
-                                    userId: checkUserExist._id,
-                                    status: 1
-                                }
-                            })
-
-                            await data.save();
-                        }
-
-
-
-                        if (!emailExitInRequestedModel1) {
-
-
-
-                            const request = requestModel({
-                                userId: checkRequestedEmail._id,
-                                userEmail: checkRequestedEmail.email,
-                                RequestedEmails: [{
-                                    requestedEmail: checkUserExist.email,
-                                    accepted: 4,
-                                    userId: checkUserExist._id
-                                }],
-
-                            })
-
-                            const saveData = await request.save();
-
-                        } else {
-
-
-                            const inRequested = [];
-                            const allRequestedEmail = emailExitInRequestedModel1.RequestedEmails
-                            allRequestedEmail.map((result, index) => {
-
-                                if (result.requestedEmail == checkUserExist.email) {
-                                    inRequested.push(true)
-                                }
-                            })
-                            if (inRequested[0] == true) {
-
-                            } else {
-                                const updatePosts = await requestModel.updateOne({ userId: emailExitInRequestedModel1.userId },
-                                    {
-                                        $push: {
-                                            RequestedEmails: [{
-                                                requestedEmail: checkUserExist.email,
-                                                accepted: 4,
-                                                userId: checkUserExist._id
-                                            }]
-                                        }
-                                    })
-                            }
-
-                        }
-
-                        const userRoom = `User${arg.requested_id}`
-                        io.to(userRoom).emit("getRequest", `Request Send successfully!`);
-
-
-                        checkRequestedEmail
-                        const fcm_token = checkRequestedEmail.fcm_token
-                        const title = "Friend Request";
-                        const body = `${checkUserExist.firstName} sent you a friend request.`;
-                        const text = `${checkUserExist.firstName} sent you a friend request.`;
-                        const sendBy = arg.user_id;
-                        const registrationToken = fcm_token
-
-                        Notification.sendPushNotificationFCM(
-                            registrationToken,
-                            title,
-                            body,
-                            text,
-                            sendBy,
-                            true
-                        );
-
-                    } else {
-                        const inRequested = [];
-                        const allRequestedEmail = emailExitInRequestedModel.RequestedEmails
-                        allRequestedEmail.map((result, index) => {
-
-                            if (result.requestedEmail == checkRequestedEmail.email) {
-                                inRequested.push(true)
-                            }
-                        })
-
-                        if (!emailExitInRequestedModel1) {
-
-                            const request = requestModel({
-                                userId: checkRequestedEmail._id,
-                                userEmail: checkRequestedEmail.email,
-                                RequestedEmails: [{
-                                    requestedEmail: checkUserExist.email,
-                                    accepted: 4,
-                                    userId: checkUserExist._id
-                                }],
-                            })
-
-                            const saveData = await request.save();
-
-                        } else {
-                            const inRequested = [];
-
-                            const allRequestedEmail = emailExitInRequestedModel1.RequestedEmails
-                            allRequestedEmail.map((result, index) => {
-
-                                if (result.requestedEmail == checkUserExist.email) {
-                                    inRequested.push(true)
-                                }
-                            })
-                            if (inRequested[0] == true) {
-
-                            } else {
-                                const updatePosts = await requestModel.updateOne({ userId: emailExitInRequestedModel1.userId },
-                                    {
-                                        $push: {
-                                            RequestedEmails: [{
-                                                requestedEmail: checkUserExist.email,
-                                                accepted: 4,
-                                                userId: checkUserExist._id
-                                            }]
-                                        }
-                                    })
-                            }
-
-                        }
-                        if (inRequested[0] == true) {
-                            const userRoom = `User${arg.requested_id}`
-                            io.to(userRoom).emit("getRequest", `Already Requested!`);
-                        } else {
-                            const updatePosts = await requestModel.updateOne({ userId: arg.user_id },
-                                {
-                                    $push: {
-                                        RequestedEmails: [{
-                                            requestedEmail: checkRequestedEmail.email,
-                                            accepted: 2,
-                                            userId: checkRequestedEmail._id
-                                        }]
-                                    }
-                                })
-                            const findUserInNotification = await notificationModel.findOne({
-                                userId: checkRequestedEmail._id
-                            })
-                            if (findUserInNotification) {
-                                await notificationModel.updateOne({
-                                    userId: checkRequestedEmail._id
-                                }, {
-                                    $push: {
-                                        notifications: {
-                                            notifications: `${checkUserExist.firstName} sent you a friend request.`,
-                                            userId: checkUserExist._id,
-                                            status: 1
-                                        }
-                                    }
-                                })
-                            } else {
-                                const data = notificationModel({
-                                    userId: checkRequestedEmail._id,
-                                    notifications: {
-                                        notifications: `${checkUserExist.firstName} sent you a friend request.`,
-                                        userId: checkUserExist._id,
-                                        status: 1
-                                    }
-                                })
-
-                                await data.save();
-                            }
-
-                            const userRoom = `User${arg.requested_id}`
-                            io.to(userRoom).emit("getRequest", `Request Send successfully!`);
-
-
-                            checkRequestedEmail
-                            const fcm_token = checkRequestedEmail.fcm_token
-                            const title = "Friend Request";
-                            const body = `${checkUserExist.firstName} sent you a friend request.`;
-                            const text = `${checkUserExist.firstName} sent you a friend request.`;
-                            const sendBy = arg.user_id;
-                            const registrationToken = fcm_token
-
-                            Notification.sendPushNotificationFCM(
-                                registrationToken,
-                                title,
-                                body,
-                                text,
-                                sendBy,
-                                true
-                            );
-                        }
-                    }
-                } else {
-
-                }
-            } else {
-                const userRoom = `User${arg.requested_id}`
-                io.to(userRoom).emit("getRequest", `not found!`);
-
-            }
-        })
-
-        socket.on('sendRequest', async (arg) => {
-
-            const findUser = await userModel.findOne({
-                _id: arg.user_id,
-                polyDating: 1
-            })
-
-            if (findUser == null) {
-                io.emit("sendRequestUser", "User Not Found or user Not Polyamorous...!");
-            } else {
-
-                const getAllUserWhichLoginAsPolyamorous = await userModel.find({ polyDating: 1 });
-                if (getAllUserWhichLoginAsPolyamorous) {
-                    const findAllUser = await userModel.find({
-                        _id: {
-                            $ne: arg.user_id
-                        },
-                        polyDating: 1
-                    })
-
-                    if (findAllUser) {
-
-                        const findValidUser = await userModel.findOne({
-                            _id: arg.request_id
-                        })
-
-
-                        if (findValidUser == null) {
-                            io.emit("sendRequestUser", "User Not Found!");
-                        } else {
-
-                            const combineUser = await linkProfileModel.findOne({
-                                _id: arg.combine_id,
-                            })
-
-                            if (combineUser) {
-
-                                if (combineUser.user1 && combineUser.user2 && combineUser.user3 == undefined && combineUser.user4 == undefined) {
-
-                                    const findValidUser1 = await linkProfileModel.findOne({
-                                        _id: arg.combine_id
-                                    })
-
-                                    if ((findValidUser1.user1).toString() == (arg.user_id).toString() || (findValidUser1.user2).toString() == (arg.user_id).toString()) {
-                                        io.emit("sendRequestUser", "already In link profile...");
-                                    } else {
-
-
-                                        const findAlrearyRerquestedUser1 = await userModel.findOne({
-                                            _id: combineUser.user1,
-                                        })
-                                        const findAlrearyRerquestedUser2 = await userModel.findOne({
-                                            _id: combineUser.user1,
-                                        })
-
-
-                                        const data = [];
-                                        for (const linkUser of findAlrearyRerquestedUser1.linkProfile) {
-
-                                            if (linkUser.userId == arg.user_id && linkUser.status == 0 && linkUser.combineId == arg.combine_id) {
-                                                data.push(1)
-                                            }
-                                        }
-                                        for (const linkUser of findAlrearyRerquestedUser2.linkProfile) {
-                                            if (linkUser.userId == arg.user_id && linkUser.status == 0 && linkUser.combineId == arg.combine_id) {
-                                                data.push(1)
-                                            }
-                                        }
-
-
-
-                                        if (data[0] == 1 && data[1] == 1) {
-
-                                            const data = {
-                                                message: "already requested link Profile....",
-                                                status: 1
-                                            }
-
-                                            io.emit("sendRequestUser", data);
-
-                                        } else {
-
-                                            await userModel.updateOne({
-                                                _id: combineUser.user1
-                                            }, {
-                                                $push: {
-                                                    linkProfile: {
-                                                        userId: arg.user_id,
-                                                        combineId: arg.combine_id
-                                                    }
-                                                }
-                                            })
-
-                                            await userModel.updateOne({
-                                                _id: combineUser.user2
-                                            }, {
-                                                $push: {
-                                                    linkProfile: {
-                                                        userId: arg.user_id,
-                                                        combineId: arg.combine_id
-                                                    }
-                                                }
-                                            })
-
-
-                                            const data = {
-                                                message: "successfully send link profile...",
-                                                status: 0
-                                            }
-                                            io.emit("sendRequestUser", data);
-                                        }
-
-                                    }
-
-
-                                } else if (combineUser.user1 && combineUser.user2 && combineUser.user3 && combineUser.user4 == undefined) {
-
-                                    const findValidUser = await linkProfileModel.findOne({
-                                        _id: arg.combine_id
-                                    })
-
-
-                                    if ((findValidUser.user1).toString() == (arg.user_id).toString() || (findValidUser.user2).toString() == (arg.user_id).toString() || (findValidUser.user3).toString() == (arg.user_id).toString()) {
-
-                                        io.emit("sendRequestUser", "already In link profile...");
-
-                                    } else {
-
-
-
-                                        const findAlrearyRerquestedUser1 = await userModel.findOne({
-                                            _id: combineUser.user1,
-                                        })
-                                        const findAlrearyRerquestedUser2 = await userModel.findOne({
-                                            _id: combineUser.user1,
-                                        })
-                                        const findAlrearyRerquestedUser3 = await userModel.findOne({
-                                            _id: combineUser.user1,
-                                        })
-
-                                        const data = [];
-                                        for (const linkUser of findAlrearyRerquestedUser1.linkProfile) {
-
-                                            if (linkUser.userId == arg.user_id && linkUser.status == 0 && linkUser.combineId == arg.combine_id) {
-                                                data.push(1)
-                                            }
-                                        }
-                                        for (const linkUser of findAlrearyRerquestedUser2.linkProfile) {
-                                            if (linkUser.userId == arg.user_id && linkUser.status == 0 && linkUser.combineId == arg.combine_id) {
-                                                data.push(1)
-                                            }
-                                        }
-                                        for (const linkUser of findAlrearyRerquestedUser3.linkProfile) {
-                                            if (linkUser.userId == arg.user_id && linkUser.status == 0 && linkUser.combineId == arg.combine_id) {
-                                                data.push(1)
-                                            }
-                                        }
-
-                                        if (data[0] == 1 && data[1] == 1 && data[2] == 1) {
-
-                                            const data = {
-                                                message: "already requested link Profile....",
-                                                status: 1
-                                            }
-
-                                            io.emit("sendRequestUser", data);
-
-                                        } else {
-                                            await userModel.updateOne({
-                                                _id: combineUser.user1
-                                            }, {
-                                                $push: {
-                                                    linkProfile: {
-                                                        userId: arg.user_id,
-                                                        combineId: arg.combine_id
-                                                    }
-                                                }
-                                            })
-
-                                            await userModel.updateOne({
-                                                _id: combineUser.user2
-                                            }, {
-                                                $push: {
-                                                    linkProfile: {
-                                                        userId: arg.user_id,
-                                                        combineId: arg.combine_id
-                                                    }
-                                                }
-                                            })
-
-                                            await userModel.updateOne({
-                                                _id: combineUser.user3
-                                            }, {
-                                                $push: {
-                                                    linkProfile: {
-                                                        userId: arg.user_id,
-                                                        combineId: arg.combine_id
-                                                    }
-                                                }
-                                            })
-
-                                            const data = {
-                                                message: "successfully send link profile...",
-                                                status: 0
-                                            }
-                                            io.emit("sendRequestUser", data);
-
-                                        }
-
-                                    }
-                                } else {
-                                    io.emit("sendRequestUser", "already have 4 users...");
-                                }
-
-
-                            } else {
-                                const findValidUser = await userModel.findOne({
-                                    _id: arg.request_id,
-                                    "linkProfile.userId": arg.user_id
-                                })
-                                if (findValidUser == null) {
-                                    await userModel.updateOne({
-                                        _id: arg.request_id
-                                    }, {
-                                        $push: {
-                                            linkProfile: {
-                                                userId: arg.user_id
-                                            }
-                                        }
-                                    })
-
-                                    io.emit("sendRequestUser", "successfully send link profile..");
-                                } else {
-                                    const data = {
-                                        message: "already requested link Profile....",
-                                        status: 1
-                                    }
-                                    io.emit("sendRequestUser", data);
-
-
-                                }
-                            }
-                        }
-
-                    } else {
-                        io.emit("sendRequestUser", "This User Not Polyamorous!");
-                    }
-
-                }
-            }
-
-        })
-
-        socket.on('conflictOfIntrest', async (arg) => {
-            const userRoom = arg.group_room_id;
-            socket.join(userRoom);
-
-            const findRoom = groupChatRoomModels.findOne({
-                _id: arg.group_room_id
-            })
-
-            if (findRoom == null) {
-                io.emit("showConflictOfIntrest", "this group is not Found");
-            } else {
-                const conflictOfIntrest = [];
-                const findGroupInConflictModel = await conflictModel.find({
-                    groupId: arg.group_room_id
-                })
-
-                for (const getGroup of findGroupInConflictModel) {
-
-                    const findUser = await userModel.findOne({
-                        _id: getGroup.conflictUserId
-                    })
-                    const findFinalDisionUser = await userModel.findOne({
-                        _id: arg.user_id
-                    })
-                    const response = {
-                        userIdWhichConflictUser: getGroup.conflictUserId,
-                        profileConflictUser: findUser.photo[0] ? findUser.photo[0].res : "",
-                        nameOfConflictUser: findUser.firstName,
-                        finalDesionForMySide: findFinalDisionUser.firstName,
-                        countAgree: getGroup.aggreeCount,
-                        countDisAgree: getGroup.disAggreeCount
-                    }
-                    conflictOfIntrest.push(response)
-
-                }
-
-                io.to(userRoom).emit("showConflictOfIntrest", conflictOfIntrest);
-            }
-
-        })
-
-        socket.on('videoCall', async (arg) => {
-
-            const findChatRoom = await chatRoomModel.findOne({
-                _id: arg.chat_room_id
-            })
-            if (findChatRoom) {
-
-                const findData = await videoCallModel.findOne({
-                    chatRoomId: arg.chat_room_id
-                })
-
-                if (findData) {
-                    io.emit("videoCallReceive", "already ceated video call!")
-                } else {
-                    const saveData = videoCallModel({
-                        chatRoomId: arg.chat_room_id,
-                        senderId: arg.sender_id,
-                        receiverId: arg.receiver_id
-                    })
-
-                    await saveData.save();
-
-                    const sender = await userModel.findOne({
-                        _id: arg.sender_id
-                    })
-
-                    const videoCallData = {
-                        chatRoomId: arg.chat_room_id,
-                        senderId: arg.sender_id,
-                        receiverId: arg.receiver_id,
-                        userName: sender.firstName,
-                        image: sender.photo ? sender.photo[0].res : ''
-                    }
-
-                    const userRoom = `User${arg.receiver_id}`
-                    io.to(userRoom).emit("videoCallReceive", videoCallData);
-
-                    const receiver = await userModel.findOne({
-                        _id: arg.receiver_id
-                    })
-
-                    const fcm_token = receiver.fcm_token
-                    const title = "video call Request";
-                    const body = `${sender.firstName} join video call.`;
-                    const text = `${sender.firstName} join video call.`;
-                    const sendBy = arg.sender_id;
-                    const registrationToken = fcm_token
-
-                    Notification.sendPushNotificationFCM(
-                        registrationToken,
-                        title,
-                        body,
-                        text,
-                        sendBy,
-                        true
-                    );
-                }
-
-            } else {
-                io.emit("videoCallReceive", "Room not Found!")
-            }
-
-        })
-
-        socket.on('videoCallEnd', async (arg) => {
-
-            const findChatRoom = await chatRoomModel.findOne({
-                _id: arg.chat_room_id
-            })
-
-            console.log("findChatRoom" , findChatRoom);
-            if (findChatRoom) {
-                const findData = await videoCallModel.findOne({
-                    chatRoomId: arg.chat_room_id
-                })
-
-                if (findData) {
-
-                    await videoCallModel.deleteOne({
-                        chatRoomId: arg.chat_room_id
-                    })
-
-                    const sender = await userModel.findOne({
-                        _id: arg.sender_id
-                    })
-
-                    const videoCallData = {
-                        chatRoomId: arg.chat_room_id,
-                        senderId: arg.sender_id,
-                        receiverId: arg.receiver_id,
-                        userName: sender.firstName,
-                        image: sender.photo ? sender.photo[0].res : ''
-                    }
-
-                    const userRoom = `User${arg.receiver_id}`
-                    io.to(userRoom).emit("videoCallEndReceive", videoCallData);
-
-                    const receiver = await userModel.findOne({
-                        _id: arg.receiver_id
-                    })
-                    const fcm_token = receiver.fcm_token
-                    const title = "video call End Request";
-                    const body = `${sender.firstName} End video call.`;
-                    const text = `${sender.firstName} End video call.`;
-                    const sendBy = arg.sender_id;
-                    const registrationToken = fcm_token
-
-                    Notification.sendPushNotificationFCM(
-                        registrationToken,
-                        title,
-                        body,
-                        text,
-                        sendBy,
-                        true
-                    );
-                } else {
-
-                    io.emit("videoCallEndReceive", "not Create Any Video Call!")
-
-                }
-
-            } else {
-                io.emit("videoCallEndReceive", "Room not Found!")
-            }
-
-        })
-
-        socket.on('acceptVideoCall', async (arg) => {
-
-            const findChatRoom = await chatRoomModel.findOne({
-                _id: arg.chat_room_id
-            })
-            if (findChatRoom) {
-
-                const findData = await videoCallModel.findOne({
-                    chatRoomId: arg.chat_room_id
-                })
-
-                if (findData) {
-
-                    await videoCallModel.updateOne({
-                        chatRoomId: arg.chat_room_id
-                    }, {
-                        $set: {
-                            accepted: 1
-                        }
-                    })
-
-                    io.emit("acceptVideoCallReceive", "accepted request!")
-                } else {
-
-                    io.emit("acceptVideoCallReceive", "not Create Any Video Call!")
-
-                }
-
-            } else {
-                io.emit("acceptVideoCallReceive", "Room not Found!")
-            }
-
-        })
-
-    })
+        }
+
+        if (findRoom == null) {
+            res.status(status.NOT_FOUND).json(
+                new APIResponse("User Not Found in Chat", "true", 404, "0")
+            )
+        } else {
+            res.status(status.OK).json(
+                new APIResponse("Read All chat", "true", 200, "1")
+            )
+        }
+
+        // const findChatId = await chatModels.findOne({ chatRoomId: mongoose.Types.ObjectId(req.params.chat_room_id) })
+
+        // if (findChatId == null) {
+        //     res.status(status.NOT_FOUND).json(
+        //         new APIResponse("User Not Found in Chat", "true", 404, "0")
+        //     )
+
+        // } else {
+        //     await chatModels.updateMany({ chatRoomId: req.params.chat_room_id }, { $set: { "chat.$[].read": 0 } });
+
+        //     res.status(status.OK).json(
+        //         new APIResponse("Read updated", "true", 200, "1")
+        //     )
+        // }
+
+    } catch (error) {
+        console.log("Error:", error);
+        res.status(status.INTERNAL_SERVER_ERROR).json(
+            new APIResponse("Something Went Wrong", "false", 500, "0", error.message)
+        );
+    }
 }
 
 
+exports.getUserWithChat = async (req, res, next) => {
+    try {
+        const allChat = [];
+        const chatRoom = [];
+        const findRoom = await chatModels.findOne({
+            chatRoomId: req.params.user_id
+        });
+        chatRoom.push(findRoom)
+
+        const page = parseInt(req.query.page)
+        const limit = parseInt(req.query.limit)
+        const startIndex = (page - 1) * limit;
+        const endIndex = page * limit;
 
 
-module.exports = socket
+        if (findRoom != null) {
+            const chat = findRoom.chat;
+            for (const finalchat of chat) {
+                const response = {
+                    _id: finalchat.sender,
+                    text: finalchat.text,
+                    time: finalchat.createdAt,
+                    photo: finalchat.photo
+                }
+                allChat.push(response)
+            }
 
+            const data = allChat.length;
+            const pageCount = Math.ceil(data / limit);
+            console.log("pageCount", pageCount);
+            res.status(status.OK).json({
+                "message": "show all record with chat",
+                "status": true,
+                "code": 201,
+                "statusCode": 1,
+                "pageCount": pageCount == NaN ? 0 : pageCount,
+                "data": startIndex ? allChat.slice(startIndex, endIndex) : allChat
+
+            })
+        } else {
+            res.status(status.OK).json({
+                "message": "show all record with chat",
+                "status": true,
+                "code": 201,
+                "statusCode": 1,
+                "pageCount": 0,
+                "data": []
+
+            })
+        }
+    } catch (error) {
+        console.log("Error:", error);
+        res.status(status.INTERNAL_SERVER_ERROR).json(
+            new APIResponse("Something Went Wrong", "false", 500, "0", error.message)
+        );
+    }
+}
+
+
+exports.allUserListWithUnreadCount = async (req, res, next) => {
+    try {
+        // const findData = await chatRoomModel.findOne({
+        //     _id: mongoose.Types.ObjectId(req.params.chat_room),
+        //     user1: mongoose.Types.ObjectId(req.params.user_1),
+        //     user2: mongoose.Types.ObjectId(req.params.user_2)
+        // })
+        const findAllUserWithIchat = await chatRoomModel.find({
+            $or: [{
+                user1: req.params.user_id
+            }, {
+                user2: req.params.user_id
+            }]
+        })
+
+        const unReadMessage = [];
+
+        for (const roomId of findAllUserWithIchat) {
+            const findRoom = await chatModels.findOne({
+                chatRoomId: roomId._id
+            })
+
+            if (findRoom) {
+                const userDetail = [];
+                if (roomId.user1 == req.params.user_id) {
+                    const userProfile = await userModel.findOne({
+                        _id: roomId.user2
+                    })
+                    userDetail.push(userProfile)
+                } else {
+                    const userProfile = await userModel.findOne({
+                        _id: roomId.user1
+                    })
+                    userDetail.push(userProfile)
+                }
+                var count = 0;
+                const lastMessage = [];
+
+                for (const getChat of findRoom.chat) {
+
+                    var s_id = (getChat.sender).toString();
+                    var u_id = (req.params.user_id).toString();
+
+                    if (s_id == u_id) {
+                        count = count + getChat.read;
+                    } else {
+
+                    }
+
+                    const lastUnreadMessage = {
+                        text: getChat.text,
+                        createdAt: getChat.createdAt,
+                        dateAndTime: getChat.dateAndTime
+                    }
+
+                    // console.log("lastUnreadMessage", lastUnreadMessage);
+                    lastMessage.push(lastUnreadMessage);
+                    const lastValue = lastMessage[lastMessage.length - 1];
+                    // console.log("lastValue", lastValue);
+
+                    console.log(lastValue);
+                    var userNotificationDate = new Date(lastValue.dateAndTime);
+                    now = new Date();
+                    var sec_num = (now - userNotificationDate) / 1000;
+                    var days = Math.floor(sec_num / (3600 * 24));
+                    var hours = Math.floor((sec_num - (days * (3600 * 24))) / 3600);
+                    var minutes = Math.floor((sec_num - (days * (3600 * 24)) - (hours * 3600)) / 60);
+                    var seconds = Math.floor(sec_num - (days * (3600 * 24)) - (hours * 3600) - (minutes * 60));
+
+                    if (hours < 10) { hours = "0" + hours; }
+                    if (minutes < 10) { minutes = "0" + minutes; }
+                    if (seconds < 10) { seconds = "0" + seconds; }
+
+                    if (days > 28) {
+                        const response = {
+                            chatRoomId: findRoom.chatRoomId,
+                            _id: userDetail[0]._id,
+                            countUnreadMessage: count,
+                            lastMessage: lastValue.text,
+                            name: userDetail[0].firstName,
+                            dateAndTime: new Date(userNotificationDate).toDateString(),
+                            profile: userDetail[0].photo[0] == undefined ? "" : userDetail[0].photo[0].res,
+
+                        }
+
+                        unReadMessage.push(response);
+                    } else if (days > 21 && days < 28) {
+                        const response = {
+                            chatRoomId: findRoom.chatRoomId,
+                            _id: userDetail[0]._id,
+                            countUnreadMessage: count,
+                            lastMessage: lastValue.text,
+                            name: userDetail[0].firstName,
+                            dateAndTime: '4 week ago',
+                            profile: userDetail[0].photo[0] == undefined ? "" : userDetail[0].photo[0].res,
+
+                        }
+
+                        unReadMessage.push(response);
+                    } else if (days > 14 && days < 21) {
+                        const response = {
+                            chatRoomId: findRoom.chatRoomId,
+                            _id: userDetail[0]._id,
+                            countUnreadMessage: count,
+                            lastMessage: lastValue.text,
+                            name: userDetail[0].firstName,
+                            dateAndTime: '3 week ago',
+                            profile: userDetail[0].photo[0] == undefined ? "" : userDetail[0].photo[0].res,
+
+                        }
+
+                        unReadMessage.push(response);
+                    } else if (days > 7 && days < 14) {
+                        const response = {
+                            chatRoomId: findRoom.chatRoomId,
+                            _id: userDetail[0]._id,
+                            countUnreadMessage: count,
+                            lastMessage: lastValue.text,
+                            name: userDetail[0].firstName,
+                            dateAndTime: '2 week ago',
+                            profile: userDetail[0].photo[0] == undefined ? "" : userDetail[0].photo[0].res,
+
+                        }
+
+                        unReadMessage.push(response);
+                    } else if (days > 0 && days < 7) {
+                        const response = {
+                            chatRoomId: findRoom.chatRoomId,
+                            _id: userDetail[0]._id,
+                            countUnreadMessage: count,
+                            lastMessage: lastValue.text,
+                            name: userDetail[0].firstName,
+                            dateAndTime: '1 week ago',
+                            profile: userDetail[0].photo[0] == undefined ? "" : userDetail[0].photo[0].res,
+
+                        }
+
+                        unReadMessage.push(response);
+                    } else if (hours > 0 && days == 0) {
+                        const response = {
+                            chatRoomId: findRoom.chatRoomId,
+                            _id: userDetail[0]._id,
+                            countUnreadMessage: count,
+                            lastMessage: lastValue.text,
+                            name: userDetail[0].firstName,
+                            dateAndTime: `${hours} hourse ago`,
+                            profile: userDetail[0].photo[0] == undefined ? "" : userDetail[0].photo[0].res,
+
+                        }
+
+                        unReadMessage.push(response);
+                    } else if (minutes > 0 && hours == 0) {
+                        const response = {
+                            chatRoomId: findRoom.chatRoomId,
+                            _id: userDetail[0]._id,
+                            countUnreadMessage: count,
+                            lastMessage: lastValue.text,
+                            name: userDetail[0].firstName,
+                            dateAndTime: `${minutes} minutes ago`,
+                            profile: userDetail[0].photo[0] == undefined ? "" : userDetail[0].photo[0].res,
+
+                        }
+
+                        unReadMessage.push(response);
+                    } else if (seconds > 0 && minutes == 0 && hours == 0 && days === 0) {
+
+                        const response = {
+                            chatRoomId: findRoom.chatRoomId,
+                            _id: userDetail[0]._id,
+                            countUnreadMessage: count,
+                            lastMessage: lastValue.text,
+                            name: userDetail[0].firstName,
+                            dateAndTime: `${seconds} seconds ago`,
+                            profile: userDetail[0].photo[0] == undefined ? "" : userDetail[0].photo[0].res,
+
+                        }
+
+                        unReadMessage.push(response);
+                    } else if (seconds == 0 && minutes == 0 && hours == 0 && days === 0) {
+                        const response = {
+                            chatRoomId: findRoom.chatRoomId,
+                            _id: userDetail[0]._id,
+                            countUnreadMessage: count,
+                            lastMessage: lastValue.text,
+                            name: userDetail[0].firstName,
+                            dateAndTime: `just now`,
+                            profile: userDetail[0].photo[0] == undefined ? "" : userDetail[0].photo[0].res,
+                        }
+
+                        unReadMessage.push(response);
+                    }
+                }
+            }
+        }
+
+        let uniqueObjArray = [...new Map(unReadMessage.map((item) => [item["_id"], item])).values()];
+        const page = parseInt(req.query.page)
+        const limit = parseInt(req.query.limit)
+        const startIndex = (page - 1) * limit;
+        const endIndex = page * limit;
+        const data = uniqueObjArray.length;
+        const pageCount = Math.ceil(data / limit);
+        // console.log("uniqueObjArray", uniqueObjArray);
+
+        // console.log(data);
+        // console.log("date is", new Date(data));
+        res.status(status.OK).json({
+            "message": "all group",
+            "status": true,
+            "code": 200,
+            "statusCode": 1,
+            "pageCount": pageCount == NaN ? 0 : pageCount,
+            "data": uniqueObjArray.slice(startIndex, endIndex).sort((a, b) => new Date(b.dateAndTime) - new Date(a.dateAndTime))
+
+        })
+
+
+        // getAllChrRoomForPericularUser =
+        // if (findData == null) {
+        //     const findData = await chatRoomModel.findOne({
+        //         _id: mongoose.Types.ObjectId(req.params.chat_room),
+        //         user1: req.params.user_2,
+        //         user2: req.params.user_1
+        //     })
+
+        //     if (findData == null) {
+        //         res.status(status.NOT_FOUND).json(
+        //             new APIResponse("not found user", "false", 404, "0")
+        //         );
+        //     } else {
+        //         const data = await chatModels.aggregate([
+        //             {
+        //                 $match: {
+        //                     chatRoomId: mongoose.Types.ObjectId(req.params.chat_room)
+        //                 }
+        //             },
+        //             {
+        //                 $lookup: {
+        //                     from: 'chatrooms',
+        //                     let: {
+        //                         chatRoom: mongoose.Types.ObjectId(req.params.chat_room)
+        //                     },
+        //                     pipeline: [
+        //                         {
+        //                             $match: {
+        //                                 $expr: {
+        //                                     $eq: [
+        //                                         "$_id",
+        //                                         "$$chatRoom"
+        //                                     ]
+        //                                 }
+        //                             }
+        //                         }
+        //                     ],
+        //                     as: "result"
+        //                 }
+        //             },
+        //         ])
+
+
+
+        //         const getAllChat = data[0].chat;
+        //         var defaltReadforUser1 = 0;
+        //         var defaltReadforUser2 = 0;
+        //         const unreadMessageByUser1 = [];
+        //         const unreadMessageByuser2 = [];
+
+
+
+        //         for (const getChat of getAllChat) {
+
+        //             if (getChat.sender == req.params.user_1) {
+
+        //                 var defaltReadforUser1 = defaltReadforUser1 + getChat.read;
+        //                 const response = [{
+        //                     unreadMessage: defaltReadforUser1,
+        //                     unreadMessageUserId: req.params.user_2
+        //                 }]
+
+        //                 unreadMessageByUser1.push(response)
+
+        //             } else if (getChat.sender == req.params.user_2) {
+
+
+        //                 var defaltReadforUser2 = defaltReadforUser2 + getChat.read;
+        //                 const response = [{
+        //                     unreadMessage: defaltReadforUser2,
+        //                     unreadMessageUserId: req.params.user_1
+        //                 }]
+
+
+        //                 unreadMessageByuser2.push(response)
+        //             }
+        //         }
+
+        //         const finalArray1 = unreadMessageByUser1[unreadMessageByUser1.length - 1];
+        //         const finalArray2 = unreadMessageByuser2[unreadMessageByuser2.length - 1];
+
+        //         if (finalArray1 && finalArray2) {
+        //             meargeAllUserUnreadMessage = [...finalArray1, ...finalArray2];
+        //             res.status(status.OK).json(
+        //                 new APIResponse("show all unread 1 chat", true, 200, 1, meargeAllUserUnreadMessage)
+        //             )
+        //         } else if (finalArray1) {
+
+        //             meargeAllUserUnreadMessage = [...finalArray1];
+        //             res.status(status.OK).json(
+        //                 new APIResponse("show all unread 2 chat", true, 200, 1, meargeAllUserUnreadMessage)
+        //             )
+
+
+        //         } else if (finalArray2) {
+
+        //             meargeAllUserUnreadMessage = [...finalArray2];
+        //             res.status(status.OK).json(
+        //                 new APIResponse("show all unread 3 chat", true, 200, 1, meargeAllUserUnreadMessage)
+        //             )
+
+
+        //         } else {
+
+        //             res.status(status.OK).json(
+        //                 new APIResponse("somthing went Wrong", "false", 500, "1")
+        //             )
+
+        //         }
+
+
+        //     }
+        // } else {
+        //     const data = await chatModels.aggregate([
+        //         {
+        //             $match: {
+        //                 chatRoomId: mongoose.Types.ObjectId(req.params.chat_room)
+        //             }
+        //         },
+        //         {
+        //             $lookup: {
+        //                 from: 'chatrooms',
+        //                 let: {
+        //                     chatRoom: mongoose.Types.ObjectId(req.params.chat_room)
+        //                 },
+        //                 pipeline: [
+        //                     {
+        //                         $match: {
+        //                             $expr: {
+        //                                 $eq: [
+        //                                     "$_id",
+        //                                     "$$chatRoom"
+        //                                 ]
+        //                             }
+        //                         }
+        //                     }
+        //                 ],
+        //                 as: "result"
+        //             }
+        //         },
+        //     ])
+
+
+
+
+
+        //     const getAllChat = data[0].chat;
+        //     var defaltReadforUser1 = 0;
+        //     var defaltReadforUser2 = 0;
+        //     const unreadMessageByUser1 = [];
+        //     const unreadMessageByuser2 = [];
+
+
+        //     for (const getChat of getAllChat) {
+
+        //         if (getChat.sender == req.params.user_1) {
+
+        //             var defaltReadforUser1 = defaltReadforUser1 + getChat.read;
+        //             const response = [{
+        //                 unreadMessage: defaltReadforUser1,
+        //                 unreadMessageUserId: req.params.user_2
+        //             }]
+
+        //             unreadMessageByUser1.push(response)
+
+        //         } else if (getChat.sender == req.params.user_2) {
+
+
+        //             var defaltReadforUser2 = defaltReadforUser2 + getChat.read;
+        //             const response = [{
+        //                 unreadMessage: defaltReadforUser2,
+        //                 unreadMessageUserId: req.params.user_1
+        //             }]
+
+        //             unreadMessageByuser2.push(response)
+        //         }
+        //     }
+
+        //     const finalArray1 = unreadMessageByUser1[unreadMessageByUser1.length - 1];
+        //     const finalArray2 = unreadMessageByuser2[unreadMessageByuser2.length - 1];
+
+        //     if (finalArray1 && finalArray2) {
+        //         meargeAllUserUnreadMessage = [...finalArray1, ...finalArray2];
+        //         res.status(status.OK).json(
+        //             new APIResponse("show all unread chat", true, 200, 1, meargeAllUserUnreadMessage)
+        //         )
+
+
+        //     } else if (finalArray1) {
+
+        //         meargeAllUserUnreadMessage = [...finalArray1];
+        //         res.status(status.OK).json(
+        //             new APIResponse("show all unread chat", true, 200, 1, meargeAllUserUnreadMessage)
+        //         )
+
+
+        //     } else if (finalArray2) {
+
+        //         meargeAllUserUnreadMessage = [...finalArray2];
+        //         res.status(status.OK).json(
+        //             new APIResponse("show all unread chat", true, 200, 1, meargeAllUserUnreadMessage)
+        //         )
+
+
+        //     } else {
+
+        //         res.status(status.OK).json(
+        //             new APIResponse("somthing went Wrong", "false", 500, "1")
+        //         )
+
+        //     }
+
+
+
+        // }
+
+
+
+    } catch (error) {
+        console.log("Error:", error);
+        res.status(status.INTERNAL_SERVER_ERROR).json(
+            new APIResponse("Something Went Wrong", "false", 500, "0", error.message)
+        );
+    }
+}
+
+
+exports.inAcallOrNot = async (req, res, next) => {
+    try {
+
+        const findChatRoomModel = await videoCallModel.findOne({
+            chatRoomId: req.params.chat_room_id
+        })
+
+        if (findChatRoomModel) {
+
+            if (findChatRoomModel.accepted == 1) {
+
+                const sender = await userModel.findOne({
+                    _id: findChatRoomModel.senderId
+                })
+
+                const receiver = await userModel.findOne({
+                    _id: findChatRoomModel.receiverId
+                })
+
+                const userDetail = {
+                    chatRoomId: req.params.chat_room_id,
+                    senderId: sender._id,
+                    receiverId: receiver._id,
+                    userName: sender.firstName,
+                    image: sender.photo ? sender.photo[0].res : "",
+                }
+
+
+                res.status(status.OK).json(
+                    new APIResponse("not join video call!", "true", 200, "1", userDetail)
+                );
+
+            } else {
+                res.status(status.OK).json(
+                    new APIResponse("not join video call!", "true", 200, "1")
+                );
+            }
+
+        } else {
+            res.status(status.NOT_FOUND).json(
+                new APIResponse("not create video call!", "false", 404, "0")
+            );
+        }
+
+
+    } catch (error) {
+        console.log("Error:", error);
+        res.status(status.INTERNAL_SERVER_ERROR).json(
+            new APIResponse("Something Went Wrong", "false", 500, "0", error.message)
+        );
+    }
+}
+
+exports.inAroomOrNot = async (req, res, next) => {
+    try {
+
+
+        console.log("req.params.receiver_id", req.params.receiver_id);
+        const findUserInVideoCallRoom = await videoCallModel.findOne({
+            receiverId: mongoose.Types.ObjectId(req.params.receiver_id),
+            accepted: 0
+        })
+
+        console.log("findUserInVideoCallRoom", findUserInVideoCallRoom);
+
+        if (findUserInVideoCallRoom) {
+            const receiver = await userModel.findOne({
+                _id: findUserInVideoCallRoom.receiverId
+            })
+
+            const sender = await userModel.findOne({
+                _id: findUserInVideoCallRoom.senderId
+            })
+            const data = {
+                chatRoomId: findUserInVideoCallRoom.chatRoomId,
+                senderId: findUserInVideoCallRoom.senderId,
+                receiverId: findUserInVideoCallRoom.receiverId,
+                userName: sender.firstName,
+                image: sender.photo ? sender.photo[0].res : "",
+            }
+
+            res.status(status.OK).json(
+                new APIResponse("user in a room or not", "true", 200, "1", data)
+            );
+        } else {
+
+            res.status(status.OK).json(
+                new APIResponse("user not in a room or room not found", "true", 200, "1", {})
+            );
+        }
+    } catch (error) {
+        console.log("Error:", error);
+        res.status(status.INTERNAL_SERVER_ERROR).json(
+            new APIResponse("Something Went Wrong", "false", 500, "0", error.message)
+        );
+    }
+}
