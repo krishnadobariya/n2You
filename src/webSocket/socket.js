@@ -1761,9 +1761,7 @@ function socket(io) {
             if (findChatRoom) {
 
                 const findData = await videoCallModel.findOne({
-                    chatRoomId: arg.chat_room_id,
-                    senderId: arg.sender_id,
-                    receiverId: arg.receiver_id
+                    chatRoomId: arg.chat_room_id
                 })
 
                 if (findData) {
@@ -1834,9 +1832,7 @@ function socket(io) {
                 if (findData) {
 
                     await videoCallModel.deleteOne({
-                        chatRoomId: arg.chat_room_id,
-                        senderId: arg.sender_id,
-                        receiverId: arg.receiver_id
+                        chatRoomId: arg.chat_room_id
                     })
 
                     const sender = await userModel.findOne({
