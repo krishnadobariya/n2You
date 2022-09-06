@@ -658,8 +658,9 @@ exports.inAroomOrNot = async (req, res, next) => {
                 new APIResponse("user in a room or not", "true", 200, "1", data)
             );
         } else {
+           
             res.status(status.OK).json(
-                new APIResponse("user not in a room or not", "true", 200, "1")
+                new APIResponse("user not in a room or not", "true", 200, "1", {})
             );
         }
     } catch (error) {
