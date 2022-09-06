@@ -12,6 +12,7 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 app.use(express.static('public'));
 app.use('/images', express.static('images'));
+const Notification = require("./src/helper/firebaseHelper");
 
 
 cron.schedule("*/60 * * * * *", async function () {
@@ -36,7 +37,10 @@ cron.schedule("*/60 * * * * *", async function () {
         var minutes = Math.floor((sec_num - (days * (3600 * 24)) - (hours * 3600)) / 60);
 
 
+        console.log("hours" , hours);
+        console.log("days", days);
         console.log("minutes", minutes);
+       
         if (hours == 0 && days == 0 && minutes == 30) {
 
 
@@ -44,7 +48,7 @@ cron.schedule("*/60 * * * * *", async function () {
                 _id: getDate.cretedSessionUser
             })
 
-            console.log("findUserInUserModel", findUserInUserModel);
+           
             if (getDate.RoomType == "public") {
 
                 const allRequestedEmails = [];
@@ -67,7 +71,6 @@ cron.schedule("*/60 * * * * *", async function () {
                     }
                 }
 
-                console.log("allRequestedEmail", allRequestedEmails);
                 const invitedUsers = [];
 
                 if (p1 != null) {
@@ -80,6 +83,31 @@ cron.schedule("*/60 * * * * *", async function () {
                     invitedUsers.push(getDate.participants[0].participants_3)
                 }
                 for (const notification of allRequestedEmails) {
+
+
+                    const findUser = await userModel.findOne({
+                        _id : notification
+                    })
+
+                    const findCreateSessionUser = await userModel.findOne({
+                        _id : getDate.cretedSessionUser
+                    })
+
+                    const title = findCreateSessionUser.firstName;
+                    const body = "after 30 min join session";
+
+                    const text = "join session";
+                    const sendBy = (findCreateSessionUser._id).toString();
+                    const registrationToken = findUser.fcm_token
+                    Notification.sendPushNotificationFCM(
+                        registrationToken,
+                        title,
+                        body,
+                        text,
+                        sendBy,
+                        true
+                    );
+
 
                     const findInNotification = await notificationModel.findOne({
                         userId: notification
@@ -114,6 +142,31 @@ cron.schedule("*/60 * * * * *", async function () {
                 }
 
                 for (const invitedUser of invitedUsers) {
+
+
+                    const findUser = await userModel.findOne({
+                        _id : invitedUser
+                    })
+
+                    const findCreateSessionUser = await userModel.findOne({
+                        _id : getDate.cretedSessionUser
+                    })
+
+                    const title = findCreateSessionUser.firstName;
+                    const body = "after 30 min join session";
+
+                    const text = "join session";
+                    const sendBy = (findCreateSessionUser._id).toString();
+                    const registrationToken = findUser.fcm_token
+                    Notification.sendPushNotificationFCM(
+                        registrationToken,
+                        title,
+                        body,
+                        text,
+                        sendBy,
+                        true
+                    );
+
 
                     const findInNotification = await notificationModel.findOne({
                         userId: invitedUser
@@ -150,14 +203,13 @@ cron.schedule("*/60 * * * * *", async function () {
 
             } else {
 
-                console.log("werfdwerd");
                 const allRequestedEmails = [];
 
                 const p1 = getDate.participants[0].participants_1 == null ? "" : getDate.participants[0].participants_1
                 const p2 = getDate.participants[0].participants_2 == null ? "" : getDate.participants[0].participants_2
                 const p3 = getDate.participants[0].participants_3 == null ? "" : getDate.participants[0].participants_3
 
-                console.log("allRequestedEmails", allRequestedEmails);
+                
 
 
                 if (p1 != null) {
@@ -171,11 +223,34 @@ cron.schedule("*/60 * * * * *", async function () {
                 }
 
                 for (const notification of allRequestedEmails) {
+
+                    const findUser = await userModel.findOne({
+                        _id : notification
+                    })
+
+                    const findCreateSessionUser = await userModel.findOne({
+                        _id : getDate.cretedSessionUser
+                    })
+
+                    const title = findCreateSessionUser.firstName;
+                    const body = "after 30 min join session";
+
+                    const text = "join session";
+                    const sendBy = (findCreateSessionUser._id).toString();
+                    const registrationToken = findUser.fcm_token
+                    Notification.sendPushNotificationFCM(
+                        registrationToken,
+                        title,
+                        body,
+                        text,
+                        sendBy,
+                        true
+                    );
+                    
                     const findInNotification = await notificationModel.findOne({
                         userId: notification
                     })
 
-                    console.log("findInNotification", findInNotification);
                     if (findInNotification) {
 
                         await notificationModel.updateOne({
