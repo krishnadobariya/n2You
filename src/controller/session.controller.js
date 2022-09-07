@@ -17,12 +17,14 @@ exports.sessionCreate = async (req, res, next) => {
 
         if (findUserInUserModel) {
 
-            const date = new Date(Date.UTC(req.body.selected_date))
-            let dates = date.getDate();
-            let month = date.toLocaleString('en-us', { month: 'long' });
-            let year = date.getFullYear();
-            let hours = date.getHours();
-            let minutes = date.getMinutes();
+            const date = new Date(req.body.selected_date)
+            let dates = date.getUTCDate();
+            let months = date.getUTCMonth()
+            let year = date.getUTCFullYear();
+            let hours = date.getUTCHours();
+            let minutes = date.getUTCMinutes();
+            let second = date.getUTCSeconds();
+            let month = date.toUTCString('en-us', { month: 'long' });
             let ampm = hours >= 12 ? 'pm' : 'am';
             hours = hours % 12;
             hours = hours ? hours : 12;
@@ -30,7 +32,7 @@ exports.sessionCreate = async (req, res, next) => {
             let strTime = hours + ' ' + ampm;
             let timeSession = 'At' + ' ' + hours + ':' + minutes + ' ' + ampm + ' ' + 'on' + ' ' + month + ' ' + dates + ',' + year;
             const createSession = sessionModel({
-                selectedDate: req.body.selected_date,
+                selectedDate: `${year}-${months + 1}-${dates} ${hours}:${minutes}:${second}`,
                 selectedTime: strTime,
                 cretedSessionUser: req.body.creted_session_user,
                 participants: {
