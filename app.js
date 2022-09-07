@@ -15,20 +15,22 @@ app.use('/images', express.static('images'));
 const Notification = require("./src/helper/firebaseHelper");
 
 
-cron.schedule("*/60 * * * * *", async function () {
+cron.schedule("*/1 * * * * *", async function () {
 
     const findSession = await sessionModel.find()
     for (const getDate of findSession) {
 
-        var userSessionDate = new Date(getDate.selectedDate);
-
+        console.log("getDate.selectedDate", getDate.selectedDate);
+        var userSessionDate = new Date(getDate.selectedDate)
+        console.log(userSessionDate);
+        console.log(userSessionDate.toUTCString());
         const date = new Date(Date.now())
-        let dates = date.getDate();
-        let month = date.getMonth()
-        let year = date.getFullYear();
-        let hour = date.getHours();
-        let minute = date.getMinutes();
-        let second = date.getSeconds();
+        let dates = date.getUTCDate();
+        let month = date.getUTCMonth()
+        let year = date.getUTCFullYear();
+        let hour = date.getUTCHours();
+        let minute = date.getUTCMinutes();
+        let second = date.getUTCSeconds();
         now = new Date(`${year}-${month + 1}-${dates} ${hour}:${minute}:${second}`)
 
         var sec_num = (userSessionDate - now) / 1000;
@@ -37,10 +39,10 @@ cron.schedule("*/60 * * * * *", async function () {
         var minutes = Math.floor((sec_num - (days * (3600 * 24)) - (hours * 3600)) / 60);
 
 
-        console.log("hours" , hours);
+        console.log("hours", hours);
         console.log("days", days);
         console.log("minutes", minutes);
-       
+
         if (hours == 0 && days == 0 && minutes == 30) {
 
 
@@ -81,11 +83,11 @@ cron.schedule("*/60 * * * * *", async function () {
 
 
                     const findUser = await userModel.findOne({
-                        _id : notification
+                        _id: notification
                     })
 
                     const findCreateSessionUser = await userModel.findOne({
-                        _id : getDate.cretedSessionUser
+                        _id: getDate.cretedSessionUser
                     })
 
                     const title = findCreateSessionUser.firstName;
@@ -135,11 +137,11 @@ cron.schedule("*/60 * * * * *", async function () {
 
                 for (const invitedUser of invitedUsers) {
                     const findUser = await userModel.findOne({
-                        _id : invitedUser
+                        _id: invitedUser
                     })
 
                     const findCreateSessionUser = await userModel.findOne({
-                        _id : getDate.cretedSessionUser
+                        _id: getDate.cretedSessionUser
                     })
 
                     const title = findCreateSessionUser.firstName;
@@ -205,11 +207,11 @@ cron.schedule("*/60 * * * * *", async function () {
                 for (const notification of allRequestedEmails) {
 
                     const findUser = await userModel.findOne({
-                        _id : notification
+                        _id: notification
                     })
 
                     const findCreateSessionUser = await userModel.findOne({
-                        _id : getDate.cretedSessionUser
+                        _id: getDate.cretedSessionUser
                     })
 
                     const title = findCreateSessionUser.firstName;
@@ -226,7 +228,7 @@ cron.schedule("*/60 * * * * *", async function () {
                         sendBy,
                         true
                     );
-                    
+
                     const findInNotification = await notificationModel.findOne({
                         userId: notification
                     })

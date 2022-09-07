@@ -2600,6 +2600,15 @@ exports.yesBasket = async (req, res, next) => {
 
                         const findThumbUp = await userModel.findOne({
                             _id: req.params.request_user_id,
+
+
+
+
+
+
+
+
+                            
                             polyDating: 0
                         })
 

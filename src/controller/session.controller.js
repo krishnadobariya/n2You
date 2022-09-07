@@ -17,7 +17,7 @@ exports.sessionCreate = async (req, res, next) => {
 
         if (findUserInUserModel) {
 
-            const date = new Date(req.body.selected_date)
+            const date = new Date(Date.UTC(req.body.selected_date))
             let dates = date.getDate();
             let month = date.toLocaleString('en-us', { month: 'long' });
             let year = date.getFullYear();

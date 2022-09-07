@@ -104,7 +104,7 @@ exports.getUserWithChat = async (req, res, next) => {
                 "code": 201,
                 "statusCode": 1,
                 "pageCount": (pageCount).toString() == (NaN).toString() ? 0 : pageCount,
-                "data": (startIndex).toString() == (Nan) ? allChat : allChat.slice(startIndex, endIndex)
+                "data": (startIndex).toString() == (NaN) ? allChat : allChat.slice(startIndex, endIndex)
 
             })
         } else {

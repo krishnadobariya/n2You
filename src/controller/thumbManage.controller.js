@@ -425,7 +425,7 @@ exports.thumbCount = async (req, res, next) => {
                                             userId: req.params.user_id
                                         }
                                     }
-                                }
+                                }                                             
                             );
 
                             if (findData) {
