@@ -296,9 +296,9 @@ exports.getUserWhichNotChoiceForLikeOrDislike = async (req, res, next) => {
                         "status": true,
                         "code": 201,
                         "statusCode": 1,
-                        "pageCount": pageCount,
-                        "data": response.slice(startIndex, endIndex)
-    
+                        "pageCount": (pageCount).toString() == (NaN).toString() ? 0 : pageCount,
+                        "data": (startIndex).toString() == (NaN).toString() ? response : response.slice(startIndex, endIndex)
+
                     })
                 } else {
                     res.status(status.NOT_FOUND).json(

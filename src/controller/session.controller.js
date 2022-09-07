@@ -385,8 +385,8 @@ exports.publicSession = async (req, res, next) => {
                 "status": true,
                 "code": 200,
                 "statusCode": 1,
-                "pageCount": pageCount == NaN ? 0 : pageCount,
-                "data": publicSession.slice(startIndex, endIndex).sort((a, b) => new Date(a.selectedDate) - new Date(b.selectedDate))
+                "pageCount": (pageCount).toString() == (NaN).toString() ? 0 : pageCount,
+                "data": (startIndex).toString() == (NaN).toString() ? publicSession.sort((a, b) => new Date(a.selectedDate) - new Date(b.selectedDate)) : publicSession.slice(startIndex, endIndex).sort((a, b) => new Date(a.selectedDate) - new Date(b.selectedDate))
 
             })
         }
@@ -693,8 +693,8 @@ exports.invitedInSession = async (req, res, next) => {
                 "status": true,
                 "code": 200,
                 "statusCode": 1,
-                "pageCount": pageCount == NaN ? 0 : pageCount,
-                "data": allInvited.slice(startIndex, endIndex).sort((a, b) => new Date(a.selectedDate) - new Date(b.selectedDate))
+                "pageCount": (pageCount).toString() == (NaN).toString() ? 0 : pageCount,
+                "data": (startIndex).toString() == (NaN).toString() ? allInvited.sort((a, b) => new Date(a.selectedDate) - new Date(b.selectedDate)) : allInvited.slice(startIndex, endIndex).sort((a, b) => new Date(a.selectedDate) - new Date(b.selectedDate))
 
             })
         }
@@ -887,8 +887,8 @@ exports.mySession = async (req, res, next) => {
                 "status": true,
                 "code": 200,
                 "statusCode": 1,
-                "pageCount": pageCount == NaN ? 0 : pageCount,
-                "data": mySession.slice(startIndex, endIndex).sort((a, b) => new Date(a.selectedDate) - new Date(b.selectedDate))
+                "pageCount": (pageCount).toString() == (NaN).toString() ? 0 : pageCount,
+                "data": (mySession).toString() == (NaN).toString() ? mySession.sort((a, b) => new Date(a.selectedDate) - new Date(b.selectedDate)) : mySession.slice(startIndex, endIndex).sort((a, b) => new Date(a.selectedDate) - new Date(b.selectedDate))
 
             })
         }

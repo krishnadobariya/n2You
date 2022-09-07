@@ -1884,12 +1884,11 @@ exports.userAllFriendPost = async (req, res, next) => {
         const statusByEmail = [];
         const data = await requestsModel.findOne({ userId: req.params.user_id });
 
-        console.log(data);
         const user = await userModal.findOne({ _id: req.params.user_id })
         if (data != null && user != null) {
 
-
-            const allRequestedEmail = data.RequestedEmails
+            const datas = await requestsModel.findOne({ userId: req.params.user_id });
+            const allRequestedEmail = datas.RequestedEmails
             const requestedEmailWitchIsInuserRequeted = [];
             const allData = [];
 
@@ -2823,10 +2822,25 @@ exports.userAllFriendPost = async (req, res, next) => {
                 var count = 0
             }
 
+            const page = parseInt(req.query.page)
+            const limit = parseInt(req.query.limit)
+            const startIndex = (page - 1) * limit;
+            const endIndex = page * limit;
+            const data = final_data.length;
+            const pageCount = Math.ceil(data / limit);
 
-            res.status(status.OK).json(
-                new APIResponse("show all post When accept by the user", "true", 201, "1", final_data.sort((a, b) => b.posts.createdAt - a.posts.createdAt), count.toString())
-            )
+
+            res.status(status.OK).json({
+                "message": "show all post When accept by the user",
+                "status": true,
+                "code": 201,
+                "statusCode": 1,
+                "pageCount": (pageCount).toString() == (NaN).toString() ? 0 : pageCount,
+                "notificationCount": count.toString(),
+                "data": (startIndex).toString() == (NaN).toString() ? final_data.sort((a, b) => b.posts.createdAt - a.posts.createdAt) : final_data.slice(startIndex, endIndex).sort((a, b) => b.posts.createdAt - a.posts.createdAt)
+
+            })
+
         } else if (user) {
 
 
@@ -3250,9 +3264,26 @@ exports.userAllFriendPost = async (req, res, next) => {
                     count = count + allNotification.read;
                 }
             }
-            res.status(status.OK).json(
-                new APIResponse("show all post When accept by the user", "true", 201, "1", final_data.sort((a, b) => b.posts.createdAt - a.posts.createdAt), count.toString())
-            )
+
+            const page = parseInt(req.query.page)
+            const limit = parseInt(req.query.limit)
+            const startIndex = (page - 1) * limit;
+            const endIndex = page * limit;
+            const data = final_data.length;
+            const pageCount = Math.ceil(data / limit);
+
+
+            res.status(status.OK).json({
+                "message": "show all post When accept by the user",
+                "status": true,
+                "code": 201,
+                "statusCode": 1,
+                "pageCount": (pageCount).toString() == (NaN).toString() ? 0 : pageCount,
+                "notificationCount": count.toString(),
+                "data": (startIndex).toString() == (NaN).toString() ? final_data.sort((a, b) => b.posts.createdAt - a.posts.createdAt) : final_data.slice(startIndex, endIndex).sort((a, b) => b.posts.createdAt - a.posts.createdAt)
+
+            })
+
         }
 
     } catch (error) {

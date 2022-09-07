@@ -153,8 +153,8 @@ exports.groupList = async (req, res, next) => {
             "status": true,
             "code": 200,
             "statusCode": 1,
-            "pageCount": pageCount,
-            "data": finalData[0].slice(startIndex, endIndex)
+            "pageCount": (pageCount).toString() == (NaN).toString() ? 0 : pageCount,
+            "data": (startIndex).toString() == (NaN).toString() ? finalData[0] : finalData[0].slice(startIndex, endIndex)
 
         })
     } catch (error) {

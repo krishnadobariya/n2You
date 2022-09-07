@@ -331,12 +331,24 @@ exports.getUserWithFriend = async (req, res, next) => {
                         responseData.push(response);
 
                     }
+
+                    const page = parseInt(req.query.page)
+                    const limit = parseInt(req.query.limit)
+                    const startIndex = (page - 1) * limit;
+                    const endIndex = page * limit;
                     let uniqueObjArray = [...new Map(responseData.map((item) => [item["_id"], item])).values()];
+                    const data = uniqueObjArray.length;
+                    const pageCount = Math.ceil(data / limit);
 
+                    res.status(status.OK).json({
+                        "message": "show all friend record",
+                        "status": true,
+                        "code": 201,
+                        "statusCode": 1,
+                        "pageCount": (pageCount).toString() == (NaN).toString() ? 0 : pageCount,
+                        "data": (page).toString() == (NaN).toString() ? uniqueObjArray : uniqueObjArray.slice(startIndex, endIndex)
 
-                    res.status(status.OK).json(
-                        new APIResponse("show all friend record", true, 201, 1, uniqueObjArray)
-                    )
+                    })
 
                 } else {
 
@@ -716,11 +728,25 @@ exports.getUserWithFriend = async (req, res, next) => {
 
                     const final_response = [...final_data, ...UniqueEmail]
 
-                    let uniqueObjArray = [...new Map(final_response.map((item) => [item["_id"], item])).values()];
 
-                    res.status(status.OK).json(
-                        new APIResponse("show all friend", true, 201, 1, uniqueObjArray)
-                    )
+
+                    const page = parseInt(req.query.page)
+                    const limit = parseInt(req.query.limit)
+                    const startIndex = (page - 1) * limit;
+                    const endIndex = page * limit;
+                    let uniqueObjArray = [...new Map(final_response.map((item) => [item["_id"], item])).values()];
+                    const data = uniqueObjArray.length;
+                    const pageCount = Math.ceil(data / limit);
+
+                    res.status(status.OK).json({
+                        "message": "show all friend record",
+                        "status": true,
+                        "code": 201,
+                        "statusCode": 1,
+                        "pageCount": (pageCount).toString() == (NaN).toString() ? 0 : pageCount,
+                        "data": (page).toString() == (NaN).toString() ? uniqueObjArray : uniqueObjArray.slice(startIndex, endIndex)
+
+                    })
                 }
             }
         }

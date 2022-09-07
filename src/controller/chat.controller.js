@@ -98,14 +98,13 @@ exports.getUserWithChat = async (req, res, next) => {
 
             const data = allChat.length;
             const pageCount = Math.ceil(data / limit);
-            console.log("pageCount", pageCount);
             res.status(status.OK).json({
                 "message": "show all record with chat",
                 "status": true,
                 "code": 201,
                 "statusCode": 1,
-                "pageCount": pageCount == NaN ? 0 : pageCount,
-                "data": startIndex ? allChat.slice(startIndex, endIndex) : allChat
+                "pageCount": (pageCount).toString() == (NaN).toString() ? 0 : pageCount,
+                "data": (startIndex).toString() == (Nan) ? allChat : allChat.slice(startIndex, endIndex)
 
             })
         } else {
@@ -339,8 +338,8 @@ exports.allUserListWithUnreadCount = async (req, res, next) => {
             "status": true,
             "code": 200,
             "statusCode": 1,
-            "pageCount": pageCount == NaN ? 0 : pageCount,
-            "data": uniqueObjArray.slice(startIndex, endIndex).sort((a, b) => new Date(b.dateAndTime) - new Date(a.dateAndTime))
+            "pageCount": (pageCount).toString() == (NaN).toString() ? 0 : pageCount,
+            "data": (startIndex).toString == (NaN).toString() ? uniqueObjArray.sort((a, b) => new Date(b.dateAndTime) - new Date(a.dateAndTime)) : uniqueObjArray.slice(startIndex, endIndex).sort((a, b) => new Date(b.dateAndTime) - new Date(a.dateAndTime))
 
         })
 

@@ -1535,8 +1535,8 @@ exports.getAllUser = async (req, res, next) => {
                     "status": true,
                     "code": 200,
                     "statusCode": 1,
-                    "pageCount": pageCount == NaN ? 0 : pageCount,
-                    "data": UniqueEmail.slice(startIndex, endIndex)
+                    "pageCount": (pageCount).toString() == (NaN).toString() ? 0 : pageCount,
+                    "data": (startIndex).toString() == (NaN).toString() ? UniqueEmail : UniqueEmail.slice(startIndex, endIndex)
 
                 })
             } else {
@@ -1909,9 +1909,8 @@ exports.getAllUser = async (req, res, next) => {
                     "status": true,
                     "code": 201,
                     "statusCode": 1,
-                    "pageCount": pageCount,
-                    "data": final_response.slice(startIndex, endIndex)
-
+                    "pageCount": (pageCount).toString() == (NaN).toString() ? 0 : pageCount,
+                    "data": (startIndex).toString() == (NaN).toString() ? UniqueEmail : UniqueEmail.slice(startIndex, endIndex)
                 })
             }
         }
@@ -2699,11 +2698,24 @@ exports.yesBasket = async (req, res, next) => {
 
 
                         }
-                        let uniqueObjArray = [...new Map(responseData.map((item) => [item["_id"], item])).values()];
 
-                        res.status(status.OK).json(
-                            new APIResponse("show all yes basket record", true, 201, 1, uniqueObjArray)
-                        )
+                        const page = parseInt(req.query.page)
+                        const limit = parseInt(req.query.limit)
+                        const startIndex = (page - 1) * limit;
+                        const endIndex = page * limit;
+                        let uniqueObjArray = [...new Map(responseData.map((item) => [item["_id"], item])).values()];
+                        const data = uniqueObjArray.length;
+                        const pageCount = Math.ceil(data / limit);
+
+                        res.status(status.OK).json({
+                            "message": "show all yes basket record",
+                            "status": true,
+                            "code": 201,
+                            "statusCode": 1,
+                            "pageCount": (pageCount).toString() == (NaN).toString() ? 0 : pageCount,
+                            "data": (page).toString() == (NaN).toString() ? uniqueObjArray : uniqueObjArray.slice(startIndex, endIndex)
+                        })
+
 
                     } else {
 
@@ -3290,12 +3302,25 @@ exports.yesBasket = async (req, res, next) => {
 
 
                         const final_response = [...final_data, ...UniqueEmail]
-
+                        const page = parseInt(req.query.page)
+                        const limit = parseInt(req.query.limit)
+                        console.log("limit", limit);
+                        const startIndex = (page - 1) * limit;
+                        console.log("startIndex", startIndex);
+                        const endIndex = page * limit;
                         let uniqueObjArray = [...new Map(final_response.map((item) => [item["_id"], item])).values()];
+                        const data = uniqueObjArray.length;
+                        const pageCount = Math.ceil(data / limit);
 
-                        res.status(status.OK).json(
-                            new APIResponse("show all yes basket record", true, 201, 1, uniqueObjArray)
-                        )
+                        console.log("page", page);
+                        res.status(status.OK).json({
+                            "message": "show all yes basket record",
+                            "status": true,
+                            "code": 201,
+                            "statusCode": 1,
+                            "pageCount": (pageCount).toString() == (NaN).toString() ? 0 : pageCount,
+                            "data": (page).toString() == (NaN).toString() ? uniqueObjArray : uniqueObjArray.slice(startIndex, endIndex)
+                        })
                     }
                 }
 
@@ -3478,10 +3503,24 @@ exports.yesBasket = async (req, res, next) => {
 
                         }
 
+
+
+                        const page = parseInt(req.query.page)
+                        const limit = parseInt(req.query.limit)
+                        const startIndex = (page - 1) * limit;
+                        const endIndex = page * limit;
                         let uniqueObjArray = [...new Map(responseData.map((item) => [item["_id"], item])).values()];
-                        res.status(status.OK).json(
-                            new APIResponse("show all yes Basket Record", true, 201, 1, uniqueObjArray)
-                        )
+                        const data = uniqueObjArray.length;
+                        const pageCount = Math.ceil(data / limit);
+
+                        res.status(status.OK).json({
+                            "message": "show all yes basket record",
+                            "status": true,
+                            "code": 201,
+                            "statusCode": 1,
+                            "pageCount": (pageCount).toString() == (NaN).toString() ? 0 : pageCount,
+                            "data": (page).toString() == (NaN).toString() ? uniqueObjArray : uniqueObjArray.slice(startIndex, endIndex)
+                        })
 
                     } else {
 
@@ -4025,11 +4064,24 @@ exports.yesBasket = async (req, res, next) => {
 
                         const final_response = [...final_data, ...UniqueEmail]
 
-                        let uniqueObjArray = [...new Map(final_response.map((item) => [item["_id"], item])).values()];
 
-                        res.status(status.OK).json(
-                            new APIResponse("show all yes Basket Record", true, 201, 1, uniqueObjArray)
-                        )
+
+                        const page = parseInt(req.query.page)
+                        const limit = parseInt(req.query.limit)
+                        const startIndex = (page - 1) * limit;
+                        const endIndex = page * limit;
+                        let uniqueObjArray = [...new Map(final_response.map((item) => [item["_id"], item])).values()];
+                        const data = uniqueObjArray.length;
+                        const pageCount = Math.ceil(data / limit);
+
+                        res.status(status.OK).json({
+                            "message": "show all yes basket record",
+                            "status": true,
+                            "code": 201,
+                            "statusCode": 1,
+                            "pageCount": (pageCount).toString() == (NaN).toString() ? 0 : pageCount,
+                            "data": (page).toString() == (NaN).toString() ? uniqueObjArray : uniqueObjArray.slice(startIndex, endIndex)
+                        })
                     }
                 }
 
@@ -4234,11 +4286,23 @@ exports.noBasket = async (req, res, next) => {
 
 
                         }
-                        let uniqueObjArray = [...new Map(responseData.map((item) => [item["_id"], item])).values()];
 
-                        res.status(status.OK).json(
-                            new APIResponse("show all no basket record", true, 201, 1, uniqueObjArray)
-                        )
+                        const page = parseInt(req.query.page)
+                        const limit = parseInt(req.query.limit)
+                        const startIndex = (page - 1) * limit;
+                        const endIndex = page * limit;
+                        let uniqueObjArray = [...new Map(responseData.map((item) => [item["_id"], item])).values()];
+                        const data = uniqueObjArray.length;
+                        const pageCount = Math.ceil(data / limit);
+
+                        res.status(status.OK).json({
+                            "message": "show all no basket record",
+                            "status": true,
+                            "code": 201,
+                            "statusCode": 1,
+                            "pageCount": (pageCount).toString() == (NaN).toString() ? 0 : pageCount,
+                            "data": (page).toString() == (NaN).toString() ? uniqueObjArray : uniqueObjArray.slice(startIndex, endIndex)
+                        })
 
                     } else {
 
@@ -4822,11 +4886,24 @@ exports.noBasket = async (req, res, next) => {
 
                         const final_response = [...final_data, ...UniqueEmail]
 
-                        let uniqueObjArray = [...new Map(final_response.map((item) => [item["_id"], item])).values()];
 
-                        res.status(status.OK).json(
-                            new APIResponse("show all no basket record", true, 201, 1, uniqueObjArray)
-                        )
+                        const page = parseInt(req.query.page)
+                        const limit = parseInt(req.query.limit)
+                        const startIndex = (page - 1) * limit;
+                        const endIndex = page * limit;
+                        let uniqueObjArray = [...new Map(final_response.map((item) => [item["_id"], item])).values()];
+                        const data = uniqueObjArray.length;
+                        const pageCount = Math.ceil(data / limit);
+
+                        res.status(status.OK).json({
+                            "message": "show all no basket record",
+                            "status": true,
+                            "code": 201,
+                            "statusCode": 1,
+                            "pageCount": (pageCount).toString() == (NaN).toString() ? 0 : pageCount,
+                            "data": (page).toString() == (NaN).toString() ? uniqueObjArray : uniqueObjArray.slice(startIndex, endIndex)
+
+                        })
                     }
                 }
 
@@ -5010,11 +5087,25 @@ exports.noBasket = async (req, res, next) => {
 
                         }
 
-                        let uniqueObjArray = [...new Map(responseData.map((item) => [item["_id"], item])).values()];
-                        res.status(status.OK).json(
-                            new APIResponse("show all No Basket Record", true, 201, 1, uniqueObjArray)
-                        )
 
+
+                        const page = parseInt(req.query.page)
+                        const limit = parseInt(req.query.limit)
+                        const startIndex = (page - 1) * limit;
+                        const endIndex = page * limit;
+                        let uniqueObjArray = [...new Map(responseData.map((item) => [item["_id"], item])).values()];
+                        const data = uniqueObjArray.length;
+                        const pageCount = Math.ceil(data / limit);
+
+                        res.status(status.OK).json({
+                            "message": "show all no basket record",
+                            "status": true,
+                            "code": 201,
+                            "statusCode": 1,
+                            "pageCount": (pageCount).toString() == (NaN).toString() ? 0 : pageCount,
+                            "data": (page).toString() == (NaN).toString() ? uniqueObjArray : uniqueObjArray.slice(startIndex, endIndex)
+
+                        })
                     } else {
 
                         const emailGet = [];
@@ -5552,11 +5643,24 @@ exports.noBasket = async (req, res, next) => {
 
                         const final_response = [...final_data, ...UniqueEmail]
 
+                        const page = parseInt(req.query.page)
+                        const limit = parseInt(req.query.limit)
+                        const startIndex = (page - 1) * limit;
+                        const endIndex = page * limit;
                         let uniqueObjArray = [...new Map(final_response.map((item) => [item["_id"], item])).values()];
+                        const data = uniqueObjArray.length;
+                        const pageCount = Math.ceil(data / limit);
 
-                        res.status(status.OK).json(
-                            new APIResponse("show all No Basket Record", true, 201, 1, uniqueObjArray)
-                        )
+                        res.status(status.OK).json({
+                            "message": "show all no basket record",
+                            "status": true,
+                            "code": 201,
+                            "statusCode": 1,
+                            "pageCount": (pageCount).toString() == (NaN).toString() ? 0 : pageCount,
+                            "data": (page).toString() == (NaN).toString() ? uniqueObjArray : uniqueObjArray.slice(startIndex, endIndex)
+
+                        })
+
                     }
                 }
 
