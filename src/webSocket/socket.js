@@ -813,7 +813,6 @@ function socket(io) {
             for (const [key, getSenderChat] of findRoom.chat.entries()) {
 
                 if ((getSenderChat.sender).toString() == (arg.user_id).toString()) {
-                    console.log(getSenderChat.text);
 
                     // await chatModels.updateOne({
                     //     sender: mongoose.Types.ObjectId(arg.user_id)
@@ -1823,7 +1822,6 @@ function socket(io) {
                 _id: arg.chat_room_id
             })
 
-            console.log("findChatRoom" , findChatRoom);
             if (findChatRoom) {
                 const findData = await videoCallModel.findOne({
                     chatRoomId: arg.chat_room_id

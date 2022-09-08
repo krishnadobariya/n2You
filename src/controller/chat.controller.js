@@ -8,57 +8,57 @@ const videoCallModel = require("../webSocket/models/videoCall.model");
 
 exports.readChat = async (req, res, next) => {
     try {
-        const findRoom = await chatModels.findOne({
-            chatRoomId: req.params.chat_room_id,
-            "chat.sender": req.params.user_id
-        })
-        for (const [key, getSenderChat] of findRoom.chat.entries()) {
+        // const findRoom = await chatModels.findOne({
+        //     chatRoomId: req.params.chat_room_id,
+        //     "chat.sender": req.params.user_id
+        // })
+        // for (const [key, getSenderChat] of findRoom.chat.entries()) {
 
-            if ((getSenderChat.sender).toString() == (req.params.user_id).toString()) {
+        //     if ((getSenderChat.sender).toString() == (req.params.user_id).toString()) {
 
-                const updatePosts = await chatModels.updateOne(
-                    {
-                        chatRoomId: req.params.chat_room_id, chat: {
-                            $elemMatch: {
-                                sender: mongoose.Types.ObjectId(req.params.user_id)
-                            }
-                        }
-                    },
-                    {
-                        $set: {
-                            "chat.$[chat].read": 0
-                        }
-                    },
-                    { arrayFilters: [{ 'chat.sender': mongoose.Types.ObjectId(req.params.user_id) }] })
-            } else {
+        //         const updatePosts = await chatModels.updateOne(
+        //             {
+        //                 chatRoomId: req.params.chat_room_id, chat: {
+        //                     $elemMatch: {
+        //                         sender: mongoose.Types.ObjectId(req.params.user_id)
+        //                     }
+        //                 }
+        //             },
+        //             {
+        //                 $set: {
+        //                     "chat.$[chat].read": 0
+        //                 }
+        //             },
+        //             { arrayFilters: [{ 'chat.sender': mongoose.Types.ObjectId(req.params.user_id) }] })
+        //     } else {
 
-            }
-        }
+        //     }
+        // }
 
-        if (findRoom == null) {
-            res.status(status.NOT_FOUND).json(
-                new APIResponse("User Not Found in Chat", "true", 404, "0")
-            )
-        } else {
-            res.status(status.OK).json(
-                new APIResponse("Read All chat", "true", 200, "1")
-            )
-        }
-
-        // const findChatId = await chatModels.findOne({ chatRoomId: mongoose.Types.ObjectId(req.params.chat_room_id) })
-
-        // if (findChatId == null) {
+        // if (findRoom == null) {
         //     res.status(status.NOT_FOUND).json(
         //         new APIResponse("User Not Found in Chat", "true", 404, "0")
         //     )
-
         // } else {
-        //     await chatModels.updateMany({ chatRoomId: req.params.chat_room_id }, { $set: { "chat.$[].read": 0 } });
-
         //     res.status(status.OK).json(
-        //         new APIResponse("Read updated", "true", 200, "1")
+        //         new APIResponse("Read All chat", "true", 200, "1")
         //     )
         // }
+
+        const findChatId = await chatModels.findOne({ chatRoomId: mongoose.Types.ObjectId(req.params.chat_room_id) })
+
+        if (findChatId == null) {
+            res.status(status.NOT_FOUND).json(
+                new APIResponse("User Not Found in Chat", "true", 404, "0")
+            )
+
+        } else {
+            await chatModels.updateMany({ chatRoomId: req.params.chat_room_id }, { $set: { "chat.$[].read": 0 } });
+
+            res.status(status.OK).json(
+                new APIResponse("Read updated", "true", 200, "1")
+            )
+        }
 
     } catch (error) {
         console.log("Error:", error);
