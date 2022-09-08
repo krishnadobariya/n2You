@@ -1538,7 +1538,7 @@ exports.getAllUser = async (req, res, next) => {
                     "code": 200,
                     "statusCode": 1,
                     "pageCount": (pageCount).toString() == (NaN).toString() ? 0 : pageCount,
-                    "data": UniqueEmail
+                    "data": (startIndex).toString() == (NaN) ? UniqueEmail : UniqueEmail.slice(startIndex, endIndex) 
 
                 })
             } else {
@@ -1761,11 +1761,8 @@ exports.getAllUser = async (req, res, next) => {
 
                         for (const meageAllTableEmail of finalExistUser) {
 
-                            console.log("meageAllTableEmail", meageAllTableEmail);
-
                             if (requestEmail.requestedEmail == meageAllTableEmail.email) {
 
-                                console.log("requestEmail", requestEmail);
                                 if (requestEmail.accepted == 1) {
                                     var status1 = {
                                         status: requestEmail.accepted,
@@ -1796,7 +1793,6 @@ exports.getAllUser = async (req, res, next) => {
 
                 const finalStatus = []
 
-                console.log("meageAllTable", meageAllTable);
                 const uniqueObjArray = [...new Map(statusByEmail.map((item) => [item["email"], item])).values()];
                 for (const [key, finalData] of meageAllTable.entries()) {
                     for (const [key, final1Data] of uniqueObjArray.entries()) {
@@ -1808,11 +1804,8 @@ exports.getAllUser = async (req, res, next) => {
                 }
 
 
-                console.log("finalStatus", finalStatus);
                 for (const [key, finalData] of finalExistUser.entries()) {
 
-
-                    console.log("finalData", finalData.email);
                     const km = finalData.distance / 1000;
                     const distance = km.toFixed(2) + " km";
                     const response = {
@@ -1852,10 +1845,6 @@ exports.getAllUser = async (req, res, next) => {
                             user2: finalData._id
                         }]
                     }).select("_id")
-
-                    console.log("findAllUserWithIchat1", findAllUserWithIchat1);
-                    console.log("findAllUserWithIchat2", findAllUserWithIchat2);
-
                     if (findAllUserWithIchat1) {
                         chatRoomId.push(findAllUserWithIchat1._id)
                         const km = finalData.distance / 1000;
@@ -1923,7 +1912,7 @@ exports.getAllUser = async (req, res, next) => {
                     "code": 201,
                     "statusCode": 1,
                     "pageCount": (pageCount).toString() == (NaN).toString() ? 0 : pageCount,
-                    "data": final_response
+                    "data": (startIndex).toString() == (NaN) ? final_response : final_response.slice(startIndex, endIndex) 
                 })
             }
         }

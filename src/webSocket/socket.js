@@ -212,6 +212,7 @@ function socket(io) {
 
                             io.to(userRoom).emit("chatReceive", chat);
 
+                            console.log("chat", chat);
                             const title = userFind.firstName;
                             const body = arg.text;
                             const text = arg.text;
@@ -308,10 +309,16 @@ function socket(io) {
                 }).select('user1, user2').lean();
 
 
+                console.log("getChatRoom", getChatRoom);
+                console.log("alterNateChatRoom", alterNateChatRoom);
+
                 if (getChatRoom == null && alterNateChatRoom == null) {
+                    console.log("if blok");
                     io.emit("chatReceive", "chat room not found");
 
                 } else {
+
+                    console.log("else blok");
 
                     if (getChatRoom) {
                         const find1 = await chatModels.findOne({
