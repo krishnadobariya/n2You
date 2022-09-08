@@ -832,9 +832,9 @@ function socket(io) {
                 "chat.sender": arg.user_id
             })
 
-            console.log("findRoom.chat", findRoom.chat);
+            console.log("findRoom.chat", findRoom);
 
-            if (findRoom.chat == null) {
+            if (findRoom == null) {
 
             } else {
                 for (const [key, getSenderChat] of findRoom.chat.entries()) {
