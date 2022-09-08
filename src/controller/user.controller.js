@@ -1404,8 +1404,10 @@ exports.getAllUser = async (req, res, next) => {
 
 
         const searchName = await userModel.find({ polyDating: 0, _id: { $ne: req.params.user_id } }).maxTimeMS(10);
+
         const reaquestedAllEmail = [];
         searchName.map((result, index) => {
+            console.log(result.email);
             reaquestedAllEmail.push(result.email)
         })
 
@@ -1536,7 +1538,7 @@ exports.getAllUser = async (req, res, next) => {
                     "code": 200,
                     "statusCode": 1,
                     "pageCount": (pageCount).toString() == (NaN).toString() ? 0 : pageCount,
-                    "data": (startIndex).toString() == (NaN).toString() ? UniqueEmail : UniqueEmail.slice(startIndex, endIndex)
+                    "data":  UniqueEmail 
 
                 })
             } else {
@@ -1910,7 +1912,7 @@ exports.getAllUser = async (req, res, next) => {
                     "code": 201,
                     "statusCode": 1,
                     "pageCount": (pageCount).toString() == (NaN).toString() ? 0 : pageCount,
-                    "data": (startIndex).toString() == (NaN).toString() ? UniqueEmail : UniqueEmail.slice(startIndex, endIndex)
+                    "data":  UniqueEmail 
                 })
             }
         }
@@ -2608,7 +2610,7 @@ exports.yesBasket = async (req, res, next) => {
 
 
 
-                            
+
                             polyDating: 0
                         })
 
