@@ -1538,7 +1538,7 @@ exports.getAllUser = async (req, res, next) => {
                     "code": 200,
                     "statusCode": 1,
                     "pageCount": (pageCount).toString() == (NaN).toString() ? 0 : pageCount,
-                    "data":  UniqueEmail 
+                    "data": UniqueEmail
 
                 })
             } else {
@@ -1806,8 +1806,13 @@ exports.getAllUser = async (req, res, next) => {
                         }
                     }
                 }
+
+
+                console.log("finalStatus", finalStatus);
                 for (const [key, finalData] of finalExistUser.entries()) {
 
+
+                    console.log("finalData", finalData.email);
                     const km = finalData.distance / 1000;
                     const distance = km.toFixed(2) + " km";
                     const response = {
@@ -1848,6 +1853,8 @@ exports.getAllUser = async (req, res, next) => {
                         }]
                     }).select("_id")
 
+                    console.log("findAllUserWithIchat1", findAllUserWithIchat1);
+                    console.log("findAllUserWithIchat2", findAllUserWithIchat2);
 
                     if (findAllUserWithIchat1) {
                         chatRoomId.push(findAllUserWithIchat1._id)
@@ -1865,6 +1872,8 @@ exports.getAllUser = async (req, res, next) => {
 
                         final_data.push(getDetail);
                     } else if (findAllUserWithIchat2) {
+
+                        console.log("charoom 2");
                         chatRoomId.push(findAllUserWithIchat2._id)
                         const km = finalData.distance / 1000;
                         const distance = km.toFixed(2) + " km";
@@ -1878,6 +1887,7 @@ exports.getAllUser = async (req, res, next) => {
                             status: finalStatus[key].status
                         }
 
+                        console.log("getDetail", getDetail);
                         final_data.push(getDetail);
                     } else {
                         const km = finalData.distance / 1000;
@@ -1896,6 +1906,7 @@ exports.getAllUser = async (req, res, next) => {
                     }
                 }
 
+                console.log("final_data", final_data);
                 const final_response = [...final_data, ...UniqueEmail]
 
                 // let uniqueObjArray = [...new Map(final_data.map((item) => [item["details"], item])).values()];
@@ -1912,7 +1923,7 @@ exports.getAllUser = async (req, res, next) => {
                     "code": 201,
                     "statusCode": 1,
                     "pageCount": (pageCount).toString() == (NaN).toString() ? 0 : pageCount,
-                    "data":  UniqueEmail 
+                    "data": final_response
                 })
             }
         }
