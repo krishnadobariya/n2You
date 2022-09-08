@@ -33,8 +33,6 @@ function socket(io) {
 
 
             console.log("socket calllllll");
-            const userRoom = `User${arg.user_2}`
-
 
             if (arg.user_1 == arg.sender_id) {
 
@@ -212,6 +210,7 @@ function socket(io) {
                                 receiver: receiver_id[0]
                             }
 
+                            const userRoom = `User${arg.user_2}`
                             io.to(userRoom).emit("chatReceive", chat);
 
                             console.log("chat", chat);
@@ -275,6 +274,7 @@ function socket(io) {
                                 receiver: receiver_id[0]
                             }
 
+                            const userRoom = `User${arg.user_2}`
                             io.to(userRoom).emit("chatReceive", chat);
                             const title = userFind.firstName;
                             const body = arg.text;
@@ -365,6 +365,7 @@ function socket(io) {
                                     receiver: receiver_id[0]
                                 }
 
+                                const userRoom = `User${arg.user_2}`
                                 io.to(userRoom).emit("chatReceive", chat);
                                 const title = userFind.firstName;
                                 const body = arg.text;
@@ -423,6 +424,7 @@ function socket(io) {
                                     sender: arg.sender_id,
                                     receiver: receiver_id[0]
                                 }
+                                const userRoom = `User${arg.user_2}`
                                 io.to(userRoom).emit("chatReceive", chat);
                                 const title = userFind.firstName;
                                 const body = arg.text;
@@ -481,6 +483,7 @@ function socket(io) {
                                     sender: arg.sender_id,
                                     receiver: receiver_id[0]
                                 }
+                                const userRoom = `User${arg.user_2}`
                                 io.to(userRoom).emit("chatReceive", chat);
 
                                 const title = userFind.firstName;
@@ -538,6 +541,7 @@ function socket(io) {
                                     sender: arg.sender_id,
                                     receiver: receiver_id[0]
                                 }
+                                const userRoom = `User${arg.user_2}`
                                 io.to(userRoom).emit("chatReceive", chat);
 
                                 const title = userFind.firstName;
@@ -828,40 +832,48 @@ function socket(io) {
                 "chat.sender": arg.user_id
             })
 
-            for (const [key, getSenderChat] of findRoom.chat.entries()) {
+            console.log("findRoom.chat", findRoom.chat);
 
-                if ((getSenderChat.sender).toString() == (arg.user_id).toString()) {
+            if (findRoom.chat == null) {
 
-                    // await chatModels.updateOne({
-                    //     sender: mongoose.Types.ObjectId(arg.user_id)
-                    // }, {
-                    //     $set: {
-                    //         read: 0
-                    //     }
-                    // }).then(() => {
-                    //     console.log("success");
-                    // }).catch((err) => {
-                    //     console.log(err);
-                    // })
+            } else {
+                for (const [key, getSenderChat] of findRoom.chat.entries()) {
 
-                    const updatePosts = await chatModels.updateOne(
-                        {
-                            chatRoomId: arg.chat_room, chat: {
-                                $elemMatch: {
-                                    sender: mongoose.Types.ObjectId(arg.user_id)
+                    if ((getSenderChat.sender).toString() == (arg.user_id).toString()) {
+
+                        // await chatModels.updateOne({
+                        //     sender: mongoose.Types.ObjectId(arg.user_id)
+                        // }, {
+                        //     $set: {
+                        //         read: 0
+                        //     }
+                        // }).then(() => {
+                        //     console.log("success");
+                        // }).catch((err) => {
+                        //     console.log(err);
+                        // })
+
+                        const updatePosts = await chatModels.updateOne(
+                            {
+                                chatRoomId: arg.chat_room, chat: {
+                                    $elemMatch: {
+                                        sender: mongoose.Types.ObjectId(arg.user_id)
+                                    }
                                 }
-                            }
-                        },
-                        {
-                            $set: {
-                                "chat.$[chat].read": 0
-                            }
-                        },
-                        { arrayFilters: [{ 'chat.sender': mongoose.Types.ObjectId(arg.user_id) }] })
-                } else {
+                            },
+                            {
+                                $set: {
+                                    "chat.$[chat].read": 0
+                                }
+                            },
+                            { arrayFilters: [{ 'chat.sender': mongoose.Types.ObjectId(arg.user_id) }] })
+                    } else {
 
+                    }
                 }
             }
+
+
 
             if (findRoom == null) {
                 io.emit("readChat", "chat room not found");
