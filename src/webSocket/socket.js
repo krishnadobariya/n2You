@@ -31,7 +31,6 @@ function socket(io) {
 
         socket.on("chat", async (arg) => {
 
-
             console.log("socket calllllll");
 
             if (arg.user_1 == arg.sender_id) {
@@ -327,12 +326,14 @@ function socket(io) {
                             chatRoomId: getChatRoom._id
                         }).select('chatRoomId').lean();
 
+                        console.log("find1:::", find1);
                         if (find1 == null) {
                             if (arg.sender_id == arg.user_1 || arg.sender_id == arg.user_2) {
                                 const findUser = await userModel.findOne({
                                     _id: arg.sender_id
                                 }).select('name, photo').lean();
 
+                                console.log("findUser", findUser);
                                 const data = chatModels({
                                     chatRoomId: getChatRoom._id,
                                     chat: {
@@ -365,6 +366,8 @@ function socket(io) {
                                     receiver: receiver_id[0]
                                 }
 
+                                console.log("chat::", chat);
+
                                 const userRoom = `User${arg.user_2}`
                                 io.to(userRoom).emit("chatReceive", chat);
                                 const title = userFind.firstName;
@@ -382,6 +385,7 @@ function socket(io) {
                                 );
 
                             } else {
+                                console.log("else 3333");
                                 io.emit("chatReceive", "sender not found");
                             }
                         } else {
