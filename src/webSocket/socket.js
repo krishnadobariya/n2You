@@ -386,6 +386,7 @@ function socket(io) {
                             }
                         } else {
 
+                            console.log("else block 2");
                             if (arg.sender_id == arg.user_1 || arg.sender_id == arg.user_2) {
 
                                 const findUser = await userModel.findOne({
@@ -424,6 +425,8 @@ function socket(io) {
                                     sender: arg.sender_id,
                                     receiver: receiver_id[0]
                                 }
+
+                                console.log("chat::::", chat);
                                 const userRoom = `User${arg.user_2}`
                                 io.to(userRoom).emit("chatReceive", chat);
                                 const title = userFind.firstName;
