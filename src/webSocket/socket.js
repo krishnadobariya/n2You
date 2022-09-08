@@ -31,7 +31,10 @@ function socket(io) {
 
         socket.on("chat", async (arg) => {
 
+
+            console.log("socket calllllll");
             const userRoom = `User${arg.user_2}`
+
 
             if (arg.user_1 == arg.sender_id) {
 
@@ -153,7 +156,6 @@ function socket(io) {
 
             if (addInChatRoom == null && checkUsers == null) {
 
-                console.log("roommmmmm");
                 const insertChatRoom = chatRoomModel({
                     user1: arg.user_1,
                     user2: arg.user_2
