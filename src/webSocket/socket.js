@@ -124,7 +124,9 @@ function socket(io) {
 
             let time = 'At' + ' ' + hours + ':' + minutes + ' ' + ampm + ' ' + 'on' + ' ' + month + ' ' + dates + ',' + year;
 
-            const userFind = await userModel.findOne({ _id: arg.user_1, polyDating: 0 });
+            const userFind = await userModel.findOne({ _id: arg.user_2, polyDating: 0 });
+
+            const senderName = await userModel.findOne({ _id: arg.user_1, polyDating: 0 });
 
             console.log("name is" , userFind.firstName);
             const fcm_token = userFind.fcm_token;
@@ -210,7 +212,7 @@ function socket(io) {
                             io.to(userRoom).emit("chatReceive", chat);
 
                             console.log("chat", chat);
-                            const title = userFind.firstName;
+                            const title = senderName.firstName;
                             const body = arg.text;
                             const text = arg.text;
                             const sendBy = arg.sender_id;
@@ -272,7 +274,7 @@ function socket(io) {
 
                             const userRoom = `User${arg.user_2}`
                             io.to(userRoom).emit("chatReceive", chat);
-                            const title = userFind.firstName;
+                            const title = senderName.firstName;
                             const body = arg.text;
 
                             const text = arg.text;
@@ -367,7 +369,7 @@ function socket(io) {
 
                                 const userRoom = `User${arg.user_2}`
                                 io.to(userRoom).emit("chatReceive", chat);
-                                const title = userFind.firstName;
+                                const title = senderName.firstName;
                                 const body = arg.text;
                                 const text = arg.text;
                                 const sendBy = arg.sender_id;
@@ -430,7 +432,7 @@ function socket(io) {
                                 console.log("chat::::", chat);
                                 const userRoom = `User${arg.user_2}`
                                 io.to(userRoom).emit("chatReceive", chat);
-                                const title = userFind.firstName;
+                                const title = senderName.firstName;
                                 const body = arg.text;
                                 const text = arg.text;
                                 const sendBy = arg.sender_id;
@@ -490,7 +492,7 @@ function socket(io) {
                                 const userRoom = `User${arg.user_2}`
                                 io.to(userRoom).emit("chatReceive", chat);
 
-                                const title = userFind.firstName;
+                                const title = senderName.firstName;
                                 const body = arg.text;
                                 const text = arg.text;
                                 const sendBy = arg.sender_id;
@@ -548,7 +550,7 @@ function socket(io) {
                                 const userRoom = `User${arg.user_2}`
                                 io.to(userRoom).emit("chatReceive", chat);
 
-                                const title = userFind.firstName;
+                                const title = senderName.firstName;
                                 const body = arg.text;
                                 const text = arg.text;
                                 const sendBy = arg.sender_id;
