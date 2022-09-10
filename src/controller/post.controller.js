@@ -2830,6 +2830,7 @@ exports.userAllFriendPost = async (req, res, next) => {
             const pageCount = Math.ceil(data / limit);
 
 
+            console.log("startindex" , startIndex);
             res.status(status.OK).json({
                 "message": "show all post When accept by the user",
                 "status": true,
@@ -2837,7 +2838,7 @@ exports.userAllFriendPost = async (req, res, next) => {
                 "statusCode": 1,
                 "pageCount": (pageCount).toString() == (NaN).toString() ? 0 : pageCount,
                 "notificationCount": count.toString(),
-                "data": (startIndex).toString() == (NaN).toString() ? final_data.sort((a, b) => b.posts.createdAt - a.posts.createdAt) : final_data.slice(startIndex, endIndex).sort((a, b) => b.posts.createdAt - a.posts.createdAt)
+                "data": (startIndex).toString() == (NaN).toString() ? final_data.sort((a, b) => b.posts.createdAt - a.posts.createdAt) : final_data.sort((a, b) => b.posts.createdAt - a.posts.createdAt).slice(startIndex, endIndex)
 
             })
 
@@ -3280,7 +3281,7 @@ exports.userAllFriendPost = async (req, res, next) => {
                 "statusCode": 1,
                 "pageCount": (pageCount).toString() == (NaN).toString() ? 0 : pageCount,
                 "notificationCount": count.toString(),
-                "data": (startIndex).toString() == (NaN).toString() ? final_data.sort((a, b) => b.posts.createdAt - a.posts.createdAt) : final_data.slice(startIndex, endIndex).sort((a, b) => b.posts.createdAt - a.posts.createdAt)
+                "data": (startIndex).toString() == (NaN).toString() ? final_data.sort((a, b) => b.posts.createdAt - a.posts.createdAt) : final_data.sort((a, b) => b.posts.createdAt - a.posts.createdAt).slice(startIndex, endIndex)
 
             })
 
