@@ -2523,7 +2523,7 @@ exports.yesBasket = async (req, res, next) => {
         const user_id = req.params.user_id;
         const request_user_id = req.params.request_user_id;
 
-        // if (user_id.toString() == request_user_id.toString()) {
+        if (user_id.toString() == request_user_id.toString()) {
 
             const findUser = await userModel.findOne({
                 _id: req.params.user_id,
@@ -2615,7 +2615,10 @@ exports.yesBasket = async (req, res, next) => {
 
                         for (const getOriginalData of finalData) {
 
-                            for (const findThumb of findThumbUp.yesBasket) {
+                            const data = findThumbUp.yesBasket
+                            const final =  data.slice(startIndex, endIndex)
+
+                            for (const findThumb of final) {
 
                                 const findInThumbUp = await thumbUpModel.findOne({
                                     adminUserId: req.params.user_id,
@@ -2750,7 +2753,11 @@ exports.yesBasket = async (req, res, next) => {
 
                         for (const getOriginalData of finalData) {
 
-                            for (const findThumb of findThumbUp.yesBasket) {
+                            const data = findThumbUp.yesBasket
+                            const final =  data.slice(startIndex, endIndex)
+
+
+                            for (const findThumb of final) {
 
 
                                 const findInThumbUp = await thumbUpModel.findOne({
@@ -2940,8 +2947,10 @@ exports.yesBasket = async (req, res, next) => {
                                             polyDating: 0
                                         })
 
-
-                                        for (const findThumb of findThumbUp.yesBasket) {
+                                        const data = findThumbUp.yesBasket
+                                        const final =  data.slice(startIndex, endIndex)
+            
+                                        for (const findThumb of final) {
 
 
                                             const findInThumbUp = await thumbUpModel.findOne({
@@ -3315,773 +3324,784 @@ exports.yesBasket = async (req, res, next) => {
 
             }
 
-        // } else {
-
-
-        //     // const findUserInBasket = await basketModel.findOne({
-        //     //     userId: req.params.request_user_id
-        //     // })
-
-        //     // if (findUserInBasket == null) {
-        //     //     res.status(status.NOT_FOUND).json(
-        //     //         new APIResponse("Not In Basket", "false", 404, "0")
-        //     //     )
-        //     // } else {
-
-        //     // const accessBasket = findUserInBasket.fullAccess
-
-        //     // if (accessBasket == true) {
-        //     const findUser = await userModel.findOne({
-        //         _id: req.params.request_user_id,
-        //         polyDating: 0
-        //     })
-
-        //     if (findUser == null) {
-        //         res.status(status.NOT_FOUND).json(
-        //             new APIResponse("user not Found", "false", 404, "0")
-        //         )
-        //     } else {
-        //         const reaquestedAllEmail = [];
-        //         const allMeargeData = [];
-        //         const YesBasketData = [];
-        //         for (const allBakest of findUser.yesBasket) {
-
-        //             const findInBlockUserModel1 = await blockuserModel.findOne({
-        //                 userId: req.params.request_user_id,
-        //                 "blockUnblockUser.blockUserId": allBakest.userId
-        //             })
-
-        //             const findInBlockUserModel2 = await blockuserModel.findOne({
-        //                 userId: allBakest.userId,
-        //                 "blockUnblockUser.blockUserId": req.params.request_user_id,
-        //             })
-        //             if (findInBlockUserModel1 || findInBlockUserModel2) {
-
-        //             } else {
-        //                 YesBasketData.push((allBakest.userId).toString())
-        //             }
-        //         }
-
-        //         for (const allyesBasketData of YesBasketData) {
-        //             const meargeData = await userModel.findOne({
-        //                 _id: allyesBasketData,
-        //             })
-
-        //             if (meargeData) {
-        //                 reaquestedAllEmail.push((meargeData._id).toString())
-        //             } else {
-        //                 reaquestedAllEmail.push()
-
-        //             }
-        //         }
-
-        //         if (reaquestedAllEmail[0] == undefined) {
-        //             res.status(status.OK).json(
-        //                 new APIResponse("show all post When accept by the user", 'true', 201, '1', [])
-        //             )
-        //         } else {
-
-        //             const RequestedEmailExiestInUser = await requestsModel.findOne(
-        //                 {
-        //                     userId: req.params.user_id,
-        //                     RequestedEmails: {
-        //                         $elemMatch: {
-        //                             userId: {
-        //                                 $in: reaquestedAllEmail
-        //                             }
-        //                         }
-        //                     }
-        //                 }
-        //             )
-
-
-        //             if (reaquestedAllEmail && RequestedEmailExiestInUser == null) {
-        //                 const finalData = [];
-        //                 const responseData = [];
-        //                 for (const allrequestedDataNotAcceptedRequestAndNotFriend of reaquestedAllEmail) {
-        //                     const userDetail = await userModel.findOne({ _id: allrequestedDataNotAcceptedRequestAndNotFriend });
-        //                     finalData.push(userDetail)
-        //                 }
-
-
-        //                 const findThumbUp = await userModel.findOne({
-        //                     _id: req.params.request_user_id,
-        //                     polyDating: 0
-        //                 })
-
-        //                 for (const getOriginalData of finalData) {
-
-        //                     for (const findThumb of findThumbUp.yesBasket) {
-
-        //                         const findInThumbUp = await thumbUpModel.findOne({
-        //                             adminUserId: req.params.request_user_id,
-        //                             thumbDetail: {
-        //                                 $elemMatch: {
-        //                                     reqUserId: req.params.user_id,
-        //                                     userId: findThumb.userId
-        //                                 }
-        //                             }
-        //                         })
-
-        //                         const findInThumbDown = await thumbUpModel.findOne({
-        //                             adminUserId: req.params.request_user_id,
-        //                             thumbDetail: {
-        //                                 $elemMatch: {
-        //                                     reqUserId: req.params.user_id,
-        //                                     userId: findThumb.userId
-        //                                 }
-        //                             }
-        //                         })
-
-        //                         if (findInThumbUp) {
-        //                             const findThumbData = findThumb.userId
-        //                             const orginalData = getOriginalData._id
-
-        //                             if (orginalData.toString() == findThumbData.toString()) {
-        //                                 const response = {
-        //                                     _id: getOriginalData._id,
-        //                                     email: getOriginalData.email,
-        //                                     firstName: getOriginalData.firstName,
-        //                                     profile: getOriginalData.photo[0] ? getOriginalData.photo[0].res : "",
-        //                                     status: 3,
-        //                                     thumbUp: findThumb.thumbUp,
-        //                                     thumbUpStatus: 1,
-        //                                     thumbDownStatus: 0
-        //                                 }
-
-        //                                 responseData.push(response);
-        //                             }
-        //                         } else if (findInThumbDown) {
-        //                             const findThumbData = findThumb.userId
-        //                             const orginalData = getOriginalData._id
-
-        //                             if (orginalData.toString() == findThumbData.toString()) {
-        //                                 const response = {
-        //                                     _id: getOriginalData._id,
-        //                                     email: getOriginalData.email,
-        //                                     firstName: getOriginalData.firstName,
-        //                                     profile: getOriginalData.photo[0] ? getOriginalData.photo[0].res : "",
-        //                                     status: 3,
-        //                                     thumbUp: findThumb.thumbUp,
-        //                                     thumbUpStatus: 0,
-        //                                     thumbDownStatus: 1
-        //                                 }
-
-        //                                 responseData.push(response);
-        //                             }
-        //                         } else {
-        //                             const findThumbData = findThumb.userId
-        //                             const orginalData = getOriginalData._id
-
-        //                             if (orginalData.toString() == findThumbData.toString()) {
-        //                                 const response = {
-        //                                     _id: getOriginalData._id,
-        //                                     email: getOriginalData.email,
-        //                                     firstName: getOriginalData.firstName,
-        //                                     profile: getOriginalData.photo[0] ? getOriginalData.photo[0].res : "",
-        //                                     status: 3,
-        //                                     thumbUp: findThumb.thumbUp,
-        //                                     thumbUpStatus: 0,
-        //                                     thumbDownStatus: 0
-        //                                 }
-
-        //                                 responseData.push(response);
-        //                             }
-        //                         }
-        //                     }
-
-        //                 }
-
-
-
-        //                 const page = parseInt(req.query.page)
-        //                 const limit = parseInt(req.query.limit)
-        //                 const startIndex = (page - 1) * limit;
-        //                 const endIndex = page * limit;
-        //                 let uniqueObjArray = [...new Map(responseData.map((item) => [item["_id"], item])).values()];
-        //                 const data = uniqueObjArray.length;
-        //                 const pageCount = Math.ceil(data / limit);
-
-        //                 res.status(status.OK).json({
-        //                     "message": "show all yes basket record",
-        //                     "status": true,
-        //                     "code": 201,
-        //                     "statusCode": 1,
-        //                     "pageCount": (pageCount).toString() == (NaN).toString() ? 0 : pageCount,
-        //                     "data": (page).toString() == (NaN).toString() ? uniqueObjArray : uniqueObjArray.slice(startIndex, endIndex)
-        //                 })
-
-        //             } else {
-
-        //                 const emailGet = [];
-        //                 const finalData = [];
-        //                 for (const getEmail of RequestedEmailExiestInUser.RequestedEmails) {
-        //                     emailGet.push((getEmail.userId).toString(0))
-        //                 }
-
-        //                 var difference = reaquestedAllEmail.filter(x => emailGet.indexOf(x) === -1);
-
-        //                 const UniqueEmail = [];
-
-        //                 for (const uniqueEmail of difference) {
-        //                     const userDetail = await userModel.findOne({ _id: uniqueEmail });
-        //                     finalData.push(userDetail)
-        //                 }
-
-        //                 const findThumbUp = await userModel.findOne({
-        //                     _id: req.params.request_user_id,
-        //                     polyDating: 0
-        //                 })
-
-        //                 for (const getOriginalData of finalData) {
-
-        //                     for (const findThumb of findThumbUp.yesBasket) {
-
-        //                         const findInThumbUp = await thumbUpModel.findOne({
-        //                             adminUserId: req.params.request_user_id,
-        //                             thumbDetail: {
-        //                                 $elemMatch: {
-        //                                     reqUserId: req.params.user_id,
-        //                                     userId: findThumb.userId
-        //                                 }
-        //                             }
-        //                         })
-
-        //                         const findInThumbDown = await thumbUpModel.findOne({
-        //                             adminUserId: req.params.request_user_id,
-        //                             thumbDetail: {
-        //                                 $elemMatch: {
-        //                                     reqUserId: req.params.user_id,
-        //                                     userId: findThumb.userId
-        //                                 }
-        //                             }
-        //                         })
-
-        //                         if (findInThumbUp) {
-        //                             const findThumbData = findThumb.userId
-        //                             const orginalData = getOriginalData._id
-
-        //                             if (orginalData.toString() == findThumbData.toString()) {
-        //                                 const response = {
-        //                                     _id: getOriginalData._id,
-        //                                     email: getOriginalData.email,
-        //                                     firstName: getOriginalData.firstName,
-        //                                     profile: getOriginalData.photo[0] ? getOriginalData.photo[0].res : "",
-        //                                     status: 3,
-        //                                     thumbUp: findThumb.thumbUp,
-        //                                     thumbUpStatus: 1,
-        //                                     thumbDownStatus: 0
-        //                                 }
-
-        //                                 UniqueEmail.push(response);
-        //                             }
-        //                         } else if (findInThumbDown) {
-        //                             const findThumbData = findThumb.userId
-        //                             const orginalData = getOriginalData._id
-
-        //                             if (orginalData.toString() == findThumbData.toString()) {
-        //                                 const response = {
-        //                                     _id: getOriginalData._id,
-        //                                     email: getOriginalData.email,
-        //                                     firstName: getOriginalData.firstName,
-        //                                     profile: getOriginalData.photo[0] ? getOriginalData.photo[0].res : "",
-        //                                     status: 3,
-        //                                     thumbUp: findThumb.thumbUp,
-        //                                     thumbUpStatus: 0,
-        //                                     thumbDownStatus: 1
-        //                                 }
-
-        //                                 UniqueEmail.push(response);
-        //                             }
-        //                         } else {
-        //                             const findThumbData = findThumb.userId
-        //                             const orginalData = getOriginalData._id
-
-        //                             if (orginalData.toString() == findThumbData.toString()) {
-        //                                 const response = {
-        //                                     _id: getOriginalData._id,
-        //                                     email: getOriginalData.email,
-        //                                     firstName: getOriginalData.firstName,
-        //                                     profile: getOriginalData.photo[0] ? getOriginalData.photo[0].res : "",
-        //                                     status: 3,
-        //                                     thumbUp: findThumb.thumbUp,
-        //                                     thumbUpStatus: 0,
-        //                                     thumbDownStatus: 0
-        //                                 }
-
-        //                                 UniqueEmail.push(response);
-        //                             }
-        //                         }
-
-        //                     }
-
-        //                 }
-
-        //                 const statusByEmail = [];
-        //                 const allRequestedEmail = RequestedEmailExiestInUser.RequestedEmails
-        //                 const requestedEmailWitchIsInuserRequeted = [];
-        //                 allRequestedEmail.map((result, next) => {
-        //                     const resultEmail = result.userId
-        //                     requestedEmailWitchIsInuserRequeted.push(resultEmail);
-        //                 })
-
-        //                 console.log("requestedEmailWitchIsInuserRequeted", requestedEmailWitchIsInuserRequeted);
-
-        //                 const meageAllTable = await userModel.aggregate([{
-        //                     $match: {
-        //                         _id: {
-        //                             $in: requestedEmailWitchIsInuserRequeted
-        //                         }
-        //                     }
-        //                 },
-        //                 {
-        //                     $lookup: {
-        //                         from: 'posts',
-        //                         localField: '_id',
-        //                         foreignField: 'userId',
-        //                         as: 'req_data'
-        //                     }
-        //                 },
-        //                 {
-        //                     $lookup: {
-        //                         from: 'requests',
-        //                         let: {
-
-        //                             userId: mongoose.Types.ObjectId(req.params.user_id),
-        //                             id: "$_id"
-        //                         },
-        //                         pipeline: [
-        //                             {
-        //                                 $match: {
-        //                                     $expr: {
-        //                                         $and: [
-        //                                             {
-        //                                                 $eq: [
-        //                                                     "$userId", "$$userId"
-        //                                                 ]
-        //                                             },
-        //                                             {
-        //                                                 $in:
-        //                                                     [
-        //                                                         "$$id", "$RequestedEmails.userId"
-        //                                                     ]
-        //                                             }
-        //                                         ]
-        //                                     }
-        //                                 }
-        //                             },
-        //                         ],
-        //                         as: 'form_data'
-        //                     }
-        //                 },
-        //                 {
-        //                     $project: {
-        //                         polyDating: "$polyDating",
-        //                         HowDoYouPoly: "$HowDoYouPoly",
-        //                         loveToGive: "$loveToGive",
-        //                         polyRelationship: "$polyRelationship",
-        //                         firstName: "$firstName",
-        //                         email: "$email",
-        //                         firstName: "$firstName",
-        //                         relationshipSatus: "$relationshipSatus",
-        //                         Bio: "$Bio",
-        //                         photo: "$photo",
-        //                         hopingToFind: "$hopingToFind",
-        //                         jobTitle: "$jobTitle",
-        //                         wantChildren: "$wantChildren",
-        //                         posts: "$req_data",
-        //                         result: "$form_data.RequestedEmails",
-        //                     }
-        //                 }])
-
-        //                 const finalExistUser = [];
-
-        //                 const emailDataDetail = meageAllTable;
-        //                 for (const DataDetail of emailDataDetail) {
-
-
-        //                     for (const reqEmail of reaquestedAllEmail) {
-        //                         if ((DataDetail._id).toString() == (reqEmail).toString()) {
-        //                             finalExistUser.push(DataDetail)
-        //                         }
-        //                     }
-        //                 }
-
-        //                 for (const emailData of finalExistUser[0].result) {
-
-        //                     for (const requestEmail of emailData) {
-
-        //                         for (const meageAllTableEmail of finalExistUser) {
-
-        //                             if ((requestEmail.userId).toString() == (meageAllTableEmail._id).toString()) {
-        //                                 const findThumbUp = await userModel.findOne({
-        //                                     _id: req.params.request_user_id,
-        //                                     polyDating: 0
-        //                                 })
-
-        //                                 for (const findThumb of findThumbUp.yesBasket) {
-
-
-        //                                     const findInThumbUp = await thumbUpModel.findOne({
-        //                                         adminUserId: req.params.request_user_id,
-        //                                         thumbDetail: {
-        //                                             $elemMatch: {
-        //                                                 reqUserId: req.params.user_id,
-        //                                                 userId: findThumb.userId
-        //                                             }
-        //                                         }
-        //                                     })
-
-        //                                     const findInThumbDown = await thumbUpModel.findOne({
-        //                                         adminUserId: req.params.request_user_id,
-        //                                         thumbDetail: {
-        //                                             $elemMatch: {
-        //                                                 reqUserId: req.params.user_id,
-        //                                                 userId: findThumb.userId
-        //                                             }
-        //                                         }
-        //                                     })
-        //                                     if (findInThumbUp) {
-        //                                         const findThumbData = findThumb.userId
-        //                                         const originalData = requestEmail.userId
-
-        //                                         if (originalData.toString() == findThumbData.toString()) {
-        //                                             if (requestEmail.accepted == 1) {
-        //                                                 var status1 = {
-        //                                                     _id: requestEmail.userId,
-        //                                                     status: requestEmail.accepted,
-        //                                                     firstName: findThumbUp.firstName,
-        //                                                     profile: findThumbUp.photo[0] ? findThumbUp.photo[0].res : "",
-        //                                                     email: requestEmail.requestedEmail,
-        //                                                     thumbUp: findThumb.thumbUp,
-        //                                                     thumbUpStatus: 1,
-        //                                                     thumbDownStatus: 0
-        //                                                 }
-        //                                                 statusByEmail.push(status1)
-        //                                             } else {
-        //                                                 var status3 = {
-        //                                                     _id: requestEmail.userId,
-        //                                                     status: requestEmail.accepted,
-        //                                                     email: requestEmail.requestedEmail,
-        //                                                     firstName: findThumbUp.firstName,
-        //                                                     profile: findThumbUp.photo[0] ? findThumbUp.photo[0].res : "",
-        //                                                     thumbUp: findThumb.thumbUp,
-        //                                                     thumbUpStatus: 1,
-        //                                                     thumbDownStatus: 0
-        //                                                 }
-        //                                                 statusByEmail.push(status3)
-        //                                             }
-        //                                         }
-        //                                     } else if (findInThumbDown) {
-        //                                         const findThumbData = findThumb.userId
-        //                                         const originalData = requestEmail.userId
-
-        //                                         if (originalData.toString() == findThumbData.toString()) {
-        //                                             if (requestEmail.accepted == 1) {
-        //                                                 var status1 = {
-        //                                                     _id: requestEmail.userId,
-        //                                                     status: requestEmail.accepted,
-        //                                                     firstName: findThumbUp.firstName,
-        //                                                     profile: findThumbUp.photo[0] ? findThumbUp.photo[0].res : "",
-        //                                                     email: requestEmail.requestedEmail,
-        //                                                     thumbUp: findThumb.thumbUp,
-        //                                                     thumbUpStatus: 0,
-        //                                                     thumbDownStatus: 1
-        //                                                 }
-        //                                                 statusByEmail.push(status1)
-        //                                             } else {
-        //                                                 var status3 = {
-        //                                                     _id: requestEmail.userId,
-        //                                                     status: requestEmail.accepted,
-        //                                                     email: requestEmail.requestedEmail,
-        //                                                     firstName: findThumbUp.firstName,
-        //                                                     profile: findThumbUp.photo[0] ? findThumbUp.photo[0].res : "",
-        //                                                     thumbUp: findThumb.thumbUp,
-        //                                                     thumbUpStatus: 0,
-        //                                                     thumbDownStatus: 1
-        //                                                 }
-        //                                                 statusByEmail.push(status3)
-        //                                             }
-        //                                         }
-        //                                     } else {
-        //                                         const findThumbData = findThumb.userId
-        //                                         const originalData = requestEmail.userId
-
-        //                                         if (originalData.toString() == findThumbData.toString()) {
-        //                                             if (requestEmail.accepted == 1) {
-        //                                                 var status1 = {
-        //                                                     _id: requestEmail.userId,
-        //                                                     status: requestEmail.accepted,
-        //                                                     firstName: findThumbUp.firstName,
-        //                                                     profile: findThumbUp.photo[0] ? findThumbUp.photo[0].res : "",
-        //                                                     email: requestEmail.requestedEmail,
-        //                                                     thumbUp: findThumb.thumbUp,
-        //                                                     thumbUpStatus: 0,
-        //                                                     thumbDownStatus: 0
-        //                                                 }
-        //                                                 statusByEmail.push(status1)
-        //                                             } else {
-        //                                                 var status3 = {
-        //                                                     _id: requestEmail.userId,
-        //                                                     status: requestEmail.accepted,
-        //                                                     email: requestEmail.requestedEmail,
-        //                                                     firstName: findThumbUp.firstName,
-        //                                                     profile: findThumbUp.photo[0] ? findThumbUp.photo[0].res : "",
-        //                                                     thumbUp: findThumb.thumbUp,
-        //                                                     thumbUpStatus: 0,
-        //                                                     thumbDownStatus: 0
-        //                                                 }
-        //                                                 statusByEmail.push(status3)
-        //                                             }
-        //                                         }
-        //                                     }
-
-
-        //                                 }
-        //                             }
-        //                         }
-        //                     }
-        //                 }
-
-        //                 const final_data = [];
-
-        //                 const finalStatus = []
-        //                 for (const [key, finalData] of meageAllTable.entries()) {
-        //                     for (const [key, final1Data] of statusByEmail.entries())
-        //                         if ((finalData._id).toString() === (final1Data._id).toString()) {
-        //                             const response = {
-        //                                 status: final1Data.status,
-        //                                 thumbUp: final1Data.thumbUp,
-        //                                 thumbUpStatus: final1Data.thumbUpStatus,
-        //                                 thumbDownStatus: final1Data.thumbDownStatus
-        //                             }
-        //                             finalStatus.push(response)
-        //                         }
-        //                 }
-        //                 for (const [key, finalData] of finalExistUser.entries()) {
-
-        //                     const findAllUserWithIchat1 = await chatRoomModel.findOne({
-        //                         $and: [{
-        //                             user1: finalData._id
-        //                         }, {
-        //                             user2: req.params.user_id
-        //                         }]
-        //                     })
-
-        //                     const findAllUserWithIchat2 = await chatRoomModel.findOne({
-        //                         $and: [{
-        //                             user1: req.params.user_id
-        //                         }, {
-        //                             user2: finalData._id
-        //                         }]
-        //                     })
-
-        //                     if (findAllUserWithIchat1) {
-
-        //                         if (finalStatus[key].status == 2) {
-        //                             const responses = {
-        //                                 _id: finalData._id,
-        //                                 // polyDating: finalData.polyDating,
-        //                                 // HowDoYouPoly: finalData.HowDoYouPoly,
-        //                                 // loveToGive: finalData.loveToGive,
-        //                                 // polyRelationship: finalData.polyRelationship,
-        //                                 firstName: finalData.firstName,
-        //                                 email: finalData.email,
-        //                                 profile: finalData.photo[0] ? finalData.photo[0].res : "",
-        //                                 // relationshipSatus: finalData.relationshipSatus,
-        //                                 // Bio: finalData.Bio,
-        //                                 // hopingToFind: finalData.hopingToFind,
-        //                                 // jobTitle: finalData.jobTitle,
-        //                                 // wantChildren: finalData.wantChildren,
-        //                                 // posts_data: finalData.posts,
-        //                                 statusAndTumbCount: finalStatus[key]
-        //                             }
-        //                             const response = {
-        //                                 _id: finalData._id,
-        //                                 // polyDating: finalData.polyDating,
-        //                                 // HowDoYouPoly: finalData.HowDoYouPoly,
-        //                                 // loveToGive: finalData.loveToGive,
-        //                                 // polyRelationship: finalData.polyRelationship,
-        //                                 firstName: finalData.firstName,
-        //                                 email: finalData.email,
-        //                                 profile: finalData.photo[0] ? finalData.photo[0].res : "",
-        //                                 // relationshipSatus: finalData.relationshipSatus,
-        //                                 // Bio: finalData.Bio,
-        //                                 // hopingToFind: finalData.hopingToFind,
-        //                                 // jobTitle: finalData.jobTitle,
-        //                                 // wantChildren: finalData.wantChildren,
-        //                                 // posts_data: finalData.posts,
-        //                                 status: responses.statusAndTumbCount.status,
-        //                                 thumbUp: responses.statusAndTumbCount.thumbUp,
-        //                                 thumbUpStatus: responses.statusAndTumbCount.thumbUpStatus,
-        //                                 thumbDownStatus: responses.statusAndTumbCount.thumbDownStatus
-        //                             }
-
-        //                             final_data.push(response);
-        //                         } else {
-        //                             const responses = {
-        //                                 _id: finalData._id,
-        //                                 chatRoomId: findAllUserWithIchat1 ? findAllUserWithIchat1._id : "",
-        //                                 // polyDating: finalData.polyDating,
-        //                                 // HowDoYouPoly: finalData.HowDoYouPoly,
-        //                                 // loveToGive: finalData.loveToGive,
-        //                                 // polyRelationship: finalData.polyRelationship,
-        //                                 firstName: finalData.firstName,
-        //                                 email: finalData.email,
-        //                                 profile: finalData.photo[0] ? finalData.photo[0].res : "",
-        //                                 // relationshipSatus: finalData.relationshipSatus,
-        //                                 // Bio: finalData.Bio,
-        //                                 // hopingToFind: finalData.hopingToFind,
-        //                                 // jobTitle: finalData.jobTitle,
-        //                                 // wantChildren: finalData.wantChildren,
-        //                                 // posts_data: finalData.posts,
-        //                                 statusAndTumbCount: finalStatus[key]
-        //                             }
-        //                             const response = {
-        //                                 _id: finalData._id,
-        //                                 chatRoomId: responses.chatRoomId,
-        //                                 // polyDating: finalData.polyDating,
-        //                                 // HowDoYouPoly: finalData.HowDoYouPoly,
-        //                                 // loveToGive: finalData.loveToGive,
-        //                                 // polyRelationship: finalData.polyRelationship,
-        //                                 firstName: finalData.firstName,
-        //                                 email: finalData.email,
-        //                                 profile: finalData.photo[0] ? finalData.photo[0].res : "",
-        //                                 // relationshipSatus: finalData.relationshipSatus,
-        //                                 // Bio: finalData.Bio,
-        //                                 // hopingToFind: finalData.hopingToFind,
-        //                                 // jobTitle: finalData.jobTitle,
-        //                                 // wantChildren: finalData.wantChildren,
-        //                                 // posts_data: finalData.posts,
-        //                                 status: responses.statusAndTumbCount.status,
-        //                                 thumbUp: responses.statusAndTumbCount.thumbUp,
-        //                                 thumbUpStatus: responses.statusAndTumbCount.thumbUpStatus,
-        //                                 thumbDownStatus: responses.statusAndTumbCount.thumbDownStatus
-        //                             }
-
-        //                             final_data.push(response);
-        //                         }
-
-        //                     } else {
-
-        //                         if (finalStatus[key].status == 2) {
-        //                             const responses = {
-        //                                 _id: finalData._id,
-        //                                 // polyDating: finalData.polyDating,
-        //                                 // HowDoYouPoly: finalData.HowDoYouPoly,
-        //                                 // loveToGive: finalData.loveToGive,
-        //                                 // polyRelationship: finalData.polyRelationship,
-        //                                 firstName: finalData.firstName,
-        //                                 email: finalData.email,
-        //                                 profile: finalData.photo[0] ? finalData.photo[0].res : "",
-        //                                 // relationshipSatus: finalData.relationshipSatus,
-        //                                 // Bio: finalData.Bio,
-        //                                 // hopingToFind: finalData.hopingToFind,
-        //                                 // jobTitle: finalData.jobTitle,
-        //                                 // wantChildren: finalData.wantChildren,
-        //                                 // posts_data: finalData.posts,
-        //                                 statusAndTumbCount: finalStatus[key]
-        //                             }
-        //                             const response = {
-        //                                 _id: finalData._id,
-        //                                 // polyDating: finalData.polyDating,
-        //                                 // HowDoYouPoly: finalData.HowDoYouPoly,
-        //                                 // loveToGive: finalData.loveToGive,
-        //                                 // polyRelationship: finalData.polyRelationship,
-        //                                 firstName: finalData.firstName,
-        //                                 email: finalData.email,
-        //                                 profile: finalData.photo[0] ? finalData.photo[0].res : "",
-        //                                 // relationshipSatus: finalData.relationshipSatus,
-        //                                 // Bio: finalData.Bio,
-        //                                 // hopingToFind: finalData.hopingToFind,
-        //                                 // jobTitle: finalData.jobTitle,
-        //                                 // wantChildren: finalData.wantChildren,
-        //                                 // posts_data: finalData.posts,
-        //                                 status: responses.statusAndTumbCount.status,
-        //                                 thumbUp: responses.statusAndTumbCount.thumbUp,
-        //                                 thumbUpStatus: responses.statusAndTumbCount.thumbUpStatus,
-        //                                 thumbDownStatus: responses.statusAndTumbCount.thumbDownStatus
-        //                             }
-
-        //                             final_data.push(response);
-        //                         } else {
-        //                             const responses = {
-        //                                 _id: finalData._id,
-        //                                 chatRoomId: findAllUserWithIchat2 ? findAllUserWithIchat2._id : "",
-        //                                 // polyDating: finalData.polyDating,
-        //                                 // HowDoYouPoly: finalData.HowDoYouPoly,
-        //                                 // loveToGive: finalData.loveToGive,
-        //                                 // polyRelationship: finalData.polyRelationship,
-        //                                 firstName: finalData.firstName,
-        //                                 email: finalData.email,
-        //                                 profile: finalData.photo[0] ? finalData.photo[0].res : "",
-        //                                 // relationshipSatus: finalData.relationshipSatus,
-        //                                 // Bio: finalData.Bio,
-        //                                 // hopingToFind: finalData.hopingToFind,
-        //                                 // jobTitle: finalData.jobTitle,
-        //                                 // wantChildren: finalData.wantChildren,
-        //                                 // posts_data: finalData.posts,
-        //                                 statusAndTumbCount: finalStatus[key]
-        //                             }
-        //                             const response = {
-        //                                 _id: finalData._id,
-        //                                 chatRoomId: responses.chatRoomId,
-        //                                 // polyDating: finalData.polyDating,
-        //                                 // HowDoYouPoly: finalData.HowDoYouPoly,
-        //                                 // loveToGive: finalData.loveToGive,
-        //                                 // polyRelationship: finalData.polyRelationship,
-        //                                 firstName: finalData.firstName,
-        //                                 email: finalData.email,
-        //                                 profile: finalData.photo[0] ? finalData.photo[0].res : "",
-        //                                 // relationshipSatus: finalData.relationshipSatus,
-        //                                 // Bio: finalData.Bio,
-        //                                 // hopingToFind: finalData.hopingToFind,
-        //                                 // jobTitle: finalData.jobTitle,
-        //                                 // wantChildren: finalData.wantChildren,
-        //                                 // posts_data: finalData.posts,
-        //                                 status: responses.statusAndTumbCount.status,
-        //                                 thumbUp: responses.statusAndTumbCount.thumbUp,
-        //                                 thumbUpStatus: responses.statusAndTumbCount.thumbUpStatus,
-        //                                 thumbDownStatus: responses.statusAndTumbCount.thumbDownStatus
-        //                             }
-
-        //                             final_data.push(response);
-        //                         }
-
-        //                     }
-        //                 }
-
-        //                 const final_response = [...final_data, ...UniqueEmail]
-
-
-
-        //                 const page = parseInt(req.query.page)
-        //                 const limit = parseInt(req.query.limit)
-        //                 const startIndex = (page - 1) * limit;
-        //                 const endIndex = page * limit;
-        //                 let uniqueObjArray = [...new Map(final_response.map((item) => [item["_id"], item])).values()];
-        //                 const data = uniqueObjArray.length;
-        //                 const pageCount = Math.ceil(data / limit);
-
-        //                 res.status(status.OK).json({
-        //                     "message": "show all yes basket record",
-        //                     "status": true,
-        //                     "code": 201,
-        //                     "statusCode": 1,
-        //                     "pageCount": (pageCount).toString() == (NaN).toString() ? 0 : pageCount,
-        //                     "data": (page).toString() == (NaN).toString() ? uniqueObjArray : uniqueObjArray.slice(startIndex, endIndex)
-        //                 })
-        //             }
-        //         }
-
-        //     }
-        //     // } else {
-        //     //     res.status(status.NOT_ACCEPTABLE).json(
-        //     //         new APIResponse("Not have Any Access, All Access Lock By User", "false", 406, "0")
-        //     //     );
-        //     // }
-        //     // }
-        // }
+        } else {
+
+
+            // const findUserInBasket = await basketModel.findOne({
+            //     userId: req.params.request_user_id
+            // })
+
+            // if (findUserInBasket == null) {
+            //     res.status(status.NOT_FOUND).json(
+            //         new APIResponse("Not In Basket", "false", 404, "0")
+            //     )
+            // } else {
+
+            // const accessBasket = findUserInBasket.fullAccess
+
+            // if (accessBasket == true) {
+            const findUser = await userModel.findOne({
+                _id: req.params.request_user_id,
+                polyDating: 0
+            })
+
+            if (findUser == null) {
+                res.status(status.NOT_FOUND).json(
+                    new APIResponse("user not Found", "false", 404, "0")
+                )
+            } else {
+                const reaquestedAllEmail = [];
+                const allMeargeData = [];
+                const YesBasketData = [];
+
+                const data = findUser.yesBasket
+                const final =  data.slice(startIndex, endIndex)
+
+                for (const allBakest of final) {
+
+                    const findInBlockUserModel1 = await blockuserModel.findOne({
+                        userId: req.params.request_user_id,
+                        "blockUnblockUser.blockUserId": allBakest.userId
+                    })
+
+                    const findInBlockUserModel2 = await blockuserModel.findOne({
+                        userId: allBakest.userId,
+                        "blockUnblockUser.blockUserId": req.params.request_user_id,
+                    })
+                    if (findInBlockUserModel1 || findInBlockUserModel2) {
+
+                    } else {
+                        YesBasketData.push((allBakest.userId).toString())
+                    }
+                }
+
+                for (const allyesBasketData of YesBasketData) {
+                    const meargeData = await userModel.findOne({
+                        _id: allyesBasketData,
+                    })
+
+                    if (meargeData) {
+                        reaquestedAllEmail.push((meargeData._id).toString())
+                    } else {
+                        reaquestedAllEmail.push()
+
+                    }
+                }
+
+                if (reaquestedAllEmail[0] == undefined) {
+                    res.status(status.OK).json(
+                        new APIResponse("show all post When accept by the user", 'true', 201, '1', [])
+                    )
+                } else {
+
+                    const RequestedEmailExiestInUser = await requestsModel.findOne(
+                        {
+                            userId: req.params.user_id,
+                            RequestedEmails: {
+                                $elemMatch: {
+                                    userId: {
+                                        $in: reaquestedAllEmail
+                                    }
+                                }
+                            }
+                        }
+                    )
+
+
+                    if (reaquestedAllEmail && RequestedEmailExiestInUser == null) {
+                        const finalData = [];
+                        const responseData = [];
+                        for (const allrequestedDataNotAcceptedRequestAndNotFriend of reaquestedAllEmail) {
+                            const userDetail = await userModel.findOne({ _id: allrequestedDataNotAcceptedRequestAndNotFriend });
+                            finalData.push(userDetail)
+                        }
+
+
+                        const findThumbUp = await userModel.findOne({
+                            _id: req.params.request_user_id,
+                            polyDating: 0
+                        })
+
+                        for (const getOriginalData of finalData) {
+
+                            const data = findThumbUp.yesBasket
+                const final =  data.slice(startIndex, endIndex)
+
+                            for (const findThumb of final) {
+
+                                const findInThumbUp = await thumbUpModel.findOne({
+                                    adminUserId: req.params.request_user_id,
+                                    thumbDetail: {
+                                        $elemMatch: {
+                                            reqUserId: req.params.user_id,
+                                            userId: findThumb.userId
+                                        }
+                                    }
+                                })
+
+                                const findInThumbDown = await thumbUpModel.findOne({
+                                    adminUserId: req.params.request_user_id,
+                                    thumbDetail: {
+                                        $elemMatch: {
+                                            reqUserId: req.params.user_id,
+                                            userId: findThumb.userId
+                                        }
+                                    }
+                                })
+
+                                if (findInThumbUp) {
+                                    const findThumbData = findThumb.userId
+                                    const orginalData = getOriginalData._id
+
+                                    if (orginalData.toString() == findThumbData.toString()) {
+                                        const response = {
+                                            _id: getOriginalData._id,
+                                            email: getOriginalData.email,
+                                            firstName: getOriginalData.firstName,
+                                            profile: getOriginalData.photo[0] ? getOriginalData.photo[0].res : "",
+                                            status: 3,
+                                            thumbUp: findThumb.thumbUp,
+                                            thumbUpStatus: 1,
+                                            thumbDownStatus: 0
+                                        }
+
+                                        responseData.push(response);
+                                    }
+                                } else if (findInThumbDown) {
+                                    const findThumbData = findThumb.userId
+                                    const orginalData = getOriginalData._id
+
+                                    if (orginalData.toString() == findThumbData.toString()) {
+                                        const response = {
+                                            _id: getOriginalData._id,
+                                            email: getOriginalData.email,
+                                            firstName: getOriginalData.firstName,
+                                            profile: getOriginalData.photo[0] ? getOriginalData.photo[0].res : "",
+                                            status: 3,
+                                            thumbUp: findThumb.thumbUp,
+                                            thumbUpStatus: 0,
+                                            thumbDownStatus: 1
+                                        }
+
+                                        responseData.push(response);
+                                    }
+                                } else {
+                                    const findThumbData = findThumb.userId
+                                    const orginalData = getOriginalData._id
+
+                                    if (orginalData.toString() == findThumbData.toString()) {
+                                        const response = {
+                                            _id: getOriginalData._id,
+                                            email: getOriginalData.email,
+                                            firstName: getOriginalData.firstName,
+                                            profile: getOriginalData.photo[0] ? getOriginalData.photo[0].res : "",
+                                            status: 3,
+                                            thumbUp: findThumb.thumbUp,
+                                            thumbUpStatus: 0,
+                                            thumbDownStatus: 0
+                                        }
+
+                                        responseData.push(response);
+                                    }
+                                }
+                            }
+
+                        }
+
+
+
+                        const page = parseInt(req.query.page)
+                        const limit = parseInt(req.query.limit)
+                        const startIndex = (page - 1) * limit;
+                        const endIndex = page * limit;
+                        let uniqueObjArray = [...new Map(responseData.map((item) => [item["_id"], item])).values()];
+                        const data = uniqueObjArray.length;
+                        const pageCount = Math.ceil(data / limit);
+
+                        res.status(status.OK).json({
+                            "message": "show all yes basket record",
+                            "status": true,
+                            "code": 201,
+                            "statusCode": 1,
+                            "pageCount": (pageCount).toString() == (NaN).toString() ? 0 : pageCount,
+                            "data": (page).toString() == (NaN).toString() ? uniqueObjArray : uniqueObjArray.slice(startIndex, endIndex)
+                        })
+
+                    } else {
+
+                        const emailGet = [];
+                        const finalData = [];
+                        for (const getEmail of RequestedEmailExiestInUser.RequestedEmails) {
+                            emailGet.push((getEmail.userId).toString(0))
+                        }
+
+                        var difference = reaquestedAllEmail.filter(x => emailGet.indexOf(x) === -1);
+
+                        const UniqueEmail = [];
+
+                        for (const uniqueEmail of difference) {
+                            const userDetail = await userModel.findOne({ _id: uniqueEmail });
+                            finalData.push(userDetail)
+                        }
+
+                        const findThumbUp = await userModel.findOne({
+                            _id: req.params.request_user_id,
+                            polyDating: 0
+                        })
+
+                        for (const getOriginalData of finalData) {
+                            const data = findThumbUp.yesBasket
+                const final =  data.slice(startIndex, endIndex)
+
+                            for (const findThumb of final) {
+
+                                const findInThumbUp = await thumbUpModel.findOne({
+                                    adminUserId: req.params.request_user_id,
+                                    thumbDetail: {
+                                        $elemMatch: {
+                                            reqUserId: req.params.user_id,
+                                            userId: findThumb.userId
+                                        }
+                                    }
+                                })
+
+                                const findInThumbDown = await thumbUpModel.findOne({
+                                    adminUserId: req.params.request_user_id,
+                                    thumbDetail: {
+                                        $elemMatch: {
+                                            reqUserId: req.params.user_id,
+                                            userId: findThumb.userId
+                                        }
+                                    }
+                                })
+
+                                if (findInThumbUp) {
+                                    const findThumbData = findThumb.userId
+                                    const orginalData = getOriginalData._id
+
+                                    if (orginalData.toString() == findThumbData.toString()) {
+                                        const response = {
+                                            _id: getOriginalData._id,
+                                            email: getOriginalData.email,
+                                            firstName: getOriginalData.firstName,
+                                            profile: getOriginalData.photo[0] ? getOriginalData.photo[0].res : "",
+                                            status: 3,
+                                            thumbUp: findThumb.thumbUp,
+                                            thumbUpStatus: 1,
+                                            thumbDownStatus: 0
+                                        }
+
+                                        UniqueEmail.push(response);
+                                    }
+                                } else if (findInThumbDown) {
+                                    const findThumbData = findThumb.userId
+                                    const orginalData = getOriginalData._id
+
+                                    if (orginalData.toString() == findThumbData.toString()) {
+                                        const response = {
+                                            _id: getOriginalData._id,
+                                            email: getOriginalData.email,
+                                            firstName: getOriginalData.firstName,
+                                            profile: getOriginalData.photo[0] ? getOriginalData.photo[0].res : "",
+                                            status: 3,
+                                            thumbUp: findThumb.thumbUp,
+                                            thumbUpStatus: 0,
+                                            thumbDownStatus: 1
+                                        }
+
+                                        UniqueEmail.push(response);
+                                    }
+                                } else {
+                                    const findThumbData = findThumb.userId
+                                    const orginalData = getOriginalData._id
+
+                                    if (orginalData.toString() == findThumbData.toString()) {
+                                        const response = {
+                                            _id: getOriginalData._id,
+                                            email: getOriginalData.email,
+                                            firstName: getOriginalData.firstName,
+                                            profile: getOriginalData.photo[0] ? getOriginalData.photo[0].res : "",
+                                            status: 3,
+                                            thumbUp: findThumb.thumbUp,
+                                            thumbUpStatus: 0,
+                                            thumbDownStatus: 0
+                                        }
+
+                                        UniqueEmail.push(response);
+                                    }
+                                }
+
+                            }
+
+                        }
+
+                        const statusByEmail = [];
+                        const allRequestedEmail = RequestedEmailExiestInUser.RequestedEmails
+                        const requestedEmailWitchIsInuserRequeted = [];
+                        allRequestedEmail.map((result, next) => {
+                            const resultEmail = result.userId
+                            requestedEmailWitchIsInuserRequeted.push(resultEmail);
+                        })
+
+                        console.log("requestedEmailWitchIsInuserRequeted", requestedEmailWitchIsInuserRequeted);
+
+                        const meageAllTable = await userModel.aggregate([{
+                            $match: {
+                                _id: {
+                                    $in: requestedEmailWitchIsInuserRequeted
+                                }
+                            }
+                        },
+                        {
+                            $lookup: {
+                                from: 'posts',
+                                localField: '_id',
+                                foreignField: 'userId',
+                                as: 'req_data'
+                            }
+                        },
+                        {
+                            $lookup: {
+                                from: 'requests',
+                                let: {
+
+                                    userId: mongoose.Types.ObjectId(req.params.user_id),
+                                    id: "$_id"
+                                },
+                                pipeline: [
+                                    {
+                                        $match: {
+                                            $expr: {
+                                                $and: [
+                                                    {
+                                                        $eq: [
+                                                            "$userId", "$$userId"
+                                                        ]
+                                                    },
+                                                    {
+                                                        $in:
+                                                            [
+                                                                "$$id", "$RequestedEmails.userId"
+                                                            ]
+                                                    }
+                                                ]
+                                            }
+                                        }
+                                    },
+                                ],
+                                as: 'form_data'
+                            }
+                        },
+                        {
+                            $project: {
+                                polyDating: "$polyDating",
+                                HowDoYouPoly: "$HowDoYouPoly",
+                                loveToGive: "$loveToGive",
+                                polyRelationship: "$polyRelationship",
+                                firstName: "$firstName",
+                                email: "$email",
+                                firstName: "$firstName",
+                                relationshipSatus: "$relationshipSatus",
+                                Bio: "$Bio",
+                                photo: "$photo",
+                                hopingToFind: "$hopingToFind",
+                                jobTitle: "$jobTitle",
+                                wantChildren: "$wantChildren",
+                                posts: "$req_data",
+                                result: "$form_data.RequestedEmails",
+                            }
+                        }])
+
+                        const finalExistUser = [];
+
+                        const emailDataDetail = meageAllTable;
+                        for (const DataDetail of emailDataDetail) {
+
+
+                            for (const reqEmail of reaquestedAllEmail) {
+                                if ((DataDetail._id).toString() == (reqEmail).toString()) {
+                                    finalExistUser.push(DataDetail)
+                                }
+                            }
+                        }
+
+                        for (const emailData of finalExistUser[0].result) {
+
+                            for (const requestEmail of emailData) {
+
+                                for (const meageAllTableEmail of finalExistUser) {
+
+                                    if ((requestEmail.userId).toString() == (meageAllTableEmail._id).toString()) {
+                                        const findThumbUp = await userModel.findOne({
+                                            _id: req.params.request_user_id,
+                                            polyDating: 0
+                                        })
+
+                                        const data = findThumbUp.yesBasket
+                const final =  data.slice(startIndex, endIndex)
+                                        for (const findThumb of final) {
+
+
+                                            const findInThumbUp = await thumbUpModel.findOne({
+                                                adminUserId: req.params.request_user_id,
+                                                thumbDetail: {
+                                                    $elemMatch: {
+                                                        reqUserId: req.params.user_id,
+                                                        userId: findThumb.userId
+                                                    }
+                                                }
+                                            })
+
+                                            const findInThumbDown = await thumbUpModel.findOne({
+                                                adminUserId: req.params.request_user_id,
+                                                thumbDetail: {
+                                                    $elemMatch: {
+                                                        reqUserId: req.params.user_id,
+                                                        userId: findThumb.userId
+                                                    }
+                                                }
+                                            })
+                                            if (findInThumbUp) {
+                                                const findThumbData = findThumb.userId
+                                                const originalData = requestEmail.userId
+
+                                                if (originalData.toString() == findThumbData.toString()) {
+                                                    if (requestEmail.accepted == 1) {
+                                                        var status1 = {
+                                                            _id: requestEmail.userId,
+                                                            status: requestEmail.accepted,
+                                                            firstName: findThumbUp.firstName,
+                                                            profile: findThumbUp.photo[0] ? findThumbUp.photo[0].res : "",
+                                                            email: requestEmail.requestedEmail,
+                                                            thumbUp: findThumb.thumbUp,
+                                                            thumbUpStatus: 1,
+                                                            thumbDownStatus: 0
+                                                        }
+                                                        statusByEmail.push(status1)
+                                                    } else {
+                                                        var status3 = {
+                                                            _id: requestEmail.userId,
+                                                            status: requestEmail.accepted,
+                                                            email: requestEmail.requestedEmail,
+                                                            firstName: findThumbUp.firstName,
+                                                            profile: findThumbUp.photo[0] ? findThumbUp.photo[0].res : "",
+                                                            thumbUp: findThumb.thumbUp,
+                                                            thumbUpStatus: 1,
+                                                            thumbDownStatus: 0
+                                                        }
+                                                        statusByEmail.push(status3)
+                                                    }
+                                                }
+                                            } else if (findInThumbDown) {
+                                                const findThumbData = findThumb.userId
+                                                const originalData = requestEmail.userId
+
+                                                if (originalData.toString() == findThumbData.toString()) {
+                                                    if (requestEmail.accepted == 1) {
+                                                        var status1 = {
+                                                            _id: requestEmail.userId,
+                                                            status: requestEmail.accepted,
+                                                            firstName: findThumbUp.firstName,
+                                                            profile: findThumbUp.photo[0] ? findThumbUp.photo[0].res : "",
+                                                            email: requestEmail.requestedEmail,
+                                                            thumbUp: findThumb.thumbUp,
+                                                            thumbUpStatus: 0,
+                                                            thumbDownStatus: 1
+                                                        }
+                                                        statusByEmail.push(status1)
+                                                    } else {
+                                                        var status3 = {
+                                                            _id: requestEmail.userId,
+                                                            status: requestEmail.accepted,
+                                                            email: requestEmail.requestedEmail,
+                                                            firstName: findThumbUp.firstName,
+                                                            profile: findThumbUp.photo[0] ? findThumbUp.photo[0].res : "",
+                                                            thumbUp: findThumb.thumbUp,
+                                                            thumbUpStatus: 0,
+                                                            thumbDownStatus: 1
+                                                        }
+                                                        statusByEmail.push(status3)
+                                                    }
+                                                }
+                                            } else {
+                                                const findThumbData = findThumb.userId
+                                                const originalData = requestEmail.userId
+
+                                                if (originalData.toString() == findThumbData.toString()) {
+                                                    if (requestEmail.accepted == 1) {
+                                                        var status1 = {
+                                                            _id: requestEmail.userId,
+                                                            status: requestEmail.accepted,
+                                                            firstName: findThumbUp.firstName,
+                                                            profile: findThumbUp.photo[0] ? findThumbUp.photo[0].res : "",
+                                                            email: requestEmail.requestedEmail,
+                                                            thumbUp: findThumb.thumbUp,
+                                                            thumbUpStatus: 0,
+                                                            thumbDownStatus: 0
+                                                        }
+                                                        statusByEmail.push(status1)
+                                                    } else {
+                                                        var status3 = {
+                                                            _id: requestEmail.userId,
+                                                            status: requestEmail.accepted,
+                                                            email: requestEmail.requestedEmail,
+                                                            firstName: findThumbUp.firstName,
+                                                            profile: findThumbUp.photo[0] ? findThumbUp.photo[0].res : "",
+                                                            thumbUp: findThumb.thumbUp,
+                                                            thumbUpStatus: 0,
+                                                            thumbDownStatus: 0
+                                                        }
+                                                        statusByEmail.push(status3)
+                                                    }
+                                                }
+                                            }
+
+
+                                        }
+                                    }
+                                }
+                            }
+                        }
+
+                        const final_data = [];
+
+                        const finalStatus = []
+                        for (const [key, finalData] of meageAllTable.entries()) {
+                            for (const [key, final1Data] of statusByEmail.entries())
+                                if ((finalData._id).toString() === (final1Data._id).toString()) {
+                                    const response = {
+                                        status: final1Data.status,
+                                        thumbUp: final1Data.thumbUp,
+                                        thumbUpStatus: final1Data.thumbUpStatus,
+                                        thumbDownStatus: final1Data.thumbDownStatus
+                                    }
+                                    finalStatus.push(response)
+                                }
+                        }
+                        for (const [key, finalData] of finalExistUser.entries()) {
+
+                            const findAllUserWithIchat1 = await chatRoomModel.findOne({
+                                $and: [{
+                                    user1: finalData._id
+                                }, {
+                                    user2: req.params.user_id
+                                }]
+                            })
+
+                            const findAllUserWithIchat2 = await chatRoomModel.findOne({
+                                $and: [{
+                                    user1: req.params.user_id
+                                }, {
+                                    user2: finalData._id
+                                }]
+                            })
+
+                            if (findAllUserWithIchat1) {
+
+                                if (finalStatus[key].status == 2) {
+                                    const responses = {
+                                        _id: finalData._id,
+                                        // polyDating: finalData.polyDating,
+                                        // HowDoYouPoly: finalData.HowDoYouPoly,
+                                        // loveToGive: finalData.loveToGive,
+                                        // polyRelationship: finalData.polyRelationship,
+                                        firstName: finalData.firstName,
+                                        email: finalData.email,
+                                        profile: finalData.photo[0] ? finalData.photo[0].res : "",
+                                        // relationshipSatus: finalData.relationshipSatus,
+                                        // Bio: finalData.Bio,
+                                        // hopingToFind: finalData.hopingToFind,
+                                        // jobTitle: finalData.jobTitle,
+                                        // wantChildren: finalData.wantChildren,
+                                        // posts_data: finalData.posts,
+                                        statusAndTumbCount: finalStatus[key]
+                                    }
+                                    const response = {
+                                        _id: finalData._id,
+                                        // polyDating: finalData.polyDating,
+                                        // HowDoYouPoly: finalData.HowDoYouPoly,
+                                        // loveToGive: finalData.loveToGive,
+                                        // polyRelationship: finalData.polyRelationship,
+                                        firstName: finalData.firstName,
+                                        email: finalData.email,
+                                        profile: finalData.photo[0] ? finalData.photo[0].res : "",
+                                        // relationshipSatus: finalData.relationshipSatus,
+                                        // Bio: finalData.Bio,
+                                        // hopingToFind: finalData.hopingToFind,
+                                        // jobTitle: finalData.jobTitle,
+                                        // wantChildren: finalData.wantChildren,
+                                        // posts_data: finalData.posts,
+                                        status: responses.statusAndTumbCount.status,
+                                        thumbUp: responses.statusAndTumbCount.thumbUp,
+                                        thumbUpStatus: responses.statusAndTumbCount.thumbUpStatus,
+                                        thumbDownStatus: responses.statusAndTumbCount.thumbDownStatus
+                                    }
+
+                                    final_data.push(response);
+                                } else {
+                                    const responses = {
+                                        _id: finalData._id,
+                                        chatRoomId: findAllUserWithIchat1 ? findAllUserWithIchat1._id : "",
+                                        // polyDating: finalData.polyDating,
+                                        // HowDoYouPoly: finalData.HowDoYouPoly,
+                                        // loveToGive: finalData.loveToGive,
+                                        // polyRelationship: finalData.polyRelationship,
+                                        firstName: finalData.firstName,
+                                        email: finalData.email,
+                                        profile: finalData.photo[0] ? finalData.photo[0].res : "",
+                                        // relationshipSatus: finalData.relationshipSatus,
+                                        // Bio: finalData.Bio,
+                                        // hopingToFind: finalData.hopingToFind,
+                                        // jobTitle: finalData.jobTitle,
+                                        // wantChildren: finalData.wantChildren,
+                                        // posts_data: finalData.posts,
+                                        statusAndTumbCount: finalStatus[key]
+                                    }
+                                    const response = {
+                                        _id: finalData._id,
+                                        chatRoomId: responses.chatRoomId,
+                                        // polyDating: finalData.polyDating,
+                                        // HowDoYouPoly: finalData.HowDoYouPoly,
+                                        // loveToGive: finalData.loveToGive,
+                                        // polyRelationship: finalData.polyRelationship,
+                                        firstName: finalData.firstName,
+                                        email: finalData.email,
+                                        profile: finalData.photo[0] ? finalData.photo[0].res : "",
+                                        // relationshipSatus: finalData.relationshipSatus,
+                                        // Bio: finalData.Bio,
+                                        // hopingToFind: finalData.hopingToFind,
+                                        // jobTitle: finalData.jobTitle,
+                                        // wantChildren: finalData.wantChildren,
+                                        // posts_data: finalData.posts,
+                                        status: responses.statusAndTumbCount.status,
+                                        thumbUp: responses.statusAndTumbCount.thumbUp,
+                                        thumbUpStatus: responses.statusAndTumbCount.thumbUpStatus,
+                                        thumbDownStatus: responses.statusAndTumbCount.thumbDownStatus
+                                    }
+
+                                    final_data.push(response);
+                                }
+
+                            } else {
+
+                                if (finalStatus[key].status == 2) {
+                                    const responses = {
+                                        _id: finalData._id,
+                                        // polyDating: finalData.polyDating,
+                                        // HowDoYouPoly: finalData.HowDoYouPoly,
+                                        // loveToGive: finalData.loveToGive,
+                                        // polyRelationship: finalData.polyRelationship,
+                                        firstName: finalData.firstName,
+                                        email: finalData.email,
+                                        profile: finalData.photo[0] ? finalData.photo[0].res : "",
+                                        // relationshipSatus: finalData.relationshipSatus,
+                                        // Bio: finalData.Bio,
+                                        // hopingToFind: finalData.hopingToFind,
+                                        // jobTitle: finalData.jobTitle,
+                                        // wantChildren: finalData.wantChildren,
+                                        // posts_data: finalData.posts,
+                                        statusAndTumbCount: finalStatus[key]
+                                    }
+                                    const response = {
+                                        _id: finalData._id,
+                                        // polyDating: finalData.polyDating,
+                                        // HowDoYouPoly: finalData.HowDoYouPoly,
+                                        // loveToGive: finalData.loveToGive,
+                                        // polyRelationship: finalData.polyRelationship,
+                                        firstName: finalData.firstName,
+                                        email: finalData.email,
+                                        profile: finalData.photo[0] ? finalData.photo[0].res : "",
+                                        // relationshipSatus: finalData.relationshipSatus,
+                                        // Bio: finalData.Bio,
+                                        // hopingToFind: finalData.hopingToFind,
+                                        // jobTitle: finalData.jobTitle,
+                                        // wantChildren: finalData.wantChildren,
+                                        // posts_data: finalData.posts,
+                                        status: responses.statusAndTumbCount.status,
+                                        thumbUp: responses.statusAndTumbCount.thumbUp,
+                                        thumbUpStatus: responses.statusAndTumbCount.thumbUpStatus,
+                                        thumbDownStatus: responses.statusAndTumbCount.thumbDownStatus
+                                    }
+
+                                    final_data.push(response);
+                                } else {
+                                    const responses = {
+                                        _id: finalData._id,
+                                        chatRoomId: findAllUserWithIchat2 ? findAllUserWithIchat2._id : "",
+                                        // polyDating: finalData.polyDating,
+                                        // HowDoYouPoly: finalData.HowDoYouPoly,
+                                        // loveToGive: finalData.loveToGive,
+                                        // polyRelationship: finalData.polyRelationship,
+                                        firstName: finalData.firstName,
+                                        email: finalData.email,
+                                        profile: finalData.photo[0] ? finalData.photo[0].res : "",
+                                        // relationshipSatus: finalData.relationshipSatus,
+                                        // Bio: finalData.Bio,
+                                        // hopingToFind: finalData.hopingToFind,
+                                        // jobTitle: finalData.jobTitle,
+                                        // wantChildren: finalData.wantChildren,
+                                        // posts_data: finalData.posts,
+                                        statusAndTumbCount: finalStatus[key]
+                                    }
+                                    const response = {
+                                        _id: finalData._id,
+                                        chatRoomId: responses.chatRoomId,
+                                        // polyDating: finalData.polyDating,
+                                        // HowDoYouPoly: finalData.HowDoYouPoly,
+                                        // loveToGive: finalData.loveToGive,
+                                        // polyRelationship: finalData.polyRelationship,
+                                        firstName: finalData.firstName,
+                                        email: finalData.email,
+                                        profile: finalData.photo[0] ? finalData.photo[0].res : "",
+                                        // relationshipSatus: finalData.relationshipSatus,
+                                        // Bio: finalData.Bio,
+                                        // hopingToFind: finalData.hopingToFind,
+                                        // jobTitle: finalData.jobTitle,
+                                        // wantChildren: finalData.wantChildren,
+                                        // posts_data: finalData.posts,
+                                        status: responses.statusAndTumbCount.status,
+                                        thumbUp: responses.statusAndTumbCount.thumbUp,
+                                        thumbUpStatus: responses.statusAndTumbCount.thumbUpStatus,
+                                        thumbDownStatus: responses.statusAndTumbCount.thumbDownStatus
+                                    }
+
+                                    final_data.push(response);
+                                }
+
+                            }
+                        }
+
+                        const final_response = [...final_data, ...UniqueEmail]
+
+
+
+                        const page = parseInt(req.query.page)
+                        const limit = parseInt(req.query.limit)
+                        const startIndex = (page - 1) * limit;
+                        const endIndex = page * limit;
+                        let uniqueObjArray = [...new Map(final_response.map((item) => [item["_id"], item])).values()];
+                        const data = uniqueObjArray.length;
+                        const pageCount = Math.ceil(data / limit);
+
+                        res.status(status.OK).json({
+                            "message": "show all yes basket record",
+                            "status": true,
+                            "code": 201,
+                            "statusCode": 1,
+                            "pageCount": (pageCount).toString() == (NaN).toString() ? 0 : pageCount,
+                            "data": (page).toString() == (NaN).toString() ? uniqueObjArray : uniqueObjArray.slice(startIndex, endIndex)
+                        })
+                    }
+                }
+
+            }
+            // } else {
+            //     res.status(status.NOT_ACCEPTABLE).json(
+            //         new APIResponse("Not have Any Access, All Access Lock By User", "false", 406, "0")
+            //     );
+            // }
+            // }
+        }
     } catch (error) {
         console.log("error", error);
         res.status(status.INTERNAL_SERVER_ERROR).json(
@@ -4111,20 +4131,18 @@ exports.noBasket = async (req, res, next) => {
                 res.status(status.NOT_FOUND).json(
                     new APIResponse("User not Found and not Social Meida & Dating type user", "false", 404, "0")
                 )
-
+                
             } else {
-
-
                 const page = parseInt(req.query.page)
                 const limit = parseInt(req.query.limit)
                 const startIndex = (page - 1) * limit;
                 const endIndex = page * limit;
 
-                
                 const reaquestedAllEmail = [];
                 const allMeargeData = [];
                 const NoBasketData = [];
-                const data = findUser.yesBasket
+
+                const data = findUser.noBasket
                 const final =  data.slice(startIndex, endIndex)
                 for (const allBakest of final) {
                     const findInBlockUserModel1 = await blockuserModel.findOne({
@@ -4194,7 +4212,10 @@ exports.noBasket = async (req, res, next) => {
 
                         for (const getOriginalData of finalData) {
 
-                            for (const findThumb of findThumbUp.noBasket) {
+                            const data = findThumbUp.noBasket
+                            const final =  data.slice(startIndex, endIndex)
+
+                            for (const findThumb of final) {
 
                                 const findInThumbUp = await thumbUpModel.findOne({
                                     adminUserId: req.params.user_id,
@@ -4299,7 +4320,7 @@ exports.noBasket = async (req, res, next) => {
                             "code": 201,
                             "statusCode": 1,
                             // "pageCount": (pageCount).toString() == (NaN).toString() ? 0 : pageCount,
-                            "data": uniqueObjArray
+                            "data": (page).toString() == (NaN).toString() ? uniqueObjArray : uniqueObjArray.slice(startIndex, endIndex)
                         })
 
                     } else {
@@ -4310,6 +4331,7 @@ exports.noBasket = async (req, res, next) => {
                             emailGet.push((getEmail.userId).toString())
                         }
 
+
                         var difference = reaquestedAllEmail.filter(x => emailGet.indexOf(x) === -1);
 
 
@@ -4317,7 +4339,7 @@ exports.noBasket = async (req, res, next) => {
                         const UniqueEmail = [];
 
 
-                        for (const uniqueEmail of difference.slice(startIndex,endIndex)) {
+                        for (const uniqueEmail of difference) {
                             const userDetail = await userModel.findOne({ _id: uniqueEmail });
                             finalData.push(userDetail)
                         }
@@ -4329,10 +4351,13 @@ exports.noBasket = async (req, res, next) => {
                         })
 
                         for (const getOriginalData of finalData) {
-                            
+
                             const data = findThumbUp.noBasket
                             const final =  data.slice(startIndex, endIndex)
+
                             for (const findThumb of final) {
+
+
                                 const findInThumbUp = await thumbUpModel.findOne({
                                     adminUserId: req.params.user_id,
                                     thumbDetail: {
@@ -4514,10 +4539,6 @@ exports.noBasket = async (req, res, next) => {
                             }
                         }
 
-
-
-
-
                         for (const emailData of finalExistUser[0].result) {
 
 
@@ -4533,7 +4554,10 @@ exports.noBasket = async (req, res, next) => {
                                             polyDating: 0
                                         })
 
-                                        for (const findThumb of findThumbUp.noBasket) {
+                                        const data = findThumbUp.noBasket
+                                        const final =  data.slice(startIndex, endIndex)
+
+                                        for (const findThumb of final) {
 
                                             const findInThumbUp = await thumbUpModel.findOne({
                                                 adminUserId: req.params.user_id,
@@ -4898,7 +4922,7 @@ exports.noBasket = async (req, res, next) => {
                             "code": 201,
                             "statusCode": 1,
                             // "pageCount": (pageCount).toString() == (NaN).toString() ? 0 : pageCount,
-                            "data": uniqueObjArray
+                            "data":  uniqueObjArray 
 
                         })
                     }
@@ -4932,10 +4956,21 @@ exports.noBasket = async (req, res, next) => {
                     new APIResponse("user not Found", "false", 404, "0")
                 )
             } else {
+
+                const page = parseInt(req.query.page)
+                const limit = parseInt(req.query.limit)
+                const startIndex = (page - 1) * limit;
+                const endIndex = page * limit;
+
+
                 const reaquestedAllEmail = [];
                 const allMeargeData = [];
                 const NoBasketData = [];
-                for (const allBakest of findUser.noBasket) {
+
+                const data = findUser.noBasket
+                const final =  data.slice(startIndex, endIndex)
+
+                for (const allBakest of final) {
                     const findInBlockUserModel1 = await blockuserModel.findOne({
                         userId: req.params.request_user_id,
                         "blockUnblockUser.blockUserId": allBakest.userId
@@ -5002,7 +5037,10 @@ exports.noBasket = async (req, res, next) => {
 
                         for (const getOriginalData of finalData) {
 
-                            for (const findThumb of findThumbUp.noBasket) {
+                            const data = findThumbUp.noBasket
+                            const final =  data.slice(startIndex, endIndex)
+
+                            for (const findThumb of final) {
 
                                 const findInThumbUp = await thumbUpModel.findOne({
                                     adminUserId: req.params.user_id,
@@ -5086,21 +5124,21 @@ exports.noBasket = async (req, res, next) => {
 
 
 
-                        const page = parseInt(req.query.page)
-                        const limit = parseInt(req.query.limit)
-                        const startIndex = (page - 1) * limit;
-                        const endIndex = page * limit;
+                        // const page = parseInt(req.query.page)
+                        // const limit = parseInt(req.query.limit)
+                        // const startIndex = (page - 1) * limit;
+                        // const endIndex = page * limit;
                         let uniqueObjArray = [...new Map(responseData.map((item) => [item["_id"], item])).values()];
-                        const data = uniqueObjArray.length;
-                        const pageCount = Math.ceil(data / limit);
+                        // const data = uniqueObjArray.length;
+                        // const pageCount = Math.ceil(data / limit);
 
                         res.status(status.OK).json({
                             "message": "show all no basket record",
                             "status": true,
                             "code": 201,
                             "statusCode": 1,
-                            "pageCount": (pageCount).toString() == (NaN).toString() ? 0 : pageCount,
-                            "data": (page).toString() == (NaN).toString() ? uniqueObjArray : uniqueObjArray.slice(startIndex, endIndex)
+                            // "pageCount": (pageCount).toString() == (NaN).toString() ? 0 : pageCount,
+                            "data": uniqueObjArray 
 
                         })
                     } else {
@@ -5127,7 +5165,10 @@ exports.noBasket = async (req, res, next) => {
 
                         for (const getOriginalData of finalData) {
 
-                            for (const findThumb of findThumbUp.noBasket) {
+                            const data = findThumbUp.noBasket
+                            const final =  data.slice(startIndex, endIndex)
+
+                            for (const findThumb of final) {
 
                                 const findInThumbUp = await thumbUpModel.findOne({
                                     adminUserId: req.params.user_id,
@@ -5309,7 +5350,10 @@ exports.noBasket = async (req, res, next) => {
                                             polyDating: 0
                                         })
 
-                                        for (const findThumb of findThumbUp.noBasket) {
+                                        const data = findThumbUp.noBasket
+                                        const final =  data.slice(startIndex, endIndex)
+
+                                        for (const findThumb of final) {
 
 
                                             const findInThumbUp = await thumbUpModel.findOne({
@@ -5640,22 +5684,21 @@ exports.noBasket = async (req, res, next) => {
 
                         const final_response = [...final_data, ...UniqueEmail]
 
-                        const page = parseInt(req.query.page)
-                        const limit = parseInt(req.query.limit)
-                        const startIndex = (page - 1) * limit;
-                        const endIndex = page * limit;
+                        // const page = parseInt(req.query.page)
+                        // const limit = parseInt(req.query.limit)
+                        // const startIndex = (page - 1) * limit;
+                        // const endIndex = page * limit;
                         let uniqueObjArray = [...new Map(final_response.map((item) => [item["_id"], item])).values()];
-                        const data = uniqueObjArray.length;
-                        const pageCount = Math.ceil(data / limit);
+                        // const data = uniqueObjArray.length;
+                        // const pageCount = Math.ceil(data / limit);
 
                         res.status(status.OK).json({
                             "message": "show all no basket record",
                             "status": true,
                             "code": 201,
                             "statusCode": 1,
-                            "pageCount": (pageCount).toString() == (NaN).toString() ? 0 : pageCount,
-                            "data": (page).toString() == (NaN).toString() ? uniqueObjArray : uniqueObjArray.slice(startIndex, endIndex)
-
+                            // "pageCount": (pageCount).toString() == (NaN).toString() ? 0 : pageCount,
+                            "data": uniqueObjArray
                         })
 
                     }
