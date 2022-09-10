@@ -215,7 +215,7 @@ function socket(io) {
                             const title = senderName.firstName;
                             const body = arg.text;
                             const text = arg.text;
-                            const sendBy = arg.sender_id;
+                            const sendBy = arg.user_1;
                             const registrationToken = fcm_token
 
                             Notification.sendPushNotificationFCM(
@@ -278,7 +278,7 @@ function socket(io) {
                             const body = arg.text;
 
                             const text = arg.text;
-                            const sendBy = arg.sender_id;
+                            const sendBy = arg.user_1;
                             const registrationToken = fcm_token
                             Notification.sendPushNotificationFCM(
                                 registrationToken,
@@ -372,7 +372,7 @@ function socket(io) {
                                 const title = senderName.firstName;
                                 const body = arg.text;
                                 const text = arg.text;
-                                const sendBy = arg.sender_id;
+                                const sendBy = arg.user_1;
                                 const registrationToken = fcm_token
                                 Notification.sendPushNotificationFCM(
                                     registrationToken,
@@ -435,7 +435,7 @@ function socket(io) {
                                 const title = senderName.firstName;
                                 const body = arg.text;
                                 const text = arg.text;
-                                const sendBy = arg.sender_id;
+                                const sendBy = arg.user_1;
                                 const registrationToken = fcm_token
                                 Notification.sendPushNotificationFCM(
                                     registrationToken,
@@ -495,7 +495,7 @@ function socket(io) {
                                 const title = senderName.firstName;
                                 const body = arg.text;
                                 const text = arg.text;
-                                const sendBy = arg.sender_id;
+                                const sendBy = arg.user_1;
 
                                 const registrationToken = fcm_token
                                 Notification.sendPushNotificationFCM(
@@ -553,7 +553,7 @@ function socket(io) {
                                 const title = senderName.firstName;
                                 const body = arg.text;
                                 const text = arg.text;
-                                const sendBy = arg.sender_id;
+                                const sendBy = arg.user_1;
 
                                 const registrationToken = fcm_token
 
