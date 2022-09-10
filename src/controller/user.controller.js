@@ -2543,9 +2543,8 @@ exports.yesBasket = async (req, res, next) => {
                 const startIndex = (page - 1) * limit;
                 const endIndex = page * limit;
                 const data = findUser.yesBasket
-               const final =  data.slice(startIndex, endIndex)
-                console.log(final);
-                
+                const final =  data.slice(startIndex, endIndex)
+               
                 for (const allBakest of final) {
                     const findInBlockUserModel1 = await blockuserModel.findOne({
                         userId: req.params.request_user_id,
@@ -2584,6 +2583,7 @@ exports.yesBasket = async (req, res, next) => {
                     )
                 } else {
 
+                    console.log("hellooo");
                     const RequestedEmailExiestInUser = await requestsModel.findOne(
                         {
                             userId: req.params.user_id,
@@ -2600,7 +2600,6 @@ exports.yesBasket = async (req, res, next) => {
 
                     if (reaquestedAllEmail && RequestedEmailExiestInUser == null) {
 
-                        console.log("helloooooooooooo");
                         const finalData = [];
                         const responseData = [];
                         for (const allrequestedDataNotAcceptedRequestAndNotFriend of reaquestedAllEmail) {
@@ -2698,10 +2697,15 @@ exports.yesBasket = async (req, res, next) => {
                                             thumbUpStatus: 0,
                                             thumbDownStatus: 0
                                         }
+
+
                                         responseData.push(response);
                                     }
                                 }
+
                             }
+
+
                         }
 
                        
@@ -2721,7 +2725,7 @@ exports.yesBasket = async (req, res, next) => {
 
                     } else {
 
-                        console.log("eferferertger");
+                        console.log("heeeeeee");
 
                         const emailGet = [];
                         const finalData = [];
@@ -2731,15 +2735,16 @@ exports.yesBasket = async (req, res, next) => {
 
                         var difference = reaquestedAllEmail.filter(x => emailGet.indexOf(x) === -1);
 
+                        console.log("difference" , difference);
                         const UniqueEmail = [];
 
-
-                        for (const uniqueEmail of difference) {
+                        for (const uniqueEmail of difference.slice(startIndex, endIndex)) {
                             const userDetail = await userModel.findOne({ _id: uniqueEmail });
                             finalData.push(userDetail)
                         }
 
 
+                        console.log("finalData" , finalData);
                         const findThumbUp = await userModel.findOne({
                             _id: req.params.request_user_id,
                             polyDating: 0
@@ -2834,12 +2839,7 @@ exports.yesBasket = async (req, res, next) => {
                                 }
 
                             }
-
-
                         }
-
-
-
                         const statusByEmail = [];
                         const allRequestedEmail = RequestedEmailExiestInUser.RequestedEmails
                         const requestedEmailWitchIsInuserRequeted = [];
@@ -2924,7 +2924,7 @@ exports.yesBasket = async (req, res, next) => {
                         const emailDataDetail = meageAllTable;
                         for (const DataDetail of emailDataDetail) {
 
-                            for (const reqEmail of reaquestedAllEmail) {
+                            for (const reqEmail of reaquestedAllEmail.slice(startIndex,endIndex)) {
                                 if ((DataDetail._id).toString(0) == (reqEmail).toString()) {
                                     finalExistUser.push(DataDetail)
                                 }
@@ -2936,9 +2936,7 @@ exports.yesBasket = async (req, res, next) => {
 
 
                         for (const emailData of finalExistUser[0].result) {
-
-
-
+                            console.log("emailData" , emailData);
                             for (const requestEmail of emailData) {
 
                                 for (const meageAllTableEmail of finalExistUser) {
