@@ -384,10 +384,7 @@ exports.userUpdate = async (req, res, next) => {
         } else {
             for (const file of files) {
                 console.log("file", file);
-                const { path } = file
-
-
-
+                const { path } = file;
                 const newPath = await cloudinaryImageUploadMethod(path)
                 urls.push(newPath)
             }
@@ -543,10 +540,6 @@ exports.userUpdate = async (req, res, next) => {
                         }
                     })
                 }
-
-
-
-
                 const findUser = await userModel.findOne({
                     email: req.body.email
                 })
@@ -6195,6 +6188,43 @@ exports.readNotification = async (req, res) => {
             )
         }
 
+    } catch (error) {
+        console.log(error);
+        res.status(status.INTERNAL_SERVER_ERROR).json(
+            new APIResponse("Something Went Wrong", "false", 500, error.message)
+        );
+    }
+}
+
+exports.logout = async(req,res,next) => {
+    try {
+
+        const userData = await userModel.findOne({
+            _id : req.params.user_id
+        })
+
+        if(userData){
+            const data =  await userModel.updateOne({
+                _id: req.params.user_id
+            }, {
+                $set: {
+                    fcm_token: ""
+                }
+            })
+            res.status(status.OK).json(
+                new APIResponse("logout success", "true", 200 , "1")
+            );
+        }else{
+            res.status(status.NOT_FOUND).json(
+                new APIResponse("Uer not found", "false", 404 , "0")
+            );
+        }
+        
+        
+       
+
+
+        
     } catch (error) {
         console.log(error);
         res.status(status.INTERNAL_SERVER_ERROR).json(
