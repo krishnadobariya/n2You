@@ -124,7 +124,7 @@ function socket(io) {
 
             let time = 'At' + ' ' + hours + ':' + minutes + ' ' + ampm + ' ' + 'on' + ' ' + month + ' ' + dates + ',' + year;
 
-            const userFind = await userModel.findOne({ _id: arg.user_2, polyDating: 0 });
+            const userFind = await userModel.findOne({ _id: arg.user_1, polyDating: 0 });
 
             console.log("name is" , userFind.firstName);
             const fcm_token = userFind.fcm_token;
