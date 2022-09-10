@@ -2538,14 +2538,8 @@ exports.yesBasket = async (req, res, next) => {
                 const reaquestedAllEmail = [];
                 const allMeargeData = [];
                 const YesBasketData = [];
-                const page = parseInt(req.query.page)
-                const limit = parseInt(req.query.limit)
-                const startIndex = (page - 1) * limit;
-                const endIndex = page * limit;
-                const data = findUser.yesBasket
-                const final =  data.slice(startIndex, endIndex)
-               
-                for (const allBakest of final) {
+                for (const allBakest of findUser.yesBasket) {
+
                     const findInBlockUserModel1 = await blockuserModel.findOne({
                         userId: req.params.request_user_id,
                         "blockUnblockUser.blockUserId": allBakest.userId
@@ -2583,7 +2577,6 @@ exports.yesBasket = async (req, res, next) => {
                     )
                 } else {
 
-                    console.log("hellooo");
                     const RequestedEmailExiestInUser = await requestsModel.findOne(
                         {
                             userId: req.params.user_id,
@@ -2609,16 +2602,22 @@ exports.yesBasket = async (req, res, next) => {
 
                         const findThumbUp = await userModel.findOne({
                             _id: req.params.request_user_id,
+
+
+
+
+
+
+
+
+
                             polyDating: 0
                         })
 
 
                         for (const getOriginalData of finalData) {
 
-                            const data = findThumbUp.yesBasket
-                            const final =  data.slice(startIndex, endIndex)
-
-                            for (const findThumb of final) {
+                            for (const findThumb of findThumbUp.yesBasket) {
 
                                 const findInThumbUp = await thumbUpModel.findOne({
                                     adminUserId: req.params.user_id,
@@ -2711,22 +2710,26 @@ exports.yesBasket = async (req, res, next) => {
 
                         }
 
-                       
+                        const page = parseInt(req.query.page)
+                        const limit = parseInt(req.query.limit)
+                        const startIndex = (page - 1) * limit;
+                        const endIndex = page * limit;
                         let uniqueObjArray = [...new Map(responseData.map((item) => [item["_id"], item])).values()];
-                        // const data = uniqueObjArray.length;
-                        // const pageCount = Math.ceil(data / limit);
+                        const data = uniqueObjArray.length;
+                        const pageCount = Math.ceil(data / limit);
 
                         res.status(status.OK).json({
                             "message": "show all yes basket record",
                             "status": true,
                             "code": 201,
                             "statusCode": 1,
-                            // "pageCount": (pageCount).toString() == (NaN).toString() ? 0 : pageCount,
-                            "data": uniqueObjArray
+                            "pageCount": (pageCount).toString() == (NaN).toString() ? 0 : pageCount,
+                            "data": (page).toString() == (NaN).toString() ? uniqueObjArray : uniqueObjArray.slice(startIndex, endIndex)
                         })
 
 
                     } else {
+
                         const emailGet = [];
                         const finalData = [];
                         for (const getEmail of RequestedEmailExiestInUser.RequestedEmails) {
@@ -2735,16 +2738,14 @@ exports.yesBasket = async (req, res, next) => {
 
                         var difference = reaquestedAllEmail.filter(x => emailGet.indexOf(x) === -1);
 
-                        console.log("difference" , difference);
                         const UniqueEmail = [];
 
-                        for (const uniqueEmail of difference.slice(startIndex, endIndex)) {
+
+                        for (const uniqueEmail of difference) {
                             const userDetail = await userModel.findOne({ _id: uniqueEmail });
                             finalData.push(userDetail)
                         }
 
-
-                        console.log("finalData" , finalData);
 
                         const findThumbUp = await userModel.findOne({
                             _id: req.params.request_user_id,
@@ -2753,11 +2754,7 @@ exports.yesBasket = async (req, res, next) => {
 
                         for (const getOriginalData of finalData) {
 
-                            const data = findThumbUp.yesBasket
-                            const final =  data.slice(startIndex, endIndex)
-
-
-                            for (const findThumb of final) {
+                            for (const findThumb of findThumbUp.yesBasket) {
 
 
                                 const findInThumbUp = await thumbUpModel.findOne({
@@ -2844,7 +2841,12 @@ exports.yesBasket = async (req, res, next) => {
                                 }
 
                             }
+
+
                         }
+
+
+
                         const statusByEmail = [];
                         const allRequestedEmail = RequestedEmailExiestInUser.RequestedEmails
                         const requestedEmailWitchIsInuserRequeted = [];
@@ -2929,13 +2931,21 @@ exports.yesBasket = async (req, res, next) => {
                         const emailDataDetail = meageAllTable;
                         for (const DataDetail of emailDataDetail) {
 
-                            for (const reqEmail of reaquestedAllEmail.slice(startIndex,endIndex)) {
+                            for (const reqEmail of reaquestedAllEmail) {
                                 if ((DataDetail._id).toString(0) == (reqEmail).toString()) {
                                     finalExistUser.push(DataDetail)
                                 }
                             }
                         }
+
+
+
+
+
                         for (const emailData of finalExistUser[0].result) {
+
+
+
                             for (const requestEmail of emailData) {
 
                                 for (const meageAllTableEmail of finalExistUser) {
@@ -2947,10 +2957,8 @@ exports.yesBasket = async (req, res, next) => {
                                             polyDating: 0
                                         })
 
-                                        const data = findThumbUp.yesBasket
-                                        const final =  data.slice(startIndex, endIndex)
-            
-                                        for (const findThumb of final) {
+
+                                        for (const findThumb of findThumbUp.yesBasket) {
 
 
                                             const findInThumbUp = await thumbUpModel.findOne({
@@ -3305,10 +3313,15 @@ exports.yesBasket = async (req, res, next) => {
 
 
                         const final_response = [...final_data, ...UniqueEmail]
-                      
+                        const page = parseInt(req.query.page)
+                        const limit = parseInt(req.query.limit)
+                        console.log("limit", limit);
+                        const startIndex = (page - 1) * limit;
+                        console.log("startIndex", startIndex);
+                        const endIndex = page * limit;
                         let uniqueObjArray = [...new Map(final_response.map((item) => [item["_id"], item])).values()];
-                        // const data = uniqueObjArray.length;
-                        // const pageCount = Math.ceil(data / limit);
+                        const data = uniqueObjArray.length;
+                        const pageCount = Math.ceil(data / limit);
 
                         console.log("page", page);
                         res.status(status.OK).json({
@@ -3316,8 +3329,8 @@ exports.yesBasket = async (req, res, next) => {
                             "status": true,
                             "code": 201,
                             "statusCode": 1,
-                            // "pageCount": (pageCount).toString() == (NaN).toString() ? 0 : pageCount,
-                            "data":  uniqueObjArray
+                            "pageCount": (pageCount).toString() == (NaN).toString() ? 0 : pageCount,
+                            "data": (page).toString() == (NaN).toString() ? uniqueObjArray : uniqueObjArray.slice(startIndex, endIndex)
                         })
                     }
                 }
@@ -3353,11 +3366,7 @@ exports.yesBasket = async (req, res, next) => {
                 const reaquestedAllEmail = [];
                 const allMeargeData = [];
                 const YesBasketData = [];
-
-                const data = findUser.yesBasket
-                const final =  data.slice(startIndex, endIndex)
-
-                for (const allBakest of final) {
+                for (const allBakest of findUser.yesBasket) {
 
                     const findInBlockUserModel1 = await blockuserModel.findOne({
                         userId: req.params.request_user_id,
@@ -3424,10 +3433,7 @@ exports.yesBasket = async (req, res, next) => {
 
                         for (const getOriginalData of finalData) {
 
-                            const data = findThumbUp.yesBasket
-                const final =  data.slice(startIndex, endIndex)
-
-                            for (const findThumb of final) {
+                            for (const findThumb of findThumbUp.yesBasket) {
 
                                 const findInThumbUp = await thumbUpModel.findOne({
                                     adminUserId: req.params.request_user_id,
@@ -3550,10 +3556,8 @@ exports.yesBasket = async (req, res, next) => {
                         })
 
                         for (const getOriginalData of finalData) {
-                            const data = findThumbUp.yesBasket
-                const final =  data.slice(startIndex, endIndex)
 
-                            for (const findThumb of final) {
+                            for (const findThumb of findThumbUp.yesBasket) {
 
                                 const findInThumbUp = await thumbUpModel.findOne({
                                     adminUserId: req.params.request_user_id,
@@ -3737,9 +3741,7 @@ exports.yesBasket = async (req, res, next) => {
                                             polyDating: 0
                                         })
 
-                                        const data = findThumbUp.yesBasket
-                const final =  data.slice(startIndex, endIndex)
-                                        for (const findThumb of final) {
+                                        for (const findThumb of findThumbUp.yesBasket) {
 
 
                                             const findInThumbUp = await thumbUpModel.findOne({
@@ -4131,20 +4133,11 @@ exports.noBasket = async (req, res, next) => {
                 res.status(status.NOT_FOUND).json(
                     new APIResponse("User not Found and not Social Meida & Dating type user", "false", 404, "0")
                 )
-                
             } else {
-                const page = parseInt(req.query.page)
-                const limit = parseInt(req.query.limit)
-                const startIndex = (page - 1) * limit;
-                const endIndex = page * limit;
-
                 const reaquestedAllEmail = [];
                 const allMeargeData = [];
                 const NoBasketData = [];
-
-                const data = findUser.noBasket
-                const final =  data.slice(startIndex, endIndex)
-                for (const allBakest of final) {
+                for (const allBakest of findUser.noBasket) {
                     const findInBlockUserModel1 = await blockuserModel.findOne({
                         userId: req.params.request_user_id,
                         "blockUnblockUser.blockUserId": allBakest.userId
@@ -4181,7 +4174,6 @@ exports.noBasket = async (req, res, next) => {
                     )
                 } else {
 
-                    
                     const RequestedEmailExiestInUser = await requestsModel.findOne(
                         {
                             userId: req.params.user_id,
@@ -4212,10 +4204,7 @@ exports.noBasket = async (req, res, next) => {
 
                         for (const getOriginalData of finalData) {
 
-                            const data = findThumbUp.noBasket
-                            const final =  data.slice(startIndex, endIndex)
-
-                            for (const findThumb of final) {
+                            for (const findThumb of findThumbUp.noBasket) {
 
                                 const findInThumbUp = await thumbUpModel.findOne({
                                     adminUserId: req.params.user_id,
@@ -4309,17 +4298,20 @@ exports.noBasket = async (req, res, next) => {
 
                         }
 
-                      
+                        const page = parseInt(req.query.page)
+                        const limit = parseInt(req.query.limit)
+                        const startIndex = (page - 1) * limit;
+                        const endIndex = page * limit;
                         let uniqueObjArray = [...new Map(responseData.map((item) => [item["_id"], item])).values()];
-                        // const data = uniqueObjArray.length;
-                        // const pageCount = Math.ceil(data / limit);
+                        const data = uniqueObjArray.length;
+                        const pageCount = Math.ceil(data / limit);
 
                         res.status(status.OK).json({
                             "message": "show all no basket record",
                             "status": true,
                             "code": 201,
                             "statusCode": 1,
-                            // "pageCount": (pageCount).toString() == (NaN).toString() ? 0 : pageCount,
+                            "pageCount": (pageCount).toString() == (NaN).toString() ? 0 : pageCount,
                             "data": (page).toString() == (NaN).toString() ? uniqueObjArray : uniqueObjArray.slice(startIndex, endIndex)
                         })
 
@@ -4352,10 +4344,7 @@ exports.noBasket = async (req, res, next) => {
 
                         for (const getOriginalData of finalData) {
 
-                            const data = findThumbUp.noBasket
-                            const final =  data.slice(startIndex, endIndex)
-
-                            for (const findThumb of final) {
+                            for (const findThumb of findThumbUp.noBasket) {
 
 
                                 const findInThumbUp = await thumbUpModel.findOne({
@@ -4539,6 +4528,10 @@ exports.noBasket = async (req, res, next) => {
                             }
                         }
 
+
+
+
+
                         for (const emailData of finalExistUser[0].result) {
 
 
@@ -4554,10 +4547,7 @@ exports.noBasket = async (req, res, next) => {
                                             polyDating: 0
                                         })
 
-                                        const data = findThumbUp.noBasket
-                                        const final =  data.slice(startIndex, endIndex)
-
-                                        for (const findThumb of final) {
+                                        for (const findThumb of findThumbUp.noBasket) {
 
                                             const findInThumbUp = await thumbUpModel.findOne({
                                                 adminUserId: req.params.user_id,
@@ -4908,21 +4898,21 @@ exports.noBasket = async (req, res, next) => {
                         const final_response = [...final_data, ...UniqueEmail]
 
 
-                        // const page = parseInt(req.query.page)
-                        // const limit = parseInt(req.query.limit)
-                        // const startIndex = (page - 1) * limit;
-                        // const endIndex = page * limit;
+                        const page = parseInt(req.query.page)
+                        const limit = parseInt(req.query.limit)
+                        const startIndex = (page - 1) * limit;
+                        const endIndex = page * limit;
                         let uniqueObjArray = [...new Map(final_response.map((item) => [item["_id"], item])).values()];
-                        // const data = uniqueObjArray.length;
-                        // const pageCount = Math.ceil(data / limit);
+                        const data = uniqueObjArray.length;
+                        const pageCount = Math.ceil(data / limit);
 
                         res.status(status.OK).json({
                             "message": "show all no basket record",
                             "status": true,
                             "code": 201,
                             "statusCode": 1,
-                            // "pageCount": (pageCount).toString() == (NaN).toString() ? 0 : pageCount,
-                            "data":  uniqueObjArray 
+                            "pageCount": (pageCount).toString() == (NaN).toString() ? 0 : pageCount,
+                            "data": (page).toString() == (NaN).toString() ? uniqueObjArray : uniqueObjArray.slice(startIndex, endIndex)
 
                         })
                     }
@@ -4956,21 +4946,10 @@ exports.noBasket = async (req, res, next) => {
                     new APIResponse("user not Found", "false", 404, "0")
                 )
             } else {
-
-                const page = parseInt(req.query.page)
-                const limit = parseInt(req.query.limit)
-                const startIndex = (page - 1) * limit;
-                const endIndex = page * limit;
-
-
                 const reaquestedAllEmail = [];
                 const allMeargeData = [];
                 const NoBasketData = [];
-
-                const data = findUser.noBasket
-                const final =  data.slice(startIndex, endIndex)
-
-                for (const allBakest of final) {
+                for (const allBakest of findUser.noBasket) {
                     const findInBlockUserModel1 = await blockuserModel.findOne({
                         userId: req.params.request_user_id,
                         "blockUnblockUser.blockUserId": allBakest.userId
@@ -5037,10 +5016,7 @@ exports.noBasket = async (req, res, next) => {
 
                         for (const getOriginalData of finalData) {
 
-                            const data = findThumbUp.noBasket
-                            const final =  data.slice(startIndex, endIndex)
-
-                            for (const findThumb of final) {
+                            for (const findThumb of findThumbUp.noBasket) {
 
                                 const findInThumbUp = await thumbUpModel.findOne({
                                     adminUserId: req.params.user_id,
@@ -5124,21 +5100,21 @@ exports.noBasket = async (req, res, next) => {
 
 
 
-                        // const page = parseInt(req.query.page)
-                        // const limit = parseInt(req.query.limit)
-                        // const startIndex = (page - 1) * limit;
-                        // const endIndex = page * limit;
+                        const page = parseInt(req.query.page)
+                        const limit = parseInt(req.query.limit)
+                        const startIndex = (page - 1) * limit;
+                        const endIndex = page * limit;
                         let uniqueObjArray = [...new Map(responseData.map((item) => [item["_id"], item])).values()];
-                        // const data = uniqueObjArray.length;
-                        // const pageCount = Math.ceil(data / limit);
+                        const data = uniqueObjArray.length;
+                        const pageCount = Math.ceil(data / limit);
 
                         res.status(status.OK).json({
                             "message": "show all no basket record",
                             "status": true,
                             "code": 201,
                             "statusCode": 1,
-                            // "pageCount": (pageCount).toString() == (NaN).toString() ? 0 : pageCount,
-                            "data": uniqueObjArray 
+                            "pageCount": (pageCount).toString() == (NaN).toString() ? 0 : pageCount,
+                            "data": (page).toString() == (NaN).toString() ? uniqueObjArray : uniqueObjArray.slice(startIndex, endIndex)
 
                         })
                     } else {
@@ -5165,10 +5141,7 @@ exports.noBasket = async (req, res, next) => {
 
                         for (const getOriginalData of finalData) {
 
-                            const data = findThumbUp.noBasket
-                            const final =  data.slice(startIndex, endIndex)
-
-                            for (const findThumb of final) {
+                            for (const findThumb of findThumbUp.noBasket) {
 
                                 const findInThumbUp = await thumbUpModel.findOne({
                                     adminUserId: req.params.user_id,
@@ -5350,10 +5323,7 @@ exports.noBasket = async (req, res, next) => {
                                             polyDating: 0
                                         })
 
-                                        const data = findThumbUp.noBasket
-                                        const final =  data.slice(startIndex, endIndex)
-
-                                        for (const findThumb of final) {
+                                        for (const findThumb of findThumbUp.noBasket) {
 
 
                                             const findInThumbUp = await thumbUpModel.findOne({
@@ -5684,21 +5654,22 @@ exports.noBasket = async (req, res, next) => {
 
                         const final_response = [...final_data, ...UniqueEmail]
 
-                        // const page = parseInt(req.query.page)
-                        // const limit = parseInt(req.query.limit)
-                        // const startIndex = (page - 1) * limit;
-                        // const endIndex = page * limit;
+                        const page = parseInt(req.query.page)
+                        const limit = parseInt(req.query.limit)
+                        const startIndex = (page - 1) * limit;
+                        const endIndex = page * limit;
                         let uniqueObjArray = [...new Map(final_response.map((item) => [item["_id"], item])).values()];
-                        // const data = uniqueObjArray.length;
-                        // const pageCount = Math.ceil(data / limit);
+                        const data = uniqueObjArray.length;
+                        const pageCount = Math.ceil(data / limit);
 
                         res.status(status.OK).json({
                             "message": "show all no basket record",
                             "status": true,
                             "code": 201,
                             "statusCode": 1,
-                            // "pageCount": (pageCount).toString() == (NaN).toString() ? 0 : pageCount,
-                            "data": uniqueObjArray
+                            "pageCount": (pageCount).toString() == (NaN).toString() ? 0 : pageCount,
+                            "data": (page).toString() == (NaN).toString() ? uniqueObjArray : uniqueObjArray.slice(startIndex, endIndex)
+
                         })
 
                     }
