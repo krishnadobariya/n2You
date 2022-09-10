@@ -280,21 +280,24 @@ exports.userRegister = async (req, res, next) => {
 exports.userLogin = async (req, res, next) => {
     try {
 
+
+        const data =  await userModel.updateOne({
+            email: req.body.email
+        }, {
+            $set: {
+                fcm_token: req.body.fcm_token
+            }
+        })
+
         const findUser = await userModel.findOne({
             email: req.body.email
         })
+
         if (findUser) {
 
             if (req.body.password == findUser.password) {
 
-                await userModel.updateOne({
-                    _id: findUser._id
-                }, {
-                    $set: {
-                        fcm_token: req.body.fcm_token
-                    }
-                }).then(() => {
-
+               
                     const data = {
                         _id: findUser._id,
                         polyDating: findUser.polyDating,
@@ -328,10 +331,6 @@ exports.userLogin = async (req, res, next) => {
 
                         new APIResponse("login success", "true", 200, "1", data)
                     )
-                })
-
-               
-
                
             } else {
                 res.status(status.NOT_FOUND).json(
