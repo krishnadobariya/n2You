@@ -124,12 +124,9 @@ function socket(io) {
 
             let time = 'At' + ' ' + hours + ':' + minutes + ' ' + ampm + ' ' + 'on' + ' ' + month + ' ' + dates + ',' + year;
 
-
-
-
-
             const userFind = await userModel.findOne({ _id: arg.user_2, polyDating: 0 });
 
+            console.log("name is" , userFind.firstName);
             const fcm_token = userFind.fcm_token;
 
             console.log("fcm_token==>", fcm_token);
@@ -331,7 +328,7 @@ function socket(io) {
                             if (arg.sender_id == arg.user_1 || arg.sender_id == arg.user_2) {
                                 const findUser = await userModel.findOne({
                                     _id: arg.sender_id
-                                }).select('name, photo').lean();
+                                })
 
                                 console.log("findUser", findUser);
                                 const data = chatModels({
@@ -340,8 +337,8 @@ function socket(io) {
                                         sender: arg.sender_id,
                                         text: arg.text,
                                         dateAndTime: `${year}-${mon}-${dates} ${hours}:${minutes}:${second}`,
-                                        name: findUser.name,
-                                        photo: findUser.photo[0] ? findUser.photo[0].res : "",
+                                        name: userFind.firstName,
+                                        photo: userFind.photo[0] ? userFind.photo[0].res : "",
                                         createdAt: time
 
                                     }
