@@ -2545,6 +2545,7 @@ exports.yesBasket = async (req, res, next) => {
                 const data = findUser.yesBasket
                 const final = data.slice(startIndex, endIndex)
 
+               
                 for (const allBakest of final) {
                     const findInBlockUserModel1 = await blockuserModel.findOne({
                         userId: req.params.request_user_id,
@@ -2583,7 +2584,6 @@ exports.yesBasket = async (req, res, next) => {
                     )
                 } else {
 
-                    console.log("hellooo");
                     const RequestedEmailExiestInUser = await requestsModel.findOne(
                         {
                             userId: req.params.user_id,
@@ -2924,8 +2924,6 @@ exports.yesBasket = async (req, res, next) => {
 
                         const finalExistUser = [];
 
-                        console.log(":meageAllTable", meageAllTable);
-
                         const emailDataDetail = meageAllTable;
                         for (const DataDetail of emailDataDetail) {
 
@@ -2935,7 +2933,7 @@ exports.yesBasket = async (req, res, next) => {
                                 }
                             }
                         }
-                       
+
                         for (const emailData of finalExistUser[0].result) {
                             for (const requestEmail of emailData) {
 
@@ -3308,6 +3306,7 @@ exports.yesBasket = async (req, res, next) => {
                         const final_response = [...final_data, ...UniqueEmail]
 
                         let uniqueObjArray = [...new Map(final_response.map((item) => [item["_id"], item])).values()];
+
                         // const data = uniqueObjArray.length;
                         // const pageCount = Math.ceil(data / limit);
 
