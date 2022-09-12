@@ -281,7 +281,7 @@ exports.userLogin = async (req, res, next) => {
     try {
 
 
-        const data =  await userModel.updateOne({
+        const data = await userModel.updateOne({
             email: req.body.email
         }, {
             $set: {
@@ -297,41 +297,41 @@ exports.userLogin = async (req, res, next) => {
 
             if (req.body.password == findUser.password) {
 
-               
-                    const data = {
-                        _id: findUser._id,
-                        polyDating: findUser.polyDating,
-                        HowDoYouPoly: findUser.HowDoYouPoly,
-                        loveToGive: findUser.loveToGive,
-                        polyRelationship: findUser.polyRelationship,
-                        email: findUser.email,
-                        firstName: findUser.firstName,
-                        birthDate: findUser.birthDate,
-                        identity: findUser.identity,
-                        relationshipSatus: findUser.relationshipSatus,
-                        IntrestedIn: findUser.IntrestedIn,
-                        Bio: findUser.Bio,
-                        photo: findUser.photo,
-                        longitude: findUser.location.coordinates[0],
-                        latitude: findUser.location.coordinates[1],
-                        fcm_token: findUser.fcm_token,
-                        hopingToFind: findUser.hopingToFind,
-                        jobTitle: findUser.jobTitle,
-                        wantChildren: findUser.wantChildren,
-                        bodyType: findUser.extraAtrribute.bodyType,
-                        height: findUser.extraAtrribute.height,
-                        smoking: findUser.extraAtrribute.smoking,
-                        drinking: findUser.extraAtrribute.drinking,
-                        hobbies: findUser.extraAtrribute.hobbies,
-                        phoneNumber: findUser.phoneNumber,
-                        countryCode: findUser.countryCode,
-                        password: findUser.password
-                    }
-                    res.status(status.OK).json(
 
-                        new APIResponse("login success", "true", 200, "1", data)
-                    )
-               
+                const data = {
+                    _id: findUser._id,
+                    polyDating: findUser.polyDating,
+                    HowDoYouPoly: findUser.HowDoYouPoly,
+                    loveToGive: findUser.loveToGive,
+                    polyRelationship: findUser.polyRelationship,
+                    email: findUser.email,
+                    firstName: findUser.firstName,
+                    birthDate: findUser.birthDate,
+                    identity: findUser.identity,
+                    relationshipSatus: findUser.relationshipSatus,
+                    IntrestedIn: findUser.IntrestedIn,
+                    Bio: findUser.Bio,
+                    photo: findUser.photo,
+                    longitude: findUser.location.coordinates[0],
+                    latitude: findUser.location.coordinates[1],
+                    fcm_token: findUser.fcm_token,
+                    hopingToFind: findUser.hopingToFind,
+                    jobTitle: findUser.jobTitle,
+                    wantChildren: findUser.wantChildren,
+                    bodyType: findUser.extraAtrribute.bodyType,
+                    height: findUser.extraAtrribute.height,
+                    smoking: findUser.extraAtrribute.smoking,
+                    drinking: findUser.extraAtrribute.drinking,
+                    hobbies: findUser.extraAtrribute.hobbies,
+                    phoneNumber: findUser.phoneNumber,
+                    countryCode: findUser.countryCode,
+                    password: findUser.password
+                }
+                res.status(status.OK).json(
+
+                    new APIResponse("login success", "true", 200, "1", data)
+                )
+
             } else {
                 res.status(status.NOT_FOUND).json(
                     new APIResponse("not match credential", "false", 404, "0")
@@ -1538,7 +1538,7 @@ exports.getAllUser = async (req, res, next) => {
                     "code": 200,
                     "statusCode": 1,
                     "pageCount": (pageCount).toString() == (NaN).toString() ? 0 : pageCount,
-                    "data": (startIndex).toString() == (NaN) ? UniqueEmail : UniqueEmail.slice(startIndex, endIndex) 
+                    "data": (startIndex).toString() == (NaN) ? UniqueEmail : UniqueEmail.slice(startIndex, endIndex)
 
                 })
             } else {
@@ -1912,7 +1912,7 @@ exports.getAllUser = async (req, res, next) => {
                     "code": 201,
                     "statusCode": 1,
                     "pageCount": (pageCount).toString() == (NaN).toString() ? 0 : pageCount,
-                    "data": (startIndex).toString() == (NaN) ? final_response : final_response.slice(startIndex, endIndex) 
+                    "data": (startIndex).toString() == (NaN) ? final_response : final_response.slice(startIndex, endIndex)
                 })
             }
         }
@@ -2543,8 +2543,8 @@ exports.yesBasket = async (req, res, next) => {
                 const startIndex = (page - 1) * limit;
                 const endIndex = page * limit;
                 const data = findUser.yesBasket
-                const final =  data.slice(startIndex, endIndex)
-               
+                const final = data.slice(startIndex, endIndex)
+
                 for (const allBakest of final) {
                     const findInBlockUserModel1 = await blockuserModel.findOne({
                         userId: req.params.request_user_id,
@@ -2616,7 +2616,7 @@ exports.yesBasket = async (req, res, next) => {
                         for (const getOriginalData of finalData) {
 
                             const data = findThumbUp.yesBasket
-                            const final =  data.slice(startIndex, endIndex)
+                            const final = data.slice(startIndex, endIndex)
 
                             for (const findThumb of final) {
 
@@ -2711,7 +2711,7 @@ exports.yesBasket = async (req, res, next) => {
 
                         }
 
-                       
+
                         let uniqueObjArray = [...new Map(responseData.map((item) => [item["_id"], item])).values()];
                         // const data = uniqueObjArray.length;
                         // const pageCount = Math.ceil(data / limit);
@@ -2735,7 +2735,7 @@ exports.yesBasket = async (req, res, next) => {
 
                         var difference = reaquestedAllEmail.filter(x => emailGet.indexOf(x) === -1);
 
-                        console.log("difference" , difference);
+                        console.log("difference", difference);
                         const UniqueEmail = [];
 
                         for (const uniqueEmail of difference.slice(startIndex, endIndex)) {
@@ -2744,7 +2744,7 @@ exports.yesBasket = async (req, res, next) => {
                         }
 
 
-                        console.log("finalData" , finalData);
+                        console.log("finalData", finalData);
 
                         const findThumbUp = await userModel.findOne({
                             _id: req.params.request_user_id,
@@ -2754,7 +2754,7 @@ exports.yesBasket = async (req, res, next) => {
                         for (const getOriginalData of finalData) {
 
                             const data = findThumbUp.yesBasket
-                            const final =  data.slice(startIndex, endIndex)
+                            const final = data.slice(startIndex, endIndex)
 
 
                             for (const findThumb of final) {
@@ -2924,17 +2924,18 @@ exports.yesBasket = async (req, res, next) => {
 
                         const finalExistUser = [];
 
-
+                        console.log(":meageAllTable", meageAllTable);
 
                         const emailDataDetail = meageAllTable;
                         for (const DataDetail of emailDataDetail) {
 
-                            for (const reqEmail of reaquestedAllEmail.slice(startIndex,endIndex)) {
+                            for (const reqEmail of reaquestedAllEmail) {
                                 if ((DataDetail._id).toString(0) == (reqEmail).toString()) {
                                     finalExistUser.push(DataDetail)
                                 }
                             }
                         }
+                       
                         for (const emailData of finalExistUser[0].result) {
                             for (const requestEmail of emailData) {
 
@@ -2948,8 +2949,8 @@ exports.yesBasket = async (req, res, next) => {
                                         })
 
                                         const data = findThumbUp.yesBasket
-                                        const final =  data.slice(startIndex, endIndex)
-            
+                                        const final = data.slice(startIndex, endIndex)
+
                                         for (const findThumb of final) {
 
 
@@ -3305,7 +3306,7 @@ exports.yesBasket = async (req, res, next) => {
 
 
                         const final_response = [...final_data, ...UniqueEmail]
-                      
+
                         let uniqueObjArray = [...new Map(final_response.map((item) => [item["_id"], item])).values()];
                         // const data = uniqueObjArray.length;
                         // const pageCount = Math.ceil(data / limit);
@@ -3317,7 +3318,7 @@ exports.yesBasket = async (req, res, next) => {
                             "code": 201,
                             "statusCode": 1,
                             // "pageCount": (pageCount).toString() == (NaN).toString() ? 0 : pageCount,
-                            "data":  uniqueObjArray
+                            "data": uniqueObjArray
                         })
                     }
                 }
@@ -3355,7 +3356,7 @@ exports.yesBasket = async (req, res, next) => {
                 const YesBasketData = [];
 
                 const data = findUser.yesBasket
-                const final =  data.slice(startIndex, endIndex)
+                const final = data.slice(startIndex, endIndex)
 
                 for (const allBakest of final) {
 
@@ -3425,7 +3426,7 @@ exports.yesBasket = async (req, res, next) => {
                         for (const getOriginalData of finalData) {
 
                             const data = findThumbUp.yesBasket
-                const final =  data.slice(startIndex, endIndex)
+                            const final = data.slice(startIndex, endIndex)
 
                             for (const findThumb of final) {
 
@@ -3551,7 +3552,7 @@ exports.yesBasket = async (req, res, next) => {
 
                         for (const getOriginalData of finalData) {
                             const data = findThumbUp.yesBasket
-                const final =  data.slice(startIndex, endIndex)
+                            const final = data.slice(startIndex, endIndex)
 
                             for (const findThumb of final) {
 
@@ -3738,7 +3739,7 @@ exports.yesBasket = async (req, res, next) => {
                                         })
 
                                         const data = findThumbUp.yesBasket
-                const final =  data.slice(startIndex, endIndex)
+                                        const final = data.slice(startIndex, endIndex)
                                         for (const findThumb of final) {
 
 
@@ -4131,7 +4132,7 @@ exports.noBasket = async (req, res, next) => {
                 res.status(status.NOT_FOUND).json(
                     new APIResponse("User not Found and not Social Meida & Dating type user", "false", 404, "0")
                 )
-                
+
             } else {
                 const page = parseInt(req.query.page)
                 const limit = parseInt(req.query.limit)
@@ -4143,7 +4144,7 @@ exports.noBasket = async (req, res, next) => {
                 const NoBasketData = [];
 
                 const data = findUser.noBasket
-                const final =  data.slice(startIndex, endIndex)
+                const final = data.slice(startIndex, endIndex)
                 for (const allBakest of final) {
                     const findInBlockUserModel1 = await blockuserModel.findOne({
                         userId: req.params.request_user_id,
@@ -4181,7 +4182,7 @@ exports.noBasket = async (req, res, next) => {
                     )
                 } else {
 
-                    
+
                     const RequestedEmailExiestInUser = await requestsModel.findOne(
                         {
                             userId: req.params.user_id,
@@ -4213,7 +4214,7 @@ exports.noBasket = async (req, res, next) => {
                         for (const getOriginalData of finalData) {
 
                             const data = findThumbUp.noBasket
-                            const final =  data.slice(startIndex, endIndex)
+                            const final = data.slice(startIndex, endIndex)
 
                             for (const findThumb of final) {
 
@@ -4309,7 +4310,7 @@ exports.noBasket = async (req, res, next) => {
 
                         }
 
-                      
+
                         let uniqueObjArray = [...new Map(responseData.map((item) => [item["_id"], item])).values()];
                         // const data = uniqueObjArray.length;
                         // const pageCount = Math.ceil(data / limit);
@@ -4353,7 +4354,7 @@ exports.noBasket = async (req, res, next) => {
                         for (const getOriginalData of finalData) {
 
                             const data = findThumbUp.noBasket
-                            const final =  data.slice(startIndex, endIndex)
+                            const final = data.slice(startIndex, endIndex)
 
                             for (const findThumb of final) {
 
@@ -4555,7 +4556,7 @@ exports.noBasket = async (req, res, next) => {
                                         })
 
                                         const data = findThumbUp.noBasket
-                                        const final =  data.slice(startIndex, endIndex)
+                                        const final = data.slice(startIndex, endIndex)
 
                                         for (const findThumb of final) {
 
@@ -4922,7 +4923,7 @@ exports.noBasket = async (req, res, next) => {
                             "code": 201,
                             "statusCode": 1,
                             // "pageCount": (pageCount).toString() == (NaN).toString() ? 0 : pageCount,
-                            "data":  uniqueObjArray 
+                            "data": uniqueObjArray
 
                         })
                     }
@@ -4968,7 +4969,7 @@ exports.noBasket = async (req, res, next) => {
                 const NoBasketData = [];
 
                 const data = findUser.noBasket
-                const final =  data.slice(startIndex, endIndex)
+                const final = data.slice(startIndex, endIndex)
 
                 for (const allBakest of final) {
                     const findInBlockUserModel1 = await blockuserModel.findOne({
@@ -5038,7 +5039,7 @@ exports.noBasket = async (req, res, next) => {
                         for (const getOriginalData of finalData) {
 
                             const data = findThumbUp.noBasket
-                            const final =  data.slice(startIndex, endIndex)
+                            const final = data.slice(startIndex, endIndex)
 
                             for (const findThumb of final) {
 
@@ -5138,7 +5139,7 @@ exports.noBasket = async (req, res, next) => {
                             "code": 201,
                             "statusCode": 1,
                             // "pageCount": (pageCount).toString() == (NaN).toString() ? 0 : pageCount,
-                            "data": uniqueObjArray 
+                            "data": uniqueObjArray
 
                         })
                     } else {
@@ -5166,7 +5167,7 @@ exports.noBasket = async (req, res, next) => {
                         for (const getOriginalData of finalData) {
 
                             const data = findThumbUp.noBasket
-                            const final =  data.slice(startIndex, endIndex)
+                            const final = data.slice(startIndex, endIndex)
 
                             for (const findThumb of final) {
 
@@ -5351,7 +5352,7 @@ exports.noBasket = async (req, res, next) => {
                                         })
 
                                         const data = findThumbUp.noBasket
-                                        const final =  data.slice(startIndex, endIndex)
+                                        const final = data.slice(startIndex, endIndex)
 
                                         for (const findThumb of final) {
 
@@ -6225,15 +6226,15 @@ exports.readNotification = async (req, res) => {
     }
 }
 
-exports.logout = async(req,res,next) => {
+exports.logout = async (req, res, next) => {
     try {
 
         const userData = await userModel.findOne({
-            _id : req.params.user_id
+            _id: req.params.user_id
         })
 
-        if(userData){
-            const data =  await userModel.updateOne({
+        if (userData) {
+            const data = await userModel.updateOne({
                 _id: req.params.user_id
             }, {
                 $set: {
@@ -6241,19 +6242,19 @@ exports.logout = async(req,res,next) => {
                 }
             })
             res.status(status.OK).json(
-                new APIResponse("logout success", "true", 200 , "1")
+                new APIResponse("logout success", "true", 200, "1")
             );
-        }else{
+        } else {
             res.status(status.NOT_FOUND).json(
-                new APIResponse("Uer not found", "false", 404 , "0")
+                new APIResponse("Uer not found", "false", 404, "0")
             );
         }
-        
-        
-       
 
 
-        
+
+
+
+
     } catch (error) {
         console.log(error);
         res.status(status.INTERNAL_SERVER_ERROR).json(
