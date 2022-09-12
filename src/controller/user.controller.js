@@ -3391,8 +3391,6 @@ exports.yesBasket = async (req, res, next) => {
                     )
                 } else {
 
-
-                    var dataLength = 0
                     const RequestedEmailExiestInUser = await requestsModel.findOne(
                         {
                             userId: req.params.user_id,
@@ -3415,6 +3413,7 @@ exports.yesBasket = async (req, res, next) => {
                             finalData.push(userDetail)
                         }
 
+
                         const findThumbUp = await userModel.findOne({
                             _id: req.params.request_user_id,
                             polyDating: 0
@@ -3423,7 +3422,7 @@ exports.yesBasket = async (req, res, next) => {
                         for (const getOriginalData of finalData) {
 
                             const data = findThumbUp.yesBasket
-                            dataLength = data.length
+
                             for (const findThumb of data) {
 
                                 const findInThumbUp = await thumbUpModel.findOne({
@@ -3505,7 +3504,7 @@ exports.yesBasket = async (req, res, next) => {
 
                         }
                         let uniqueObjArray = [...new Map(responseData.map((item) => [item["_id"], item])).values()];
-                        const pagecount = dataLength;
+                        const pagecount = data.length;
                         const pageCount = Math.ceil(pagecount / limit);
 
                         res.status(status.OK).json({
@@ -4063,7 +4062,7 @@ exports.yesBasket = async (req, res, next) => {
                         const final_response = [...final_data, ...UniqueEmail]
 
                         let uniqueObjArray = [...new Map(final_response.map((item) => [item["_id"], item])).values()];
-                        const pagecount = dataLength;
+                        const pagecount = data.length;
                         const pageCount = Math.ceil(pagecount / limit);
 
                         res.status(status.OK).json({
