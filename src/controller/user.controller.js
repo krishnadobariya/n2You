@@ -2543,9 +2543,9 @@ exports.yesBasket = async (req, res, next) => {
                 const startIndex = (page - 1) * limit;
                 const endIndex = page * limit;
                 const data = findUser.yesBasket
+                const final = data.slice(startIndex, endIndex)
 
-
-                for (const allBakest of data) {
+                for (const allBakest of final) {
                     const findInBlockUserModel1 = await blockuserModel.findOne({
                         userId: req.params.request_user_id,
                         "blockUnblockUser.blockUserId": allBakest.userId
@@ -2583,6 +2583,7 @@ exports.yesBasket = async (req, res, next) => {
                     )
                 } else {
 
+                    console.log("hellooo");
                     const RequestedEmailExiestInUser = await requestsModel.findOne(
                         {
                             userId: req.params.user_id,
@@ -2615,9 +2616,8 @@ exports.yesBasket = async (req, res, next) => {
                         for (const getOriginalData of finalData) {
 
                             const data = findThumbUp.yesBasket
-                            const final = data.slice(startIndex, endIndex)
 
-                            for (const findThumb of final) {
+                            for (const findThumb of data) {
 
                                 const findInThumbUp = await thumbUpModel.findOne({
                                     adminUserId: req.params.user_id,
@@ -2712,15 +2712,15 @@ exports.yesBasket = async (req, res, next) => {
 
 
                         let uniqueObjArray = [...new Map(responseData.map((item) => [item["_id"], item])).values()];
-                        // const data = uniqueObjArray.length;
-                        // const pageCount = Math.ceil(data / limit);
+                        const pagecount = data.length;
+                        const pageCount = Math.ceil(pagecount / limit);
 
                         res.status(status.OK).json({
                             "message": "show all yes basket record",
                             "status": true,
                             "code": 201,
                             "statusCode": 1,
-                            // "pageCount": (pageCount).toString() == (NaN).toString() ? 0 : pageCount,
+                            "pageCount": (pageCount).toString() == (NaN).toString() ? 0 : pageCount,
                             "data": uniqueObjArray
                         })
 
@@ -2737,7 +2737,7 @@ exports.yesBasket = async (req, res, next) => {
                         console.log("difference", difference);
                         const UniqueEmail = [];
 
-                        for (const uniqueEmail of difference.slice(startIndex, endIndex)) {
+                        for (const uniqueEmail of difference) {
                             const userDetail = await userModel.findOne({ _id: uniqueEmail });
                             finalData.push(userDetail)
                         }
@@ -2753,10 +2753,7 @@ exports.yesBasket = async (req, res, next) => {
                         for (const getOriginalData of finalData) {
 
                             const data = findThumbUp.yesBasket
-                            const final = data.slice(startIndex, endIndex)
-
-
-                            for (const findThumb of final) {
+                            for (const findThumb of data) {
 
 
                                 const findInThumbUp = await thumbUpModel.findOne({
@@ -2920,7 +2917,6 @@ exports.yesBasket = async (req, res, next) => {
                         }])
 
 
-                        console.log("meageAllTable", meageAllTable);
 
                         const finalExistUser = [];
 
@@ -2933,16 +2929,12 @@ exports.yesBasket = async (req, res, next) => {
                                 }
                             }
                         }
-
-                        console.log("finalExistUser", finalExistUser[0].result);
                         for (const emailData of finalExistUser[0].result) {
                             for (const requestEmail of emailData) {
 
-                                console.log("finalExistUser", finalExistUser);
-
                                 for (const meageAllTableEmail of finalExistUser) {
 
-                                    if ((requestEmail.userId).toString() == (meageAllTableEmail._id).toString()) {
+                                    if (requestEmail.requestedEmail == meageAllTableEmail.email) {
 
                                         const findThumbUp = await userModel.findOne({
                                             _id: req.params.request_user_id,
@@ -3088,8 +3080,7 @@ exports.yesBasket = async (req, res, next) => {
 
                         const final_data = [];
 
-                        const finalStatus = [];
-
+                        const finalStatus = []
                         for (const [key, finalData] of meageAllTable.entries()) {
 
                             for (const [key, final1Data] of statusByEmail.entries())
@@ -3124,9 +3115,6 @@ exports.yesBasket = async (req, res, next) => {
                             })
 
 
-                            
-                        console.log("finalStatus", finalStatus);
-                        
                             console.log("findAllUserWithIchat2", findAllUserWithIchat2);
                             if (findAllUserWithIchat1) {
 
@@ -3313,9 +3301,8 @@ exports.yesBasket = async (req, res, next) => {
                         const final_response = [...final_data, ...UniqueEmail]
 
                         let uniqueObjArray = [...new Map(final_response.map((item) => [item["_id"], item])).values()];
-
-                        // const data = uniqueObjArray.length;
-                        // const pageCount = Math.ceil(data / limit);
+                        const pagecount = data.length;
+                        const pageCount = Math.ceil(pagecount / limit);
 
                         console.log("page", page);
                         res.status(status.OK).json({
@@ -3323,7 +3310,7 @@ exports.yesBasket = async (req, res, next) => {
                             "status": true,
                             "code": 201,
                             "statusCode": 1,
-                            // "pageCount": (pageCount).toString() == (NaN).toString() ? 0 : pageCount,
+                            "pageCount": (pageCount).toString() == (NaN).toString() ? 0 : pageCount,
                             "data": uniqueObjArray
                         })
                     }
