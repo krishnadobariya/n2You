@@ -624,9 +624,8 @@ exports.inAcallOrNot = async (req, res, next) => {
     }
 }
 
-exports.inAroomOrNot = async (req, res, next) => {x
+exports.inAroomOrNot = async (req, res, next) => {
     try {
-
 
         console.log("req.params.receiver_id", req.params.receiver_id);
         const findUserInVideoCallRoom = await videoCallModel.findOne({

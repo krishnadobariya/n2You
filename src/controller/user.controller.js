@@ -2920,6 +2920,7 @@ exports.yesBasket = async (req, res, next) => {
                         }])
 
 
+                        console.log("meageAllTable", meageAllTable);
 
                         const finalExistUser = [];
 
@@ -2933,12 +2934,15 @@ exports.yesBasket = async (req, res, next) => {
                             }
                         }
 
+                        console.log("finalExistUser", finalExistUser[0].result);
                         for (const emailData of finalExistUser[0].result) {
                             for (const requestEmail of emailData) {
 
+                                console.log("finalExistUser", finalExistUser);
+
                                 for (const meageAllTableEmail of finalExistUser) {
 
-                                    if (requestEmail.requestedEmail == meageAllTableEmail.email) {
+                                    if ((requestEmail.userId).toString() == (meageAllTableEmail._id).toString()) {
 
                                         const findThumbUp = await userModel.findOne({
                                             _id: req.params.request_user_id,
@@ -3084,7 +3088,8 @@ exports.yesBasket = async (req, res, next) => {
 
                         const final_data = [];
 
-                        const finalStatus = []
+                        const finalStatus = [];
+
                         for (const [key, finalData] of meageAllTable.entries()) {
 
                             for (const [key, final1Data] of statusByEmail.entries())
@@ -3119,6 +3124,9 @@ exports.yesBasket = async (req, res, next) => {
                             })
 
 
+                            
+                        console.log("finalStatus", finalStatus);
+                        
                             console.log("findAllUserWithIchat2", findAllUserWithIchat2);
                             if (findAllUserWithIchat1) {
 
