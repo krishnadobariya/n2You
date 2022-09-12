@@ -4196,9 +4196,8 @@ exports.noBasket = async (req, res, next) => {
                         for (const getOriginalData of finalData) {
 
                             const data = findThumbUp.noBasket
-                            const final = data.slice(startIndex, endIndex)
 
-                            for (const findThumb of final) {
+                            for (const findThumb of data) {
 
                                 const findInThumbUp = await thumbUpModel.findOne({
                                     adminUserId: req.params.user_id,
@@ -4294,16 +4293,16 @@ exports.noBasket = async (req, res, next) => {
 
 
                         let uniqueObjArray = [...new Map(responseData.map((item) => [item["_id"], item])).values()];
-                        // const data = uniqueObjArray.length;
-                        // const pageCount = Math.ceil(data / limit);
+                        const pagecount = data.length;
+                        const pageCount = Math.ceil(pagecount / limit);
 
                         res.status(status.OK).json({
                             "message": "show all no basket record",
                             "status": true,
                             "code": 201,
                             "statusCode": 1,
-                            // "pageCount": (pageCount).toString() == (NaN).toString() ? 0 : pageCount,
-                            "data": (page).toString() == (NaN).toString() ? uniqueObjArray : uniqueObjArray.slice(startIndex, endIndex)
+                            "pageCount": (pageCount).toString() == (NaN).toString() ? 0 : pageCount,
+                            "data": uniqueObjArray
                         })
 
                     } else {
@@ -4336,9 +4335,8 @@ exports.noBasket = async (req, res, next) => {
                         for (const getOriginalData of finalData) {
 
                             const data = findThumbUp.noBasket
-                            const final = data.slice(startIndex, endIndex)
 
-                            for (const findThumb of final) {
+                            for (const findThumb of data) {
 
 
                                 const findInThumbUp = await thumbUpModel.findOne({
@@ -4538,9 +4536,8 @@ exports.noBasket = async (req, res, next) => {
                                         })
 
                                         const data = findThumbUp.noBasket
-                                        const final = data.slice(startIndex, endIndex)
 
-                                        for (const findThumb of final) {
+                                        for (const findThumb of data) {
 
                                             const findInThumbUp = await thumbUpModel.findOne({
                                                 adminUserId: req.params.user_id,
@@ -4891,20 +4888,16 @@ exports.noBasket = async (req, res, next) => {
                         const final_response = [...final_data, ...UniqueEmail]
 
 
-                        // const page = parseInt(req.query.page)
-                        // const limit = parseInt(req.query.limit)
-                        // const startIndex = (page - 1) * limit;
-                        // const endIndex = page * limit;
                         let uniqueObjArray = [...new Map(final_response.map((item) => [item["_id"], item])).values()];
-                        // const data = uniqueObjArray.length;
-                        // const pageCount = Math.ceil(data / limit);
+                        const pagecount = data.length;
+                        const pageCount = Math.ceil(pagecount / limit);
 
                         res.status(status.OK).json({
                             "message": "show all no basket record",
                             "status": true,
                             "code": 201,
                             "statusCode": 1,
-                            // "pageCount": (pageCount).toString() == (NaN).toString() ? 0 : pageCount,
+                            "pageCount": (pageCount).toString() == (NaN).toString() ? 0 : pageCount,
                             "data": uniqueObjArray
 
                         })
@@ -5021,9 +5014,8 @@ exports.noBasket = async (req, res, next) => {
                         for (const getOriginalData of finalData) {
 
                             const data = findThumbUp.noBasket
-                            const final = data.slice(startIndex, endIndex)
 
-                            for (const findThumb of final) {
+                            for (const findThumb of data) {
 
                                 const findInThumbUp = await thumbUpModel.findOne({
                                     adminUserId: req.params.user_id,
@@ -5112,15 +5104,15 @@ exports.noBasket = async (req, res, next) => {
                         // const startIndex = (page - 1) * limit;
                         // const endIndex = page * limit;
                         let uniqueObjArray = [...new Map(responseData.map((item) => [item["_id"], item])).values()];
-                        // const data = uniqueObjArray.length;
-                        // const pageCount = Math.ceil(data / limit);
+                        const pagecount = data.length;
+                        const pageCount = Math.ceil(pagecount / limit);
 
                         res.status(status.OK).json({
                             "message": "show all no basket record",
                             "status": true,
                             "code": 201,
                             "statusCode": 1,
-                            // "pageCount": (pageCount).toString() == (NaN).toString() ? 0 : pageCount,
+                            "pageCount": (pageCount).toString() == (NaN).toString() ? 0 : pageCount,
                             "data": uniqueObjArray
 
                         })
@@ -5149,9 +5141,8 @@ exports.noBasket = async (req, res, next) => {
                         for (const getOriginalData of finalData) {
 
                             const data = findThumbUp.noBasket
-                            const final = data.slice(startIndex, endIndex)
 
-                            for (const findThumb of final) {
+                            for (const findThumb of data) {
 
                                 const findInThumbUp = await thumbUpModel.findOne({
                                     adminUserId: req.params.user_id,
@@ -5672,15 +5663,15 @@ exports.noBasket = async (req, res, next) => {
                         // const startIndex = (page - 1) * limit;
                         // const endIndex = page * limit;
                         let uniqueObjArray = [...new Map(final_response.map((item) => [item["_id"], item])).values()];
-                        // const data = uniqueObjArray.length;
-                        // const pageCount = Math.ceil(data / limit);
+                        const pagecount = data.length;
+                        const pageCount = Math.ceil(pagecount / limit);
 
                         res.status(status.OK).json({
                             "message": "show all no basket record",
                             "status": true,
                             "code": 201,
                             "statusCode": 1,
-                            // "pageCount": (pageCount).toString() == (NaN).toString() ? 0 : pageCount,
+                            "pageCount": (pageCount).toString() == (NaN).toString() ? 0 : pageCount,
                             "data": uniqueObjArray
                         })
 
