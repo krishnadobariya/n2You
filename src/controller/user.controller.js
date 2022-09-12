@@ -2545,7 +2545,7 @@ exports.yesBasket = async (req, res, next) => {
                 const data = findUser.yesBasket
                 const final = data.slice(startIndex, endIndex)
 
-               
+
                 for (const allBakest of final) {
                     const findInBlockUserModel1 = await blockuserModel.findOne({
                         userId: req.params.request_user_id,
@@ -2616,9 +2616,8 @@ exports.yesBasket = async (req, res, next) => {
                         for (const getOriginalData of finalData) {
 
                             const data = findThumbUp.yesBasket
-                            const final = data.slice(startIndex, endIndex)
 
-                            for (const findThumb of final) {
+                            for (const findThumb of data) {
 
                                 const findInThumbUp = await thumbUpModel.findOne({
                                     adminUserId: req.params.user_id,
