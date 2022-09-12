@@ -652,6 +652,8 @@ exports.inAroomOrNot = async (req, res, next) => {
                 image: sender.photo ? sender.photo[0].res : "",
             }
 
+            console.log("DATA", data);
+
             res.status(status.OK).json(
                 new APIResponse("user in a room or not", "true", 200, "1", data)
             );
