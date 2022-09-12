@@ -624,7 +624,7 @@ exports.inAcallOrNot = async (req, res, next) => {
     }
 }
 
-exports.inAroomOrNot = async (req, res, next) => {
+exports.inAroomOrNot = async (req, res, next) => {x
     try {
 
 
