@@ -2543,10 +2543,9 @@ exports.yesBasket = async (req, res, next) => {
                 const startIndex = (page - 1) * limit;
                 const endIndex = page * limit;
                 const data = findUser.yesBasket
-                const final = data.slice(startIndex, endIndex)
 
 
-                for (const allBakest of final) {
+                for (const allBakest of data) {
                     const findInBlockUserModel1 = await blockuserModel.findOne({
                         userId: req.params.request_user_id,
                         "blockUnblockUser.blockUserId": allBakest.userId
@@ -2616,8 +2615,9 @@ exports.yesBasket = async (req, res, next) => {
                         for (const getOriginalData of finalData) {
 
                             const data = findThumbUp.yesBasket
+                            const final = data.slice(startIndex, endIndex)
 
-                            for (const findThumb of data) {
+                            for (const findThumb of final) {
 
                                 const findInThumbUp = await thumbUpModel.findOne({
                                     adminUserId: req.params.user_id,
