@@ -4937,8 +4937,6 @@ exports.noBasket = async (req, res, next) => {
                 const limit = parseInt(req.query.limit)
                 const startIndex = (page - 1) * limit;
                 const endIndex = page * limit;
-
-
                 const reaquestedAllEmail = [];
                 const allMeargeData = [];
                 const NoBasketData = [];
@@ -4963,6 +4961,7 @@ exports.noBasket = async (req, res, next) => {
                     }
                 }
 
+                console.log("NoBasketData", NoBasketData);
                 for (const allNoBasketData of NoBasketData) {
                     const meargeData = await userModel.findOne({
                         _id: allNoBasketData,
@@ -4976,6 +4975,9 @@ exports.noBasket = async (req, res, next) => {
 
                     }
                 }
+
+
+                console.log("reaquestedAllEmail", reaquestedAllEmail);
 
                 if (reaquestedAllEmail[0] == undefined) {
                     res.status(status.OK).json(

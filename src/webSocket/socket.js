@@ -12,7 +12,7 @@ const conflictModel = require("../model/polyamorous/conflict.model");
 const notificationModel = require("../model/polyamorous/notification.model");
 const requestModel = require("../model/requests.model");
 const videoCallModel = require("./models/videoCall.model");
-const { deleteOne, updateOne } = require("../model/user.model");
+const { deleteOne, updateOne, findOne } = require("../model/user.model");
 function socket(io) {
 
     console.log("socket connected...");
@@ -128,7 +128,7 @@ function socket(io) {
 
             const senderName = await userModel.findOne({ _id: arg.user_1, polyDating: 0 });
 
-            console.log("name is" , userFind.firstName);
+            console.log("name is", userFind.firstName);
             const fcm_token = userFind.fcm_token;
 
             console.log("fcm_token==>", fcm_token);
@@ -1793,62 +1793,80 @@ function socket(io) {
             const findChatRoom = await chatRoomModel.findOne({
                 _id: arg.chat_room_id
             })
-            if (findChatRoom) {
 
-                const findData = await videoCallModel.findOne({
-                    chatRoomId: arg.chat_room_id
-                })
-
-                if (findData) {
-                    io.emit("videoCallReceive", "already ceated video call!")
-                } else {
-                    const saveData = videoCallModel({
-                        chatRoomId: arg.chat_room_id,
-                        senderId: arg.sender_id,
+            const findReciverIdInAllVideoCall = await videoCallModel.findOne({
+                $or: [
+                    {
+                        senderId: arg.receiver_id
+                    },
+                    {
                         receiverId: arg.receiver_id
+                    }
+                ]
+            })
+
+            if (findReciverIdInAllVideoCall) {
+                io.emit("videoCallReceive", "user on another call!")
+            } else {
+                if (findChatRoom) {
+
+                    const findData = await videoCallModel.findOne({
+                        chatRoomId: arg.chat_room_id
                     })
 
-                    await saveData.save();
+                    if (findData) {
+                        io.emit("videoCallReceive", "already ceated video call!")
+                    } else {
+                        const saveData = videoCallModel({
+                            chatRoomId: arg.chat_room_id,
+                            senderId: arg.sender_id,
+                            receiverId: arg.receiver_id
+                        })
 
-                    const sender = await userModel.findOne({
-                        _id: arg.sender_id
-                    })
+                        await saveData.save();
 
-                    const videoCallData = {
-                        chatRoomId: arg.chat_room_id,
-                        senderId: arg.sender_id,
-                        receiverId: arg.receiver_id,
-                        userName: sender.firstName,
-                        image: sender.photo ? sender.photo[0].res : ''
+                        const sender = await userModel.findOne({
+                            _id: arg.sender_id
+                        })
+
+                        const videoCallData = {
+                            chatRoomId: arg.chat_room_id,
+                            senderId: arg.sender_id,
+                            receiverId: arg.receiver_id,
+                            userName: sender.firstName,
+                            image: sender.photo ? sender.photo[0].res : ''
+                        }
+
+                        const userRoom = `User${arg.receiver_id}`
+                        io.to(userRoom).emit("videoCallReceive", videoCallData);
+
+                        const receiver = await userModel.findOne({
+                            _id: arg.receiver_id
+                        })
+
+                        const fcm_token = receiver.fcm_token
+                        const title = "video call Request";
+                        const body = `${sender.firstName} join video call.`;
+                        const text = `${sender.firstName} join video call.`;
+                        const sendBy = arg.sender_id;
+                        const registrationToken = fcm_token
+
+                        Notification.sendPushNotificationFCM(
+                            registrationToken,
+                            title,
+                            body,
+                            text,
+                            sendBy,
+                            true
+                        );
                     }
 
-                    const userRoom = `User${arg.receiver_id}`
-                    io.to(userRoom).emit("videoCallReceive", videoCallData);
-
-                    const receiver = await userModel.findOne({
-                        _id: arg.receiver_id
-                    })
-
-                    const fcm_token = receiver.fcm_token
-                    const title = "video call Request";
-                    const body = `${sender.firstName} join video call.`;
-                    const text = `${sender.firstName} join video call.`;
-                    const sendBy = arg.sender_id;
-                    const registrationToken = fcm_token
-
-                    Notification.sendPushNotificationFCM(
-                        registrationToken,
-                        title,
-                        body,
-                        text,
-                        sendBy,
-                        true
-                    );
+                } else {
+                    io.emit("videoCallReceive", "Room not Found!")
                 }
-
-            } else {
-                io.emit("videoCallReceive", "Room not Found!")
             }
+
+
 
         })
 
