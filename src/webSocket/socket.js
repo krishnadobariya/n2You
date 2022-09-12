@@ -1806,7 +1806,8 @@ function socket(io) {
             })
 
             if (findReciverIdInAllVideoCall) {
-                io.emit("videoCallReceive", "user on another call!")
+                const userRoom = `User${arg.sender_id}`
+                io.to(userRoom).emit("videoCallEngaged", "User is already on a call! Please try again after sometime.");
             } else {
                 if (findChatRoom) {
 
