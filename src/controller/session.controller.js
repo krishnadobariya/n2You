@@ -289,9 +289,15 @@ exports.publicSession = async (req, res, next) => {
         })
 
         if (findPublicSession[0] == null) {
-            res.status(status.OK).json(
-                new APIResponse("Not Found Any Public Session", "true", 200, "1", [])
-            )
+            res.status(status.OK).json({
+                "message": "Not Found Any Public Session",
+                "status": true,
+                "code": 200,
+                "statusCode": 1,
+                "pageCount": 0,
+                "data": []
+
+            })
         } else {
 
             const publicSession = [];
