@@ -1814,6 +1814,7 @@ function socket(io) {
                     const findData = await videoCallModel.findOne({
                         chatRoomId: arg.chat_room_id
                     })
+                    
 
                     if (findData) {
                         io.emit("videoCallReceive", "already ceated video call!")
