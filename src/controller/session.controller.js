@@ -7,6 +7,7 @@ const notificationModel = require("../model/polyamorous/notification.model");
 const requestsModel = require("../model/requests.model");
 const { default: mongoose } = require("mongoose");
 const cron = require("node-cron");
+const Notification = require("./src/helper/firebaseHelper");
 
 exports.sessionCreate = async (req, res, next) => {
     try {
@@ -78,6 +79,26 @@ exports.sessionCreate = async (req, res, next) => {
 
 
                 for (const notification of allRequestedEmails) {
+                    
+                      const findUser = await userModel.findOne({
+                        _id: notification
+                    })
+                      
+                    const title = findUserInUserModel.firstName;
+                    const body = `${findUserInUserModel.firstName} create session ${timeSession}`;
+
+                    const text = "join session";
+                    const sendBy = (findUserInUserModel._id).toString();
+                    const registrationToken = findUser.fcm_token
+                    Notification.sendPushNotificationFCM(
+                        registrationToken,
+                        title,
+                        body,
+                        text,
+                        sendBy,
+                        true
+                    );
+
                     const findInNotification = await notificationModel.findOne({
                         userId: notification
                     })
@@ -112,6 +133,26 @@ exports.sessionCreate = async (req, res, next) => {
                 }
 
                 for (const invitedUser of invitedUsers) {
+                    
+                     const findUser = await userModel.findOne({
+                        _id: invitedUser
+                    })
+                      
+                    const title = findUserInUserModel.firstName;
+                    const body = `${findUserInUserModel.firstName} invited you in session ${timeSession}`;
+
+                    const text = "join session";
+                    const sendBy = (findUserInUserModel._id).toString();
+                    const registrationToken = findUser.fcm_token
+                    Notification.sendPushNotificationFCM(
+                        registrationToken,
+                        title,
+                        body,
+                        text,
+                        sendBy,
+                        true
+                    );
+
 
                     const findInNotification = await notificationModel.findOne({
                         userId: invitedUser
@@ -166,6 +207,26 @@ exports.sessionCreate = async (req, res, next) => {
 
 
                 for (const notification of allRequestedEmails) {
+                    
+                     const findUser = await userModel.findOne({
+                        _id: notification
+                    })
+                      
+                    const title = findUserInUserModel.firstName;
+                    const body = `${findUserInUserModel.firstName} invited you in session ${timeSession}`;
+
+                    const text = "join session";
+                    const sendBy = (findUserInUserModel._id).toString();
+                    const registrationToken = findUser.fcm_token
+                    Notification.sendPushNotificationFCM(
+                        registrationToken,
+                        title,
+                        body,
+                        text,
+                        sendBy,
+                        true
+                    );
+
                     const findInNotification = await notificationModel.findOne({
                         userId: notification
                     })
