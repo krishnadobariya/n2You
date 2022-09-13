@@ -67,13 +67,13 @@ exports.sessionCreate = async (req, res, next) => {
 
                 }
                 const invitedUsers = [];
-                if (p1 != "") {
+                if (p1) {
                     invitedUsers.push(mongoose.Types.ObjectId(req.body.participants_1))
                 }
-                if (p2 != "") {
+                if (p2) {
                     invitedUsers.push(mongoose.Types.ObjectId(req.body.participants_2))
                 }
-                if (p3 != "") {
+                if (p3) {
                     invitedUsers.push(mongoose.Types.ObjectId(req.body.participants_3))
                 }
 
@@ -196,13 +196,13 @@ exports.sessionCreate = async (req, res, next) => {
                 const p3 = req.body.participants_3 ? req.body.participants_3 : ""
 
 
-                if (p1 != "") {
+                if (p1) {
                     allRequestedEmails.push(mongoose.Types.ObjectId(req.body.participants_1))
                 }
-                if (p2 != "") {
+                if (p2) {
                     allRequestedEmails.push(mongoose.Types.ObjectId(req.body.participants_2))
                 }
-                if (p3 != "") {
+                if (p3) {
                     allRequestedEmails.push(mongoose.Types.ObjectId(req.body.participants_3))
                 }
 
@@ -495,6 +495,7 @@ exports.invitedInSession = async (req, res, next) => {
                         cretedSessionUserId: createdSessionUser._id,
                         cretedSessionUsername: createdSessionUser.firstName,
                         isLive: findInvited.isLive,
+                        isAbleToJoin : findInvited.started,
                         RoomType: findInvited.RoomType,
                         selectedTime: findInvited.selectedTime,
                         selectedDate: findInvited.selectedDate,
@@ -512,6 +513,7 @@ exports.invitedInSession = async (req, res, next) => {
                         cretedSessionUserId: createdSessionUser._id,
                         cretedSessionUsername: createdSessionUser.firstName,
                         isLive: findInvited.isLive,
+                        isAbleToJoin : findInvited.started,
                         RoomType: findInvited.RoomType,
                         selectedTime: findInvited.selectedTime,
                         selectedDate: findInvited.selectedDate,
@@ -529,6 +531,7 @@ exports.invitedInSession = async (req, res, next) => {
                         cretedSessionUserId: createdSessionUser._id,
                         cretedSessionUsername: createdSessionUser.firstName,
                         isLive: findInvited.isLive,
+                        isAbleToJoin : findInvited.started,
                         RoomType: findInvited.RoomType,
                         selectedTime: findInvited.selectedTime,
                         selectedDate: findInvited.selectedDate,
@@ -551,6 +554,7 @@ exports.invitedInSession = async (req, res, next) => {
                         cretedSessionUserId: createdSessionUser._id,
                         cretedSessionUsername: createdSessionUser.firstName,
                         isLive: findInvited.isLive,
+                        isAbleToJoin : findInvited.started,
                         RoomType: findInvited.RoomType,
                         selectedTime: findInvited.selectedTime,
                         selectedDate: findInvited.selectedDate,
@@ -580,6 +584,7 @@ exports.invitedInSession = async (req, res, next) => {
                         cretedSessionUserId: createdSessionUser._id,
                         cretedSessionUsername: createdSessionUser.firstName,
                         isLive: findInvited.isLive,
+                        isAbleToJoin : findInvited.started,
                         RoomType: findInvited.RoomType,
                         selectedTime: findInvited.selectedTime,
                         selectedDate: findInvited.selectedDate,
@@ -597,6 +602,7 @@ exports.invitedInSession = async (req, res, next) => {
                         cretedSessionUserId: createdSessionUser._id,
                         cretedSessionUsername: createdSessionUser.firstName,
                         isLive: findInvited.isLive,
+                        isAbleToJoin : findInvited.started,
                         RoomType: findInvited.RoomType,
                         selectedTime: findInvited.selectedTime,
                         selectedDate: findInvited.selectedDate,
@@ -615,6 +621,7 @@ exports.invitedInSession = async (req, res, next) => {
                         cretedSessionUserId: createdSessionUser._id,
                         cretedSessionUsername: createdSessionUser.firstName,
                         isLive: findInvited.isLive,
+                        isAbleToJoin : findInvited.started,
                         RoomType: findInvited.RoomType,
                         selectedTime: findInvited.selectedTime,
                         selectedDate: findInvited.selectedDate,
@@ -636,6 +643,7 @@ exports.invitedInSession = async (req, res, next) => {
                         cretedSessionUserId: createdSessionUser._id,
                         cretedSessionUsername: createdSessionUser.firstName,
                         isLive: findInvited.isLive,
+                        isAbleToJoin : findInvited.started,
                         RoomType: findInvited.RoomType,
                         selectedTime: findInvited.selectedTime,
                         selectedDate: findInvited.selectedDate,
@@ -666,6 +674,7 @@ exports.invitedInSession = async (req, res, next) => {
                         cretedSessionUserId: createdSessionUser._id,
                         cretedSessionUsername: createdSessionUser.firstName,
                         isLive: findInvited.isLive,
+                        isAbleToJoin : findInvited.started,
                         RoomType: findInvited.RoomType,
                         selectedTime: findInvited.selectedTime,
                         selectedDate: findInvited.selectedDate,
@@ -683,6 +692,7 @@ exports.invitedInSession = async (req, res, next) => {
                         cretedSessionUserId: createdSessionUser._id,
                         cretedSessionUsername: createdSessionUser.firstName,
                         isLive: findInvited.isLive,
+                        isAbleToJoin : findInvited.started,
                         RoomType: findInvited.RoomType,
                         selectedTime: findInvited.selectedTime,
                         selectedDate: findInvited.selectedDate,
@@ -701,6 +711,7 @@ exports.invitedInSession = async (req, res, next) => {
                         cretedSessionUserId: createdSessionUser._id,
                         cretedSessionUsername: createdSessionUser.firstName,
                         isLive: findInvited.isLive,
+                        isAbleToJoin : findInvited.started,
                         RoomType: findInvited.RoomType,
                         selectedTime: findInvited.selectedTime,
                         selectedDate: findInvited.selectedDate,
@@ -723,6 +734,7 @@ exports.invitedInSession = async (req, res, next) => {
                         cretedSessionUserId: createdSessionUser._id,
                         cretedSessionUsername: createdSessionUser.firstName,
                         isLive: findInvited.isLive,
+                        isAbleToJoin : findInvited.started,
                         RoomType: findInvited.RoomType,
                         selectedTime: findInvited.selectedTime,
                         selectedDate: findInvited.selectedDate,
@@ -772,8 +784,7 @@ exports.invitedInSession = async (req, res, next) => {
     }
 }
 
-
-exports.mySession = async (req, res, next) => {
+exports.mySession = async (req, res, next) => { 
     try {
 
         const mySession = [];
@@ -784,6 +795,25 @@ exports.mySession = async (req, res, next) => {
 
         for (const findMySession of findUserInsession) {
 
+
+            var userSessionDate = new Date(findMySession.selectedDate)
+
+            const date = new Date(Date.now())
+            let dates = date.getUTCDate();
+            let month = date.getUTCMonth()
+            let year = date.getUTCFullYear();
+            let hour = date.getUTCHours();
+            let minute = date.getUTCMinutes();
+            let second = date.getUTCSeconds();
+
+            now = new Date(`${year}-${month + 1}-${dates} ${hour}:${minute}:${second}`)
+    
+            var sec_num = (userSessionDate - now) / 1000;
+            var days = Math.floor(sec_num / (3600 * 24));
+            var hours = Math.floor((sec_num - (days * (3600 * 24))) / 3600);
+            var minutes = Math.floor((sec_num - (days * (3600 * 24)) - (hours * 3600)) / 60);
+    
+    
             const findUserDeatil = await userModel.findOne({
                 _id: findMySession.cretedSessionUser,
                 polyDating: 0
@@ -813,6 +843,7 @@ exports.mySession = async (req, res, next) => {
                     cretedSessionUserId: findUserDeatil ? findUserDeatil._id : "",
                     cretedSessionUserphoto: findUserDeatil.photo ? findUserDeatil.photo[0] ? findUserDeatil.photo[0].res : "" : "",
                     cretedSessionUsername: findUserDeatil ? findUserDeatil.firstName : "",
+                    isStart : (days <= 0 && hours >= 0 && minutes >= 0) ? true : false,
                     participants: [
                         {
                             _id: findParticipantsiUserDeatil1 ? findParticipantsiUserDeatil1._id : "",
@@ -843,6 +874,7 @@ exports.mySession = async (req, res, next) => {
                     cretedSessionUserId: findUserDeatil ? findUserDeatil._id : "",
                     cretedSessionUserphoto: findUserDeatil.photo ? findUserDeatil.photo[0] ? findUserDeatil.photo[0].res : "" : "",
                     cretedSessionUsername: findUserDeatil ? findUserDeatil.firstName : "",
+                    isStart : (days <= 0 && hours >= 0 && minutes >= 0) ? true : false,
                     participants: []
 
                 }
@@ -858,6 +890,7 @@ exports.mySession = async (req, res, next) => {
                     cretedSessionUserId: findUserDeatil ? findUserDeatil._id : "",
                     cretedSessionUserphoto: findUserDeatil.photo ? findUserDeatil.photo[0] ? findUserDeatil.photo[0].res : "" : "",
                     cretedSessionUsername: findUserDeatil ? findUserDeatil.firstName : "",
+                    isStart : (days <= 0 && hours >= 0 && minutes >= 0) ? true : false,
                     participants: [
                         {
                             _id: findParticipantsiUserDeatil2 ? findParticipantsiUserDeatil2._id : "",
@@ -884,6 +917,7 @@ exports.mySession = async (req, res, next) => {
                     cretedSessionUserId: findUserDeatil ? findUserDeatil._id : "",
                     cretedSessionUserphoto: findUserDeatil.photo ? findUserDeatil.photo[0] ? findUserDeatil.photo[0].res : "" : "",
                     cretedSessionUsername: findUserDeatil ? findUserDeatil.firstName : "",
+                    isStart : (days <= 0 && hours >= 0 && minutes >= 0) ? true : false,
                     participants: [
                         {
                             _id: findParticipantsiUserDeatil1 ? findParticipantsiUserDeatil1._id : "",
@@ -908,6 +942,7 @@ exports.mySession = async (req, res, next) => {
                     cretedSessionUserId: findUserDeatil ? findUserDeatil._id : "",
                     cretedSessionUserphoto: findUserDeatil.photo ? findUserDeatil.photo[0] ? findUserDeatil.photo[0].res : "" : "",
                     cretedSessionUsername: findUserDeatil ? findUserDeatil.firstName : "",
+                    isStart : (days <= 0 && hours >= 0 && minutes >= 0) ? true : false,
                     participants: [
                         {
                             _id: findParticipantsiUserDeatil1 ? findParticipantsiUserDeatil1._id : "",
@@ -964,6 +999,7 @@ exports.mySession = async (req, res, next) => {
         )
     }
 }
+
 
 
 
