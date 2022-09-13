@@ -15,256 +15,256 @@ app.use('/images', express.static('images'));
 const Notification = require("./src/helper/firebaseHelper");
 
 
-// cron.schedule("*/1 * * * * *", async function () {
+cron.schedule("*/60 * * * * *", async function () {
 
-//     const findSession = await sessionModel.find()
-//     for (const getDate of findSession) {
+    const findSession = await sessionModel.find()
+    for (const getDate of findSession) {
 
-//         console.log("getDate.selectedDate", getDate.selectedDate);
-//         var userSessionDate = new Date(getDate.selectedDate)
-//         const date = new Date(Date.now())
-//         let dates = date.getUTCDate();
-//         let month = date.getUTCMonth()
-//         let year = date.getUTCFullYear();
-//         let hour = date.getUTCHours();
-//         let minute = date.getUTCMinutes();
-//         let second = date.getUTCSeconds();
-//         now = new Date(`${year}-${month + 1}-${dates} ${hour}:${minute}:${second}`)
+        console.log("getDate.selectedDate", getDate.selectedDate);
+        var userSessionDate = new Date(getDate.selectedDate)
+        const date = new Date(Date.now())
+        let dates = date.getUTCDate();
+        let month = date.getUTCMonth()
+        let year = date.getUTCFullYear();
+        let hour = date.getUTCHours();
+        let minute = date.getUTCMinutes();
+        let second = date.getUTCSeconds();
+        now = new Date(`${year}-${month + 1}-${dates} ${hour}:${minute}:${second}`)
 
-//         var sec_num = (userSessionDate - now) / 1000;
-//         var days = Math.floor(sec_num / (3600 * 24));
-//         var hours = Math.floor((sec_num - (days * (3600 * 24))) / 3600);
-//         var minutes = Math.floor((sec_num - (days * (3600 * 24)) - (hours * 3600)) / 60);
-
-
-//         console.log("hours", hours);
-//         console.log("days", days);
-//         console.log("minutes", minutes);
-
-//         if (hours == 0 && days == 0 && minutes == 30) {
+        var sec_num = (userSessionDate - now) / 1000;
+        var days = Math.floor(sec_num / (3600 * 24));
+        var hours = Math.floor((sec_num - (days * (3600 * 24))) / 3600);
+        var minutes = Math.floor((sec_num - (days * (3600 * 24)) - (hours * 3600)) / 60);
 
 
-//             const findUserInUserModel = await userModel.findOne({
-//                 _id: getDate.cretedSessionUser
-//             })
-//             if (getDate.RoomType == "public") {
-//                 const allRequestedEmails = [];
-//                 const findAllFriend = await requestsModel.findOne({
-//                     userId: getDate.cretedSessionUser
-//                 })
+        console.log("hours", hours);
+        console.log("days", days);
+        console.log("minutes", minutes);
 
-//                 const p1 = getDate.participants[0].participants_1 == null ? "" : getDate.participants[0].participants_1
-//                 const p2 = getDate.participants[0].participants_2 == null ? "" : getDate.participants[0].participants_2
-//                 const p3 = getDate.participants[0].participants_3 == null ? "" : getDate.participants[0].participants_3
+        if (hours == 0 && days == 0 && minutes == 30) {
 
 
-//                 for (const allRequestedEmail of findAllFriend.RequestedEmails) {
+            const findUserInUserModel = await userModel.findOne({
+                _id: getDate.cretedSessionUser
+            })
+            if (getDate.RoomType == "public") {
+                const allRequestedEmails = [];
+                const findAllFriend = await requestsModel.findOne({
+                    userId: getDate.cretedSessionUser
+                })
 
-//                     if (allRequestedEmail.accepted == 1) {
-//                         if (((allRequestedEmail.userId).toString() != (p1).toString()) && ((allRequestedEmail.userId).toString() != (p2).toString()) && ((allRequestedEmail.userId).toString() != (p3).toString())) {
-//                             allRequestedEmails.push(allRequestedEmail.userId)
-//                         }
-//                     }
-//                 }
-
-//                 const invitedUsers = [];
-//                 if (p1 != null) {
-//                     invitedUsers.push(getDate.participants[0].participants_1)
-//                 }
-//                 if (p2 != null) {
-//                     invitedUsers.push(getDate.participants[0].participants_2)
-//                 }
-//                 if (p3 != null) {
-//                     invitedUsers.push(getDate.participants[0].participants_3)
-//                 }
-//                 for (const notification of allRequestedEmails) {
+                const p1 = getDate.participants[0].participants_1 == null ? "" : getDate.participants[0].participants_1
+                const p2 = getDate.participants[0].participants_2 == null ? "" : getDate.participants[0].participants_2
+                const p3 = getDate.participants[0].participants_3 == null ? "" : getDate.participants[0].participants_3
 
 
-//                     const findUser = await userModel.findOne({
-//                         _id: notification
-//                     })
+                for (const allRequestedEmail of findAllFriend.RequestedEmails) {
 
-//                     const findCreateSessionUser = await userModel.findOne({
-//                         _id: getDate.cretedSessionUser
-//                     })
+                    if (allRequestedEmail.accepted == 1) {
+                        if (((allRequestedEmail.userId).toString() != (p1).toString()) && ((allRequestedEmail.userId).toString() != (p2).toString()) && ((allRequestedEmail.userId).toString() != (p3).toString())) {
+                            allRequestedEmails.push(allRequestedEmail.userId)
+                        }
+                    }
+                }
 
-//                     const title = findCreateSessionUser.firstName;
-//                     const body = "after 30 min join session";
-
-//                     const text = "join session";
-//                     const sendBy = (findCreateSessionUser._id).toString();
-//                     const registrationToken = findUser.fcm_token
-//                     Notification.sendPushNotificationFCM(
-//                         registrationToken,
-//                         title,
-//                         body,
-//                         text,
-//                         sendBy,
-//                         true
-//                     );
+                const invitedUsers = [];
+                if (p1 != null) {
+                    invitedUsers.push(getDate.participants[0].participants_1)
+                }
+                if (p2 != null) {
+                    invitedUsers.push(getDate.participants[0].participants_2)
+                }
+                if (p3 != null) {
+                    invitedUsers.push(getDate.participants[0].participants_3)
+                }
+                for (const notification of allRequestedEmails) {
 
 
-//                     const findInNotification = await notificationModel.findOne({
-//                         userId: notification
-//                     })
-//                     if (findInNotification) {
+                    const findUser = await userModel.findOne({
+                        _id: notification
+                    })
 
-//                         await notificationModel.updateOne({
-//                             userId: notification
-//                         }, {
-//                             $push: {
-//                                 notifications: {
-//                                     notifications: `after 30 min join session`,
-//                                     userId: findUserInUserModel._id,
-//                                     status: 9
-//                                 }
-//                             }
-//                         })
-//                     } else {
-//                         const savedata = notificationModel({
-//                             userId: notification,
-//                             notifications: {
-//                                 notifications: `after 30 min join session`,
-//                                 userId: findUserInUserModel._id,
-//                                 status: 9
-//                             }
-//                         })
-//                         await savedata.save();
-//                     }
-//                 }
+                    const findCreateSessionUser = await userModel.findOne({
+                        _id: getDate.cretedSessionUser
+                    })
 
-//                 for (const invitedUser of invitedUsers) {
-//                     const findUser = await userModel.findOne({
-//                         _id: invitedUser
-//                     })
+                    const title = findCreateSessionUser.firstName;
+                    const body = "after 30 min join session";
 
-//                     const findCreateSessionUser = await userModel.findOne({
-//                         _id: getDate.cretedSessionUser
-//                     })
+                    const text = "join session";
+                    const sendBy = (findCreateSessionUser._id).toString();
+                    const registrationToken = findUser.fcm_token
+                    Notification.sendPushNotificationFCM(
+                        registrationToken,
+                        title,
+                        body,
+                        text,
+                        sendBy,
+                        true
+                    );
 
-//                     const title = findCreateSessionUser.firstName;
-//                     const body = "after 30 min join session";
 
-//                     const text = "join session";
-//                     const sendBy = (findCreateSessionUser._id).toString();
-//                     const registrationToken = findUser.fcm_token
-//                     Notification.sendPushNotificationFCM(
-//                         registrationToken,
-//                         title,
-//                         body,
-//                         text,
-//                         sendBy,
-//                         true
-//                     );
+                    const findInNotification = await notificationModel.findOne({
+                        userId: notification
+                    })
+                    if (findInNotification) {
 
-//                     const findInNotification = await notificationModel.findOne({
-//                         userId: invitedUser
-//                     })
+                        await notificationModel.updateOne({
+                            userId: notification
+                        }, {
+                            $push: {
+                                notifications: {
+                                    notifications: `after 30 min join session`,
+                                    userId: findUserInUserModel._id,
+                                    status: 9
+                                }
+                            }
+                        })
+                    } else {
+                        const savedata = notificationModel({
+                            userId: notification,
+                            notifications: {
+                                notifications: `after 30 min join session`,
+                                userId: findUserInUserModel._id,
+                                status: 9
+                            }
+                        })
+                        await savedata.save();
+                    }
+                }
 
-//                     if (findInNotification) {
-//                         await notificationModel.updateOne({
-//                             userId: invitedUser
-//                         }, {
-//                             $push: {
-//                                 notifications: {
-//                                     notifications: `after 30 min join session`,
-//                                     userId: findUserInUserModel._id,
-//                                     status: 9
-//                                 }
-//                             }
-//                         })
-//                     } else {
-//                         const savedata = notificationModel({
-//                             userId: invitedUser,
-//                             notifications: {
-//                                 notifications: `after 30 min join session`,
-//                                 userId: findUserInUserModel._id,
-//                                 status: 9
-//                             }
-//                         })
-//                         await savedata.save();
-//                     }
-//                 }
+                for (const invitedUser of invitedUsers) {
+                    const findUser = await userModel.findOne({
+                        _id: invitedUser
+                    })
 
-//             } else {
-//                 const allRequestedEmails = [];
-//                 const p1 = getDate.participants[0].participants_1 == null ? "" : getDate.participants[0].participants_1
-//                 const p2 = getDate.participants[0].participants_2 == null ? "" : getDate.participants[0].participants_2
-//                 const p3 = getDate.participants[0].participants_3 == null ? "" : getDate.participants[0].participants_3
+                    const findCreateSessionUser = await userModel.findOne({
+                        _id: getDate.cretedSessionUser
+                    })
 
-//                 if (p1 != null) {
-//                     allRequestedEmails.push(getDate.participants[0].participants_1)
-//                 }
-//                 if (p2 != null) {
-//                     allRequestedEmails.push(getDate.participants[0].participants_2)
-//                 }
-//                 if (p3 != null) {
-//                     allRequestedEmails.push(getDate.participants[0].participants_3)
-//                 }
+                    const title = findCreateSessionUser.firstName;
+                    const body = "after 30 min join session";
 
-//                 for (const notification of allRequestedEmails) {
+                    const text = "join session";
+                    const sendBy = (findCreateSessionUser._id).toString();
+                    const registrationToken = findUser.fcm_token
+                    Notification.sendPushNotificationFCM(
+                        registrationToken,
+                        title,
+                        body,
+                        text,
+                        sendBy,
+                        true
+                    );
 
-//                     const findUser = await userModel.findOne({
-//                         _id: notification
-//                     })
+                    const findInNotification = await notificationModel.findOne({
+                        userId: invitedUser
+                    })
 
-//                     const findCreateSessionUser = await userModel.findOne({
-//                         _id: getDate.cretedSessionUser
-//                     })
+                    if (findInNotification) {
+                        await notificationModel.updateOne({
+                            userId: invitedUser
+                        }, {
+                            $push: {
+                                notifications: {
+                                    notifications: `after 30 min join session`,
+                                    userId: findUserInUserModel._id,
+                                    status: 9
+                                }
+                            }
+                        })
+                    } else {
+                        const savedata = notificationModel({
+                            userId: invitedUser,
+                            notifications: {
+                                notifications: `after 30 min join session`,
+                                userId: findUserInUserModel._id,
+                                status: 9
+                            }
+                        })
+                        await savedata.save();
+                    }
+                }
 
-//                     const title = findCreateSessionUser.firstName;
-//                     const body = "after 30 min join session";
+            } else {
+                const allRequestedEmails = [];
+                const p1 = getDate.participants[0].participants_1 == null ? "" : getDate.participants[0].participants_1
+                const p2 = getDate.participants[0].participants_2 == null ? "" : getDate.participants[0].participants_2
+                const p3 = getDate.participants[0].participants_3 == null ? "" : getDate.participants[0].participants_3
 
-//                     const text = "join session";
-//                     const sendBy = (findCreateSessionUser._id).toString();
-//                     const registrationToken = findUser.fcm_token
-//                     Notification.sendPushNotificationFCM(
-//                         registrationToken,
-//                         title,
-//                         body,
-//                         text,
-//                         sendBy,
-//                         true
-//                     );
+                if (p1 != null) {
+                    allRequestedEmails.push(getDate.participants[0].participants_1)
+                }
+                if (p2 != null) {
+                    allRequestedEmails.push(getDate.participants[0].participants_2)
+                }
+                if (p3 != null) {
+                    allRequestedEmails.push(getDate.participants[0].participants_3)
+                }
 
-//                     const findInNotification = await notificationModel.findOne({
-//                         userId: notification
-//                     })
+                for (const notification of allRequestedEmails) {
 
-//                     if (findInNotification) {
+                    const findUser = await userModel.findOne({
+                        _id: notification
+                    })
 
-//                         await notificationModel.updateOne({
-//                             userId: notification
-//                         }, {
-//                             $push: {
-//                                 notifications: {
-//                                     notifications: `after 30 min join session`,
-//                                     userId: findUserInUserModel._id,
-//                                     status: 9
-//                                 }
-//                             }
-//                         })
+                    const findCreateSessionUser = await userModel.findOne({
+                        _id: getDate.cretedSessionUser
+                    })
 
-//                     } else {
-//                         const savedata = notificationModel({
-//                             userId: notification,
-//                             notifications: {
-//                                 notifications: `after 30 min join session`,
-//                                 userId: findUserInUserModel._id,
-//                                 status: 9
-//                             }
-//                         })
-//                         await savedata.save();
+                    const title = findCreateSessionUser.firstName;
+                    const body = "after 30 min join session";
 
-//                     }
-//                 }
-//             }
+                    const text = "join session";
+                    const sendBy = (findCreateSessionUser._id).toString();
+                    const registrationToken = findUser.fcm_token
+                    Notification.sendPushNotificationFCM(
+                        registrationToken,
+                        title,
+                        body,
+                        text,
+                        sendBy,
+                        true
+                    );
 
-//         } else {
-//         }
-//     }
-//     console.log("running a task every 10 second");
-// });
+                    const findInNotification = await notificationModel.findOne({
+                        userId: notification
+                    })
+
+                    if (findInNotification) {
+
+                        await notificationModel.updateOne({
+                            userId: notification
+                        }, {
+                            $push: {
+                                notifications: {
+                                    notifications: `after 30 min join session`,
+                                    userId: findUserInUserModel._id,
+                                    status: 9
+                                }
+                            }
+                        })
+
+                    } else {
+                        const savedata = notificationModel({
+                            userId: notification,
+                            notifications: {
+                                notifications: `after 30 min join session`,
+                                userId: findUserInUserModel._id,
+                                status: 9
+                            }
+                        })
+                        await savedata.save();
+
+                    }
+                }
+            }
+
+        } else {
+        }
+    }
+    console.log("running a task every 10 second");
+});
 
 
 const userRoutes = require("./src/routes/user.routes");
