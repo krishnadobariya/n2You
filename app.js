@@ -47,6 +47,52 @@ cron.schedule("*/60 * * * * *", async function () {
             const findUserInUserModel = await userModel.findOne({
                 _id: getDate.cretedSessionUser
             })
+       
+                    const title = findUserInUserModel.firstName;
+                    const body = "after 30 min started your session";
+
+                    const text = "join session";
+                    const sendBy = (findUserInUserModel._id).toString();
+                    const registrationToken = findUserInUserModel.fcm_token
+                    Notification.sendPushNotificationFCM(
+                        registrationToken,
+                        title,
+                        body,
+                        text,
+                        sendBy,
+                        true
+                    );
+            
+                 const findInNotification = await notificationModel.findOne({
+                        userId: findUserInUserModel._id
+                    })
+                    if (findInNotification) {
+
+                        await notificationModel.updateOne({
+                            userId: findUserInUserModel._id
+                        }, {
+                            $push: {
+                                notifications: {
+                                    notifications: "after 30 min started your session",
+                                    userId: findUserInUserModel._id,
+                                    status: 9
+                                }
+                            }
+                        })
+                    } else {
+                        const savedata = notificationModel({
+                            userId: findUserInUserModel._id,
+                            notifications: {
+                                notifications: "after 30 min started your session",
+                                userId: findUserInUserModel._id,
+                                status: 9
+                            }
+                        })
+                        await savedata.save();
+                    }
+                }
+            
+            
             if (getDate.RoomType == "public") {
                 const allRequestedEmails = [];
                 const findAllFriend = await requestsModel.findOne({
