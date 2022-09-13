@@ -7,7 +7,7 @@ const notificationModel = require("../model/polyamorous/notification.model");
 const requestsModel = require("../model/requests.model");
 const { default: mongoose } = require("mongoose");
 const cron = require("node-cron");
-const Notification = require("./src/helper/firebaseHelper");
+const Notification = require("../helper/firebaseHelper")
 
 exports.sessionCreate = async (req, res, next) => {
     try {
@@ -26,12 +26,13 @@ exports.sessionCreate = async (req, res, next) => {
             let minutes = date.getUTCMinutes();
             let second = date.getUTCSeconds();
             let month = date.toUTCString('en-us', { month: 'long' });
+            const mon  =month.toString().split(" ")
             let ampm = hours >= 12 ? 'pm' : 'am';
             hours = hours % 12;
             hours = hours ? hours : 12;
             minutes = minutes.toString().padStart(2, '0');
             let strTime = hours + ' ' + ampm;
-            let timeSession = 'At' + ' ' + hours + ':' + minutes + ' ' + ampm + ' ' + 'on' + ' ' + month + ' ' + dates + ',' + year;
+            let timeSession = 'At' + ' ' + hours + ':' + minutes + ' ' + ampm + ' ' + 'on' + ' ' + mon[0] + ' ' + mon[1] + ' ' + mon[2] + ' ' + mon[3]
             const createSession = sessionModel({
                 selectedDate: `${year}-${months + 1}-${dates} ${hours}:${minutes}:${second}`,
                 selectedTime: strTime,
@@ -39,7 +40,7 @@ exports.sessionCreate = async (req, res, next) => {
                 participants: {
                     participants_1: req.body.participants_1 ? req.body.participants_1 : null,
                     participants_2: req.body.participants_2 ? req.body.participants_2 : null,
-                    participants_3: req.body.participants_3 ? req.body.participants_3 : null,
+                    participants_3: req.body.participants_3 ? req.body.participants_3 : null
                 },
                 RoomType: req.body.room_type
             })
