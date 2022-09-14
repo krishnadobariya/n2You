@@ -17,8 +17,12 @@ const sessionSchema = mongoose.Schema({
         required: true
     },
     started: {
-        type:Boolean,
-        default : false
+        type: Boolean,
+        default: false
+    },
+    sessionEndOrNot: {
+        type: Boolean,
+        default: false
     },
     participants: [{
         participants_1: {
