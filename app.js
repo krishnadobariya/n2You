@@ -21,7 +21,7 @@ cron.schedule("*/1 * * * * *", async function () {
     for (const getDate of findSession) {
 
         console.log("getDate.selectedDate", getDate.selectedDate);
-        var userSessionDate = new Date(getDate.selectedDate)
+        var userSessionDate = new Date(new Date(getDate.selectedDate).toUTCString())
         console.log(":userSessionDate", userSessionDate);
 
         console.log("userSessionDate", userSessionDate.getUTCHours());
@@ -34,7 +34,7 @@ cron.schedule("*/1 * * * * *", async function () {
         const finalUserSessionDate = new Date(`${userSessionyear}-${userSessionmonth + 1}-${userSessionDates} ${userSessionhour}:${userSessionminute}:${userSessionsecond}`)
 
         console.log("finalUserSessionDate", finalUserSessionDate);
-        const date = new Date(Date.now())
+        const date = new Date(new Date().toUTCString())
         let dates = date.getUTCDate();
         let month = date.getUTCMonth()
         let year = date.getUTCFullYear();
