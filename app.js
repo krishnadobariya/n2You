@@ -24,12 +24,12 @@ cron.schedule("*/1 * * * * *", async function () {
         var userSessionDate = new Date((getDate.selectedDate))
         console.log(":userSessionDate", userSessionDate);
 
-        let userSessionDates = userSessionDate.getDate();
-        let userSessionmonth = userSessionDate.getMonth()
-        let userSessionyear = userSessionDate.getFullYear();
-        let userSessionhour = userSessionDate.getHours();
-        let userSessionminute = userSessionDate.getMinutes();
-        let userSessionsecond = userSessionDate.getSeconds();
+        let userSessionDates = userSessionDate.getUTCDate();
+        let userSessionmonth = userSessionDate.getUTCMonth()
+        let userSessionyear = userSessionDate.getUTCFullYear();
+        let userSessionhour = (userSessionDate.getUTCHours() + 24) % 12 || 12;
+        let userSessionminute = userSessionDate.getUTCMinutes();
+        let userSessionsecond = userSessionDate.getUTCSeconds();
         const finalUserSessionDate = new Date(`${userSessionyear}-${userSessionmonth + 1}-${userSessionDates} ${userSessionhour}:${userSessionminute}:${userSessionsecond}`)
 
         console.log("finalUserSessionDate", finalUserSessionDate);
