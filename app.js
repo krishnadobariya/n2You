@@ -21,7 +21,7 @@ cron.schedule("*/1 * * * * *", async function () {
     for (const getDate of findSession) {
 
         console.log("getDate.selectedDate", getDate.selectedDate);
-        var userSessionDate = new Date(getDate.selectedDate)
+        var userSessionDate = new Date(Date.now(getDate.selectedDate))
         console.log(":userSessionDate", userSessionDate);
 
         let userSessionDates = userSessionDate.getDate();
