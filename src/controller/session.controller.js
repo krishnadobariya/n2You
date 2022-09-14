@@ -863,7 +863,7 @@ exports.mySession = async (req, res, next) => {
                     cretedSessionUserId: findUserDeatil ? findUserDeatil._id : "",
                     cretedSessionUserphoto: findUserDeatil.photo ? findUserDeatil.photo[0] ? findUserDeatil.photo[0].res : "" : "",
                     cretedSessionUsername: findUserDeatil ? findUserDeatil.firstName : "",
-                    isStart: (days < 0 && hours >= 0 && minutes >= 0) || (days <= 0 && hours >= 0 && minutes >= 0) ? true : false,
+                    isStart: (days < 0 && hours >= 0 && minutes >= 0) || (days == 0 && hours == 0 && minutes == 0) ? true : false,
                     participants: [
                         {
                             _id: findParticipantsiUserDeatil1 ? findParticipantsiUserDeatil1._id : "",
@@ -894,7 +894,7 @@ exports.mySession = async (req, res, next) => {
                     cretedSessionUserId: findUserDeatil ? findUserDeatil._id : "",
                     cretedSessionUserphoto: findUserDeatil.photo ? findUserDeatil.photo[0] ? findUserDeatil.photo[0].res : "" : "",
                     cretedSessionUsername: findUserDeatil ? findUserDeatil.firstName : "",
-                    isStart: (days < 0 && hours >= 0 && minutes >= 0) || (days <= 0 && hours >= 0 && minutes >= 0) ? true : false,
+                    isStart: (days < 0 && hours >= 0 && minutes >= 0) || (days == 0 && hours == 0 && minutes == 0) ? true : false,
                     participants: []
 
                 }
@@ -910,7 +910,7 @@ exports.mySession = async (req, res, next) => {
                     cretedSessionUserId: findUserDeatil ? findUserDeatil._id : "",
                     cretedSessionUserphoto: findUserDeatil.photo ? findUserDeatil.photo[0] ? findUserDeatil.photo[0].res : "" : "",
                     cretedSessionUsername: findUserDeatil ? findUserDeatil.firstName : "",
-                    isStart: (days < 0 && hours >= 0 && minutes >= 0) || (days <= 0 && hours >= 0 && minutes >= 0) ? true : false,
+                    isStart: (days < 0 && hours >= 0 && minutes >= 0) || (days == 0 && hours == 0 && minutes == 0) ? true : false,
                     participants: [
                         {
                             _id: findParticipantsiUserDeatil2 ? findParticipantsiUserDeatil2._id : "",
@@ -937,7 +937,7 @@ exports.mySession = async (req, res, next) => {
                     cretedSessionUserId: findUserDeatil ? findUserDeatil._id : "",
                     cretedSessionUserphoto: findUserDeatil.photo ? findUserDeatil.photo[0] ? findUserDeatil.photo[0].res : "" : "",
                     cretedSessionUsername: findUserDeatil ? findUserDeatil.firstName : "",
-                    isStart: (days < 0 && hours >= 0 && minutes >= 0) || (days <= 0 && hours >= 0 && minutes >= 0) ? true : false,
+                    isStart: (days < 0 && hours >= 0 && minutes >= 0) || (days == 0 && hours == 0 && minutes == 0) ? true : false,
                     participants: [
                         {
                             _id: findParticipantsiUserDeatil1 ? findParticipantsiUserDeatil1._id : "",
@@ -962,7 +962,7 @@ exports.mySession = async (req, res, next) => {
                     cretedSessionUserId: findUserDeatil ? findUserDeatil._id : "",
                     cretedSessionUserphoto: findUserDeatil.photo ? findUserDeatil.photo[0] ? findUserDeatil.photo[0].res : "" : "",
                     cretedSessionUsername: findUserDeatil ? findUserDeatil.firstName : "",
-                    isStart: (days < 0 && hours >= 0 && minutes >= 0) || (days <= 0 && hours >= 0 && minutes >= 0) ? true : false,
+                    isStart: (days < 0 && hours >= 0 && minutes >= 0) || (days == 0 && hours == 0 && minutes == 0) ? true : false,
                     participants: [
                         {
                             _id: findParticipantsiUserDeatil1 ? findParticipantsiUserDeatil1._id : "",
