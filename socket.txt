@@ -209,3 +209,17 @@ joinSession
 }
 
 sessionJoinSuccess
+
+===============================================
+
+==>endSession
+
+===============================================
+endSession
+
+{
+    "session_id":"",
+    "create_session_user":""
+}
+
+endSessionSuccess

@@ -20,7 +20,7 @@ cron.schedule("*/60 * * * * *", async function () {
     const findSession = await sessionModel.find()
     for (const getDate of findSession) {
 
-        
+
         var userSessionDate = new Date(new Date(getDate.selectedDate).toUTCString())
         let userSessionDates = userSessionDate.getUTCDate();
         let userSessionmonth = userSessionDate.getUTCMonth();
@@ -86,7 +86,7 @@ cron.schedule("*/60 * * * * *", async function () {
                         notifications: {
                             notifications: "after 30 min started your session",
                             userId: findUserInUserModel._id,
-                            status: 9
+                            status: 11
                         }
                     }
                 })
@@ -96,7 +96,7 @@ cron.schedule("*/60 * * * * *", async function () {
                     notifications: {
                         notifications: "after 30 min started your session",
                         userId: findUserInUserModel._id,
-                        status: 9
+                        status: 11
                     }
                 })
                 await savedata.save();
@@ -171,7 +171,7 @@ cron.schedule("*/60 * * * * *", async function () {
                                 notifications: {
                                     notifications: `after 30 min join session`,
                                     userId: findUserInUserModel._id,
-                                    status: 9
+                                    status: 11
                                 }
                             }
                         })
@@ -181,7 +181,7 @@ cron.schedule("*/60 * * * * *", async function () {
                             notifications: {
                                 notifications: `after 30 min join session`,
                                 userId: findUserInUserModel._id,
-                                status: 9
+                                status: 11
                             }
                         })
                         await savedata.save();
@@ -224,7 +224,7 @@ cron.schedule("*/60 * * * * *", async function () {
                                 notifications: {
                                     notifications: `after 30 min join session`,
                                     userId: findUserInUserModel._id,
-                                    status: 9
+                                    status: 11
                                 }
                             }
                         })
@@ -234,7 +234,7 @@ cron.schedule("*/60 * * * * *", async function () {
                             notifications: {
                                 notifications: `after 30 min join session`,
                                 userId: findUserInUserModel._id,
-                                status: 9
+                                status: 11
                             }
                         })
                         await savedata.save();
@@ -295,7 +295,7 @@ cron.schedule("*/60 * * * * *", async function () {
                                 notifications: {
                                     notifications: `after 30 min join session`,
                                     userId: findUserInUserModel._id,
-                                    status: 9
+                                    status: 11
                                 }
                             }
                         })
@@ -306,7 +306,7 @@ cron.schedule("*/60 * * * * *", async function () {
                             notifications: {
                                 notifications: `after 30 min join session`,
                                 userId: findUserInUserModel._id,
-                                status: 9
+                                status: 11
                             }
                         })
                         await savedata.save();
