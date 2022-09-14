@@ -2236,7 +2236,8 @@ function socket(io) {
                         _id: arg.session_id
                     }, {
                         $set: {
-                            sessionEndOrNot: true
+                            sessionEndOrNot: true,
+                            started: false
                         }
                     })
 
