@@ -393,7 +393,7 @@ exports.userUpdate = async (req, res, next) => {
 
                 console.log(urls);
 
-                const url = [req.body.images]
+                const url = req.body.images
                 console.log(url);
 
                 for (const data of url) {
