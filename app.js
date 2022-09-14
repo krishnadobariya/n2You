@@ -15,7 +15,7 @@ app.use('/images', express.static('images'));
 const Notification = require("./src/helper/firebaseHelper");
 
 
-cron.schedule("*/1 * * * * *", async function () {
+cron.schedule("*/60 * * * * *", async function () {
 
     const findSession = await sessionModel.find()
     for (const getDate of findSession) {
@@ -35,7 +35,6 @@ cron.schedule("*/1 * * * * *", async function () {
         let userSessionsecond = userSessionDate.getUTCSeconds();
         const finalUserSessionDate = new Date(`${userSessionyear}-${userSessionmonth + 1}-${userSessionDates} ${finalHours}:${finalMinute}:${userSessionsecond}`)
 
-        console.log("finalUserSessionDate", finalUserSessionDate);
         const date = new Date(new Date().toUTCString())
         let dates = date.getUTCDate();
         let month = date.getUTCMonth()
