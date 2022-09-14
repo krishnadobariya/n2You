@@ -582,168 +582,265 @@ function socket(io) {
                 _id: arg.session_id
             })
 
+
+            const p1 = findIdInSession.participants[0].participants_1 == null ? "" : findIdInSession.participants[0].participants_1
+            const p2 = findIdInSession.participants[0].participants_2 == null ? "" : findIdInSession.participants[0].participants_2
+            const p3 = findIdInSession.participants[0].participants_3 == null ? "" : findIdInSession.participants[0].participants_3
+
             if (findIdInSession) {
 
-                if (findIdInSession.roomType == "public") {
+                if ((findIdInSession.cretedSessionUser).toString() == (arg.create_session_user).toString()) {
+                    if (findIdInSession.roomType == "public") {
 
-                    const allRequestedEmails = [];
-                    const findAllFriend = await requestModel.findOne({
-                        userId: findIdInSession.cretedSessionUser
-                    })
+                        const allRequestedEmails = [];
+                        const findAllFriend = await requestModel.findOne({
+                            userId: findIdInSession.cretedSessionUser
+                        })
 
-                    const p1 = findIdInSession.participants[0].participants_1 == null ? "" : findIdInSession.participants[0].participants_1
-                    const p2 = findIdInSession.participants[0].participants_2 == null ? "" : findIdInSession.participants[0].participants_2
-                    const p3 = findIdInSession.participants[0].participants_3 == null ? "" : findIdInSession.participants[0].participants_3
+                        const p1 = findIdInSession.participants[0].participants_1 == null ? "" : findIdInSession.participants[0].participants_1
+                        const p2 = findIdInSession.participants[0].participants_2 == null ? "" : findIdInSession.participants[0].participants_2
+                        const p3 = findIdInSession.participants[0].participants_3 == null ? "" : findIdInSession.participants[0].participants_3
 
 
-                    for (const allRequestedEmail of findAllFriend.RequestedEmails) {
+                        for (const allRequestedEmail of findAllFriend.RequestedEmails) {
 
-                        if (allRequestedEmail.accepted == 1) {
-                            if (((allRequestedEmail.userId).toString() != (p1).toString()) && ((allRequestedEmail.userId).toString() != (p2).toString()) && ((allRequestedEmail.userId).toString() != (p3).toString())) {
-                                allRequestedEmails.push(allRequestedEmail.userId)
+                            if (allRequestedEmail.accepted == 1) {
+                                if (((allRequestedEmail.userId).toString() != (p1).toString()) && ((allRequestedEmail.userId).toString() != (p2).toString()) && ((allRequestedEmail.userId).toString() != (p3).toString())) {
+                                    allRequestedEmails.push(allRequestedEmail.userId)
+                                }
                             }
                         }
-                    }
 
-                    const invitedUsers = [];
-                    if (p1 != null) {
-                        invitedUsers.push(findIdInSession.participants[0].participants_1)
-                    }
-                    if (p2 != null) {
-                        invitedUsers.push(findIdInSession.participants[0].participants_2)
-                    }
-                    if (p3 != null) {
-                        invitedUsers.push(findIdInSession.participants[0].participants_3)
-                    }
+                        const invitedUsers = [];
+                        if (p1 != null) {
+                            invitedUsers.push(findIdInSession.participants[0].participants_1)
+                        }
+                        if (p2 != null) {
+                            invitedUsers.push(findIdInSession.participants[0].participants_2)
+                        }
+                        if (p3 != null) {
+                            invitedUsers.push(findIdInSession.participants[0].participants_3)
+                        }
 
-                    for (const notification of allRequestedEmails) {
-
-
-                        const findUser = await userModel.findOne({
-                            _id: notification
-                        })
-
-                        const findCreateSessionUser = await userModel.findOne({
-                            _id: findIdInSession.cretedSessionUser
-                        })
-
-                        const title = findCreateSessionUser.firstName;
-                        const body = `session started which one is created by ${findCreateSessionUser.firstName}`;
-
-                        const text = "join session";
-                        const sendBy = (findCreateSessionUser._id).toString();
-                        const registrationToken = findUser.fcm_token
-                        Notification.sendPushNotificationFCM(
-                            registrationToken,
-                            title,
-                            body,
-                            text,
-                            sendBy,
-                            true
-                        );
+                        for (const notification of allRequestedEmails) {
 
 
-                        const findInNotification = await notificationModel.findOne({
-                            userId: notification
-                        })
-                        if (findInNotification) {
+                            const findUser = await userModel.findOne({
+                                _id: notification
+                            })
 
-                            await notificationModel.updateOne({
+                            const findCreateSessionUser = await userModel.findOne({
+                                _id: findIdInSession.cretedSessionUser
+                            })
+
+                            const title = findCreateSessionUser.firstName;
+                            const body = `session started which one is created by ${findCreateSessionUser.firstName}`;
+
+                            const text = "join session";
+                            const sendBy = (findCreateSessionUser._id).toString();
+                            const registrationToken = findUser.fcm_token
+                            Notification.sendPushNotificationFCM(
+                                registrationToken,
+                                title,
+                                body,
+                                text,
+                                sendBy,
+                                true
+                            );
+
+
+                            const findInNotification = await notificationModel.findOne({
                                 userId: notification
-                            }, {
-                                $push: {
+                            })
+                            if (findInNotification) {
+
+                                await notificationModel.updateOne({
+                                    userId: notification
+                                }, {
+                                    $push: {
+                                        notifications: {
+                                            notifications: `session started which one is created by ${findCreateSessionUser.firstName}`,
+                                            userId: findCreateSessionUser._id,
+                                            status: 9
+                                        }
+                                    }
+                                })
+                            } else {
+                                const savedata = notificationModel({
+                                    userId: notification,
                                     notifications: {
                                         notifications: `session started which one is created by ${findCreateSessionUser.firstName}`,
                                         userId: findCreateSessionUser._id,
                                         status: 9
                                     }
-                                }
-                            })
-                        } else {
-                            const savedata = notificationModel({
-                                userId: notification,
-                                notifications: {
-                                    notifications: `session started which one is created by ${findCreateSessionUser.firstName}`,
-                                    userId: findCreateSessionUser._id,
-                                    status: 9
-                                }
-                            })
-                            await savedata.save();
+                                })
+                                await savedata.save();
+                            }
                         }
-                    }
 
-                    for (const invitedUser of invitedUsers) {
+                        for (const invitedUser of invitedUsers) {
 
-                        await sessionModel.updateOne({
-                            _id: arg.session_id
-                        },
-                            {
-                                $set: {
-                                    started: true
-                                }
+                            await sessionModel.updateOne({
+                                _id: arg.session_id
+                            },
+                                {
+                                    $set: {
+                                        started: true
+                                    }
+                                })
+                            const findUser = await userModel.findOne({
+                                _id: invitedUser
                             })
-                        const findUser = await userModel.findOne({
-                            _id: invitedUser
-                        })
 
-                        const findCreateSessionUser = await userModel.findOne({
-                            _id: findIdInSession.cretedSessionUser
-                        })
+                            const findCreateSessionUser = await userModel.findOne({
+                                _id: findIdInSession.cretedSessionUser
+                            })
 
-                        const title = findCreateSessionUser.firstName;
-                        const body = `session started which one is created by ${findCreateSessionUser.firstName}`;
+                            const title = findCreateSessionUser.firstName;
+                            const body = `session started which one is created by ${findCreateSessionUser.firstName}`;
 
-                        const text = "join session";
-                        const sendBy = (findCreateSessionUser._id).toString();
-                        const registrationToken = findUser.fcm_token
-                        Notification.sendPushNotificationFCM(
-                            registrationToken,
-                            title,
-                            body,
-                            text,
-                            sendBy,
-                            true
-                        );
+                            const text = "join session";
+                            const sendBy = (findCreateSessionUser._id).toString();
+                            const registrationToken = findUser.fcm_token
+                            Notification.sendPushNotificationFCM(
+                                registrationToken,
+                                title,
+                                body,
+                                text,
+                                sendBy,
+                                true
+                            );
 
-                        const findInNotification = await notificationModel.findOne({
-                            userId: invitedUser
-                        })
-
-                        if (findInNotification) {
-                            await notificationModel.updateOne({
+                            const findInNotification = await notificationModel.findOne({
                                 userId: invitedUser
-                            }, {
-                                $push: {
+                            })
+
+                            if (findInNotification) {
+                                await notificationModel.updateOne({
+                                    userId: invitedUser
+                                }, {
+                                    $push: {
+                                        notifications: {
+                                            notifications: `session started which one is created by ${findCreateSessionUser.firstName}`,
+                                            userId: findCreateSessionUser._id,
+                                            status: 9
+                                        }
+                                    }
+                                })
+                            } else {
+                                const savedata = notificationModel({
+                                    userId: invitedUser,
                                     notifications: {
                                         notifications: `session started which one is created by ${findCreateSessionUser.firstName}`,
                                         userId: findCreateSessionUser._id,
                                         status: 9
                                     }
-                                }
-                            })
-                        } else {
-                            const savedata = notificationModel({
-                                userId: invitedUser,
-                                notifications: {
-                                    notifications: `session started which one is created by ${findCreateSessionUser.firstName}`,
-                                    userId: findCreateSessionUser._id,
-                                    status: 9
-                                }
-                            })
-                            await savedata.save();
+                                })
+                                await savedata.save();
+                            }
                         }
-                    }
 
-                    io.emit("sessionJoinSuccess", "session started");
-                } else {
+                        io.emit("sessionJoinSuccess", "session started");
+                    } else {
+                        const allRequestedEmails = [];
+
+                        const p1 = findIdInSession.participants[0].participants_1 == null ? "" : findIdInSession.participants[0].participants_1
+                        const p2 = findIdInSession.participants[0].participants_2 == null ? "" : findIdInSession.participants[0].participants_2
+                        const p3 = findIdInSession.participants[0].participants_3 == null ? "" : findIdInSession.participants[0].participants_3
+
+                        if (p1) {
+                            allRequestedEmails.push(findIdInSession.participants[0].participants_1)
+                        }
+                        if (p2) {
+                            allRequestedEmails.push(findIdInSession.participants[0].participants_2)
+                        }
+                        if (p3) {
+                            allRequestedEmails.push(findIdInSession.participants[0].participants_3)
+                        }
+
+                        console.log("allRequestedEmails", allRequestedEmails);
+
+                        for (const notification of allRequestedEmails) {
+
+                            await sessionModel.updateOne({
+                                _id: arg.session_id
+                            },
+                                {
+                                    $set: {
+                                        started: true
+                                    }
+                                })
+
+
+
+                            const findUser = await userModel.findOne({
+                                _id: notification
+                            })
+
+                            const findCreateSessionUser = await userModel.findOne({
+                                _id: findIdInSession.cretedSessionUser
+                            })
+
+                            const title = findCreateSessionUser.firstName;
+                            const body = `session started which one is created by ${findCreateSessionUser.firstName}`;
+
+                            const text = "join session";
+                            const sendBy = (findCreateSessionUser._id).toString();
+                            const registrationToken = findUser.fcm_token
+                            Notification.sendPushNotificationFCM(
+                                registrationToken,
+                                title,
+                                body,
+                                text,
+                                sendBy,
+                                true
+                            );
+
+                            const findInNotification = await notificationModel.findOne({
+                                userId: notification
+                            })
+
+                            if (findInNotification) {
+
+                                await notificationModel.updateOne({
+                                    userId: notification
+                                }, {
+                                    $push: {
+                                        notifications: {
+                                            notifications: `session started which one is created by ${findCreateSessionUser.firstName}`,
+                                            userId: findCreateSessionUser._id,
+                                            status: 9
+                                        }
+                                    }
+                                })
+
+                            } else {
+                                const savedata = notificationModel({
+                                    userId: notification,
+                                    notifications: {
+                                        notifications: `session started which one is created by ${findCreateSessionUser.firstName}`,
+                                        userId: findCreateSessionUser._id,
+                                        status: 9
+                                    }
+                                })
+                                await savedata.save();
+
+                            }
+                        }
+
+                        io.emit("sessionJoinSuccess", "session started");
+
+                    }
+                } else if (p1) {
+
                     const allRequestedEmails = [];
 
-                    const p1 = findIdInSession.participants[0].participants_1 == null ? "" : findIdInSession.participants[0].participants_1
+                    const sessionUser = findIdInSession.cretedSessionUser == null ? "" : findIdInSession.cretedSessionUser
                     const p2 = findIdInSession.participants[0].participants_2 == null ? "" : findIdInSession.participants[0].participants_2
                     const p3 = findIdInSession.participants[0].participants_3 == null ? "" : findIdInSession.participants[0].participants_3
 
-                    if (p1) {
-                        allRequestedEmails.push(findIdInSession.participants[0].participants_1)
+                    if (sessionUser) {
+                        allRequestedEmails.push(findIdInSession.cretedSessionUser)
                     }
                     if (p2) {
                         allRequestedEmails.push(findIdInSession.participants[0].participants_2)
@@ -752,31 +849,19 @@ function socket(io) {
                         allRequestedEmails.push(findIdInSession.participants[0].participants_3)
                     }
 
-                    console.log("allRequestedEmails", allRequestedEmails);
 
                     for (const notification of allRequestedEmails) {
-
-                        await sessionModel.updateOne({
-                            _id: arg.session_id
-                        },
-                            {
-                                $set: {
-                                    started: true
-                                }
-                            })
-
-
 
                         const findUser = await userModel.findOne({
                             _id: notification
                         })
 
                         const findCreateSessionUser = await userModel.findOne({
-                            _id: findIdInSession.cretedSessionUser
+                            _id: findIdInSession.participants[0].participants_1
                         })
 
                         const title = findCreateSessionUser.firstName;
-                        const body = `session started which one is created by ${findCreateSessionUser.firstName}`;
+                        const body = `session is joing by ${findCreateSessionUser.firstName}`;
 
                         const text = "join session";
                         const sendBy = (findCreateSessionUser._id).toString();
@@ -822,13 +907,164 @@ function socket(io) {
                         }
                     }
 
-                    io.emit("sessionJoinSuccess", "session started");
 
+                } else if (p2) {
+                    const allRequestedEmails = [];
+
+                    const sessionUser = findIdInSession.cretedSessionUser == null ? "" : findIdInSession.cretedSessionUser
+                    const p1 = findIdInSession.participants[0].participants_1 == null ? "" : findIdInSession.participants[0].participants_1
+                    const p3 = findIdInSession.participants[0].participants_3 == null ? "" : findIdInSession.participants[0].participants_3
+
+                    if (sessionUser) {
+                        allRequestedEmails.push(findIdInSession.cretedSessionUser)
+                    }
+                    if (p1) {
+                        allRequestedEmails.push(findIdInSession.participants[0].participants_1)
+                    }
+                    if (p3) {
+                        allRequestedEmails.push(findIdInSession.participants[0].participants_3)
+                    }
+
+
+                    for (const notification of allRequestedEmails) {
+
+                        const findUser = await userModel.findOne({
+                            _id: notification
+                        })
+
+                        const findCreateSessionUser = await userModel.findOne({
+                            _id: findIdInSession.participants[0].participants_2
+                        })
+
+                        const title = findCreateSessionUser.firstName;
+                        const body = `session is joing by ${findCreateSessionUser.firstName}`;
+
+                        const text = "join session";
+                        const sendBy = (findCreateSessionUser._id).toString();
+                        const registrationToken = findUser.fcm_token
+                        Notification.sendPushNotificationFCM(
+                            registrationToken,
+                            title,
+                            body,
+                            text,
+                            sendBy,
+                            true
+                        );
+
+                        const findInNotification = await notificationModel.findOne({
+                            userId: notification
+                        })
+
+                        if (findInNotification) {
+
+                            await notificationModel.updateOne({
+                                userId: notification
+                            }, {
+                                $push: {
+                                    notifications: {
+                                        notifications: `session started which one is created by ${findCreateSessionUser.firstName}`,
+                                        userId: findCreateSessionUser._id,
+                                        status: 9
+                                    }
+                                }
+                            })
+
+                        } else {
+                            const savedata = notificationModel({
+                                userId: notification,
+                                notifications: {
+                                    notifications: `session started which one is created by ${findCreateSessionUser.firstName}`,
+                                    userId: findCreateSessionUser._id,
+                                    status: 9
+                                }
+                            })
+                            await savedata.save();
+
+                        }
+                    }
+                } else if (p3) {
+                    const allRequestedEmails = [];
+
+                    const sessionUser = findIdInSession.cretedSessionUser == null ? "" : findIdInSession.cretedSessionUser
+                    const p2 = findIdInSession.participants[0].participants_2 == null ? "" : findIdInSession.participants[0].participants_2
+                    const p1 = findIdInSession.participants[0].participants_1 == null ? "" : findIdInSession.participants[0].participants_1
+
+                    if (sessionUser) {
+                        allRequestedEmails.push(findIdInSession.cretedSessionUser)
+                    }
+                    if (p2) {
+                        allRequestedEmails.push(findIdInSession.participants[0].participants_2)
+                    }
+                    if (p1) {
+                        allRequestedEmails.push(findIdInSession.participants[0].participants_1)
+                    }
+
+
+                    for (const notification of allRequestedEmails) {
+
+                        const findUser = await userModel.findOne({
+                            _id: notification
+                        })
+
+                        const findCreateSessionUser = await userModel.findOne({
+                            _id: findIdInSession.participants[0].participants_3
+                        })
+
+                        const title = findCreateSessionUser.firstName;
+                        const body = `session is joing by ${findCreateSessionUser.firstName}`;
+
+                        const text = "join session";
+                        const sendBy = (findCreateSessionUser._id).toString();
+                        const registrationToken = findUser.fcm_token
+                        Notification.sendPushNotificationFCM(
+                            registrationToken,
+                            title,
+                            body,
+                            text,
+                            sendBy,
+                            true
+                        );
+
+                        const findInNotification = await notificationModel.findOne({
+                            userId: notification
+                        })
+
+                        if (findInNotification) {
+
+                            await notificationModel.updateOne({
+                                userId: notification
+                            }, {
+                                $push: {
+                                    notifications: {
+                                        notifications: `session started which one is created by ${findCreateSessionUser.firstName}`,
+                                        userId: findCreateSessionUser._id,
+                                        status: 9
+                                    }
+                                }
+                            })
+
+                        } else {
+                            const savedata = notificationModel({
+                                userId: notification,
+                                notifications: {
+                                    notifications: `session started which one is created by ${findCreateSessionUser.firstName}`,
+                                    userId: findCreateSessionUser._id,
+                                    status: 9
+                                }
+                            })
+                            await savedata.save();
+
+                        }
+                    }
                 }
+
+
             } else {
                 io.emit("sessionJoinSuccess", "seesion not found");
             }
         })
+
+
 
         socket.on("createGroupRoom", async (arg) => {
 
@@ -2330,80 +2566,6 @@ function socket(io) {
 
                 } else if (p1) {
 
-                    const allRequestedEmails = [];
-
-                    const sessionUser = findSession.cretedSessionUser == null ? "" : findSession.cretedSessionUser
-                    const p2 = findSession.participants[0].participants_2 == null ? "" : findSession.participants[0].participants_2
-                    const p3 = findSession.participants[0].participants_3 == null ? "" : findSession.participants[0].participants_3
-
-                    if (sessionUser) {
-                        allRequestedEmails.push(findSession.cretedSessionUser)
-                    }
-                    if (p2) {
-                        allRequestedEmails.push(findSession.participants[0].participants_2)
-                    }
-                    if (p3) {
-                        allRequestedEmails.push(findSession.participants[0].participants_3)
-                    }
-
-                    for (const notification of allRequestedEmails) {
-
-                        const findUser = await userModel.findOne({
-                            _id: notification
-                        })
-
-                        const findCreateSessionUser = await userModel.findOne({
-                            _id: findSession.participants[0].participants_1
-                        })
-
-                        const title = findCreateSessionUser.firstName;
-                        const body = `session end by ${findCreateSessionUser.firstName}`;
-
-                        const text = "join session";
-                        const sendBy = (findCreateSessionUser._id).toString();
-                        const registrationToken = findUser.fcm_token
-                        Notification.sendPushNotificationFCM(
-                            registrationToken,
-                            title,
-                            body,
-                            text,
-                            sendBy,
-                            true
-                        );
-
-                        const findInNotification = await notificationModel.findOne({
-                            userId: notification
-                        })
-
-                        if (findInNotification) {
-
-                            await notificationModel.updateOne({
-                                userId: notification
-                            }, {
-                                $push: {
-                                    notifications: {
-                                        notifications: `session end by ${findCreateSessionUser.firstName}`,
-                                        userId: findCreateSessionUser._id,
-                                        status: 10
-                                    }
-                                }
-                            })
-
-                        } else {
-                            const savedata = notificationModel({
-                                userId: notification,
-                                notifications: {
-                                    notifications: `session end by ${findCreateSessionUser.firstName}`,
-                                    userId: findCreateSessionUser._id,
-                                    status: 10
-                                }
-                            })
-                            await savedata.save();
-
-                        }
-                    }
-
-
                     const res = {
                         message: "Session end Successfully",
                         status: 0
@@ -2413,79 +2575,6 @@ function socket(io) {
 
                 } else if (p2) {
 
-                    const allRequestedEmails = [];
-
-                    const sessionUser = findSession.cretedSessionUser == null ? "" : findSession.cretedSessionUser
-                    const p1 = findSession.participants[0].participants_2 == null ? "" : findSession.participants[0].participants_2
-                    const p3 = findSession.participants[0].participants_3 == null ? "" : findSession.participants[0].participants_3
-
-                    if (sessionUser) {
-                        allRequestedEmails.push(findSession.cretedSessionUser)
-                    }
-                    if (p1) {
-                        allRequestedEmails.push(findSession.participants[0].participants_1)
-                    }
-                    if (p3) {
-                        allRequestedEmails.push(findSession.participants[0].participants_3)
-                    }
-
-                    for (const notification of allRequestedEmails) {
-
-                        const findUser = await userModel.findOne({
-                            _id: notification
-                        })
-
-                        const findCreateSessionUser = await userModel.findOne({
-                            _id: findSession.participants[0].participants_2
-                        })
-
-                        const title = findCreateSessionUser.firstName;
-                        const body = `session end by ${findCreateSessionUser.firstName}`;
-
-                        const text = "join session";
-                        const sendBy = (findCreateSessionUser._id).toString();
-                        const registrationToken = findUser.fcm_token
-                        Notification.sendPushNotificationFCM(
-                            registrationToken,
-                            title,
-                            body,
-                            text,
-                            sendBy,
-                            true
-                        );
-
-                        const findInNotification = await notificationModel.findOne({
-                            userId: notification
-                        })
-
-                        if (findInNotification) {
-
-                            await notificationModel.updateOne({
-                                userId: notification
-                            }, {
-                                $push: {
-                                    notifications: {
-                                        notifications: `session end by ${findCreateSessionUser.firstName}`,
-                                        userId: findCreateSessionUser._id,
-                                        status: 10
-                                    }
-                                }
-                            })
-
-                        } else {
-                            const savedata = notificationModel({
-                                userId: notification,
-                                notifications: {
-                                    notifications: `session end by ${findCreateSessionUser.firstName}`,
-                                    userId: findCreateSessionUser._id,
-                                    status: 10
-                                }
-                            })
-                            await savedata.save();
-
-                        }
-                    }
-
                     const res = {
                         message: "Session end Successfully",
                         status: 0
@@ -2493,79 +2582,6 @@ function socket(io) {
 
                     io.emit("endSessionSuccess", res)
                 } else if (p3) {
-
-                    const allRequestedEmails = [];
-
-                    const sessionUser = findSession.cretedSessionUser == null ? "" : findSession.cretedSessionUser
-                    const p2 = findSession.participants[0].participants_2 == null ? "" : findSession.participants[0].participants_2
-                    const p1 = findSession.participants[0].participants_3 == null ? "" : findSession.participants[0].participants_3
-
-                    if (sessionUser) {
-                        allRequestedEmails.push(findSession.cretedSessionUser)
-                    }
-                    if (p2) {
-                        allRequestedEmails.push(findSession.participants[0].participants_2)
-                    }
-                    if (p1) {
-                        allRequestedEmails.push(findSession.participants[0].participants_1)
-                    }
-
-                    for (const notification of allRequestedEmails) {
-
-                        const findUser = await userModel.findOne({
-                            _id: notification
-                        })
-
-                        const findCreateSessionUser = await userModel.findOne({
-                            _id: findSession.participants[0].participants_3
-                        })
-
-                        const title = findCreateSessionUser.firstName;
-                        const body = `session end by ${findCreateSessionUser.firstName}`;
-
-                        const text = "join session";
-                        const sendBy = (findCreateSessionUser._id).toString();
-                        const registrationToken = findUser.fcm_token
-                        Notification.sendPushNotificationFCM(
-                            registrationToken,
-                            title,
-                            body,
-                            text,
-                            sendBy,
-                            true
-                        );
-
-                        const findInNotification = await notificationModel.findOne({
-                            userId: notification
-                        })
-
-                        if (findInNotification) {
-
-                            await notificationModel.updateOne({
-                                userId: notification
-                            }, {
-                                $push: {
-                                    notifications: {
-                                        notifications: `session end by ${findCreateSessionUser.firstName}`,
-                                        userId: findCreateSessionUser._id,
-                                        status: 10
-                                    }
-                                }
-                            })
-
-                        } else {
-                            const savedata = notificationModel({
-                                userId: notification,
-                                notifications: {
-                                    notifications: `session end by ${findCreateSessionUser.firstName}`,
-                                    userId: findCreateSessionUser._id,
-                                    status: 10
-                                }
-                            })
-                            await savedata.save();
-
-                        }
-                    }
 
                     const res = {
                         message: "Session end Successfully",
