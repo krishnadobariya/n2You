@@ -2321,8 +2321,12 @@ function socket(io) {
                     }
 
 
+                    const res = {
+                        message: "Session end Successfully",
+                        status: 0
+                    }
 
-                    io.emit("endSessionSuccess", "Session end Successfully")
+                    io.emit("endSessionSuccess", res)
 
                 } else if (p1) {
 
@@ -2399,7 +2403,14 @@ function socket(io) {
                         }
                     }
 
-                    io.emit("endSessionSuccess", "Session end Successfully")
+
+                    const res = {
+                        message: "Session end Successfully",
+                        status: 0
+                    }
+
+                    io.emit("endSessionSuccess", res)
+
                 } else if (p2) {
 
                     const allRequestedEmails = [];
@@ -2475,7 +2486,12 @@ function socket(io) {
                         }
                     }
 
-                    io.emit("endSessionSuccess", "Session end Successfully")
+                    const res = {
+                        message: "Session end Successfully",
+                        status: 0
+                    }
+
+                    io.emit("endSessionSuccess", res)
                 } else if (p3) {
 
                     const allRequestedEmails = [];
@@ -2551,7 +2567,12 @@ function socket(io) {
                         }
                     }
 
-                    io.emit("endSessionSuccess", "Session end Successfully")
+                    const res = {
+                        message: "Session end Successfully",
+                        status: 0
+                    }
+
+                    io.emit("endSessionSuccess", res)
 
                 } else {
                     io.emit("endSessionSuccess", "you not end session, you not have any access for ending session.")
