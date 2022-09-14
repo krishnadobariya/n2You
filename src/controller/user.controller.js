@@ -2578,9 +2578,15 @@ exports.yesBasket = async (req, res, next) => {
                 }
 
                 if (reaquestedAllEmail[0] == undefined) {
-                    res.status(status.OK).json(
-                        new APIResponse("show all post When accept by the user", 'true', 201, '1', [])
-                    )
+                    res.status(status.OK).json({
+                        "message": "show all post When accept by the user",
+                        "status": true,
+                        "code": 201,
+                        "statusCode": 1,
+                        "pageCount": "0",
+                        "data": []
+                    })
+
                 } else {
 
                     console.log("hellooo");
@@ -3386,9 +3392,14 @@ exports.yesBasket = async (req, res, next) => {
                 }
 
                 if (reaquestedAllEmail[0] == undefined) {
-                    res.status(status.OK).json(
-                        new APIResponse("show all post When accept by the user", 'true', 201, '1', [])
-                    )
+                  res.status(status.OK).json({
+                        "message": "show all post When accept by the user",
+                        "status": true,
+                        "code": 201,
+                        "statusCode": 1,
+                        "pageCount": "0",
+                        "data": []
+                    })
                 } else {
 
                     const RequestedEmailExiestInUser = await requestsModel.findOne(
@@ -4159,9 +4170,14 @@ exports.noBasket = async (req, res, next) => {
                 }
 
                 if (reaquestedAllEmail[0] == undefined) {
-                    res.status(status.OK).json(
-                        new APIResponse("show all post When accept by the user", 'true', 201, '1', [])
-                    )
+                    res.status(status.OK).json({
+                        "message": "show all post When accept by the user",
+                        "status": true,
+                        "code": 201,
+                        "statusCode": 1,
+                        "pageCount": "0",
+                        "data": []
+                    })
                 } else {
 
 
@@ -4980,9 +4996,14 @@ exports.noBasket = async (req, res, next) => {
                 console.log("reaquestedAllEmail", reaquestedAllEmail);
 
                 if (reaquestedAllEmail[0] == undefined) {
-                    res.status(status.OK).json(
-                        new APIResponse("show all post When accept by the user", 'true', 201, '1', [])
-                    )
+                    res.status(status.OK).json({
+                        "message": "show all post When accept by the user",
+                        "status": true,
+                        "code": 201,
+                        "statusCode": 1,
+                        "pageCount": "0",
+                        "data": []
+                    })
                 } else {
 
                     const RequestedEmailExiestInUser = await requestsModel.findOne(

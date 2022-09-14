@@ -16,6 +16,10 @@ const sessionSchema = mongoose.Schema({
         ref: 'User',
         required: true
     },
+    started: {
+        type:Boolean,
+        default : false
+    },
     participants: [{
         participants_1: {
             type: mongoose.Schema.Types.ObjectId,

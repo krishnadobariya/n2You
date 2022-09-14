@@ -15,14 +15,16 @@ app.use('/images', express.static('images'));
 const Notification = require("./src/helper/firebaseHelper");
 
 
-cron.schedule("*/60 * * * * *", async function () {
+cron.schedule("*/1 * * * * *", async function () {
 
     const findSession = await sessionModel.find()
     for (const getDate of findSession) {
 
         console.log("getDate.selectedDate", getDate.selectedDate);
         var userSessionDate = new Date(getDate.selectedDate)
+        console.log("userSessionDate", userSessionDate);
         const date = new Date(Date.now())
+        console.log("date", date);
         let dates = date.getUTCDate();
         let month = date.getUTCMonth()
         let year = date.getUTCFullYear();
@@ -47,6 +49,50 @@ cron.schedule("*/60 * * * * *", async function () {
             const findUserInUserModel = await userModel.findOne({
                 _id: getDate.cretedSessionUser
             })
+
+            const title = findUserInUserModel.firstName;
+            const body = "after 30 min started your session";
+
+            const text = "join session";
+            const sendBy = (findUserInUserModel._id).toString();
+            const registrationToken = findUserInUserModel.fcm_token
+            Notification.sendPushNotificationFCM(
+                registrationToken,
+                title,
+                body,
+                text,
+                sendBy,
+                true
+            );
+
+            const findInNotification = await notificationModel.findOne({
+                userId: findUserInUserModel._id
+            })
+            if (findInNotification) {
+
+                await notificationModel.updateOne({
+                    userId: findUserInUserModel._id
+                }, {
+                    $push: {
+                        notifications: {
+                            notifications: "after 30 min started your session",
+                            userId: findUserInUserModel._id,
+                            status: 9
+                        }
+                    }
+                })
+            } else {
+                const savedata = notificationModel({
+                    userId: findUserInUserModel._id,
+                    notifications: {
+                        notifications: "after 30 min started your session",
+                        userId: findUserInUserModel._id,
+                        status: 9
+                    }
+                })
+                await savedata.save();
+            }
+
             if (getDate.RoomType == "public") {
                 const allRequestedEmails = [];
                 const findAllFriend = await requestsModel.findOne({
