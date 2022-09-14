@@ -823,7 +823,7 @@ function socket(io) {
                     }
 
                     io.emit("sessionJoinSuccess", "session started");
-                    
+
                 }
             } else {
                 io.emit("sessionJoinSuccess", "seesion not found");
@@ -2226,14 +2226,14 @@ function socket(io) {
         socket.on('endSession', async (arg) => {
 
             const findSession = await sessionModel.findOne({
-                _id: req.params.session_id
+                _id: arg.session_id
             })
 
             if (findSession) {
 
                 if ((findSession.cretedSessionUser).toString() == (arg.create_session_user).toString()) {
                     await sessionModel.updateOne({
-                        _id: req.params.session_id
+                        _id: arg.session_id
                     }, {
                         $set: {
                             sessionEndOrNot: true
