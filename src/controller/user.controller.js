@@ -372,7 +372,6 @@ exports.userUpdate = async (req, res, next) => {
             })
         }
 
-
         const urls = []
         const files = req.files
 
@@ -380,16 +379,35 @@ exports.userUpdate = async (req, res, next) => {
             const findUser = await userModel.findOne({
                 _id: req.params.user_id
             })
+
             urls.push(...findUser.photo)
+
         } else {
             for (const file of files) {
-                console.log("file", file);
+
+                const findUser = await userModel.findOne({
+                    _id: req.params.user_id
+                })
+
+                urls.push(...findUser.photo)
+
+                console.log(urls);
+
+                const url = req.params.images
+
+                for (const data of url) {
+                    const indexOfObject = urls.findIndex(object => {
+                        return object.res == data;
+                    });
+                    urls.splice(indexOfObject, 1);
+                }
+
+                console.log("urls", urls);
                 const { path } = file;
                 const newPath = await cloudinaryImageUploadMethod(path)
                 urls.push(newPath)
             }
         }
-
 
         if (userFind == null) {
             res.status(status.NOT_FOUND).json(
@@ -3392,7 +3410,7 @@ exports.yesBasket = async (req, res, next) => {
                 }
 
                 if (reaquestedAllEmail[0] == undefined) {
-                  res.status(status.OK).json({
+                    res.status(status.OK).json({
                         "message": "show all post When accept by the user",
                         "status": true,
                         "code": 201,
