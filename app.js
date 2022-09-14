@@ -15,16 +15,22 @@ app.use('/images', express.static('images'));
 const Notification = require("./src/helper/firebaseHelper");
 
 
-cron.schedule("*/60 * * * * *", async function () {
+cron.schedule("*/1 * * * * *", async function () {
 
     const findSession = await sessionModel.find()
     for (const getDate of findSession) {
 
         console.log("getDate.selectedDate", getDate.selectedDate);
         var userSessionDate = new Date(getDate.selectedDate)
-        console.log("userSessionDate", userSessionDate);
+        let userSessionDates = date.getUTCDate();
+        let userSessionmonth = date.getUTCMonth()
+        let userSessionyear = date.getUTCFullYear();
+        let userSessionhour = date.getUTCHours();
+        let userSessionminute = date.getUTCMinutes();
+        let userSessionsecond = date.getUTCSeconds();
+        userSessionDate = new Date(`${userSessionyear}-${userSessionmonth + 1}-${userSessionDates} ${userSessionhour}:${userSessionminute}:${userSessionsecond}`)
+
         const date = new Date(Date.now())
-        console.log("date", date);
         let dates = date.getDate();
         let month = date.getMonth()
         let year = date.getFullYear();
@@ -33,7 +39,6 @@ cron.schedule("*/60 * * * * *", async function () {
         let second = date.getSeconds();
         now = new Date(`${year}-${month + 1}-${dates} ${hour}:${minute}:${second}`)
 
-        console.log("now", now);
         var sec_num = (userSessionDate - now) / 1000;
         var days = Math.floor(sec_num / (3600 * 24));
         var hours = Math.floor((sec_num - (days * (3600 * 24))) / 3600);
