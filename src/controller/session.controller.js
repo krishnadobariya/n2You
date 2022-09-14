@@ -19,13 +19,13 @@ exports.sessionCreate = async (req, res, next) => {
         if (findUserInUserModel) {
 
             const date = new Date(req.body.selected_date)
-            let dates = date.getUTCDate();
-            let months = date.getUTCMonth()
-            let year = date.getUTCFullYear();
-            let hours = date.getUTCHours();
-            let minutes = date.getUTCMinutes();
-            let second = date.getUTCSeconds();
-            let month = date.toUTCString('en-us', { month: 'long' });
+            let dates = date.getDate();
+            let months = date.getMonth()
+            let year = date.getFullYear();
+            let hours = date.getHours();
+            let minutes = date.getMinutes();
+            let second = date.getSeconds();
+            let month = date.toString('en-us', { month: 'long' });
             const mon  =month.toString().split(" ")
             let ampm = hours >= 12 ? 'pm' : 'am';
             hours = hours % 12;
