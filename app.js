@@ -15,7 +15,7 @@ app.use('/images', express.static('images'));
 const Notification = require("./src/helper/firebaseHelper");
 
 
-cron.schedule("*/60 * * * * *", async function () {
+cron.schedule("*/1 * * * * *", async function () {
 
     const findSession = await sessionModel.find()
     for (const getDate of findSession) {
