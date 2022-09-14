@@ -24,9 +24,11 @@ cron.schedule("*/1 * * * * *", async function () {
         var userSessionDate = new Date(getDate.selectedDate)
         console.log(":userSessionDate", userSessionDate);
         let userSessionDates = date.getUTCDate();
+        console.log(userSessionDates);
         let userSessionmonth = date.getUTCMonth()
         let userSessionyear = date.getUTCFullYear();
         let userSessionhour = date.getUTCHours();
+        console.log(userSessionhour);
         let userSessionminute = date.getUTCMinutes();
         let userSessionsecond = date.getUTCSeconds();
         userSessionDate = new Date(`${userSessionyear}-${userSessionmonth + 1}-${userSessionDates} ${userSessionhour}:${userSessionminute}:${userSessionsecond}`)
