@@ -42,6 +42,7 @@ cron.schedule("*/1 * * * * *", async function () {
         let second = date.getSeconds();
         now = new Date(`${year}-${month + 1}-${dates} ${hour}:${minute}:${second}`)
 
+        console.log("now", now);
         var sec_num = (finalUserSessionDate - now) / 1000;
         var days = Math.floor(sec_num / (3600 * 24));
         var hours = Math.floor((sec_num - (days * (3600 * 24))) / 3600);
