@@ -23,15 +23,14 @@ cron.schedule("*/1 * * * * *", async function () {
         console.log("getDate.selectedDate", getDate.selectedDate);
         var userSessionDate = new Date(getDate.selectedDate)
         console.log(":userSessionDate", userSessionDate);
-        let userSessionDates = userSessionDate.getUTCDate();
-        console.log(userSessionDates);
-        let userSessionmonth = userSessionDate.getUTCMonth()
-        let userSessionyear = userSessionDate.getUTCFullYear();
-        let userSessionhour = userSessionDate.getUTCHours();
-        console.log(userSessionhour);
-        let userSessionminute = userSessionDate.getUTCMinutes();
-        let userSessionsecond = userSessionDate.getUTCSeconds();
-        const finalUserSessionDate = new Date(`${userSessionyear}-${userSessionmonth + 1}-${userSessionDates} ${userSessionhour + 6}:${userSessionminute}:${userSessionsecond}`)
+
+        let userSessionDates = userSessionDate.getDate();
+        let userSessionmonth = userSessionDate.getMonth()
+        let userSessionyear = userSessionDate.getFullYear();
+        let userSessionhour = userSessionDate.getHours();
+        let userSessionminute = userSessionDate.getMinutes();
+        let userSessionsecond = userSessionDate.getSeconds();
+        const finalUserSessionDate = new Date(`${userSessionyear}-${userSessionmonth + 1}-${userSessionDates} ${userSessionhour}:${userSessionminute}:${userSessionsecond}`)
 
         console.log("finalUserSessionDate", finalUserSessionDate);
         const date = new Date(Date.now())
