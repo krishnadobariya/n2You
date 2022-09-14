@@ -853,8 +853,11 @@ exports.mySession = async (req, res, next) => {
             })
 
 
-            if (findMySession.sessionEndOrNot == "false") {
+            if (findMySession.sessionEndOrNot == false) {
+                console.log("i am false");
                 if (findUserDeatil && findParticipantsiUserDeatil1 && findParticipantsiUserDeatil2 && findParticipantsiUserDeatil3) {
+
+                    console.log(((days < 0 && hours >= 0 && minutes >= 0) || (days == 0 && hours == 0 && minutes == 0)));
                     const response = {
                         _id: findMySession._id,
                         selectedTime: findMySession.selectedTime,
@@ -864,7 +867,7 @@ exports.mySession = async (req, res, next) => {
                         cretedSessionUserId: findUserDeatil ? findUserDeatil._id : "",
                         cretedSessionUserphoto: findUserDeatil.photo ? findUserDeatil.photo[0] ? findUserDeatil.photo[0].res : "" : "",
                         cretedSessionUsername: findUserDeatil ? findUserDeatil.firstName : "",
-                        isStart: ((days < 0 && hours >= 0 && minutes >= 0) || (days == 0 && hours == 0 && minutes == 0)) ? true : false,
+                        isStart: ((days < 0 && hours >= 0 && minutes >= 0) || (days == 0 && hours == 0 && minutes == 0)) == true ? true : false,
                         participants: [
                             {
                                 _id: findParticipantsiUserDeatil1 ? findParticipantsiUserDeatil1._id : "",
@@ -886,6 +889,8 @@ exports.mySession = async (req, res, next) => {
 
                     mySession.push(response)
                 } else if (findUserDeatil && findParticipantsiUserDeatil1 == null && findParticipantsiUserDeatil2 == null && findParticipantsiUserDeatil3 == null) {
+
+                    console.log(((days < 0 && hours >= 0 && minutes >= 0) || (days == 0 && hours == 0 && minutes == 0)));
                     const response = {
                         _id: findMySession._id,
                         selectedTime: findMySession.selectedTime,
@@ -895,7 +900,7 @@ exports.mySession = async (req, res, next) => {
                         cretedSessionUserId: findUserDeatil ? findUserDeatil._id : "",
                         cretedSessionUserphoto: findUserDeatil.photo ? findUserDeatil.photo[0] ? findUserDeatil.photo[0].res : "" : "",
                         cretedSessionUsername: findUserDeatil ? findUserDeatil.firstName : "",
-                        isStart: ((days < 0 && hours >= 0 && minutes >= 0) || (days == 0 && hours == 0 && minutes == 0)) ? true : false,
+                        isStart: ((days < 0 && hours >= 0 && minutes >= 0) || (days == 0 && hours == 0 && minutes == 0)) == true ? true : false,
                         participants: []
 
                     }
@@ -911,7 +916,7 @@ exports.mySession = async (req, res, next) => {
                         cretedSessionUserId: findUserDeatil ? findUserDeatil._id : "",
                         cretedSessionUserphoto: findUserDeatil.photo ? findUserDeatil.photo[0] ? findUserDeatil.photo[0].res : "" : "",
                         cretedSessionUsername: findUserDeatil ? findUserDeatil.firstName : "",
-                        isStart: ((days < 0 && hours >= 0 && minutes >= 0) || (days == 0 && hours == 0 && minutes == 0)) ? true : false,
+                        isStart: ((days < 0 && hours >= 0 && minutes >= 0) || (days == 0 && hours == 0 && minutes == 0)) == true ? true : false,
                         participants: [
                             {
                                 _id: findParticipantsiUserDeatil2 ? findParticipantsiUserDeatil2._id : "",
@@ -938,7 +943,7 @@ exports.mySession = async (req, res, next) => {
                         cretedSessionUserId: findUserDeatil ? findUserDeatil._id : "",
                         cretedSessionUserphoto: findUserDeatil.photo ? findUserDeatil.photo[0] ? findUserDeatil.photo[0].res : "" : "",
                         cretedSessionUsername: findUserDeatil ? findUserDeatil.firstName : "",
-                        isStart: ((days < 0 && hours >= 0 && minutes >= 0) || (days == 0 && hours == 0 && minutes == 0)) ? true : false,
+                        isStart: ((days < 0 && hours >= 0 && minutes >= 0) || (days == 0 && hours == 0 && minutes == 0)) == true ? true : false,
                         participants: [
                             {
                                 _id: findParticipantsiUserDeatil1 ? findParticipantsiUserDeatil1._id : "",
@@ -963,7 +968,7 @@ exports.mySession = async (req, res, next) => {
                         cretedSessionUserId: findUserDeatil ? findUserDeatil._id : "",
                         cretedSessionUserphoto: findUserDeatil.photo ? findUserDeatil.photo[0] ? findUserDeatil.photo[0].res : "" : "",
                         cretedSessionUsername: findUserDeatil ? findUserDeatil.firstName : "",
-                        isStart: ((days < 0 && hours >= 0 && minutes >= 0) || (days == 0 && hours == 0 && minutes == 0)) ? true : false,
+                        isStart: ((days < 0 && hours >= 0 && minutes >= 0) || (days == 0 && hours == 0 && minutes == 0)) == true ? true : false,
                         participants: [
                             {
                                 _id: findParticipantsiUserDeatil1 ? findParticipantsiUserDeatil1._id : "",
@@ -980,7 +985,8 @@ exports.mySession = async (req, res, next) => {
 
                     mySession.push(response)
                 }
-            } else {
+            } else if (findMySession.sessionEndOrNot == true) {
+                console.log("i am true");
                 if (findUserDeatil && findParticipantsiUserDeatil1 && findParticipantsiUserDeatil2 && findParticipantsiUserDeatil3) {
                     const response = {
                         _id: findMySession._id,
@@ -1166,6 +1172,10 @@ exports.endSession = async (req, res, next) => {
                     sessionEndOrNot: true
                 }
             })
+
+            res.status(status.OK).json(
+                new APIResponse("end session success", "true", 200, "1")
+            )
 
         } else {
             res.status(status.NOT_FOUND).json(
