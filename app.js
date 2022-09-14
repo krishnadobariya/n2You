@@ -29,10 +29,10 @@ cron.schedule("*/1 * * * * *", async function () {
         let userSessionmonth = userSessionDate.getUTCMonth();
         let userSessionyear = userSessionDate.getUTCFullYear();
         let userSessionhour = userSessionDate.getUTCHours();
-        let userSessionminute = userSessionDate.getUTCMinutes() + 30 * 60 * 1000;
+        let userSessionminute = userSessionDate.getUTCMinutes();
         console.log("userSessionminute", userSessionminute);
         let userSessionsecond = userSessionDate.getUTCSeconds();
-        const finalUserSessionDate = new Date(`${userSessionyear}-${userSessionmonth + 1}-${userSessionDates} ${userSessionhour - 6}:${userSessionminute}:${userSessionsecond}`)
+        const finalUserSessionDate = new Date(`${userSessionyear}-${userSessionmonth + 1}-${userSessionDates} ${userSessionhour - 5}:${userSessionminute - 30}:${userSessionsecond}`)
 
         console.log("finalUserSessionDate", finalUserSessionDate);
         const date = new Date(new Date().toUTCString())
