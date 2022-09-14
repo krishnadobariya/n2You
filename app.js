@@ -20,11 +20,8 @@ cron.schedule("*/60 * * * * *", async function () {
     const findSession = await sessionModel.find()
     for (const getDate of findSession) {
 
-        console.log("getDate.selectedDate", getDate.selectedDate);
+        
         var userSessionDate = new Date(new Date(getDate.selectedDate).toUTCString())
-        console.log(":userSessionDate", userSessionDate);
-
-        console.log("userSessionDate", userSessionDate.getUTCHours());
         let userSessionDates = userSessionDate.getUTCDate();
         let userSessionmonth = userSessionDate.getUTCMonth();
         let userSessionyear = userSessionDate.getUTCFullYear();

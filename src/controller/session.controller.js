@@ -802,24 +802,38 @@ exports.mySession = async (req, res, next) => {
         for (const findMySession of findUserInsession) {
 
 
-            var userSessionDate = new Date(findMySession.selectedDate)
+                
+        var userSessionDate = new Date(new Date(findMySession.selectedDate).toUTCString())
+        let userSessionDates = userSessionDate.getUTCDate();
+        let userSessionmonth = userSessionDate.getUTCMonth();
+        let userSessionyear = userSessionDate.getUTCFullYear();
+        let userSessionhour = userSessionDate.getUTCHours();
+        let userSessionminute = userSessionDate.getUTCMinutes();
+        const finalMinute = userSessionminute >= 30 ? userSessionminute - 30 : userSessionminute + 30;
+        const finalHours = userSessionminute >= 30 ? userSessionhour - 5 : userSessionhour - 6;
+        let userSessionsecond = userSessionDate.getUTCSeconds();
+        const finalUserSessionDate = new Date(`${userSessionyear}-${userSessionmonth + 1}-${userSessionDates} ${finalHours}:${finalMinute}:${userSessionsecond}`)
 
-            const date = new Date(Date.now())
-            let dates = date.getUTCDate();
-            let month = date.getUTCMonth()
-            let year = date.getUTCFullYear();
-            let hour = date.getUTCHours();
-            let minute = date.getUTCMinutes();
-            let second = date.getUTCSeconds();
+        const date = new Date(new Date().toUTCString())
+        let dates = date.getUTCDate();
+        let month = date.getUTCMonth()
+        let year = date.getUTCFullYear();
+        let hour = date.getUTCHours();
+        let minute = date.getUTCMinutes();
+        let second = date.getUTCSeconds();
+        now = new Date(`${year}-${month + 1}-${dates} ${hour}:${minute}:${second}`)
 
-            now = new Date(`${year}-${month + 1}-${dates} ${hour}:${minute}:${second}`)
+        console.log("now", now);
+        var sec_num = (finalUserSessionDate - now) / 1000;
+        var days = Math.floor(sec_num / (3600 * 24));
+        var hours = Math.floor((sec_num - (days * (3600 * 24))) / 3600);
+        var minutes = Math.floor((sec_num - (days * (3600 * 24)) - (hours * 3600)) / 60);
 
-            var sec_num = (userSessionDate - now) / 1000;
-            var days = Math.floor(sec_num / (3600 * 24));
-            var hours = Math.floor((sec_num - (days * (3600 * 24))) / 3600);
-            var minutes = Math.floor((sec_num - (days * (3600 * 24)) - (hours * 3600)) / 60);
 
-
+        console.log("hours", hours);
+        console.log("days", days);
+        console.log("minutes", minutes);
+      
             const findUserDeatil = await userModel.findOne({
                 _id: findMySession.cretedSessionUser,
                 polyDating: 0

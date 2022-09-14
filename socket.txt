@@ -195,3 +195,17 @@ acceptVideoCall
 }
 
 acceptVideoCallReceive
+
+======================================================
+
+==>joinSession
+
+======================================================
+
+joinSession
+
+{
+    "session_id":""
+}
+
+sessionJoinSuccess
