@@ -733,6 +733,8 @@ function socket(io) {
                             await savedata.save();
                         }
                     }
+
+                    io.emit("sessionJoinSuccess", "session started");
                 } else {
                     const allRequestedEmails = [];
 
@@ -819,11 +821,10 @@ function socket(io) {
 
                         }
                     }
+
+                    io.emit("sessionJoinSuccess", "session started");
+                    
                 }
-
-                io.emit("sessionJoinSuccess", "session started");
-
-
             } else {
                 io.emit("sessionJoinSuccess", "seesion not found");
             }
