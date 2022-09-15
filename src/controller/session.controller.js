@@ -49,7 +49,7 @@ exports.sessionCreate = async (req, res, next) => {
 
             const saveData = await createSession.save();
 
-            if (req.body.room_type == "public") {
+            if (req.body.room_type == "Public") {
 
                 const allRequestedEmails = [];
                 const findAllFriend = await requestsModel.findOne({
@@ -287,7 +287,7 @@ exports.publicSession = async (req, res, next) => {
     try {
 
         const findPublicSession = await sessionModel.find({
-            RoomType: "public"
+            RoomType: "Public"
         })
 
         if (findPublicSession[0] == null) {

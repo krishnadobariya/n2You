@@ -102,7 +102,7 @@ cron.schedule("*/60 * * * * *", async function () {
                 await savedata.save();
             }
 
-            if (getDate.RoomType == "public") {
+            if (getDate.RoomType == "Public") {
                 const allRequestedEmails = [];
                 const findAllFriend = await requestsModel.findOne({
                     userId: getDate.cretedSessionUser

@@ -594,7 +594,7 @@ function socket(io) {
             if (findIdInSession) {
 
                 if ((findIdInSession.cretedSessionUser).toString() == (arg.create_session_user).toString()) {
-                    if (findIdInSession.roomType == "public") {
+                    if (findIdInSession.roomType == "Public") {
 
                         const allRequestedEmails = [];
                         const findAllFriend = await requestModel.findOne({
@@ -2608,4 +2608,3 @@ function socket(io) {
 }
 
 module.exports = socket
-
