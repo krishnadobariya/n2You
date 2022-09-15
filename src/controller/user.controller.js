@@ -392,15 +392,17 @@ exports.userUpdate = async (req, res, next) => {
             for (const file of files) {
 
                 const url = req.body.images
-                console.log("remove urls", url[0]);
 
                 if (url[0] == "u") {
-                    
+
                     const { path } = file;
                     const newPath = await cloudinaryImageUploadMethod(path)
                     urls.push(newPath)
 
                 } else {
+
+                    console.log("aleardy add", urls);
+                    console.log("remove url", url);
 
                     for (const data of url) {
 
