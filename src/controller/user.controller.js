@@ -396,11 +396,16 @@ exports.userUpdate = async (req, res, next) => {
                 console.log("remove urls", url[0]);
 
                 if (url[0] == "u") {
+                    const findUser = await userModel.findOne({
+                        _id: req.params.user_id
+                    })
+
+                    urls.push(...findUser.photo)
 
                     const { path } = file;
                     const newPath = await cloudinaryImageUploadMethod(path)
-                    console.log("newPath", newPath);
-                    console.log("final url is", urls);
+                    urls.push(newPath)
+
                 } else {
 
                     for (const data of url) {
@@ -414,7 +419,6 @@ exports.userUpdate = async (req, res, next) => {
                     console.log("after remove", urls);
                     const { path } = file;
                     const newPath = await cloudinaryImageUploadMethod(path)
-                    console.log(newPath);
                     urls.push(newPath)
 
                     console.log("final url is", urls);
