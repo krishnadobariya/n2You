@@ -395,7 +395,15 @@ exports.userUpdate = async (req, res, next) => {
                 const url = req.body.images
                 console.log("remove urls", url);
 
-                if(url[0] == undefined){
+                if (url[0] == undefined) {
+                    
+                    const { path } = file;
+                    const newPath = await cloudinaryImageUploadMethod(path)
+                    urls.push(newPath)
+
+                    console.log("final url is", urls);
+                } else {
+
                     for (const data of url) {
 
                         const indexOfObject = urls.findIndex(object => {
@@ -403,22 +411,17 @@ exports.userUpdate = async (req, res, next) => {
                         });
                         urls.splice(indexOfObject, 1);
                     }
-    
+
                     console.log("after remove", urls);
                     const { path } = file;
                     const newPath = await cloudinaryImageUploadMethod(path)
                     urls.push(newPath)
-    
+
                     console.log("final url is", urls);
-                }else{
-                   
-                    const { path } = file;
-                    const newPath = await cloudinaryImageUploadMethod(path)
-                    urls.push(newPath)
-    
-                    console.log("final url is", urls);
+
+
                 }
-              
+
             }
         }
 
