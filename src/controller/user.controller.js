@@ -385,6 +385,13 @@ exports.userUpdate = async (req, res, next) => {
 
         } else {
 
+
+            const findUser = await userModel.findOne({
+                _id: req.params.user_id
+            })
+
+            urls.push(...findUser.photo)
+
             const files = req.files
             console.log("files", files);
             for (const file of files) {
