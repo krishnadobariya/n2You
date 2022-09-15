@@ -338,109 +338,224 @@ exports.publicSession = async (req, res, next) => {
                     profile: participants3Find ? participants3Find.photo[0] ? participants3Find.photo[0].res : "" : "",
                 }
 
-                console.log("publicSessionwithUserDetails", publicSessionwithUserDetails);
 
 
-                if (participants1Find && participants2Find && participants3Find) {
-                    // const sessionDetail = 
-                    // const response = {
-                    //     sessionDetail
-                    // }
-                    publicSession.push({
-                        _id: publicSessionwithUserDetails._id,
-                        cretedSessionUserId: findUser._id,
-                        cretedSessionUsername: findUser.firstName,
-                        selectedDate: publicSessionwithUserDetails.selectedDate,
-                        selectedTime: publicSessionwithUserDetails.selectedTime,
-                        roomType: publicSessionwithUserDetails.RoomType,
-                        detail: publicSessionwithUserDetails.isLive == "true" ? "100 people joined" : "12 Jan 2020 12:00 PM",
-                        isLive: publicSessionwithUserDetails.isLive,
-                        cretedSessionUserphoto: findUser.photo == undefined ? "" : findUser.photo[0] ? findUser.photo[0].res : "",
-                        participants: [
-                            participants_1,
-                            participants_2,
-                            participants_3
-                        ]
-                    })
-                } else if (participants1Find == null && participants2Find && participants3Find) {
-                    // const sessionDetail = 
-                    // const response = {
-                    //     sessionDetail
-                    // }
-                    publicSession.push({
-                        _id: publicSessionwithUserDetails._id,
-                        cretedSessionUserId: findUser._id,
-                        cretedSessionUsername: findUser.firstName,
-                        selectedDate: publicSessionwithUserDetails.selectedDate,
-                        selectedTime: publicSessionwithUserDetails.selectedTime,
-                        roomType: publicSessionwithUserDetails.RoomType,
-                        detail: publicSessionwithUserDetails.isLive == "true" ? "100 people joined" : "12 Jan 2020 12:00 PM",
-                        isLive: publicSessionwithUserDetails.isLive,
-                        cretedSessionUserphoto: findUser.photo == undefined ? "" : findUser.photo[0] ? findUser.photo[0].res : "",
-                        participants: [
-                            participants_2,
-                            participants_3
-                        ]
-                    })
-                } else if (participants1Find && participants2Find == null && participants3Find) {
-                    const sessionDetail = {
-                        _id: publicSessionwithUserDetails._id,
-                        cretedSessionUserId: findUser._id,
-                        cretedSessionUsername: findUser.firstName,
-                        selectedDate: publicSessionwithUserDetails.selectedDate,
-                        selectedTime: publicSessionwithUserDetails.selectedTime,
-                        roomType: publicSessionwithUserDetails.RoomType,
-                        detail: publicSessionwithUserDetails.isLive == "true" ? "100 people joined" : "12 Jan 2020 12:00 PM",
-                        isLive: publicSessionwithUserDetails.isLive,
-                        cretedSessionUserphoto: findUser.photo == undefined ? "" : findUser.photo[0] ? findUser.photo[0].res : "",
-                        participants: [
-                            participants_1,
-                            participants_3
-                        ]
+                if (publicSessionwithUserDetails.RoomType == "public") {
+
+                    console.log("swsdwqeswqed");
+                    if (participants1Find && participants2Find && participants3Find) {
+                        // const sessionDetail = 
+                        // const response = {
+                        //     sessionDetail
+                        // }
+                        publicSession.push({
+                            _id: publicSessionwithUserDetails._id,
+                            cretedSessionUserId: findUser._id,
+                            cretedSessionUsername: findUser.firstName,
+                            selectedDate: publicSessionwithUserDetails.selectedDate,
+                            selectedTime: publicSessionwithUserDetails.selectedTime,
+                            roomType: publicSessionwithUserDetails.RoomType,
+                            detail: publicSessionwithUserDetails.isLive == "true" ? "100 people joined" : "12 Jan 2020 12:00 PM",
+                            isLive: publicSessionwithUserDetails.isLive,
+                            isAbleToJoin: publicSessionwithUserDetails.started,
+                            cretedSessionUserphoto: findUser.photo == undefined ? "" : findUser.photo[0] ? findUser.photo[0].res : "",
+                            participants: [
+                                participants_1,
+                                participants_2,
+                                participants_3
+                            ]
+                        })
+                    } else if (participants1Find == null && participants2Find && participants3Find) {
+                        // const sessionDetail = 
+                        // const response = {
+                        //     sessionDetail
+                        // }
+                        publicSession.push({
+                            _id: publicSessionwithUserDetails._id,
+                            cretedSessionUserId: findUser._id,
+                            cretedSessionUsername: findUser.firstName,
+                            selectedDate: publicSessionwithUserDetails.selectedDate,
+                            selectedTime: publicSessionwithUserDetails.selectedTime,
+                            roomType: publicSessionwithUserDetails.RoomType,
+                            detail: publicSessionwithUserDetails.isLive == "true" ? "100 people joined" : "12 Jan 2020 12:00 PM",
+                            isLive: publicSessionwithUserDetails.isLive,
+                            isAbleToJoin: publicSessionwithUserDetails.started,
+                            cretedSessionUserphoto: findUser.photo == undefined ? "" : findUser.photo[0] ? findUser.photo[0].res : "",
+                            participants: [
+                                participants_2,
+                                participants_3
+                            ]
+                        })
+                    } else if (participants1Find && participants2Find == null && participants3Find) {
+                        const sessionDetail = {
+                            _id: publicSessionwithUserDetails._id,
+                            cretedSessionUserId: findUser._id,
+                            cretedSessionUsername: findUser.firstName,
+                            selectedDate: publicSessionwithUserDetails.selectedDate,
+                            selectedTime: publicSessionwithUserDetails.selectedTime,
+                            roomType: publicSessionwithUserDetails.RoomType,
+                            detail: publicSessionwithUserDetails.isLive == "true" ? "100 people joined" : "12 Jan 2020 12:00 PM",
+                            isLive: publicSessionwithUserDetails.isLive,
+                            isAbleToJoin: publicSessionwithUserDetails.started,
+                            cretedSessionUserphoto: findUser.photo == undefined ? "" : findUser.photo[0] ? findUser.photo[0].res : "",
+                            participants: [
+                                participants_1,
+                                participants_3
+                            ]
+                        }
+                        const response = {
+                            sessionDetail
+                        }
+                        publicSession.push(response)
+                    } else if (participants1Find && participants2Find && participants3Find == null) {
+                        // const sessionDetail = 
+                        // const response = {
+                        //     sessionDetail
+                        // }
+                        publicSession.push({
+                            _id: publicSessionwithUserDetails._id,
+                            cretedSessionUserId: findUser._id,
+                            cretedSessionUsername: findUser.firstName,
+                            selectedDate: publicSessionwithUserDetails.selectedDate,
+                            selectedTime: publicSessionwithUserDetails.selectedTime,
+                            roomType: publicSessionwithUserDetails.RoomType,
+                            detail: publicSessionwithUserDetails.isLive == "true" ? "100 people joined" : "12 Jan 2020 12:00 PM",
+                            isLive: publicSessionwithUserDetails.isLive,
+                            isAbleToJoin: publicSessionwithUserDetails.started,
+                            cretedSessionUserphoto: findUser.photo == undefined ? "" : findUser.photo[0] ? findUser.photo[0].res : "",
+                            participants: [
+                                participants_1,
+                                participants_2
+                            ]
+                        })
+
+                    } else if (participants1Find == null && participants2Find == null && participants3Find == null) {
+                        // const sessionDetail =
+                        // const response = {
+                        //     sessionDetail
+                        // }
+                        publicSession.push({
+                            _id: publicSessionwithUserDetails._id,
+                            cretedSessionUserId: findUser._id,
+                            cretedSessionUsername: findUser.firstName,
+                            selectedDate: publicSessionwithUserDetails.selectedDate,
+                            selectedTime: publicSessionwithUserDetails.selectedTime,
+                            roomType: publicSessionwithUserDetails.RoomType,
+                            detail: publicSessionwithUserDetails.isLive == "true" ? "100 people joined" : "12 Jan 2020 12:00 PM",
+                            isLive: publicSessionwithUserDetails.isLive,
+                            isAbleToJoin: publicSessionwithUserDetails.started,
+                            cretedSessionUserphoto: findUser.photo == undefined ? "" : findUser.photo[0] ? findUser.photo[0].res : "",
+                            participants: []
+                        })
                     }
-                    const response = {
-                        sessionDetail
-                    }
-                    publicSession.push(response)
-                } else if (participants1Find && participants2Find && participants3Find == null) {
-                    // const sessionDetail = 
-                    // const response = {
-                    //     sessionDetail
-                    // }
-                    publicSession.push({
-                        _id: publicSessionwithUserDetails._id,
-                        cretedSessionUserId: findUser._id,
-                        cretedSessionUsername: findUser.firstName,
-                        selectedDate: publicSessionwithUserDetails.selectedDate,
-                        selectedTime: publicSessionwithUserDetails.selectedTime,
-                        roomType: publicSessionwithUserDetails.RoomType,
-                        detail: publicSessionwithUserDetails.isLive == "true" ? "100 people joined" : "12 Jan 2020 12:00 PM",
-                        isLive: publicSessionwithUserDetails.isLive,
-                        cretedSessionUserphoto: findUser.photo == undefined ? "" : findUser.photo[0] ? findUser.photo[0].res : "",
-                        participants: [
-                            participants_1,
-                            participants_2
-                        ]
-                    })
+                } else {
+                    if (participants1Find && participants2Find && participants3Find) {
+                        // const sessionDetail = 
+                        // const response = {
+                        //     sessionDetail
+                        // }
+                        publicSession.push({
+                            _id: publicSessionwithUserDetails._id,
+                            cretedSessionUserId: findUser._id,
+                            cretedSessionUsername: findUser.firstName,
+                            selectedDate: publicSessionwithUserDetails.selectedDate,
+                            selectedTime: publicSessionwithUserDetails.selectedTime,
+                            roomType: publicSessionwithUserDetails.RoomType,
+                            detail: publicSessionwithUserDetails.isLive == "true" ? "100 people joined" : "12 Jan 2020 12:00 PM",
+                            isLive: publicSessionwithUserDetails.isLive,
+                            isAbleToJoin: false,
+                            cretedSessionUserphoto: findUser.photo == undefined ? "" : findUser.photo[0] ? findUser.photo[0].res : "",
+                            participants: [
+                                participants_1,
+                                participants_2,
+                                participants_3
+                            ]
+                        })
+                    } else if (participants1Find == null && participants2Find && participants3Find) {
+                        // const sessionDetail = 
+                        // const response = {
+                        //     sessionDetail
+                        // }
+                        publicSession.push({
+                            _id: publicSessionwithUserDetails._id,
+                            cretedSessionUserId: findUser._id,
+                            cretedSessionUsername: findUser.firstName,
+                            selectedDate: publicSessionwithUserDetails.selectedDate,
+                            selectedTime: publicSessionwithUserDetails.selectedTime,
+                            roomType: publicSessionwithUserDetails.RoomType,
+                            detail: publicSessionwithUserDetails.isLive == "true" ? "100 people joined" : "12 Jan 2020 12:00 PM",
+                            isLive: publicSessionwithUserDetails.isLive,
+                            isAbleToJoin: false,
+                            cretedSessionUserphoto: findUser.photo == undefined ? "" : findUser.photo[0] ? findUser.photo[0].res : "",
+                            participants: [
+                                participants_2,
+                                participants_3
+                            ]
+                        })
+                    } else if (participants1Find && participants2Find == null && participants3Find) {
+                        const sessionDetail = {
+                            _id: publicSessionwithUserDetails._id,
+                            cretedSessionUserId: findUser._id,
+                            cretedSessionUsername: findUser.firstName,
+                            selectedDate: publicSessionwithUserDetails.selectedDate,
+                            selectedTime: publicSessionwithUserDetails.selectedTime,
+                            roomType: publicSessionwithUserDetails.RoomType,
+                            detail: publicSessionwithUserDetails.isLive == "true" ? "100 people joined" : "12 Jan 2020 12:00 PM",
+                            isLive: publicSessionwithUserDetails.isLive,
+                            isAbleToJoin: false,
+                            cretedSessionUserphoto: findUser.photo == undefined ? "" : findUser.photo[0] ? findUser.photo[0].res : "",
+                            participants: [
+                                participants_1,
+                                participants_3
+                            ]
+                        }
+                        const response = {
+                            sessionDetail
+                        }
+                        publicSession.push(response)
+                    } else if (participants1Find && participants2Find && participants3Find == null) {
+                        // const sessionDetail = 
+                        // const response = {
+                        //     sessionDetail
+                        // }
+                        publicSession.push({
+                            _id: publicSessionwithUserDetails._id,
+                            cretedSessionUserId: findUser._id,
+                            cretedSessionUsername: findUser.firstName,
+                            selectedDate: publicSessionwithUserDetails.selectedDate,
+                            selectedTime: publicSessionwithUserDetails.selectedTime,
+                            roomType: publicSessionwithUserDetails.RoomType,
+                            detail: publicSessionwithUserDetails.isLive == "true" ? "100 people joined" : "12 Jan 2020 12:00 PM",
+                            isLive: publicSessionwithUserDetails.isLive,
+                            isAbleToJoin: false,
+                            cretedSessionUserphoto: findUser.photo == undefined ? "" : findUser.photo[0] ? findUser.photo[0].res : "",
+                            participants: [
+                                participants_1,
+                                participants_2
+                            ]
+                        })
 
-                } else if (participants1Find == null && participants2Find == null && participants3Find == null) {
-                    // const sessionDetail =
-                    // const response = {
-                    //     sessionDetail
-                    // }
-                    publicSession.push({
-                        _id: publicSessionwithUserDetails._id,
-                        cretedSessionUserId: findUser._id,
-                        cretedSessionUsername: findUser.firstName,
-                        selectedDate: publicSessionwithUserDetails.selectedDate,
-                        selectedTime: publicSessionwithUserDetails.selectedTime,
-                        roomType: publicSessionwithUserDetails.RoomType,
-                        detail: publicSessionwithUserDetails.isLive == "true" ? "100 people joined" : "12 Jan 2020 12:00 PM",
-                        isLive: publicSessionwithUserDetails.isLive,
-                        cretedSessionUserphoto: findUser.photo == undefined ? "" : findUser.photo[0] ? findUser.photo[0].res : "",
-                        participants: []
-                    })
+                    } else if (participants1Find == null && participants2Find == null && participants3Find == null) {
+                        // const sessionDetail =
+                        // const response = {
+                        //     sessionDetail
+                        // }
+                        publicSession.push({
+                            _id: publicSessionwithUserDetails._id,
+                            cretedSessionUserId: findUser._id,
+                            cretedSessionUsername: findUser.firstName,
+                            selectedDate: publicSessionwithUserDetails.selectedDate,
+                            selectedTime: publicSessionwithUserDetails.selectedTime,
+                            roomType: publicSessionwithUserDetails.RoomType,
+                            detail: publicSessionwithUserDetails.isLive == "true" ? "100 people joined" : "12 Jan 2020 12:00 PM",
+                            isLive: publicSessionwithUserDetails.isLive,
+                            isAbleToJoin: false,
+                            cretedSessionUserphoto: findUser.photo == undefined ? "" : findUser.photo[0] ? findUser.photo[0].res : "",
+                            participants: []
+                        })
+                    }
                 }
+
 
             }
 

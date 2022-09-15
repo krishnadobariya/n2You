@@ -276,7 +276,6 @@ exports.userRegister = async (req, res, next) => {
     }
 }
 
-
 exports.userLogin = async (req, res, next) => {
     try {
 
@@ -913,7 +912,6 @@ exports.userUpdate = async (req, res, next) => {
     }
 }
 
-
 // token update
 
 exports.tokenUpdate = async (req, res, next) => {
@@ -1411,8 +1409,6 @@ exports.searchFriend = async (req, res, next) => {
         )
     }
 }
-
-
 
 exports.getAllUser = async (req, res, next) => {
     try {
@@ -2375,9 +2371,6 @@ exports.getDataUserWise = async (req, res, next) => {
     }
 }
 
-
-
-
 exports.storeBasketValue = async (req, res, next) => {
     try {
 
@@ -2530,7 +2523,6 @@ exports.storeBasketValue = async (req, res, next) => {
         )
     }
 }
-
 
 exports.yesBasket = async (req, res, next) => {
     try {

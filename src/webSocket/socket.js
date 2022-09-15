@@ -587,6 +587,10 @@ function socket(io) {
             const p2 = findIdInSession.participants[0].participants_2 == null ? "" : findIdInSession.participants[0].participants_2
             const p3 = findIdInSession.participants[0].participants_3 == null ? "" : findIdInSession.participants[0].participants_3
 
+            console.log(p1);
+            console.log(p2);
+            console.log((p1).toString() == (findIdInSession.cretedSessionUser).toString());
+            console.log();
             if (findIdInSession) {
 
                 if ((findIdInSession.cretedSessionUser).toString() == (arg.create_session_user).toString()) {
@@ -831,7 +835,8 @@ function socket(io) {
                         io.emit("sessionJoinSuccess", "session started");
 
                     }
-                } else if (p1) {
+                } else if ((p1).toString() == (arg.create_session_user).toString()) {
+
 
                     const allRequestedEmails = [];
 
@@ -908,7 +913,7 @@ function socket(io) {
                     }
 
 
-                } else if (p2) {
+                } else if ((p2).toString() == (arg.create_session_user).toString()) {
                     const allRequestedEmails = [];
 
                     const sessionUser = findIdInSession.cretedSessionUser == null ? "" : findIdInSession.cretedSessionUser
@@ -982,7 +987,7 @@ function socket(io) {
 
                         }
                     }
-                } else if (p3) {
+                } else if ((p3).toString() == (arg.create_session_user).toString()) {
                     const allRequestedEmails = [];
 
                     const sessionUser = findIdInSession.cretedSessionUser == null ? "" : findIdInSession.cretedSessionUser
