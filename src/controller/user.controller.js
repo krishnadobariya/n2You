@@ -13,6 +13,7 @@ const likeModel = require("../model/like.model");
 const thumbUpModel = require("../model/thumbUp.model");
 const thumbDownModel = require("../model/thumDown.model");
 var nodemailer = require('nodemailer');
+const querystring = require("querystring");
 const { updateOne } = require("../model/user.model");
 const blockuserModel = require("../model/blockuser.model");
 const { url } = require("../utils/cloudinary.utils");
@@ -393,8 +394,10 @@ exports.userUpdate = async (req, res, next) => {
 
                 const url = req.body.images
 
+                
+                console.log(output);
                 console.log("req.body.images", req.body.images[0]);
-                console.log(url[0]);
+                console.log(url);
 
                 if (url) {
 
