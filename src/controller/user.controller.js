@@ -380,8 +380,8 @@ exports.userUpdate = async (req, res, next) => {
         const removeFirst = urlAll.slice(1, -1)
         const url = removeFirst.split(",")
 
-        console.log("url is", url);
-        if (url[0] == undefined) {
+        console.log("url is", url[0] == '');
+        if (url[0] == '') {
 
             if (files[0] == undefined) {
                 const findUser = await userModel.findOne({
