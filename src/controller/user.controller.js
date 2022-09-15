@@ -393,9 +393,6 @@ exports.userUpdate = async (req, res, next) => {
             for (const file of files) {
 
                 const url = req.body.images
-
-                url
-                console.log(output);
                 console.log("req.body.images", req.body.images[0]);
                 console.log(url);
 
