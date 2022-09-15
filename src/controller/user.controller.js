@@ -394,42 +394,40 @@ exports.userUpdate = async (req, res, next) => {
             for (const file of files) {
 
                 const url = req.body.images
-                console.log("req.body.images", req.body.images[0]);
-                const data = JSON.parse(url)
-                console.log("data is", data);
-                console.log("first iimg is", data[0]);
+                const removeFirst = url.slice(1, -1)
+                console.log(removeFirst.split(","))
 
-                // if (url) {
+                if (url[0] == undefined) {
 
-                //     const { path } = file;
-                //     const newPath = await cloudinaryImageUploadMethod(path)
-                //     urls.push(newPath)
+                    const { path } = file;
+                    const newPath = await cloudinaryImageUploadMethod(path)
+                    urls.push(newPath)
 
-                // } else {
+                } else {
 
-                //     console.log("aleardy add", urls);
-                //     console.log("remove url", url);
+                    console.log("aleardy add", urls);
+                    console.log("remove url", url);
 
-                //     for (const data of url) {
+                    for (const data of url) {
 
-                //         console.log("data is", data);
-                //         const indexOfObject = urls.findIndex(object => {
-                //             return object.res == data;
-                //         });
+                        console.log("data is", data);
+                        const indexOfObject = urls.findIndex(object => {
+                            return object.res == data;
+                        });
 
-                //         console.log(indexOfObject);
-                //         urls.splice(indexOfObject, 1);
-                //     }
+                        console.log(indexOfObject);
+                        urls.splice(indexOfObject, 1);
+                    }
 
-                //     console.log("after remove", urls);
-                //     const { path } = file;
-                //     const newPath = await cloudinaryImageUploadMethod(path)
-                //     urls.push(newPath)
+                    console.log("after remove", urls);
+                    const { path } = file;
+                    const newPath = await cloudinaryImageUploadMethod(path)
+                    urls.push(newPath)
 
-                //     console.log("final url is", urls);
+                    console.log("final url is", urls);
 
 
-                // }
+                }
 
             }
         }
