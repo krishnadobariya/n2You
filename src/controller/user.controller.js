@@ -387,16 +387,13 @@ exports.userUpdate = async (req, res, next) => {
 
             const urls = []
             const files = req.files
-
+            console.log("files", files);
             for (const file of files) {
                 const { path } = file
 
                 const newPath = await cloudinaryImageUploadMethod(path)
                 urls.push(newPath)
             }
-
-
-
             // for (const file of files) {
 
             //     const findUser = await userModel.findOne({
