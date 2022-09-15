@@ -415,7 +415,8 @@ exports.userUpdate = async (req, res, next) => {
                     console.log("after remove", urls);
                     const { path } = file;
                     const newPath = await cloudinaryImageUploadMethod(path)
-                    urls.push(...newPath)
+                    console.log(newPath);
+                    urls.push(newPath)
 
                     console.log("final url is", urls);
 
