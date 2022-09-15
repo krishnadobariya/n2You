@@ -394,7 +394,7 @@ exports.userUpdate = async (req, res, next) => {
                 const url = req.body.images
 
                 console.log("req.body.images", req.body.images[0]);
-                console.log(url);
+                console.log(url[0]);
 
                 if (url) {
 
