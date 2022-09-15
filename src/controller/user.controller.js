@@ -393,7 +393,7 @@ exports.userUpdate = async (req, res, next) => {
 
                 const url = req.body.images
 
-                if (url[0] == "u") {
+                if (url[0]) {
 
                     const { path } = file;
                     const newPath = await cloudinaryImageUploadMethod(path)
