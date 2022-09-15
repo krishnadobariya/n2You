@@ -382,26 +382,20 @@ exports.userUpdate = async (req, res, next) => {
             urls.push(...findUser.photo)
 
         } else {
+
+            const findUser = await userModel.findOne({
+                _id: req.params.user_id
+            })
+
+            urls.push(...findUser.photo)
+
             for (const file of files) {
-
-                const findUser = await userModel.findOne({
-                    _id: req.params.user_id
-                })
-
-                urls.push(...findUser.photo)
-
-                console.log(urls);
 
                 const url = req.body.images
                 console.log("remove urls", url[0]);
 
                 if (url[0] == "u") {
-                    const findUser = await userModel.findOne({
-                        _id: req.params.user_id
-                    })
-
-                    urls.push(...findUser.photo)
-
+                    
                     const { path } = file;
                     const newPath = await cloudinaryImageUploadMethod(path)
                     urls.push(newPath)
