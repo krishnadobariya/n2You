@@ -482,6 +482,8 @@ exports.userUpdate = async (req, res, next) => {
 
         }
 
+
+        console.log("urls is sssss", urls);
         if (userFind == null) {
             res.status(status.NOT_FOUND).json(
                 new APIResponse("User not Found", "false", 404, "0")
