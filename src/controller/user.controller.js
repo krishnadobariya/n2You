@@ -395,20 +395,30 @@ exports.userUpdate = async (req, res, next) => {
                 const url = req.body.images
                 console.log("remove urls", url);
 
-                
-                for (const data of url) {
-                    const indexOfObject = urls.findIndex(object => {
-                        return object.res == data;
-                    });
-                    urls.splice(indexOfObject, 1);
+                if(url[0] == undefined){
+                    for (const data of url) {
+
+                        const indexOfObject = urls.findIndex(object => {
+                            return object.res == data;
+                        });
+                        urls.splice(indexOfObject, 1);
+                    }
+    
+                    console.log("after remove", urls);
+                    const { path } = file;
+                    const newPath = await cloudinaryImageUploadMethod(path)
+                    urls.push(newPath)
+    
+                    console.log("final url is", urls);
+                }else{
+                   
+                    const { path } = file;
+                    const newPath = await cloudinaryImageUploadMethod(path)
+                    urls.push(newPath)
+    
+                    console.log("final url is", urls);
                 }
-
-                console.log("after remove", urls);
-                const { path } = file;
-                const newPath = await cloudinaryImageUploadMethod(path)
-                urls.push(newPath)
-
-                console.log("final url is", urls);
+              
             }
         }
 
