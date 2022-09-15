@@ -23,6 +23,7 @@ exports.sessionCreate = async (req, res, next) => {
             let dates = date.getDate();
             let months = date.getMonth()
             let year = date.getFullYear();
+            let hour = date.getHours();
             let hours = date.getHours();
             let minutes = date.getMinutes();
             let second = date.getSeconds();
@@ -35,7 +36,7 @@ exports.sessionCreate = async (req, res, next) => {
             let strTime = hours + ' ' + ampm;
             let timeSession = 'At' + ' ' + hours + ':' + minutes + ' ' + ampm + ' ' + 'on' + ' ' + mon[0] + ' ' + mon[1] + ' ' + mon[2] + ' ' + mon[3]
             const createSession = sessionModel({
-                selectedDate: `${year}-${months + 1}-${dates} ${hours}:${minutes}:${second}`,
+                selectedDate: `${year}-${months + 1}-${dates} ${hour}:${minutes}:${second}`,
                 selectedTime: strTime,
                 cretedSessionUser: req.body.creted_session_user,
                 participants: {
