@@ -393,9 +393,10 @@ exports.userUpdate = async (req, res, next) => {
 
             for (const file of files) {
 
-                const url = req.body.images
-                const removeFirst = url.slice(1, -1)
-                console.log(removeFirst.split(","))
+                const urlAll = req.body.images
+                const removeFirst = urlAll.slice(1, -1)
+                console.log("removeFirst", removeFirst);
+                const url = removeFirst.split(",")
 
                 if (url[0] == undefined) {
 
