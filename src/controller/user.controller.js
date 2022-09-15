@@ -13,11 +13,9 @@ const likeModel = require("../model/like.model");
 const thumbUpModel = require("../model/thumbUp.model");
 const thumbDownModel = require("../model/thumDown.model");
 var nodemailer = require('nodemailer');
-const querystring = require("querystring");
 const { updateOne } = require("../model/user.model");
 const blockuserModel = require("../model/blockuser.model");
 const { url } = require("../utils/cloudinary.utils");
-const { log } = require("console");
 
 exports.userRegister = async (req, res, next) => {
     try {
@@ -384,47 +382,30 @@ exports.userUpdate = async (req, res, next) => {
             urls.push(...findUser.photo)
 
         } else {
+            for (const file of files) {
 
-            const findUser = await userModel.findOne({
-                _id: req.params.user_id
-            })
+                const findUser = await userModel.findOne({
+                    _id: req.params.user_id
+                })
 
-            urls.push(...findUser.photo)
+                urls.push(...findUser.photo)
 
-            
-            const urlAll = req.body.images
-            const removeFirst = urlAll.slice(1, -1)
-            console.log("removeFirst", removeFirst);
-            const url = removeFirst.split(",")
+                console.log(urls);
 
-            if(url[0] == undefined){
-                for (const file of files) {
-                        const { path } = file;
-                        const newPath = await cloudinaryImageUploadMethod(path)
+                const url = req.body.images
+                console.log(url);
+
+                for (const data of url) {
+                    const indexOfObject = urls.findIndex(object => {
+                        return object.res == data;
+                    });
+                    urls.splice(indexOfObject, 1);
                 }
-            }else{
 
-                for (const file of files) {
-                        console.log("aleardy add", urls);
-                        console.log("remove url", url);
-    
-                        for (const data of url) {
-    
-                            console.log("data is", data);
-                            const indexOfObject = urls.findIndex(object => {
-                                return object.res == data;
-                            });
-    
-                            console.log(indexOfObject);
-                            urls.splice(indexOfObject, 1);
-                        }
-    
-                        console.log("after remove", urls);
-                        const { path } = file;
-                        const newPath = await cloudinaryImageUploadMethod(path)
-                        console.log("newPath", newPath);
-                        console.log("final url is", urls);
-                    }
+                console.log("urls", urls);
+                const { path } = file;
+                const newPath = await cloudinaryImageUploadMethod(path)
+                urls.push(newPath)
             }
         }
 
@@ -930,6 +911,7 @@ exports.userUpdate = async (req, res, next) => {
         )
     }
 }
+
 
 // token update
 
