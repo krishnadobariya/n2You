@@ -406,9 +406,12 @@ exports.userUpdate = async (req, res, next) => {
 
                     for (const data of url) {
 
+                        console.log("data is", data);
                         const indexOfObject = urls.findIndex(object => {
                             return object.res == data;
                         });
+
+                        console.log(indexOfObject);
                         urls.splice(indexOfObject, 1);
                     }
 
