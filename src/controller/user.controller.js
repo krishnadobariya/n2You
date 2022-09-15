@@ -395,7 +395,9 @@ exports.userUpdate = async (req, res, next) => {
 
                 const url = req.body.images
                 console.log("req.body.images", req.body.images[0]);
-                JSON.parse(url)
+                const data = JSON.parse(url)
+                console.log("data is", data);
+                console.log("first iimg is", data[0]);
 
                 // if (url) {
 
