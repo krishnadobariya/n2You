@@ -371,7 +371,6 @@ exports.userUpdate = async (req, res, next) => {
             })
         }
 
-        const urls = []
         const files = req.files
 
 
@@ -383,6 +382,8 @@ exports.userUpdate = async (req, res, next) => {
         if (url[0] == undefined) {
 
             if (files[0] == undefined) {
+
+                const urls = []
                 const findUser = await userModel.findOne({
                     _id: req.params.user_id
                 })
@@ -390,6 +391,8 @@ exports.userUpdate = async (req, res, next) => {
                 urls.push(...findUser.photo)
 
             } else {
+
+                const urls = []
                 const findUser = await userModel.findOne({
                     _id: req.params.user_id
                 })
@@ -436,6 +439,8 @@ exports.userUpdate = async (req, res, next) => {
             console.log("helloooooo");
             if (files[0] == undefined) {
 
+
+                const urls = []
                 const findUser = await userModel.findOne({
                     _id: req.params.user_id
                 })
@@ -452,6 +457,8 @@ exports.userUpdate = async (req, res, next) => {
                 console.log("urls", urls);
             } else {
 
+
+                const urls = []
                 const findUser = await userModel.findOne({
                     _id: req.params.user_id
                 })
