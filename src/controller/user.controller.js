@@ -384,31 +384,44 @@ exports.userUpdate = async (req, res, next) => {
             urls.push(...findUser.photo)
 
         } else {
+
+            const urls = []
+            const files = req.files
+
             for (const file of files) {
+                const { path } = file
 
-                const findUser = await userModel.findOne({
-                    _id: req.params.user_id
-                })
-
-                urls.push(...findUser.photo)
-
-                console.log(urls);
-
-                const url = req.body.images
-                console.log(url);
-
-                for (const data of url) {
-                    const indexOfObject = urls.findIndex(object => {
-                        return object.res == data;
-                    });
-                    urls.splice(indexOfObject, 1);
-                }
-
-                console.log("urls", urls);
-                const { path } = file;
                 const newPath = await cloudinaryImageUploadMethod(path)
                 urls.push(newPath)
             }
+
+
+
+            // for (const file of files) {
+
+            //     const findUser = await userModel.findOne({
+            //         _id: req.params.user_id
+            //     })
+
+            //     urls.push(...findUser.photo)
+
+            //     console.log(urls);
+
+            //     const url = req.body.images
+            //     console.log(url);
+
+            //     for (const data of url) {
+            //         const indexOfObject = urls.findIndex(object => {
+            //             return object.res == data;
+            //         });
+            //         urls.splice(indexOfObject, 1);
+            //     }
+
+            //     console.log("urls", urls);
+            //     const { path } = file;
+            //     const newPath = await cloudinaryImageUploadMethod(path)
+            //     urls.push(newPath)
+            // }
         }
 
         if (userFind == null) {
