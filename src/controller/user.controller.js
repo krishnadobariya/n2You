@@ -393,7 +393,7 @@ exports.userUpdate = async (req, res, next) => {
                 console.log(urls);
 
                 const url = req.body.images
-                console.log("remove urls", url == []);
+                console.log("remove urls", url[0]);
 
                 if (url == []) {
 
