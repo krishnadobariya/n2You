@@ -390,6 +390,8 @@ exports.userUpdate = async (req, res, next) => {
                 urls.push(...findUser.photo)
 
             } else {
+
+                console.log("111111");
                 const findUser = await userModel.findOne({
                     _id: req.params.user_id
                 })
