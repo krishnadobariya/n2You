@@ -377,7 +377,7 @@ exports.userUpdate = async (req, res, next) => {
 
 
         const urlAll = req.body.images
-        const removeFirst = data.slice(1, -1)
+        const removeFirst = urlAll.slice(1, -1)
         const url = removeFirst.split(",")
 
         if (url[0] == undefined) {
