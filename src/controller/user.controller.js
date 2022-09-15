@@ -393,8 +393,9 @@ exports.userUpdate = async (req, res, next) => {
                 console.log(urls);
 
                 const url = req.body.images
-                console.log(url);
+                console.log("remove urls", url);
 
+                
                 for (const data of url) {
                     const indexOfObject = urls.findIndex(object => {
                         return object.res == data;
@@ -402,10 +403,12 @@ exports.userUpdate = async (req, res, next) => {
                     urls.splice(indexOfObject, 1);
                 }
 
-                console.log("urls", urls);
+                console.log("after remove", urls);
                 const { path } = file;
                 const newPath = await cloudinaryImageUploadMethod(path)
                 urls.push(newPath)
+
+                console.log("final url is", urls);
             }
         }
 
