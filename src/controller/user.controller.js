@@ -433,20 +433,48 @@ exports.userUpdate = async (req, res, next) => {
 
         } else {
 
-            const findUser = await userModel.findOne({
-                _id: req.params.user_id
-            })
+            console.log("helloooooo");
+            if (files[0] == undefined) {
 
-            urls.push(...findUser.photo)
+                const findUser = await userModel.findOne({
+                    _id: req.params.user_id
+                })
 
-            for (const data of url) {
-                const indexOfObject = urls.findIndex(object => {
-                    return object.res == data;
-                });
-                urls.splice(indexOfObject, 1);
+                urls.push(...findUser.photo)
+
+                for (const data of url) {
+                    const indexOfObject = urls.findIndex(object => {
+                        return object.res == data;
+                    });
+                    urls.splice(indexOfObject, 1);
+                }
+
+                console.log("urls", urls);
+            } else {
+
+                const findUser = await userModel.findOne({
+                    _id: req.params.user_id
+                })
+
+                urls.push(...findUser.photo)
+
+                for (const data of url) {
+                    const indexOfObject = urls.findIndex(object => {
+                        return object.res == data;
+                    });
+                    urls.splice(indexOfObject, 1);
+                }
+
+                const files = req.files
+                console.log("files", files);
+                for (const file of files) {
+                    const { path } = file
+
+                    const newPath = await cloudinaryImageUploadMethod(path)
+                    urls.push(newPath)
+                }
+
             }
-
-            console.log("urls", urls);
 
         }
 
