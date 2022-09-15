@@ -385,7 +385,6 @@ exports.userUpdate = async (req, res, next) => {
 
         } else {
 
-            const urls = []
             const files = req.files
             console.log("files", files);
             for (const file of files) {
