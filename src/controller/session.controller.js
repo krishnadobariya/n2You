@@ -18,6 +18,7 @@ exports.sessionCreate = async (req, res, next) => {
 
         if (findUserInUserModel) {
 
+            console.log("req.body.selected_date", req.body.selected_date);
             const date = new Date(req.body.selected_date)
             let dates = date.getDate();
             let months = date.getMonth()
