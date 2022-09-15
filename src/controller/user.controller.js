@@ -401,9 +401,9 @@ exports.userUpdate = async (req, res, next) => {
                 for (const file of files) {
                         const { path } = file;
                         const newPath = await cloudinaryImageUploadMethod(path)
-                        urls.push(newPath)
                 }
             }else{
+
                 for (const file of files) {
                         console.log("aleardy add", urls);
                         console.log("remove url", url);
@@ -423,8 +423,6 @@ exports.userUpdate = async (req, res, next) => {
                         const { path } = file;
                         const newPath = await cloudinaryImageUploadMethod(path)
                         console.log("newPath", newPath);
-                        urls.push(newPath)
-    
                         console.log("final url is", urls);
                     }
             }
