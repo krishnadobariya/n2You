@@ -380,6 +380,7 @@ exports.userUpdate = async (req, res, next) => {
         const removeFirst = urlAll.slice(1, -1)
         const url = removeFirst.split(",")
 
+        console.log("url is", url);
         if (url[0] == undefined) {
 
             if (files[0] == undefined) {
