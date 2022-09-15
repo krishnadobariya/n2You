@@ -407,7 +407,7 @@ exports.userUpdate = async (req, res, next) => {
                 console.log("urls", urls);
                 const { path } = file;
                 const newPath = await cloudinaryImageUploadMethod(path)
-                urls.push(...newPath)
+                urls.push(newPath)
             }
         }
 
