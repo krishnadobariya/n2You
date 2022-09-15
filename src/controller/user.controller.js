@@ -374,6 +374,8 @@ exports.userUpdate = async (req, res, next) => {
         const urls = []
         const files = req.files
 
+
+
         if (files[0] == undefined) {
             const findUser = await userModel.findOne({
                 _id: req.params.user_id
@@ -405,7 +407,7 @@ exports.userUpdate = async (req, res, next) => {
                 console.log("urls", urls);
                 const { path } = file;
                 const newPath = await cloudinaryImageUploadMethod(path)
-                urls.push(newPath)
+                urls.push(...newPath)
             }
         }
 
