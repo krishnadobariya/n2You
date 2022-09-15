@@ -547,6 +547,47 @@ exports.userUpdate = async (req, res, next) => {
                 )
             } else {
 
+                console.log("urls is 33333", urls);
+
+                const updateUser = await userModel.updateOne({
+                    _id: req.params.user_id
+                }, {
+                    $set: {
+                        polyDating: req.body.poly_dating,
+                        HowDoYouPoly: req.body.how_do_you_poly,
+                        loveToGive: req.body.love_to_give,
+                        polyRelationship: req.body.poly_relationship,
+                        email: req.body.email,
+                        firstName: req.body.first_name,
+                        birthDate: req.body.birth_date,
+                        identity: req.body.identity,
+                        relationshipSatus: req.body.relationship_satus,
+                        IntrestedIn: req.body.intrested_in,
+                        Bio: req.body.bio,
+                        location: {
+                            type: "Point",
+                            coordinates: [
+                                parseFloat(req.body.longitude),
+                                parseFloat(req.body.latitude),
+                            ],
+                        },
+                        photo: urls,
+                        fcm_token: req.body.fcm_token,
+                        hopingToFind: req.body.hoping_to_find,
+                        jobTitle: req.body.job_title,
+                        wantChildren: req.body.want_children,
+                        extraAtrribute: {
+                            bodyType: req.body.body_type,
+                            height: req.body.height,
+                            smoking: req.body.smoking,
+                            drinking: req.body.drinking,
+                            hobbies: req.body.hobbies
+                        },
+                        phoneNumber: phoneNum,
+                        countryCode: req.body.country_code
+                    }
+                })
+
                 const findUser = await userModel.findOne({
                     email: req.body.email
                 })
