@@ -338,113 +338,113 @@ exports.publicSession = async (req, res, next) => {
                     profile: participants3Find ? participants3Find.photo[0] ? participants3Find.photo[0].res : "" : "",
                 }
 
-           
-                    if (participants1Find && participants2Find && participants3Find) {
-                        // const sessionDetail = 
-                        // const response = {
-                        //     sessionDetail
-                        // }
-                        publicSession.push({
-                            _id: publicSessionwithUserDetails._id,
-                            cretedSessionUserId: findUser._id,
-                            cretedSessionUsername: findUser.firstName,
-                            selectedDate: publicSessionwithUserDetails.selectedDate,
-                            selectedTime: publicSessionwithUserDetails.selectedTime,
-                            roomType: publicSessionwithUserDetails.RoomType,
-                            detail: publicSessionwithUserDetails.isLive == "true" ? "100 people joined" : "12 Jan 2020 12:00 PM",
-                            isLive: publicSessionwithUserDetails.isLive,
-                            isAbleToJoin: publicSessionwithUserDetails.started,
-                            cretedSessionUserphoto: findUser.photo == undefined ? "" : findUser.photo[0] ? findUser.photo[0].res : "",
-                            participants: [
-                                participants_1,
-                                participants_2,
-                                participants_3
-                            ]
-                        })
-                    } else if (participants1Find == null && participants2Find && participants3Find) {
-                        // const sessionDetail = 
-                        // const response = {
-                        //     sessionDetail
-                        // }
-                        publicSession.push({
-                            _id: publicSessionwithUserDetails._id,
-                            cretedSessionUserId: findUser._id,
-                            cretedSessionUsername: findUser.firstName,
-                            selectedDate: publicSessionwithUserDetails.selectedDate,
-                            selectedTime: publicSessionwithUserDetails.selectedTime,
-                            roomType: publicSessionwithUserDetails.RoomType,
-                            detail: publicSessionwithUserDetails.isLive == "true" ? "100 people joined" : "12 Jan 2020 12:00 PM",
-                            isLive: publicSessionwithUserDetails.isLive,
-                            isAbleToJoin: publicSessionwithUserDetails.started,
-                            cretedSessionUserphoto: findUser.photo == undefined ? "" : findUser.photo[0] ? findUser.photo[0].res : "",
-                            participants: [
-                                participants_2,
-                                participants_3
-                            ]
-                        })
-                    } else if (participants1Find && participants2Find == null && participants3Find) {
-                        const sessionDetail = {
-                            _id: publicSessionwithUserDetails._id,
-                            cretedSessionUserId: findUser._id,
-                            cretedSessionUsername: findUser.firstName,
-                            selectedDate: publicSessionwithUserDetails.selectedDate,
-                            selectedTime: publicSessionwithUserDetails.selectedTime,
-                            roomType: publicSessionwithUserDetails.RoomType,
-                            detail: publicSessionwithUserDetails.isLive == "true" ? "100 people joined" : "12 Jan 2020 12:00 PM",
-                            isLive: publicSessionwithUserDetails.isLive,
-                            isAbleToJoin: publicSessionwithUserDetails.started,
-                            cretedSessionUserphoto: findUser.photo == undefined ? "" : findUser.photo[0] ? findUser.photo[0].res : "",
-                            participants: [
-                                participants_1,
-                                participants_3
-                            ]
-                        }
-                        const response = {
-                            sessionDetail
-                        }
-                        publicSession.push(response)
-                    } else if (participants1Find && participants2Find && participants3Find == null) {
-                        // const sessionDetail = 
-                        // const response = {
-                        //     sessionDetail
-                        // }
-                        publicSession.push({
-                            _id: publicSessionwithUserDetails._id,
-                            cretedSessionUserId: findUser._id,
-                            cretedSessionUsername: findUser.firstName,
-                            selectedDate: publicSessionwithUserDetails.selectedDate,
-                            selectedTime: publicSessionwithUserDetails.selectedTime,
-                            roomType: publicSessionwithUserDetails.RoomType,
-                            detail: publicSessionwithUserDetails.isLive == "true" ? "100 people joined" : "12 Jan 2020 12:00 PM",
-                            isLive: publicSessionwithUserDetails.isLive,
-                            isAbleToJoin: publicSessionwithUserDetails.started,
-                            cretedSessionUserphoto: findUser.photo == undefined ? "" : findUser.photo[0] ? findUser.photo[0].res : "",
-                            participants: [
-                                participants_1,
-                                participants_2
-                            ]
-                        })
 
-                    } else if (participants1Find == null && participants2Find == null && participants3Find == null) {
-                        // const sessionDetail =
-                        // const response = {
-                        //     sessionDetail
-                        // }
-                        publicSession.push({
-                            _id: publicSessionwithUserDetails._id,
-                            cretedSessionUserId: findUser._id,
-                            cretedSessionUsername: findUser.firstName,
-                            selectedDate: publicSessionwithUserDetails.selectedDate,
-                            selectedTime: publicSessionwithUserDetails.selectedTime,
-                            roomType: publicSessionwithUserDetails.RoomType,
-                            detail: publicSessionwithUserDetails.isLive == "true" ? "100 people joined" : "12 Jan 2020 12:00 PM",
-                            isLive: publicSessionwithUserDetails.isLive,
-                            isAbleToJoin: publicSessionwithUserDetails.started,
-                            cretedSessionUserphoto: findUser.photo == undefined ? "" : findUser.photo[0] ? findUser.photo[0].res : "",
-                            participants: []
-                        })
+                if (participants1Find && participants2Find && participants3Find) {
+                    // const sessionDetail = 
+                    // const response = {
+                    //     sessionDetail
+                    // }
+                    publicSession.push({
+                        _id: publicSessionwithUserDetails._id,
+                        cretedSessionUserId: findUser._id,
+                        cretedSessionUsername: findUser.firstName,
+                        selectedDate: publicSessionwithUserDetails.selectedDate,
+                        selectedTime: publicSessionwithUserDetails.selectedTime,
+                        roomType: publicSessionwithUserDetails.RoomType,
+                        detail: publicSessionwithUserDetails.started == "true" ? "100 people joined" : "12 Jan 2020 12:00 PM",
+                        isLive: publicSessionwithUserDetails.started,
+                        isAbleToJoin: publicSessionwithUserDetails.started,
+                        cretedSessionUserphoto: findUser.photo == undefined ? "" : findUser.photo[0] ? findUser.photo[0].res : "",
+                        participants: [
+                            participants_1,
+                            participants_2,
+                            participants_3
+                        ]
+                    })
+                } else if (participants1Find == null && participants2Find && participants3Find) {
+                    // const sessionDetail = 
+                    // const response = {
+                    //     sessionDetail
+                    // }
+                    publicSession.push({
+                        _id: publicSessionwithUserDetails._id,
+                        cretedSessionUserId: findUser._id,
+                        cretedSessionUsername: findUser.firstName,
+                        selectedDate: publicSessionwithUserDetails.selectedDate,
+                        selectedTime: publicSessionwithUserDetails.selectedTime,
+                        roomType: publicSessionwithUserDetails.RoomType,
+                        detail: publicSessionwithUserDetails.started == "true" ? "100 people joined" : "12 Jan 2020 12:00 PM",
+                        isLive: publicSessionwithUserDetails.started,
+                        isAbleToJoin: publicSessionwithUserDetails.started,
+                        cretedSessionUserphoto: findUser.photo == undefined ? "" : findUser.photo[0] ? findUser.photo[0].res : "",
+                        participants: [
+                            participants_2,
+                            participants_3
+                        ]
+                    })
+                } else if (participants1Find && participants2Find == null && participants3Find) {
+                    const sessionDetail = {
+                        _id: publicSessionwithUserDetails._id,
+                        cretedSessionUserId: findUser._id,
+                        cretedSessionUsername: findUser.firstName,
+                        selectedDate: publicSessionwithUserDetails.selectedDate,
+                        selectedTime: publicSessionwithUserDetails.selectedTime,
+                        roomType: publicSessionwithUserDetails.RoomType,
+                        detail: publicSessionwithUserDetails.started == "true" ? "100 people joined" : "12 Jan 2020 12:00 PM",
+                        isLive: publicSessionwithUserDetails.started,
+                        isAbleToJoin: publicSessionwithUserDetails.started,
+                        cretedSessionUserphoto: findUser.photo == undefined ? "" : findUser.photo[0] ? findUser.photo[0].res : "",
+                        participants: [
+                            participants_1,
+                            participants_3
+                        ]
                     }
-               
+                    const response = {
+                        sessionDetail
+                    }
+                    publicSession.push(response)
+                } else if (participants1Find && participants2Find && participants3Find == null) {
+                    // const sessionDetail = 
+                    // const response = {
+                    //     sessionDetail
+                    // }
+                    publicSession.push({
+                        _id: publicSessionwithUserDetails._id,
+                        cretedSessionUserId: findUser._id,
+                        cretedSessionUsername: findUser.firstName,
+                        selectedDate: publicSessionwithUserDetails.selectedDate,
+                        selectedTime: publicSessionwithUserDetails.selectedTime,
+                        roomType: publicSessionwithUserDetails.RoomType,
+                        detail: publicSessionwithUserDetails.started == "true" ? "100 people joined" : "12 Jan 2020 12:00 PM",
+                        isLive: publicSessionwithUserDetails.started,
+                        isAbleToJoin: publicSessionwithUserDetails.started,
+                        cretedSessionUserphoto: findUser.photo == undefined ? "" : findUser.photo[0] ? findUser.photo[0].res : "",
+                        participants: [
+                            participants_1,
+                            participants_2
+                        ]
+                    })
+
+                } else if (participants1Find == null && participants2Find == null && participants3Find == null) {
+                    // const sessionDetail =
+                    // const response = {
+                    //     sessionDetail
+                    // }
+                    publicSession.push({
+                        _id: publicSessionwithUserDetails._id,
+                        cretedSessionUserId: findUser._id,
+                        cretedSessionUsername: findUser.firstName,
+                        selectedDate: publicSessionwithUserDetails.selectedDate,
+                        selectedTime: publicSessionwithUserDetails.selectedTime,
+                        roomType: publicSessionwithUserDetails.RoomType,
+                        detail: publicSessionwithUserDetails.started == "true" ? "100 people joined" : "12 Jan 2020 12:00 PM",
+                        isLive: publicSessionwithUserDetails.started,
+                        isAbleToJoin: publicSessionwithUserDetails.started,
+                        cretedSessionUserphoto: findUser.photo == undefined ? "" : findUser.photo[0] ? findUser.photo[0].res : "",
+                        participants: []
+                    })
+                }
+
 
             }
 
@@ -504,7 +504,7 @@ exports.invitedInSession = async (req, res, next) => {
                         _id: findInvited._id,
                         cretedSessionUserId: createdSessionUser._id,
                         cretedSessionUsername: createdSessionUser.firstName,
-                        isLive: findInvited.isLive,
+                        isLive: findInvited.started,
                         isAbleToJoin: findInvited.started,
                         RoomType: findInvited.RoomType,
                         selectedTime: findInvited.selectedTime,
@@ -522,7 +522,7 @@ exports.invitedInSession = async (req, res, next) => {
                         _id: findInvited._id,
                         cretedSessionUserId: createdSessionUser._id,
                         cretedSessionUsername: createdSessionUser.firstName,
-                        isLive: findInvited.isLive,
+                        isLive: findInvited.started,
                         isAbleToJoin: findInvited.started,
                         RoomType: findInvited.RoomType,
                         selectedTime: findInvited.selectedTime,
@@ -540,7 +540,7 @@ exports.invitedInSession = async (req, res, next) => {
                         _id: findInvited._id,
                         cretedSessionUserId: createdSessionUser._id,
                         cretedSessionUsername: createdSessionUser.firstName,
-                        isLive: findInvited.isLive,
+                        isLive: findInvited.started,
                         isAbleToJoin: findInvited.started,
                         RoomType: findInvited.RoomType,
                         selectedTime: findInvited.selectedTime,
@@ -563,7 +563,7 @@ exports.invitedInSession = async (req, res, next) => {
                         _id: findInvited._id,
                         cretedSessionUserId: createdSessionUser._id,
                         cretedSessionUsername: createdSessionUser.firstName,
-                        isLive: findInvited.isLive,
+                        isLive: findInvited.started,
                         isAbleToJoin: findInvited.started,
                         RoomType: findInvited.RoomType,
                         selectedTime: findInvited.selectedTime,
@@ -593,7 +593,7 @@ exports.invitedInSession = async (req, res, next) => {
                         _id: findInvited._id,
                         cretedSessionUserId: createdSessionUser._id,
                         cretedSessionUsername: createdSessionUser.firstName,
-                        isLive: findInvited.isLive,
+                        isLive: findInvited.started,
                         isAbleToJoin: findInvited.started,
                         RoomType: findInvited.RoomType,
                         selectedTime: findInvited.selectedTime,
@@ -611,7 +611,7 @@ exports.invitedInSession = async (req, res, next) => {
                         _id: findInvited._id,
                         cretedSessionUserId: createdSessionUser._id,
                         cretedSessionUsername: createdSessionUser.firstName,
-                        isLive: findInvited.isLive,
+                        isLive: findInvited.started,
                         isAbleToJoin: findInvited.started,
                         RoomType: findInvited.RoomType,
                         selectedTime: findInvited.selectedTime,
@@ -630,7 +630,7 @@ exports.invitedInSession = async (req, res, next) => {
                         _id: findInvited._id,
                         cretedSessionUserId: createdSessionUser._id,
                         cretedSessionUsername: createdSessionUser.firstName,
-                        isLive: findInvited.isLive,
+                        isLive: findInvited.started,
                         isAbleToJoin: findInvited.started,
                         RoomType: findInvited.RoomType,
                         selectedTime: findInvited.selectedTime,
@@ -652,7 +652,7 @@ exports.invitedInSession = async (req, res, next) => {
                         _id: findInvited._id,
                         cretedSessionUserId: createdSessionUser._id,
                         cretedSessionUsername: createdSessionUser.firstName,
-                        isLive: findInvited.isLive,
+                        isLive: findInvited.started,
                         isAbleToJoin: findInvited.started,
                         RoomType: findInvited.RoomType,
                         selectedTime: findInvited.selectedTime,
@@ -683,7 +683,7 @@ exports.invitedInSession = async (req, res, next) => {
                         _id: findInvited._id,
                         cretedSessionUserId: createdSessionUser._id,
                         cretedSessionUsername: createdSessionUser.firstName,
-                        isLive: findInvited.isLive,
+                        isLive: findInvited.started,
                         isAbleToJoin: findInvited.started,
                         RoomType: findInvited.RoomType,
                         selectedTime: findInvited.selectedTime,
@@ -701,7 +701,7 @@ exports.invitedInSession = async (req, res, next) => {
                         _id: findInvited._id,
                         cretedSessionUserId: createdSessionUser._id,
                         cretedSessionUsername: createdSessionUser.firstName,
-                        isLive: findInvited.isLive,
+                        isLive: findInvited.started,
                         isAbleToJoin: findInvited.started,
                         RoomType: findInvited.RoomType,
                         selectedTime: findInvited.selectedTime,
@@ -720,7 +720,7 @@ exports.invitedInSession = async (req, res, next) => {
                         _id: findInvited._id,
                         cretedSessionUserId: createdSessionUser._id,
                         cretedSessionUsername: createdSessionUser.firstName,
-                        isLive: findInvited.isLive,
+                        isLive: findInvited.started,
                         isAbleToJoin: findInvited.started,
                         RoomType: findInvited.RoomType,
                         selectedTime: findInvited.selectedTime,
@@ -743,7 +743,7 @@ exports.invitedInSession = async (req, res, next) => {
                         _id: findInvited._id,
                         cretedSessionUserId: createdSessionUser._id,
                         cretedSessionUsername: createdSessionUser.firstName,
-                        isLive: findInvited.isLive,
+                        isLive: findInvited.started,
                         isAbleToJoin: findInvited.started,
                         RoomType: findInvited.RoomType,
                         selectedTime: findInvited.selectedTime,
@@ -866,7 +866,7 @@ exports.mySession = async (req, res, next) => {
                         _id: findMySession._id,
                         selectedTime: findMySession.selectedTime,
                         selectedDate: findMySession.selectedDate,
-                        isLive: findMySession.isLive,
+                        isLive: ((days < 0 && hours >= 0 && minutes >= 0) || (days == 0 && hours == 0 && minutes == 0)) == true ? true : false,
                         RoomType: findMySession.RoomType,
                         cretedSessionUserId: findUserDeatil ? findUserDeatil._id : "",
                         cretedSessionUserphoto: findUserDeatil.photo ? findUserDeatil.photo[0] ? findUserDeatil.photo[0].res : "" : "",
@@ -899,7 +899,7 @@ exports.mySession = async (req, res, next) => {
                         _id: findMySession._id,
                         selectedTime: findMySession.selectedTime,
                         selectedDate: findMySession.selectedDate,
-                        isLive: findMySession.isLive,
+                        isLive: ((days < 0 && hours >= 0 && minutes >= 0) || (days == 0 && hours == 0 && minutes == 0)) == true ? true : false,
                         RoomType: findMySession.RoomType,
                         cretedSessionUserId: findUserDeatil ? findUserDeatil._id : "",
                         cretedSessionUserphoto: findUserDeatil.photo ? findUserDeatil.photo[0] ? findUserDeatil.photo[0].res : "" : "",
@@ -915,7 +915,7 @@ exports.mySession = async (req, res, next) => {
                         _id: findMySession._id,
                         selectedTime: findMySession.selectedTime,
                         selectedDate: findMySession.selectedDate,
-                        isLive: findMySession.isLive,
+                        isLive: ((days < 0 && hours >= 0 && minutes >= 0) || (days == 0 && hours == 0 && minutes == 0)) == true ? true : false,
                         RoomType: findMySession.RoomType,
                         cretedSessionUserId: findUserDeatil ? findUserDeatil._id : "",
                         cretedSessionUserphoto: findUserDeatil.photo ? findUserDeatil.photo[0] ? findUserDeatil.photo[0].res : "" : "",
@@ -942,7 +942,7 @@ exports.mySession = async (req, res, next) => {
                         _id: findMySession._id,
                         selectedTime: findMySession.selectedTime,
                         selectedDate: findMySession.selectedDate,
-                        isLive: findMySession.isLive,
+                        isLive: ((days < 0 && hours >= 0 && minutes >= 0) || (days == 0 && hours == 0 && minutes == 0)) == true ? true : false,
                         RoomType: findMySession.RoomType,
                         cretedSessionUserId: findUserDeatil ? findUserDeatil._id : "",
                         cretedSessionUserphoto: findUserDeatil.photo ? findUserDeatil.photo[0] ? findUserDeatil.photo[0].res : "" : "",
@@ -967,7 +967,7 @@ exports.mySession = async (req, res, next) => {
                         _id: findMySession._id,
                         selectedTime: findMySession.selectedTime,
                         selectedDate: findMySession.selectedDate,
-                        isLive: findMySession.isLive,
+                        isLive: ((days < 0 && hours >= 0 && minutes >= 0) || (days == 0 && hours == 0 && minutes == 0)) == true ? true : false,
                         RoomType: findMySession.RoomType,
                         cretedSessionUserId: findUserDeatil ? findUserDeatil._id : "",
                         cretedSessionUserphoto: findUserDeatil.photo ? findUserDeatil.photo[0] ? findUserDeatil.photo[0].res : "" : "",
@@ -996,7 +996,7 @@ exports.mySession = async (req, res, next) => {
                         _id: findMySession._id,
                         selectedTime: findMySession.selectedTime,
                         selectedDate: findMySession.selectedDate,
-                        isLive: findMySession.isLive,
+                        isLive: false,
                         RoomType: findMySession.RoomType,
                         cretedSessionUserId: findUserDeatil ? findUserDeatil._id : "",
                         cretedSessionUserphoto: findUserDeatil.photo ? findUserDeatil.photo[0] ? findUserDeatil.photo[0].res : "" : "",
@@ -1027,7 +1027,7 @@ exports.mySession = async (req, res, next) => {
                         _id: findMySession._id,
                         selectedTime: findMySession.selectedTime,
                         selectedDate: findMySession.selectedDate,
-                        isLive: findMySession.isLive,
+                        isLive: false,
                         RoomType: findMySession.RoomType,
                         cretedSessionUserId: findUserDeatil ? findUserDeatil._id : "",
                         cretedSessionUserphoto: findUserDeatil.photo ? findUserDeatil.photo[0] ? findUserDeatil.photo[0].res : "" : "",
@@ -1043,7 +1043,7 @@ exports.mySession = async (req, res, next) => {
                         _id: findMySession._id,
                         selectedTime: findMySession.selectedTime,
                         selectedDate: findMySession.selectedDate,
-                        isLive: findMySession.isLive,
+                        isLive: false,
                         RoomType: findMySession.RoomType,
                         cretedSessionUserId: findUserDeatil ? findUserDeatil._id : "",
                         cretedSessionUserphoto: findUserDeatil.photo ? findUserDeatil.photo[0] ? findUserDeatil.photo[0].res : "" : "",
@@ -1070,7 +1070,7 @@ exports.mySession = async (req, res, next) => {
                         _id: findMySession._id,
                         selectedTime: findMySession.selectedTime,
                         selectedDate: findMySession.selectedDate,
-                        isLive: findMySession.isLive,
+                        isLive: false,
                         RoomType: findMySession.RoomType,
                         cretedSessionUserId: findUserDeatil ? findUserDeatil._id : "",
                         cretedSessionUserphoto: findUserDeatil.photo ? findUserDeatil.photo[0] ? findUserDeatil.photo[0].res : "" : "",
@@ -1095,7 +1095,7 @@ exports.mySession = async (req, res, next) => {
                         _id: findMySession._id,
                         selectedTime: findMySession.selectedTime,
                         selectedDate: findMySession.selectedDate,
-                        isLive: findMySession.isLive,
+                        isLive: false,
                         RoomType: findMySession.RoomType,
                         cretedSessionUserId: findUserDeatil ? findUserDeatil._id : "",
                         cretedSessionUserphoto: findUserDeatil.photo ? findUserDeatil.photo[0] ? findUserDeatil.photo[0].res : "" : "",
