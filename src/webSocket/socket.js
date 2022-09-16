@@ -2622,7 +2622,50 @@ function socket(io) {
         })
 
         socket.on('callForJoin', async (arg) => {
-            io.emit("nowEnd", "successfully start now")
+
+            const findSession = await sessionModel.findOne({
+                _id: arg.session_id
+            })
+
+            if (findSession.roomType == "Pblic") {
+
+                const findUser = await userModel.find({
+                    _id: {
+                        $ne: arg.create_session_user
+                    }
+                }).select("_id")
+
+
+                for (const getNot of findUser) {
+                    const userRoom = `User${getNot._id}`
+                    io.to(userRoom).emit("nowEnd", "successfully start now");
+                }
+
+            } else {
+
+                const allId = [];
+                const findSession = await sessionModel.findOne({
+                    _id: arg.session_id
+                })
+
+                const p1 = findSession.participants[0].participants_1 == null ? "" : findSession.participants[0].participants_1
+                const p2 = findSession.participants[0].participants_2 == null ? "" : findSession.participants[0].participants_2
+                const p3 = findSession.participants[0].participants_3 == null ? "" : findSession.participants[0].participants_3
+
+                if (p1) {
+                    allId.push(findSession.participants[0].participants_1)
+                } else if (p2) {
+                    allId.push(findSession.participants[0].participants_1)
+                } else if (p3) {
+                    allId.push(findSession.participants[0].participants_1)
+                }
+
+                for (const getNot of allId) {
+                    const userRoom = `User${getNot}`
+                    io.to(userRoom).emit("nowEnd", "successfully start now");
+                }
+
+            }
         })
 
     })
