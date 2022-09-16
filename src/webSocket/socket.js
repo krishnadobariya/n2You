@@ -2621,6 +2621,10 @@ function socket(io) {
 
         })
 
+        socket.on('callForJoin', async (arg) => {
+            io.emit("endSessionSuccess", "successfully start now")
+        })
+
     })
 }
 

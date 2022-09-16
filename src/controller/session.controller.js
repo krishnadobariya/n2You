@@ -1703,8 +1703,8 @@ exports.mySession = async (req, res, next) => {
             let userSessionyear = userSessionDate.getUTCFullYear();
             let userSessionhour = userSessionDate.getUTCHours();
             let userSessionminute = userSessionDate.getUTCMinutes();
-            const finalMinute = userSessionminute >= 31 ? userSessionminute - 31 : userSessionminute + 31;
-            const finalHours = userSessionminute >= 31 ? userSessionhour - 5 : userSessionhour - 6;
+            const finalMinute = userSessionminute >= 30 ? userSessionminute - 30 : userSessionminute + 30;
+            const finalHours = userSessionminute >= 30 ? userSessionhour - 5 : userSessionhour - 6;
             let userSessionsecond = userSessionDate.getUTCSeconds();
             const finalUserSessionDate = new Date(`${userSessionyear}-${userSessionmonth + 1}-${userSessionDates} ${finalHours}:${finalMinute}:${userSessionsecond}`)
 
@@ -1816,11 +1816,11 @@ exports.mySession = async (req, res, next) => {
                             {
                                 _id: findParticipantsiUserDeatil2 ? findParticipantsiUserDeatil2._id : "",
                                 photo: findParticipantsiUserDeatil2 == null ? "" : findParticipantsiUserDeatil2.photo[0] ? findParticipantsiUserDeatil2.photo[0].res : "",
-                                name: findParticipantsiUserDeatil2 == null ? " " : findParticipantsiUserDeatil2.firstName
+                                name: findParticipantsiUserDeatil2 == null ? "" : findParticipantsiUserDeatil2.firstName
                             },
                             {
                                 _id: findParticipantsiUserDeatil3 ? findParticipantsiUserDeatil3._id : "",
-                                photo: findParticipantsiUserDeatil3 == null ? " " : findParticipantsiUserDeatil3.photo[0] ? findParticipantsiUserDeatil3.photo[0].res : "",
+                                photo: findParticipantsiUserDeatil3 == null ? "" : findParticipantsiUserDeatil3.photo[0] ? findParticipantsiUserDeatil3.photo[0].res : "",
                                 name: findParticipantsiUserDeatil3 == null ? "" : findParticipantsiUserDeatil3.firstName
                             }
                         ]
