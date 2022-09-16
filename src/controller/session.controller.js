@@ -287,21 +287,85 @@ exports.publicSession = async (req, res, next) => {
     try {
 
         const findPublicSession = await sessionModel.find({
-            RoomType: "Public"
+            roomType: "Public",
+            cretedSessionUser: {
+                $ne: req.params.user_id
+            },
         })
 
-        if (findPublicSession[0] == null) {
-            res.status(status.OK).json({
-                "message": "Not Found Any Public Session",
-                "status": true,
-                "code": 200,
-                "statusCode": 1,
-                "pageCount": 0,
-                "data": []
+        const findPublicSessionMatch = await sessionModel.find({
+            roomType: "Public",
+            cretedSessionUser: {
+                $eq: req.params.user_id
+            },
+        })
 
-            })
-            
-        } else {
+        const findPublicSessionParticipant1 = await sessionModel.find({
+            roomType: "Public",
+            participants: {
+                $elemMatch: {
+                    participants_1: {
+                        $ne: req.params.user_id
+                    }
+                }
+            }
+        })
+        const findPublicSessionParticipant1Match = await sessionModel.find({
+            roomType: "Public",
+            participants: {
+                $elemMatch: {
+                    participants_1: {
+                        $eq: req.params.user_id
+                    }
+                }
+            }
+        })
+
+        const findPublicSessionParticipant2 = await sessionModel.find({
+            roomType: "Public",
+            participants: {
+                $elemMatch: {
+                    participants_2: {
+                        $ne: req.params.user_id
+                    }
+                }
+            }
+        })
+        const findPublicSessionParticipant2Match = await sessionModel.find({
+            roomType: "Public",
+            participants: {
+                $elemMatch: {
+                    participants_2: {
+                        $eq: req.params.user_id
+                    }
+                }
+            }
+        })
+
+        const findPublicSessionParticipant3 = await sessionModel.find({
+            roomType: "Public",
+            participants: {
+                $elemMatch: {
+                    participants_3: {
+                        $ne: req.params.user_id
+                    }
+                }
+            }
+        })
+
+        const findPublicSessionParticipant3Match = await sessionModel.find({
+            roomType: "Public",
+            participants: {
+                $elemMatch: {
+                    participants_3: {
+                        $eq: req.params.user_id
+                    }
+                }
+            }
+        })
+
+
+        if (findPublicSessionMatch[0] != undefined) {
 
             const publicSession = [];
 
@@ -543,6 +607,751 @@ exports.publicSession = async (req, res, next) => {
                 "statusCode": 1,
                 "pageCount": (pageCount).toString() == (NaN).toString() ? 0 : pageCount,
                 "data": (startIndex).toString() == (NaN).toString() ? publicSession.sort((a, b) => new Date(a.selectedDate) - new Date(b.selectedDate)) : publicSession.slice(startIndex, endIndex).sort((a, b) => new Date(a.selectedDate) - new Date(b.selectedDate))
+
+            })
+
+
+        } else if (findPublicSessionParticipant1Match[0] != undefined) {
+
+            console.log("howwwwww");
+            const publicSession = [];
+
+            for (const publicSessionwithUserDetails of findPublicSessionParticipant1) {
+
+                const findUser = await userModel.findOne({
+                    _id: publicSessionwithUserDetails.cretedSessionUser,
+                    polyDating: 0
+                })
+
+                const participants1Find = await userModel.findOne({
+                    _id: publicSessionwithUserDetails.participants[0].participants_1,
+                    polyDating: 0
+                })
+                const participants2Find = await userModel.findOne({
+                    _id: publicSessionwithUserDetails.participants[0].participants_2,
+                    polyDating: 0
+                })
+                const participants3Find = await userModel.findOne({
+                    _id: publicSessionwithUserDetails.participants[0].participants_3,
+                    polyDating: 0
+                })
+
+                const participants_1 = {
+                    _id: participants1Find ? participants1Find._id : "",
+                    name: participants1Find ? participants1Find.firstName : "",
+                    profile: participants1Find ? participants1Find.photo[0] ? participants1Find.photo[0].res : "" : "",
+                }
+                const participants_2 = {
+                    _id: participants2Find ? participants2Find._id : "",
+                    name: participants2Find ? participants2Find.firstName : "",
+                    profile: participants2Find ? participants2Find.photo[0] ? participants2Find.photo[0].res : "" : "",
+                }
+                const participants_3 = {
+                    _id: participants3Find ? participants3Find._id : "",
+                    name: participants3Find ? participants3Find.firstName : "",
+                    profile: participants3Find ? participants3Find.photo[0] ? participants3Find.photo[0].res : "" : "",
+                }
+
+
+                if (participants1Find && participants2Find && participants3Find) {
+                    // const sessionDetail = 
+                    // const response = {
+                    //     sessionDetail
+                    // }
+
+                    const dates = publicSessionwithUserDetails.selectedDate;
+                    const finalDate = new Date(dates)
+                    let month = finalDate.toLocaleString('en-us', { month: 'long' });
+                    let date = finalDate.getDate();
+                    let year = finalDate.getFullYear();
+
+                    let hours = finalDate.getHours();
+                    let minutes = finalDate.getMinutes();
+                    let ampm = hours >= 12 ? 'pm' : 'am';
+                    hours = hours % 12;
+                    hours = hours ? hours : 12;
+                    minutes = minutes.toString().padStart(2, '0');
+                    let strTime = hours + ':' + minutes + ' ' + ampm;
+
+                    publicSession.push({
+                        _id: publicSessionwithUserDetails._id,
+                        cretedSessionUserId: findUser._id,
+                        cretedSessionUsername: findUser.firstName,
+                        selectedDate: publicSessionwithUserDetails.selectedDate,
+                        selectedTime: publicSessionwithUserDetails.selectedTime,
+                        roomType: publicSessionwithUserDetails.RoomType,
+                        detail: publicSessionwithUserDetails.started == true ? "100 people joined" : `${date} ${month} ${year} ${strTime}`,
+                        isLive: publicSessionwithUserDetails.started,
+                        isAbleToJoin: publicSessionwithUserDetails.started,
+                        cretedSessionUserphoto: findUser.photo == undefined ? "" : findUser.photo[0] ? findUser.photo[0].res : "",
+                        participants: [
+                            participants_1,
+                            participants_2,
+                            participants_3
+                        ]
+                    })
+                } else if (participants1Find == null && participants2Find && participants3Find) {
+                    // const sessionDetail = 
+                    // const response = {
+                    //     sessionDetail
+                    // }
+
+                    const dates = publicSessionwithUserDetails.selectedDate;
+                    const finalDate = new Date(dates)
+                    let month = finalDate.toLocaleString('en-us', { month: 'long' });
+                    let date = finalDate.getDate();
+                    let year = finalDate.getFullYear();
+
+                    let hours = finalDate.getHours();
+                    let minutes = finalDate.getMinutes();
+                    let ampm = hours >= 12 ? 'pm' : 'am';
+                    hours = hours % 12;
+                    hours = hours ? hours : 12;
+                    minutes = minutes.toString().padStart(2, '0');
+                    let strTime = hours + ':' + minutes + ' ' + ampm;
+
+                    publicSession.push({
+                        _id: publicSessionwithUserDetails._id,
+                        cretedSessionUserId: findUser._id,
+                        cretedSessionUsername: findUser.firstName,
+                        selectedDate: publicSessionwithUserDetails.selectedDate,
+                        selectedTime: publicSessionwithUserDetails.selectedTime,
+                        roomType: publicSessionwithUserDetails.RoomType,
+                        detail: publicSessionwithUserDetails.started == "true" ? "100 people joined" : `${date} ${month} ${year} ${strTime}`,
+                        isLive: publicSessionwithUserDetails.started,
+                        isAbleToJoin: publicSessionwithUserDetails.started,
+                        cretedSessionUserphoto: findUser.photo == undefined ? "" : findUser.photo[0] ? findUser.photo[0].res : "",
+                        participants: [
+                            participants_2,
+                            participants_3
+                        ]
+                    })
+                } else if (participants1Find && participants2Find == null && participants3Find) {
+
+                    const dates = publicSessionwithUserDetails.selectedDate;
+                    const finalDate = new Date(dates)
+                    let month = finalDate.toLocaleString('en-us', { month: 'long' });
+                    let date = finalDate.getDate();
+                    let year = finalDate.getFullYear();
+
+                    let hours = finalDate.getHours();
+                    let minutes = finalDate.getMinutes();
+                    let ampm = hours >= 12 ? 'pm' : 'am';
+                    hours = hours % 12;
+                    hours = hours ? hours : 12;
+                    minutes = minutes.toString().padStart(2, '0');
+                    let strTime = hours + ':' + minutes + ' ' + ampm;
+
+
+                    const sessionDetail = {
+                        _id: publicSessionwithUserDetails._id,
+                        cretedSessionUserId: findUser._id,
+                        cretedSessionUsername: findUser.firstName,
+                        selectedDate: publicSessionwithUserDetails.selectedDate,
+                        selectedTime: publicSessionwithUserDetails.selectedTime,
+                        roomType: publicSessionwithUserDetails.RoomType,
+                        detail: publicSessionwithUserDetails.started == "true" ? "100 people joined" : `${date} ${month} ${year} ${strTime}`,
+                        isLive: publicSessionwithUserDetails.started,
+                        isAbleToJoin: publicSessionwithUserDetails.started,
+                        cretedSessionUserphoto: findUser.photo == undefined ? "" : findUser.photo[0] ? findUser.photo[0].res : "",
+                        participants: [
+                            participants_1,
+                            participants_3
+                        ]
+                    }
+                    const response = {
+                        sessionDetail
+                    }
+                    publicSession.push(response)
+                } else if (participants1Find && participants2Find && participants3Find == null) {
+                    // const sessionDetail = 
+                    // const response = {
+                    //     sessionDetail
+                    // }
+
+                    const dates = publicSessionwithUserDetails.selectedDate;
+                    const finalDate = new Date(dates)
+                    let month = finalDate.toLocaleString('en-us', { month: 'long' });
+                    let date = finalDate.getDate();
+                    let year = finalDate.getFullYear();
+
+                    let hours = finalDate.getHours();
+                    let minutes = finalDate.getMinutes();
+                    let ampm = hours >= 12 ? 'pm' : 'am';
+                    hours = hours % 12;
+                    hours = hours ? hours : 12;
+                    minutes = minutes.toString().padStart(2, '0');
+                    let strTime = hours + ':' + minutes + ' ' + ampm;
+
+
+
+                    publicSession.push({
+                        _id: publicSessionwithUserDetails._id,
+                        cretedSessionUserId: findUser._id,
+                        cretedSessionUsername: findUser.firstName,
+                        selectedDate: publicSessionwithUserDetails.selectedDate,
+                        selectedTime: publicSessionwithUserDetails.selectedTime,
+                        roomType: publicSessionwithUserDetails.RoomType,
+                        detail: publicSessionwithUserDetails.started == true ? "100 people joined" : `${date} ${month} ${year} ${strTime}`,
+                        isLive: publicSessionwithUserDetails.started,
+                        isAbleToJoin: publicSessionwithUserDetails.started,
+                        cretedSessionUserphoto: findUser.photo == undefined ? "" : findUser.photo[0] ? findUser.photo[0].res : "",
+                        participants: [
+                            participants_1,
+                            participants_2
+                        ]
+                    })
+
+                } else if (participants1Find == null && participants2Find == null && participants3Find == null) {
+                    // const sessionDetail =
+                    // const response = {
+                    //     sessionDetail
+                    // }
+
+                    const dates = publicSessionwithUserDetails.selectedDate;
+                    const finalDate = new Date(dates)
+                    let month = finalDate.toLocaleString('en-us', { month: 'long' });
+                    let date = finalDate.getDate();
+                    let year = finalDate.getFullYear();
+
+                    let hours = finalDate.getHours();
+                    let minutes = finalDate.getMinutes();
+                    let ampm = hours >= 12 ? 'pm' : 'am';
+                    hours = hours % 12;
+                    hours = hours ? hours : 12;
+                    minutes = minutes.toString().padStart(2, '0');
+                    let strTime = hours + ':' + minutes + ' ' + ampm;
+
+
+                    publicSession.push({
+                        _id: publicSessionwithUserDetails._id,
+                        cretedSessionUserId: findUser._id,
+                        cretedSessionUsername: findUser.firstName,
+                        selectedDate: publicSessionwithUserDetails.selectedDate,
+                        selectedTime: publicSessionwithUserDetails.selectedTime,
+                        roomType: publicSessionwithUserDetails.RoomType,
+                        detail: publicSessionwithUserDetails.started == true ? "100 people joined" : `${date} ${month} ${year} ${strTime}`,
+                        isLive: publicSessionwithUserDetails.started,
+                        isAbleToJoin: publicSessionwithUserDetails.started,
+                        cretedSessionUserphoto: findUser.photo == undefined ? "" : findUser.photo[0] ? findUser.photo[0].res : "",
+                        participants: []
+                    })
+                }
+
+
+            }
+
+            const page = parseInt(req.query.page)
+            const limit = parseInt(req.query.limit)
+            const startIndex = (page - 1) * limit;
+            const endIndex = page * limit;
+            const data = publicSession.length;
+            const pageCount = Math.ceil(data / limit);
+            res.status(status.OK).json({
+                "message": "successfully Show All Public Session!",
+                "status": true,
+                "code": 200,
+                "statusCode": 1,
+                "pageCount": (pageCount).toString() == (NaN).toString() ? 0 : pageCount,
+                "data": (startIndex).toString() == (NaN).toString() ? publicSession.sort((a, b) => new Date(a.selectedDate) - new Date(b.selectedDate)) : publicSession.slice(startIndex, endIndex).sort((a, b) => new Date(a.selectedDate) - new Date(b.selectedDate))
+
+            })
+        } else if (findPublicSessionParticipant2Match[0] != undefined) {
+
+            const publicSession = [];
+
+            for (const publicSessionwithUserDetails of findPublicSessionParticipant2) {
+
+                const findUser = await userModel.findOne({
+                    _id: publicSessionwithUserDetails.cretedSessionUser,
+                    polyDating: 0
+                })
+
+                const participants1Find = await userModel.findOne({
+                    _id: publicSessionwithUserDetails.participants[0].participants_1,
+                    polyDating: 0
+                })
+                const participants2Find = await userModel.findOne({
+                    _id: publicSessionwithUserDetails.participants[0].participants_2,
+                    polyDating: 0
+                })
+                const participants3Find = await userModel.findOne({
+                    _id: publicSessionwithUserDetails.participants[0].participants_3,
+                    polyDating: 0
+                })
+
+                const participants_1 = {
+                    _id: participants1Find ? participants1Find._id : "",
+                    name: participants1Find ? participants1Find.firstName : "",
+                    profile: participants1Find ? participants1Find.photo[0] ? participants1Find.photo[0].res : "" : "",
+                }
+                const participants_2 = {
+                    _id: participants2Find ? participants2Find._id : "",
+                    name: participants2Find ? participants2Find.firstName : "",
+                    profile: participants2Find ? participants2Find.photo[0] ? participants2Find.photo[0].res : "" : "",
+                }
+                const participants_3 = {
+                    _id: participants3Find ? participants3Find._id : "",
+                    name: participants3Find ? participants3Find.firstName : "",
+                    profile: participants3Find ? participants3Find.photo[0] ? participants3Find.photo[0].res : "" : "",
+                }
+
+
+                if (participants1Find && participants2Find && participants3Find) {
+                    // const sessionDetail = 
+                    // const response = {
+                    //     sessionDetail
+                    // }
+
+                    const dates = publicSessionwithUserDetails.selectedDate;
+                    const finalDate = new Date(dates)
+                    let month = finalDate.toLocaleString('en-us', { month: 'long' });
+                    let date = finalDate.getDate();
+                    let year = finalDate.getFullYear();
+
+                    let hours = finalDate.getHours();
+                    let minutes = finalDate.getMinutes();
+                    let ampm = hours >= 12 ? 'pm' : 'am';
+                    hours = hours % 12;
+                    hours = hours ? hours : 12;
+                    minutes = minutes.toString().padStart(2, '0');
+                    let strTime = hours + ':' + minutes + ' ' + ampm;
+
+                    publicSession.push({
+                        _id: publicSessionwithUserDetails._id,
+                        cretedSessionUserId: findUser._id,
+                        cretedSessionUsername: findUser.firstName,
+                        selectedDate: publicSessionwithUserDetails.selectedDate,
+                        selectedTime: publicSessionwithUserDetails.selectedTime,
+                        roomType: publicSessionwithUserDetails.RoomType,
+                        detail: publicSessionwithUserDetails.started == true ? "100 people joined" : `${date} ${month} ${year} ${strTime}`,
+                        isLive: publicSessionwithUserDetails.started,
+                        isAbleToJoin: publicSessionwithUserDetails.started,
+                        cretedSessionUserphoto: findUser.photo == undefined ? "" : findUser.photo[0] ? findUser.photo[0].res : "",
+                        participants: [
+                            participants_1,
+                            participants_2,
+                            participants_3
+                        ]
+                    })
+                } else if (participants1Find == null && participants2Find && participants3Find) {
+                    // const sessionDetail = 
+                    // const response = {
+                    //     sessionDetail
+                    // }
+
+                    const dates = publicSessionwithUserDetails.selectedDate;
+                    const finalDate = new Date(dates)
+                    let month = finalDate.toLocaleString('en-us', { month: 'long' });
+                    let date = finalDate.getDate();
+                    let year = finalDate.getFullYear();
+
+                    let hours = finalDate.getHours();
+                    let minutes = finalDate.getMinutes();
+                    let ampm = hours >= 12 ? 'pm' : 'am';
+                    hours = hours % 12;
+                    hours = hours ? hours : 12;
+                    minutes = minutes.toString().padStart(2, '0');
+                    let strTime = hours + ':' + minutes + ' ' + ampm;
+
+                    publicSession.push({
+                        _id: publicSessionwithUserDetails._id,
+                        cretedSessionUserId: findUser._id,
+                        cretedSessionUsername: findUser.firstName,
+                        selectedDate: publicSessionwithUserDetails.selectedDate,
+                        selectedTime: publicSessionwithUserDetails.selectedTime,
+                        roomType: publicSessionwithUserDetails.RoomType,
+                        detail: publicSessionwithUserDetails.started == "true" ? "100 people joined" : `${date} ${month} ${year} ${strTime}`,
+                        isLive: publicSessionwithUserDetails.started,
+                        isAbleToJoin: publicSessionwithUserDetails.started,
+                        cretedSessionUserphoto: findUser.photo == undefined ? "" : findUser.photo[0] ? findUser.photo[0].res : "",
+                        participants: [
+                            participants_2,
+                            participants_3
+                        ]
+                    })
+                } else if (participants1Find && participants2Find == null && participants3Find) {
+
+                    const dates = publicSessionwithUserDetails.selectedDate;
+                    const finalDate = new Date(dates)
+                    let month = finalDate.toLocaleString('en-us', { month: 'long' });
+                    let date = finalDate.getDate();
+                    let year = finalDate.getFullYear();
+
+                    let hours = finalDate.getHours();
+                    let minutes = finalDate.getMinutes();
+                    let ampm = hours >= 12 ? 'pm' : 'am';
+                    hours = hours % 12;
+                    hours = hours ? hours : 12;
+                    minutes = minutes.toString().padStart(2, '0');
+                    let strTime = hours + ':' + minutes + ' ' + ampm;
+
+
+                    const sessionDetail = {
+                        _id: publicSessionwithUserDetails._id,
+                        cretedSessionUserId: findUser._id,
+                        cretedSessionUsername: findUser.firstName,
+                        selectedDate: publicSessionwithUserDetails.selectedDate,
+                        selectedTime: publicSessionwithUserDetails.selectedTime,
+                        roomType: publicSessionwithUserDetails.RoomType,
+                        detail: publicSessionwithUserDetails.started == "true" ? "100 people joined" : `${date} ${month} ${year} ${strTime}`,
+                        isLive: publicSessionwithUserDetails.started,
+                        isAbleToJoin: publicSessionwithUserDetails.started,
+                        cretedSessionUserphoto: findUser.photo == undefined ? "" : findUser.photo[0] ? findUser.photo[0].res : "",
+                        participants: [
+                            participants_1,
+                            participants_3
+                        ]
+                    }
+                    const response = {
+                        sessionDetail
+                    }
+                    publicSession.push(response)
+                } else if (participants1Find && participants2Find && participants3Find == null) {
+                    // const sessionDetail = 
+                    // const response = {
+                    //     sessionDetail
+                    // }
+
+                    const dates = publicSessionwithUserDetails.selectedDate;
+                    const finalDate = new Date(dates)
+                    let month = finalDate.toLocaleString('en-us', { month: 'long' });
+                    let date = finalDate.getDate();
+                    let year = finalDate.getFullYear();
+
+                    let hours = finalDate.getHours();
+                    let minutes = finalDate.getMinutes();
+                    let ampm = hours >= 12 ? 'pm' : 'am';
+                    hours = hours % 12;
+                    hours = hours ? hours : 12;
+                    minutes = minutes.toString().padStart(2, '0');
+                    let strTime = hours + ':' + minutes + ' ' + ampm;
+
+
+
+                    publicSession.push({
+                        _id: publicSessionwithUserDetails._id,
+                        cretedSessionUserId: findUser._id,
+                        cretedSessionUsername: findUser.firstName,
+                        selectedDate: publicSessionwithUserDetails.selectedDate,
+                        selectedTime: publicSessionwithUserDetails.selectedTime,
+                        roomType: publicSessionwithUserDetails.RoomType,
+                        detail: publicSessionwithUserDetails.started == true ? "100 people joined" : `${date} ${month} ${year} ${strTime}`,
+                        isLive: publicSessionwithUserDetails.started,
+                        isAbleToJoin: publicSessionwithUserDetails.started,
+                        cretedSessionUserphoto: findUser.photo == undefined ? "" : findUser.photo[0] ? findUser.photo[0].res : "",
+                        participants: [
+                            participants_1,
+                            participants_2
+                        ]
+                    })
+
+                } else if (participants1Find == null && participants2Find == null && participants3Find == null) {
+                    // const sessionDetail =
+                    // const response = {
+                    //     sessionDetail
+                    // }
+
+                    const dates = publicSessionwithUserDetails.selectedDate;
+                    const finalDate = new Date(dates)
+                    let month = finalDate.toLocaleString('en-us', { month: 'long' });
+                    let date = finalDate.getDate();
+                    let year = finalDate.getFullYear();
+
+                    let hours = finalDate.getHours();
+                    let minutes = finalDate.getMinutes();
+                    let ampm = hours >= 12 ? 'pm' : 'am';
+                    hours = hours % 12;
+                    hours = hours ? hours : 12;
+                    minutes = minutes.toString().padStart(2, '0');
+                    let strTime = hours + ':' + minutes + ' ' + ampm;
+
+
+                    publicSession.push({
+                        _id: publicSessionwithUserDetails._id,
+                        cretedSessionUserId: findUser._id,
+                        cretedSessionUsername: findUser.firstName,
+                        selectedDate: publicSessionwithUserDetails.selectedDate,
+                        selectedTime: publicSessionwithUserDetails.selectedTime,
+                        roomType: publicSessionwithUserDetails.RoomType,
+                        detail: publicSessionwithUserDetails.started == true ? "100 people joined" : `${date} ${month} ${year} ${strTime}`,
+                        isLive: publicSessionwithUserDetails.started,
+                        isAbleToJoin: publicSessionwithUserDetails.started,
+                        cretedSessionUserphoto: findUser.photo == undefined ? "" : findUser.photo[0] ? findUser.photo[0].res : "",
+                        participants: []
+                    })
+                }
+
+
+            }
+
+            const page = parseInt(req.query.page)
+            const limit = parseInt(req.query.limit)
+            const startIndex = (page - 1) * limit;
+            const endIndex = page * limit;
+            const data = publicSession.length;
+            const pageCount = Math.ceil(data / limit);
+            res.status(status.OK).json({
+                "message": "successfully Show All Public Session!",
+                "status": true,
+                "code": 200,
+                "statusCode": 1,
+                "pageCount": (pageCount).toString() == (NaN).toString() ? 0 : pageCount,
+                "data": (startIndex).toString() == (NaN).toString() ? publicSession.sort((a, b) => new Date(a.selectedDate) - new Date(b.selectedDate)) : publicSession.slice(startIndex, endIndex).sort((a, b) => new Date(a.selectedDate) - new Date(b.selectedDate))
+
+            })
+        } else if (findPublicSessionParticipant3Match[0] != undefined) {
+
+            const publicSession = [];
+
+            for (const publicSessionwithUserDetails of findPublicSessionParticipant3) {
+
+                const findUser = await userModel.findOne({
+                    _id: publicSessionwithUserDetails.cretedSessionUser,
+                    polyDating: 0
+                })
+
+                const participants1Find = await userModel.findOne({
+                    _id: publicSessionwithUserDetails.participants[0].participants_1,
+                    polyDating: 0
+                })
+                const participants2Find = await userModel.findOne({
+                    _id: publicSessionwithUserDetails.participants[0].participants_2,
+                    polyDating: 0
+                })
+                const participants3Find = await userModel.findOne({
+                    _id: publicSessionwithUserDetails.participants[0].participants_3,
+                    polyDating: 0
+                })
+
+                const participants_1 = {
+                    _id: participants1Find ? participants1Find._id : "",
+                    name: participants1Find ? participants1Find.firstName : "",
+                    profile: participants1Find ? participants1Find.photo[0] ? participants1Find.photo[0].res : "" : "",
+                }
+                const participants_2 = {
+                    _id: participants2Find ? participants2Find._id : "",
+                    name: participants2Find ? participants2Find.firstName : "",
+                    profile: participants2Find ? participants2Find.photo[0] ? participants2Find.photo[0].res : "" : "",
+                }
+                const participants_3 = {
+                    _id: participants3Find ? participants3Find._id : "",
+                    name: participants3Find ? participants3Find.firstName : "",
+                    profile: participants3Find ? participants3Find.photo[0] ? participants3Find.photo[0].res : "" : "",
+                }
+
+
+                if (participants1Find && participants2Find && participants3Find) {
+                    // const sessionDetail = 
+                    // const response = {
+                    //     sessionDetail
+                    // }
+
+                    const dates = publicSessionwithUserDetails.selectedDate;
+                    const finalDate = new Date(dates)
+                    let month = finalDate.toLocaleString('en-us', { month: 'long' });
+                    let date = finalDate.getDate();
+                    let year = finalDate.getFullYear();
+
+                    let hours = finalDate.getHours();
+                    let minutes = finalDate.getMinutes();
+                    let ampm = hours >= 12 ? 'pm' : 'am';
+                    hours = hours % 12;
+                    hours = hours ? hours : 12;
+                    minutes = minutes.toString().padStart(2, '0');
+                    let strTime = hours + ':' + minutes + ' ' + ampm;
+
+                    publicSession.push({
+                        _id: publicSessionwithUserDetails._id,
+                        cretedSessionUserId: findUser._id,
+                        cretedSessionUsername: findUser.firstName,
+                        selectedDate: publicSessionwithUserDetails.selectedDate,
+                        selectedTime: publicSessionwithUserDetails.selectedTime,
+                        roomType: publicSessionwithUserDetails.RoomType,
+                        detail: publicSessionwithUserDetails.started == true ? "100 people joined" : `${date} ${month} ${year} ${strTime}`,
+                        isLive: publicSessionwithUserDetails.started,
+                        isAbleToJoin: publicSessionwithUserDetails.started,
+                        cretedSessionUserphoto: findUser.photo == undefined ? "" : findUser.photo[0] ? findUser.photo[0].res : "",
+                        participants: [
+                            participants_1,
+                            participants_2,
+                            participants_3
+                        ]
+                    })
+                } else if (participants1Find == null && participants2Find && participants3Find) {
+                    // const sessionDetail = 
+                    // const response = {
+                    //     sessionDetail
+                    // }
+
+                    const dates = publicSessionwithUserDetails.selectedDate;
+                    const finalDate = new Date(dates)
+                    let month = finalDate.toLocaleString('en-us', { month: 'long' });
+                    let date = finalDate.getDate();
+                    let year = finalDate.getFullYear();
+
+                    let hours = finalDate.getHours();
+                    let minutes = finalDate.getMinutes();
+                    let ampm = hours >= 12 ? 'pm' : 'am';
+                    hours = hours % 12;
+                    hours = hours ? hours : 12;
+                    minutes = minutes.toString().padStart(2, '0');
+                    let strTime = hours + ':' + minutes + ' ' + ampm;
+
+                    publicSession.push({
+                        _id: publicSessionwithUserDetails._id,
+                        cretedSessionUserId: findUser._id,
+                        cretedSessionUsername: findUser.firstName,
+                        selectedDate: publicSessionwithUserDetails.selectedDate,
+                        selectedTime: publicSessionwithUserDetails.selectedTime,
+                        roomType: publicSessionwithUserDetails.RoomType,
+                        detail: publicSessionwithUserDetails.started == "true" ? "100 people joined" : `${date} ${month} ${year} ${strTime}`,
+                        isLive: publicSessionwithUserDetails.started,
+                        isAbleToJoin: publicSessionwithUserDetails.started,
+                        cretedSessionUserphoto: findUser.photo == undefined ? "" : findUser.photo[0] ? findUser.photo[0].res : "",
+                        participants: [
+                            participants_2,
+                            participants_3
+                        ]
+                    })
+                } else if (participants1Find && participants2Find == null && participants3Find) {
+
+                    const dates = publicSessionwithUserDetails.selectedDate;
+                    const finalDate = new Date(dates)
+                    let month = finalDate.toLocaleString('en-us', { month: 'long' });
+                    let date = finalDate.getDate();
+                    let year = finalDate.getFullYear();
+
+                    let hours = finalDate.getHours();
+                    let minutes = finalDate.getMinutes();
+                    let ampm = hours >= 12 ? 'pm' : 'am';
+                    hours = hours % 12;
+                    hours = hours ? hours : 12;
+                    minutes = minutes.toString().padStart(2, '0');
+                    let strTime = hours + ':' + minutes + ' ' + ampm;
+
+
+                    const sessionDetail = {
+                        _id: publicSessionwithUserDetails._id,
+                        cretedSessionUserId: findUser._id,
+                        cretedSessionUsername: findUser.firstName,
+                        selectedDate: publicSessionwithUserDetails.selectedDate,
+                        selectedTime: publicSessionwithUserDetails.selectedTime,
+                        roomType: publicSessionwithUserDetails.RoomType,
+                        detail: publicSessionwithUserDetails.started == "true" ? "100 people joined" : `${date} ${month} ${year} ${strTime}`,
+                        isLive: publicSessionwithUserDetails.started,
+                        isAbleToJoin: publicSessionwithUserDetails.started,
+                        cretedSessionUserphoto: findUser.photo == undefined ? "" : findUser.photo[0] ? findUser.photo[0].res : "",
+                        participants: [
+                            participants_1,
+                            participants_3
+                        ]
+                    }
+                    const response = {
+                        sessionDetail
+                    }
+                    publicSession.push(response)
+                } else if (participants1Find && participants2Find && participants3Find == null) {
+                    // const sessionDetail = 
+                    // const response = {
+                    //     sessionDetail
+                    // }
+
+                    const dates = publicSessionwithUserDetails.selectedDate;
+                    const finalDate = new Date(dates)
+                    let month = finalDate.toLocaleString('en-us', { month: 'long' });
+                    let date = finalDate.getDate();
+                    let year = finalDate.getFullYear();
+
+                    let hours = finalDate.getHours();
+                    let minutes = finalDate.getMinutes();
+                    let ampm = hours >= 12 ? 'pm' : 'am';
+                    hours = hours % 12;
+                    hours = hours ? hours : 12;
+                    minutes = minutes.toString().padStart(2, '0');
+                    let strTime = hours + ':' + minutes + ' ' + ampm;
+
+
+
+                    publicSession.push({
+                        _id: publicSessionwithUserDetails._id,
+                        cretedSessionUserId: findUser._id,
+                        cretedSessionUsername: findUser.firstName,
+                        selectedDate: publicSessionwithUserDetails.selectedDate,
+                        selectedTime: publicSessionwithUserDetails.selectedTime,
+                        roomType: publicSessionwithUserDetails.RoomType,
+                        detail: publicSessionwithUserDetails.started == true ? "100 people joined" : `${date} ${month} ${year} ${strTime}`,
+                        isLive: publicSessionwithUserDetails.started,
+                        isAbleToJoin: publicSessionwithUserDetails.started,
+                        cretedSessionUserphoto: findUser.photo == undefined ? "" : findUser.photo[0] ? findUser.photo[0].res : "",
+                        participants: [
+                            participants_1,
+                            participants_2
+                        ]
+                    })
+
+                } else if (participants1Find == null && participants2Find == null && participants3Find == null) {
+                    // const sessionDetail =
+                    // const response = {
+                    //     sessionDetail
+                    // }
+
+                    const dates = publicSessionwithUserDetails.selectedDate;
+                    const finalDate = new Date(dates)
+                    let month = finalDate.toLocaleString('en-us', { month: 'long' });
+                    let date = finalDate.getDate();
+                    let year = finalDate.getFullYear();
+
+                    let hours = finalDate.getHours();
+                    let minutes = finalDate.getMinutes();
+                    let ampm = hours >= 12 ? 'pm' : 'am';
+                    hours = hours % 12;
+                    hours = hours ? hours : 12;
+                    minutes = minutes.toString().padStart(2, '0');
+                    let strTime = hours + ':' + minutes + ' ' + ampm;
+
+
+                    publicSession.push({
+                        _id: publicSessionwithUserDetails._id,
+                        cretedSessionUserId: findUser._id,
+                        cretedSessionUsername: findUser.firstName,
+                        selectedDate: publicSessionwithUserDetails.selectedDate,
+                        selectedTime: publicSessionwithUserDetails.selectedTime,
+                        roomType: publicSessionwithUserDetails.RoomType,
+                        detail: publicSessionwithUserDetails.started == true ? "100 people joined" : `${date} ${month} ${year} ${strTime}`,
+                        isLive: publicSessionwithUserDetails.started,
+                        isAbleToJoin: publicSessionwithUserDetails.started,
+                        cretedSessionUserphoto: findUser.photo == undefined ? "" : findUser.photo[0] ? findUser.photo[0].res : "",
+                        participants: []
+                    })
+                }
+
+
+            }
+
+            const page = parseInt(req.query.page)
+            const limit = parseInt(req.query.limit)
+            const startIndex = (page - 1) * limit;
+            const endIndex = page * limit;
+            const data = publicSession.length;
+            const pageCount = Math.ceil(data / limit);
+            res.status(status.OK).json({
+                "message": "successfully Show All Public Session!",
+                "status": true,
+                "code": 200,
+                "statusCode": 1,
+                "pageCount": (pageCount).toString() == (NaN).toString() ? 0 : pageCount,
+                "data": (startIndex).toString() == (NaN).toString() ? publicSession.sort((a, b) => new Date(a.selectedDate) - new Date(b.selectedDate)) : publicSession.slice(startIndex, endIndex).sort((a, b) => new Date(a.selectedDate) - new Date(b.selectedDate))
+
+            })
+        } else {
+            res.status(status.OK).json({
+                "message": "Not Found Any Public Session",
+                "status": true,
+                "code": 200,
+                "statusCode": 1,
+                "pageCount": 0,
+                "data": []
 
             })
         }
