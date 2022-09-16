@@ -300,6 +300,7 @@ exports.publicSession = async (req, res, next) => {
                 "data": []
 
             })
+            
         } else {
 
             const publicSession = [];
@@ -346,6 +347,21 @@ exports.publicSession = async (req, res, next) => {
                     // const response = {
                     //     sessionDetail
                     // }
+
+                    const dates = publicSessionwithUserDetails.selectedDate;
+                    const finalDate = new Date(dates)
+                    let month = finalDate.toLocaleString('en-us', { month: 'long' });
+                    let date = finalDate.getDate();
+                    let year = finalDate.getFullYear();
+
+                    let hours = finalDate.getHours();
+                    let minutes = finalDate.getMinutes();
+                    let ampm = hours >= 12 ? 'pm' : 'am';
+                    hours = hours % 12;
+                    hours = hours ? hours : 12;
+                    minutes = minutes.toString().padStart(2, '0');
+                    let strTime = hours + ':' + minutes + ' ' + ampm;
+
                     publicSession.push({
                         _id: publicSessionwithUserDetails._id,
                         cretedSessionUserId: findUser._id,
@@ -353,7 +369,7 @@ exports.publicSession = async (req, res, next) => {
                         selectedDate: publicSessionwithUserDetails.selectedDate,
                         selectedTime: publicSessionwithUserDetails.selectedTime,
                         roomType: publicSessionwithUserDetails.RoomType,
-                        detail: publicSessionwithUserDetails.started == true ? "100 people joined" : "12 Jan 2020 12:00 PM",
+                        detail: publicSessionwithUserDetails.started == true ? "100 people joined" : `${date} ${month} ${year} ${strTime}`,
                         isLive: publicSessionwithUserDetails.started,
                         isAbleToJoin: publicSessionwithUserDetails.started,
                         cretedSessionUserphoto: findUser.photo == undefined ? "" : findUser.photo[0] ? findUser.photo[0].res : "",
@@ -368,6 +384,21 @@ exports.publicSession = async (req, res, next) => {
                     // const response = {
                     //     sessionDetail
                     // }
+
+                    const dates = publicSessionwithUserDetails.selectedDate;
+                    const finalDate = new Date(dates)
+                    let month = finalDate.toLocaleString('en-us', { month: 'long' });
+                    let date = finalDate.getDate();
+                    let year = finalDate.getFullYear();
+
+                    let hours = finalDate.getHours();
+                    let minutes = finalDate.getMinutes();
+                    let ampm = hours >= 12 ? 'pm' : 'am';
+                    hours = hours % 12;
+                    hours = hours ? hours : 12;
+                    minutes = minutes.toString().padStart(2, '0');
+                    let strTime = hours + ':' + minutes + ' ' + ampm;
+
                     publicSession.push({
                         _id: publicSessionwithUserDetails._id,
                         cretedSessionUserId: findUser._id,
@@ -375,7 +406,7 @@ exports.publicSession = async (req, res, next) => {
                         selectedDate: publicSessionwithUserDetails.selectedDate,
                         selectedTime: publicSessionwithUserDetails.selectedTime,
                         roomType: publicSessionwithUserDetails.RoomType,
-                        detail: publicSessionwithUserDetails.started == "true" ? "100 people joined" : "12 Jan 2020 12:00 PM",
+                        detail: publicSessionwithUserDetails.started == "true" ? "100 people joined" : `${date} ${month} ${year} ${strTime}`,
                         isLive: publicSessionwithUserDetails.started,
                         isAbleToJoin: publicSessionwithUserDetails.started,
                         cretedSessionUserphoto: findUser.photo == undefined ? "" : findUser.photo[0] ? findUser.photo[0].res : "",
@@ -385,6 +416,22 @@ exports.publicSession = async (req, res, next) => {
                         ]
                     })
                 } else if (participants1Find && participants2Find == null && participants3Find) {
+
+                    const dates = publicSessionwithUserDetails.selectedDate;
+                    const finalDate = new Date(dates)
+                    let month = finalDate.toLocaleString('en-us', { month: 'long' });
+                    let date = finalDate.getDate();
+                    let year = finalDate.getFullYear();
+
+                    let hours = finalDate.getHours();
+                    let minutes = finalDate.getMinutes();
+                    let ampm = hours >= 12 ? 'pm' : 'am';
+                    hours = hours % 12;
+                    hours = hours ? hours : 12;
+                    minutes = minutes.toString().padStart(2, '0');
+                    let strTime = hours + ':' + minutes + ' ' + ampm;
+
+
                     const sessionDetail = {
                         _id: publicSessionwithUserDetails._id,
                         cretedSessionUserId: findUser._id,
@@ -392,7 +439,7 @@ exports.publicSession = async (req, res, next) => {
                         selectedDate: publicSessionwithUserDetails.selectedDate,
                         selectedTime: publicSessionwithUserDetails.selectedTime,
                         roomType: publicSessionwithUserDetails.RoomType,
-                        detail: publicSessionwithUserDetails.started == "true" ? "100 people joined" : "12 Jan 2020 12:00 PM",
+                        detail: publicSessionwithUserDetails.started == "true" ? "100 people joined" : `${date} ${month} ${year} ${strTime}`,
                         isLive: publicSessionwithUserDetails.started,
                         isAbleToJoin: publicSessionwithUserDetails.started,
                         cretedSessionUserphoto: findUser.photo == undefined ? "" : findUser.photo[0] ? findUser.photo[0].res : "",
@@ -410,6 +457,23 @@ exports.publicSession = async (req, res, next) => {
                     // const response = {
                     //     sessionDetail
                     // }
+
+                    const dates = publicSessionwithUserDetails.selectedDate;
+                    const finalDate = new Date(dates)
+                    let month = finalDate.toLocaleString('en-us', { month: 'long' });
+                    let date = finalDate.getDate();
+                    let year = finalDate.getFullYear();
+
+                    let hours = finalDate.getHours();
+                    let minutes = finalDate.getMinutes();
+                    let ampm = hours >= 12 ? 'pm' : 'am';
+                    hours = hours % 12;
+                    hours = hours ? hours : 12;
+                    minutes = minutes.toString().padStart(2, '0');
+                    let strTime = hours + ':' + minutes + ' ' + ampm;
+
+
+
                     publicSession.push({
                         _id: publicSessionwithUserDetails._id,
                         cretedSessionUserId: findUser._id,
@@ -417,7 +481,7 @@ exports.publicSession = async (req, res, next) => {
                         selectedDate: publicSessionwithUserDetails.selectedDate,
                         selectedTime: publicSessionwithUserDetails.selectedTime,
                         roomType: publicSessionwithUserDetails.RoomType,
-                        detail: publicSessionwithUserDetails.started == true ? "100 people joined" : "12 Jan 2020 12:00 PM",
+                        detail: publicSessionwithUserDetails.started == true ? "100 people joined" : `${date} ${month} ${year} ${strTime}`,
                         isLive: publicSessionwithUserDetails.started,
                         isAbleToJoin: publicSessionwithUserDetails.started,
                         cretedSessionUserphoto: findUser.photo == undefined ? "" : findUser.photo[0] ? findUser.photo[0].res : "",
@@ -432,6 +496,22 @@ exports.publicSession = async (req, res, next) => {
                     // const response = {
                     //     sessionDetail
                     // }
+
+                    const dates = publicSessionwithUserDetails.selectedDate;
+                    const finalDate = new Date(dates)
+                    let month = finalDate.toLocaleString('en-us', { month: 'long' });
+                    let date = finalDate.getDate();
+                    let year = finalDate.getFullYear();
+
+                    let hours = finalDate.getHours();
+                    let minutes = finalDate.getMinutes();
+                    let ampm = hours >= 12 ? 'pm' : 'am';
+                    hours = hours % 12;
+                    hours = hours ? hours : 12;
+                    minutes = minutes.toString().padStart(2, '0');
+                    let strTime = hours + ':' + minutes + ' ' + ampm;
+
+
                     publicSession.push({
                         _id: publicSessionwithUserDetails._id,
                         cretedSessionUserId: findUser._id,
@@ -439,7 +519,7 @@ exports.publicSession = async (req, res, next) => {
                         selectedDate: publicSessionwithUserDetails.selectedDate,
                         selectedTime: publicSessionwithUserDetails.selectedTime,
                         roomType: publicSessionwithUserDetails.RoomType,
-                        detail: publicSessionwithUserDetails.started == true ? "100 people joined" : "12 Jan 2020 12:00 PM",
+                        detail: publicSessionwithUserDetails.started == true ? "100 people joined" : `${date} ${month} ${year} ${strTime}`,
                         isLive: publicSessionwithUserDetails.started,
                         isAbleToJoin: publicSessionwithUserDetails.started,
                         cretedSessionUserphoto: findUser.photo == undefined ? "" : findUser.photo[0] ? findUser.photo[0].res : "",
