@@ -315,51 +315,7 @@ cron.schedule("*/60 * * * * *", async function () {
                 }
             }
 
-        } else {
-        }
-    }
-    console.log("running a task every 10 second");
-});
-
-
-cron.schedule("*/60 * * * * *", async function () {
-
-    const findSession = await sessionModel.find()
-    for (const getDate of findSession) {
-
-
-        var userSessionDate = new Date(new Date(getDate.selectedDate).toUTCString())
-        let userSessionDates = userSessionDate.getUTCDate();
-        let userSessionmonth = userSessionDate.getUTCMonth();
-        let userSessionyear = userSessionDate.getUTCFullYear();
-        let userSessionhour = userSessionDate.getUTCHours();
-        let userSessionminute = userSessionDate.getUTCMinutes();
-        const finalMinute = userSessionminute >= 30 ? userSessionminute - 30 : userSessionminute + 30;
-        const finalHours = userSessionminute >= 30 ? userSessionhour - 5 : userSessionhour - 6;
-        let userSessionsecond = userSessionDate.getUTCSeconds();
-        const finalUserSessionDate = new Date(`${userSessionyear}-${userSessionmonth + 1}-${userSessionDates} ${finalHours}:${finalMinute}:${userSessionsecond}`)
-
-        const date = new Date(new Date().toUTCString())
-        let dates = date.getUTCDate();
-        let month = date.getUTCMonth()
-        let year = date.getUTCFullYear();
-        let hour = date.getUTCHours();
-        let minute = date.getUTCMinutes();
-        let second = date.getUTCSeconds();
-        now = new Date(`${year}-${month + 1}-${dates} ${hour}:${minute}:${second}`)
-
-        console.log("now", now);
-        var sec_num = (finalUserSessionDate - now) / 1000;
-        var days = Math.floor(sec_num / (3600 * 24));
-        var hours = Math.floor((sec_num - (days * (3600 * 24))) / 3600);
-        var minutes = Math.floor((sec_num - (days * (3600 * 24)) - (hours * 3600)) / 60);
-
-
-        console.log("hours", hours);
-        console.log("days", days);
-        console.log("minutes", minutes);
-
-        if (hours == 0 && days == 0 && minutes == 0) {
+        } else if (hours == 0 && days == 0 && minutes == 0) {
 
 
             const findUserInUserModel = await userModel.findOne({
@@ -367,7 +323,7 @@ cron.schedule("*/60 * * * * *", async function () {
             })
 
             const title = findUserInUserModel.firstName;
-            const body = "your session started now";
+            const body = "your session started!";
 
             const text = "join session";
             const sendBy = (findUserInUserModel._id).toString();
@@ -391,7 +347,7 @@ cron.schedule("*/60 * * * * *", async function () {
                 }, {
                     $push: {
                         notifications: {
-                            notifications: "your session started now",
+                            notifications: "your session started!",
                             userId: findUserInUserModel._id,
                             status: 11
                         }
@@ -401,18 +357,21 @@ cron.schedule("*/60 * * * * *", async function () {
                 const savedata = notificationModel({
                     userId: findUserInUserModel._id,
                     notifications: {
-                        notifications: "your session started now",
+                        notifications: "your session started!",
                         userId: findUserInUserModel._id,
                         status: 11
                     }
                 })
                 await savedata.save();
             }
+
+
         } else {
         }
     }
     console.log("running a task every 10 second");
 });
+
 
 
 const userRoutes = require("./src/routes/user.routes");
