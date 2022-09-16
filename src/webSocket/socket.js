@@ -2569,34 +2569,13 @@ function socket(io) {
 
                     io.emit("endSessionSuccess", res)
 
-                } else if (p1) {
-
-                    const res = {
-                        message: "Session end Successfully",
-                        status: 0
-                    }
-
-                    io.emit("endSessionSuccess", res)
-
-                } else if (p2) {
-
-                    const res = {
-                        message: "Session end Successfully",
-                        status: 0
-                    }
-
-                    io.emit("endSessionSuccess", res)
-                } else if (p3) {
-
-                    const res = {
-                        message: "Session end Successfully",
-                        status: 0
-                    }
-
-                    io.emit("endSessionSuccess", res)
-
                 } else {
-                    io.emit("endSessionSuccess", "you not end session, you not have any access for ending session.")
+                    const res = {
+                        message: "Session end Successfully",
+                        status: 1
+                    }
+
+                    io.emit("endSessionSuccess", res)
                 }
             } else {
                 io.emit("endSessionSuccess", "Session not Found!")
