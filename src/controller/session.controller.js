@@ -1715,7 +1715,7 @@ exports.mySession = async (req, res, next) => {
             let hour = date.getUTCHours();
             let minute = date.getUTCMinutes();
             let second = date.getUTCSeconds();
-            now = new Date(`${year}-${month + 1}-${dates} ${hour}:${minute - 1}:${second}`)
+            now = new Date(`${year}-${month + 1}-${dates} ${hour}:${minute}:${second}`)
 
             console.log("now", now);
             var sec_num = (finalUserSessionDate - now) / 1000;
