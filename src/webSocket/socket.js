@@ -587,10 +587,6 @@ function socket(io) {
             const p2 = findIdInSession.participants[0].participants_2 == null ? "" : findIdInSession.participants[0].participants_2
             const p3 = findIdInSession.participants[0].participants_3 == null ? "" : findIdInSession.participants[0].participants_3
 
-            console.log(p1);
-            console.log(p2);
-            console.log((p1).toString() == (findIdInSession.cretedSessionUser).toString());
-            console.log();
             if (findIdInSession) {
 
                 if ((findIdInSession.cretedSessionUser).toString() == (arg.create_session_user).toString()) {
@@ -600,7 +596,12 @@ function socket(io) {
                         const findAllFriend = await requestModel.findOne({
                             userId: findIdInSession.cretedSessionUser
                         })
-
+                        await sessionModel.updateOne(
+                            {
+                                _id: arg.session_id,
+                            },
+                            { $inc: { countJoinUser: 1 } }
+                        )
                         const p1 = findIdInSession.participants[0].participants_1 == null ? "" : findIdInSession.participants[0].participants_1
                         const p2 = findIdInSession.participants[0].participants_2 == null ? "" : findIdInSession.participants[0].participants_2
                         const p3 = findIdInSession.participants[0].participants_3 == null ? "" : findIdInSession.participants[0].participants_3
@@ -762,7 +763,6 @@ function socket(io) {
                             allRequestedEmails.push(findIdInSession.participants[0].participants_3)
                         }
 
-                        console.log("allRequestedEmails", allRequestedEmails);
 
                         for (const notification of allRequestedEmails) {
 
@@ -837,6 +837,12 @@ function socket(io) {
                     }
                 } else if ((p1).toString() == (arg.create_session_user).toString()) {
 
+                    await sessionModel.updateOne(
+                        {
+                            _id: arg.session_id,
+                        },
+                        { $inc: { countJoinUser: 1 } }
+                    )
 
                     const allRequestedEmails = [];
 
@@ -914,6 +920,13 @@ function socket(io) {
 
 
                 } else if ((p2).toString() == (arg.create_session_user).toString()) {
+
+                    await sessionModel.updateOne(
+                        {
+                            _id: arg.session_id,
+                        },
+                        { $inc: { countJoinUser: 1 } }
+                    )
                     const allRequestedEmails = [];
 
                     const sessionUser = findIdInSession.cretedSessionUser == null ? "" : findIdInSession.cretedSessionUser
@@ -988,6 +1001,15 @@ function socket(io) {
                         }
                     }
                 } else if ((p3).toString() == (arg.create_session_user).toString()) {
+
+                    await sessionModel.updateOne(
+                        {
+                            _id: arg.session_id,
+                        },
+                        { $inc: { countJoinUser: 1 } }
+                    )
+
+
                     const allRequestedEmails = [];
 
                     const sessionUser = findIdInSession.cretedSessionUser == null ? "" : findIdInSession.cretedSessionUser
@@ -2478,6 +2500,13 @@ function socket(io) {
 
 
                 if ((findSession.cretedSessionUser).toString() == (arg.create_session_user).toString()) {
+                    await sessionModel.updateOne(
+                        {
+                            _id: arg.session_id,
+                        },
+                        { $inc: { countJoinUser: -1 } }
+                    )
+
                     await sessionModel.updateOne({
                         _id: arg.session_id
                     }, {
@@ -2570,6 +2599,15 @@ function socket(io) {
                     io.emit("endSessionSuccess", res)
 
                 } else {
+
+                    await sessionModel.updateOne(
+                        {
+                            _id: arg.session_id,
+                        },
+                        { $inc: { countJoinUser: -1 } }
+                    )
+
+
                     const res = {
                         message: "Session end Successfully",
                         status: 1

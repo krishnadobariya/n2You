@@ -11,6 +11,10 @@ const sessionSchema = mongoose.Schema({
         type: String,
         default: true
     },
+    countJoinUser: {
+        type: Number,
+        default: 0
+    },
     cretedSessionUser: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'User',
