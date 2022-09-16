@@ -1703,8 +1703,8 @@ exports.mySession = async (req, res, next) => {
             let userSessionyear = userSessionDate.getUTCFullYear();
             let userSessionhour = userSessionDate.getUTCHours();
             let userSessionminute = userSessionDate.getUTCMinutes();
-            const finalMinute = userSessionminute >= 31 ? userSessionminute - 31 : userSessionminute + 31;
-            const finalHours = userSessionminute >= 31 ? userSessionhour - 5 : userSessionhour - 6;
+            const finalMinute = userSessionminute >= 30 ? userSessionminute - 30 : userSessionminute + 30;
+            const finalHours = userSessionminute >= 30 ? userSessionhour - 5 : userSessionhour - 6;
             let userSessionsecond = userSessionDate.getUTCSeconds();
             const finalUserSessionDate = new Date(`${userSessionyear}-${userSessionmonth + 1}-${userSessionDates} ${finalHours}:${finalMinute}:${userSessionsecond}`)
 
