@@ -322,6 +322,99 @@ cron.schedule("*/60 * * * * *", async function () {
 });
 
 
+cron.schedule("*/60 * * * * *", async function () {
+
+    const findSession = await sessionModel.find()
+    for (const getDate of findSession) {
+
+
+        var userSessionDate = new Date(new Date(getDate.selectedDate).toUTCString())
+        let userSessionDates = userSessionDate.getUTCDate();
+        let userSessionmonth = userSessionDate.getUTCMonth();
+        let userSessionyear = userSessionDate.getUTCFullYear();
+        let userSessionhour = userSessionDate.getUTCHours();
+        let userSessionminute = userSessionDate.getUTCMinutes();
+        const finalMinute = userSessionminute >= 30 ? userSessionminute - 30 : userSessionminute + 30;
+        const finalHours = userSessionminute >= 30 ? userSessionhour - 5 : userSessionhour - 6;
+        let userSessionsecond = userSessionDate.getUTCSeconds();
+        const finalUserSessionDate = new Date(`${userSessionyear}-${userSessionmonth + 1}-${userSessionDates} ${finalHours}:${finalMinute}:${userSessionsecond}`)
+
+        const date = new Date(new Date().toUTCString())
+        let dates = date.getUTCDate();
+        let month = date.getUTCMonth()
+        let year = date.getUTCFullYear();
+        let hour = date.getUTCHours();
+        let minute = date.getUTCMinutes();
+        let second = date.getUTCSeconds();
+        now = new Date(`${year}-${month + 1}-${dates} ${hour}:${minute}:${second}`)
+
+        console.log("now", now);
+        var sec_num = (finalUserSessionDate - now) / 1000;
+        var days = Math.floor(sec_num / (3600 * 24));
+        var hours = Math.floor((sec_num - (days * (3600 * 24))) / 3600);
+        var minutes = Math.floor((sec_num - (days * (3600 * 24)) - (hours * 3600)) / 60);
+
+
+        console.log("hours", hours);
+        console.log("days", days);
+        console.log("minutes", minutes);
+
+        if (hours == 0 && days == 0 && minutes == 0) {
+
+
+            const findUserInUserModel = await userModel.findOne({
+                _id: getDate.cretedSessionUser
+            })
+
+            const title = findUserInUserModel.firstName;
+            const body = "your session started now";
+
+            const text = "join session";
+            const sendBy = (findUserInUserModel._id).toString();
+            const registrationToken = findUserInUserModel.fcm_token
+            Notification.sendPushNotificationFCM(
+                registrationToken,
+                title,
+                body,
+                text,
+                sendBy,
+                true
+            );
+
+            const findInNotification = await notificationModel.findOne({
+                userId: findUserInUserModel._id
+            })
+            if (findInNotification) {
+
+                await notificationModel.updateOne({
+                    userId: findUserInUserModel._id
+                }, {
+                    $push: {
+                        notifications: {
+                            notifications: "your session started now",
+                            userId: findUserInUserModel._id,
+                            status: 11
+                        }
+                    }
+                })
+            } else {
+                const savedata = notificationModel({
+                    userId: findUserInUserModel._id,
+                    notifications: {
+                        notifications: "your session started now",
+                        userId: findUserInUserModel._id,
+                        status: 11
+                    }
+                })
+                await savedata.save();
+            }
+        } else {
+        }
+    }
+    console.log("running a task every 10 second");
+});
+
+
 const userRoutes = require("./src/routes/user.routes");
 const postRoutes = require("./src/routes/post.routes");
 const requestRoutes = require("./src/routes/request.routes");

@@ -2667,7 +2667,6 @@ function socket(io) {
 
             }
         })
-
     })
 }
 
