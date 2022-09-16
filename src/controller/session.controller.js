@@ -2026,6 +2026,7 @@ exports.mySession = async (req, res, next) => {
             let userSessionyear = userSessionDate.getUTCFullYear();
             let userSessionhour = userSessionDate.getUTCHours();
             let userSessionminute = userSessionDate.getUTCMinutes();
+
             const finalMinute = userSessionminute >= 30 ? userSessionminute - 30 : userSessionminute + 30;
             const finalHours = userSessionminute >= 30 ? userSessionhour - 5 : userSessionhour - 6;
             let userSessionsecond = userSessionDate.getUTCSeconds();
@@ -2047,7 +2048,9 @@ exports.mySession = async (req, res, next) => {
             var hours = Math.floor((sec_num - (days * (3600 * 24))) / 3600);
             var minutes = Math.floor((sec_num - (days * (3600 * 24)) - (hours * 3600)) / 60) + 1;
 
-
+            var getDate = new Date(findMySession.selectedDate)
+            const hoursOne = getDate.getHours()
+            const minutesOne = getDate.getMinutes()
             console.log("hours", hours);
             console.log("days", days);
             console.log("minutes", minutes);
@@ -2080,7 +2083,7 @@ exports.mySession = async (req, res, next) => {
                     const response = {
                         _id: findMySession._id,
                         selectedTime: findMySession.selectedTime,
-                        selectedDate: `${year}-${month + 1}-${dates} ${hour}:${minute}`,
+                        selectedDate: `${year}-${month + 1}-${dates} ${hoursOne}:${minutesOne}`,
                         isLive: ((days < 0 && hours >= 0 && minutes >= 0) || (days == 0 && hours == 0 && minutes == 0)) == true ? true : false,
                         RoomType: findMySession.RoomType,
                         cretedSessionUserId: findUserDeatil ? findUserDeatil._id : "",
@@ -2113,7 +2116,7 @@ exports.mySession = async (req, res, next) => {
                     const response = {
                         _id: findMySession._id,
                         selectedTime: findMySession.selectedTime,
-                        selectedDate: `${year}-${month + 1}-${dates} ${hour}:${minute}`,
+                        selectedDate: `${year}-${month + 1}-${dates} ${hoursOne}:${minutesOne}`,
                         isLive: ((days < 0 && hours >= 0 && minutes >= 0) || (days == 0 && hours == 0 && minutes == 0)) == true ? true : false,
                         RoomType: findMySession.RoomType,
                         cretedSessionUserId: findUserDeatil ? findUserDeatil._id : "",
@@ -2129,7 +2132,7 @@ exports.mySession = async (req, res, next) => {
                     const response = {
                         _id: findMySession._id,
                         selectedTime: findMySession.selectedTime,
-                        selectedDate: `${year}-${month + 1}-${dates} ${hour}:${minute}`,
+                        selectedDate: `${year}-${month + 1}-${dates} ${hoursOne}:${minutesOne}`,
                         isLive: ((days < 0 && hours >= 0 && minutes >= 0) || (days == 0 && hours == 0 && minutes == 0)) == true ? true : false,
                         RoomType: findMySession.RoomType,
                         cretedSessionUserId: findUserDeatil ? findUserDeatil._id : "",
@@ -2156,7 +2159,7 @@ exports.mySession = async (req, res, next) => {
                     const response = {
                         _id: findMySession._id,
                         selectedTime: findMySession.selectedTime,
-                        selectedDate: `${year}-${month + 1}-${dates} ${hour}:${minute}`,
+                        selectedDate: `${year}-${month + 1}-${dates} ${hoursOne}:${minutesOne}`,
                         isLive: ((days < 0 && hours >= 0 && minutes >= 0) || (days == 0 && hours == 0 && minutes == 0)) == true ? true : false,
                         RoomType: findMySession.RoomType,
                         cretedSessionUserId: findUserDeatil ? findUserDeatil._id : "",
@@ -2181,7 +2184,7 @@ exports.mySession = async (req, res, next) => {
                     const response = {
                         _id: findMySession._id,
                         selectedTime: findMySession.selectedTime,
-                        selectedDate: `${year}-${month + 1}-${dates} ${hour}:${minute}`,
+                        selectedDate: `${year}-${month + 1}-${dates} ${hoursOne}:${minutesOne}`,
                         isLive: ((days < 0 && hours >= 0 && minutes >= 0) || (days == 0 && hours == 0 && minutes == 0)) == true ? true : false,
                         RoomType: findMySession.RoomType,
                         cretedSessionUserId: findUserDeatil ? findUserDeatil._id : "",
@@ -2210,7 +2213,7 @@ exports.mySession = async (req, res, next) => {
                     const response = {
                         _id: findMySession._id,
                         selectedTime: findMySession.selectedTime,
-                        selectedDate: `${year}-${month + 1}-${dates} ${hour}:${minute}`,
+                        selectedDate: `${year}-${month + 1}-${dates} ${hoursOne}:${minutesOne}`,
                         isLive: false,
                         RoomType: findMySession.RoomType,
                         cretedSessionUserId: findUserDeatil ? findUserDeatil._id : "",
@@ -2241,7 +2244,7 @@ exports.mySession = async (req, res, next) => {
                     const response = {
                         _id: findMySession._id,
                         selectedTime: findMySession.selectedTime,
-                        selectedDate: `${year}-${month + 1}-${dates} ${hour}:${minute}`,
+                        selectedDate: `${year}-${month + 1}-${dates} ${hoursOne}:${minutesOne}`,
                         isLive: false,
                         RoomType: findMySession.RoomType,
                         cretedSessionUserId: findUserDeatil ? findUserDeatil._id : "",
@@ -2257,7 +2260,7 @@ exports.mySession = async (req, res, next) => {
                     const response = {
                         _id: findMySession._id,
                         selectedTime: findMySession.selectedTime,
-                        selectedDate: `${year}-${month + 1}-${dates} ${hour}:${minute}`,
+                        selectedDate: `${year}-${month + 1}-${dates} ${hoursOne}:${minutesOne}`,
                         isLive: false,
                         RoomType: findMySession.RoomType,
                         cretedSessionUserId: findUserDeatil ? findUserDeatil._id : "",
@@ -2284,7 +2287,7 @@ exports.mySession = async (req, res, next) => {
                     const response = {
                         _id: findMySession._id,
                         selectedTime: findMySession.selectedTime,
-                        selectedDate: `${year}-${month + 1}-${dates} ${hour}:${minute}`,
+                        selectedDate: `${year}-${month + 1}-${dates} ${hoursOne}:${minutesOne}`,
                         isLive: false,
                         RoomType: findMySession.RoomType,
                         cretedSessionUserId: findUserDeatil ? findUserDeatil._id : "",
@@ -2309,7 +2312,7 @@ exports.mySession = async (req, res, next) => {
                     const response = {
                         _id: findMySession._id,
                         selectedTime: findMySession.selectedTime,
-                        selectedDate: `${year}-${month + 1}-${dates} ${hour}:${minute}`,
+                        selectedDate: `${year}-${month + 1}-${dates} ${hoursOne}:${minutesOne}`,
                         isLive: false,
                         RoomType: findMySession.RoomType,
                         cretedSessionUserId: findUserDeatil ? findUserDeatil._id : "",
