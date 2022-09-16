@@ -419,8 +419,10 @@ exports.publicSession = async (req, res, next) => {
                     const dates = publicSessionwithUserDetails.selectedDate;
                     const finalDate = new Date(dates)
                     let month = finalDate.toLocaleString('en-us', { month: 'long' });
+                    let months = finalDate.getMonth();
                     let date = finalDate.getDate();
                     let year = finalDate.getFullYear();
+                    let hour = finalDate.getHours();
 
                     let hours = finalDate.getHours();
                     let minutes = finalDate.getMinutes();
@@ -434,7 +436,7 @@ exports.publicSession = async (req, res, next) => {
                         _id: publicSessionwithUserDetails._id,
                         cretedSessionUserId: findUser._id,
                         cretedSessionUsername: findUser.firstName,
-                        selectedDate: publicSessionwithUserDetails.selectedDate,
+                        selectedDate: `${year}-${months + 1}-${date} ${hour}:${minutes}`,
                         selectedTime: publicSessionwithUserDetails.selectedTime,
                         roomType: publicSessionwithUserDetails.RoomType,
                         detail: publicSessionwithUserDetails.started == true ? `${publicSessionwithUserDetails.countJoinUser} people joining` : `${date} ${month} ${year} ${strTime}`,
@@ -456,8 +458,10 @@ exports.publicSession = async (req, res, next) => {
                     const dates = publicSessionwithUserDetails.selectedDate;
                     const finalDate = new Date(dates)
                     let month = finalDate.toLocaleString('en-us', { month: 'long' });
+                    let months = finalDate.getMonth();
                     let date = finalDate.getDate();
                     let year = finalDate.getFullYear();
+                    let hour = finalDate.getHours();
 
                     let hours = finalDate.getHours();
                     let minutes = finalDate.getMinutes();
@@ -471,7 +475,7 @@ exports.publicSession = async (req, res, next) => {
                         _id: publicSessionwithUserDetails._id,
                         cretedSessionUserId: findUser._id,
                         cretedSessionUsername: findUser.firstName,
-                        selectedDate: publicSessionwithUserDetails.selectedDate,
+                        selectedDate: `${year}-${months + 1}-${date} ${hour}:${minutes}`,
                         selectedTime: publicSessionwithUserDetails.selectedTime,
                         roomType: publicSessionwithUserDetails.RoomType,
                         detail: publicSessionwithUserDetails.started == true ? `${publicSessionwithUserDetails.countJoinUser} people joining` : `${date} ${month} ${year} ${strTime}`,
@@ -488,8 +492,10 @@ exports.publicSession = async (req, res, next) => {
                     const dates = publicSessionwithUserDetails.selectedDate;
                     const finalDate = new Date(dates)
                     let month = finalDate.toLocaleString('en-us', { month: 'long' });
+                    let months = finalDate.getMonth();
                     let date = finalDate.getDate();
                     let year = finalDate.getFullYear();
+                    let hour = finalDate.getHours();
 
                     let hours = finalDate.getHours();
                     let minutes = finalDate.getMinutes();
@@ -504,7 +510,7 @@ exports.publicSession = async (req, res, next) => {
                         _id: publicSessionwithUserDetails._id,
                         cretedSessionUserId: findUser._id,
                         cretedSessionUsername: findUser.firstName,
-                        selectedDate: publicSessionwithUserDetails.selectedDate,
+                        selectedDate: `${year}-${months + 1}-${date} ${hour}:${minutes}`,
                         selectedTime: publicSessionwithUserDetails.selectedTime,
                         roomType: publicSessionwithUserDetails.RoomType,
                         detail: publicSessionwithUserDetails.started == true ? `${publicSessionwithUserDetails.countJoinUser} people joining` : `${date} ${month} ${year} ${strTime}`,
@@ -529,8 +535,10 @@ exports.publicSession = async (req, res, next) => {
                     const dates = publicSessionwithUserDetails.selectedDate;
                     const finalDate = new Date(dates)
                     let month = finalDate.toLocaleString('en-us', { month: 'long' });
+                    let months = finalDate.getMonth();
                     let date = finalDate.getDate();
                     let year = finalDate.getFullYear();
+                    let hour = finalDate.getHours();
 
                     let hours = finalDate.getHours();
                     let minutes = finalDate.getMinutes();
@@ -546,7 +554,7 @@ exports.publicSession = async (req, res, next) => {
                         _id: publicSessionwithUserDetails._id,
                         cretedSessionUserId: findUser._id,
                         cretedSessionUsername: findUser.firstName,
-                        selectedDate: publicSessionwithUserDetails.selectedDate,
+                        selectedDate: `${year}-${months + 1}-${date} ${hour}:${minutes}`,
                         selectedTime: publicSessionwithUserDetails.selectedTime,
                         roomType: publicSessionwithUserDetails.RoomType,
                         detail: publicSessionwithUserDetails.started == true ? `${publicSessionwithUserDetails.countJoinUser} people joining` : `${date} ${month} ${year} ${strTime}`,
@@ -568,8 +576,10 @@ exports.publicSession = async (req, res, next) => {
                     const dates = publicSessionwithUserDetails.selectedDate;
                     const finalDate = new Date(dates)
                     let month = finalDate.toLocaleString('en-us', { month: 'long' });
+                    let months = finalDate.getMonth();
                     let date = finalDate.getDate();
                     let year = finalDate.getFullYear();
+                    let hour = finalDate.getHours();
 
                     let hours = finalDate.getHours();
                     let minutes = finalDate.getMinutes();
@@ -584,7 +594,7 @@ exports.publicSession = async (req, res, next) => {
                         _id: publicSessionwithUserDetails._id,
                         cretedSessionUserId: findUser._id,
                         cretedSessionUsername: findUser.firstName,
-                        selectedDate: publicSessionwithUserDetails.selectedDate,
+                        selectedDate: `${year}-${months + 1}-${date} ${hour}:${minutes}`,
                         selectedTime: publicSessionwithUserDetails.selectedTime,
                         roomType: publicSessionwithUserDetails.RoomType,
                         detail: publicSessionwithUserDetails.started == true ? `${publicSessionwithUserDetails.countJoinUser} people joining` : `${date} ${month} ${year} ${strTime}`,
@@ -666,8 +676,10 @@ exports.publicSession = async (req, res, next) => {
                     const dates = publicSessionwithUserDetails.selectedDate;
                     const finalDate = new Date(dates)
                     let month = finalDate.toLocaleString('en-us', { month: 'long' });
+                    let months = finalDate.getMonth();
                     let date = finalDate.getDate();
                     let year = finalDate.getFullYear();
+                    let hour = finalDate.getHours();
 
                     let hours = finalDate.getHours();
                     let minutes = finalDate.getMinutes();
@@ -681,7 +693,7 @@ exports.publicSession = async (req, res, next) => {
                         _id: publicSessionwithUserDetails._id,
                         cretedSessionUserId: findUser._id,
                         cretedSessionUsername: findUser.firstName,
-                        selectedDate: publicSessionwithUserDetails.selectedDate,
+                        selectedDate: `${year}-${months + 1}-${date} ${hour}:${minutes}`,
                         selectedTime: publicSessionwithUserDetails.selectedTime,
                         roomType: publicSessionwithUserDetails.RoomType,
                         detail: publicSessionwithUserDetails.started == true ? `${publicSessionwithUserDetails.countJoinUser} people joining` : `${date} ${month} ${year} ${strTime}`,
@@ -703,8 +715,10 @@ exports.publicSession = async (req, res, next) => {
                     const dates = publicSessionwithUserDetails.selectedDate;
                     const finalDate = new Date(dates)
                     let month = finalDate.toLocaleString('en-us', { month: 'long' });
+                    let months = finalDate.getMonth();
                     let date = finalDate.getDate();
                     let year = finalDate.getFullYear();
+                    let hour = finalDate.getHours();
 
                     let hours = finalDate.getHours();
                     let minutes = finalDate.getMinutes();
@@ -718,7 +732,7 @@ exports.publicSession = async (req, res, next) => {
                         _id: publicSessionwithUserDetails._id,
                         cretedSessionUserId: findUser._id,
                         cretedSessionUsername: findUser.firstName,
-                        selectedDate: publicSessionwithUserDetails.selectedDate,
+                        selectedDate: `${year}-${months + 1}-${date} ${hour}:${minutes}`,
                         selectedTime: publicSessionwithUserDetails.selectedTime,
                         roomType: publicSessionwithUserDetails.RoomType,
                         detail: publicSessionwithUserDetails.started == true ? `${publicSessionwithUserDetails.countJoinUser} people joining` : `${date} ${month} ${year} ${strTime}`,
@@ -735,8 +749,10 @@ exports.publicSession = async (req, res, next) => {
                     const dates = publicSessionwithUserDetails.selectedDate;
                     const finalDate = new Date(dates)
                     let month = finalDate.toLocaleString('en-us', { month: 'long' });
+                    let months = finalDate.getMonth();
                     let date = finalDate.getDate();
                     let year = finalDate.getFullYear();
+                    let hour = finalDate.getHours();
 
                     let hours = finalDate.getHours();
                     let minutes = finalDate.getMinutes();
@@ -751,7 +767,7 @@ exports.publicSession = async (req, res, next) => {
                         _id: publicSessionwithUserDetails._id,
                         cretedSessionUserId: findUser._id,
                         cretedSessionUsername: findUser.firstName,
-                        selectedDate: publicSessionwithUserDetails.selectedDate,
+                        selectedDate: `${year}-${months + 1}-${date} ${hour}:${minutes}`,
                         selectedTime: publicSessionwithUserDetails.selectedTime,
                         roomType: publicSessionwithUserDetails.RoomType,
                         detail: publicSessionwithUserDetails.started == true ? `${publicSessionwithUserDetails.countJoinUser} people joining` : `${date} ${month} ${year} ${strTime}`,
@@ -776,8 +792,10 @@ exports.publicSession = async (req, res, next) => {
                     const dates = publicSessionwithUserDetails.selectedDate;
                     const finalDate = new Date(dates)
                     let month = finalDate.toLocaleString('en-us', { month: 'long' });
+                    let months = finalDate.getMonth();
                     let date = finalDate.getDate();
                     let year = finalDate.getFullYear();
+                    let hour = finalDate.getHours();
 
                     let hours = finalDate.getHours();
                     let minutes = finalDate.getMinutes();
@@ -793,7 +811,7 @@ exports.publicSession = async (req, res, next) => {
                         _id: publicSessionwithUserDetails._id,
                         cretedSessionUserId: findUser._id,
                         cretedSessionUsername: findUser.firstName,
-                        selectedDate: publicSessionwithUserDetails.selectedDate,
+                        selectedDate: `${year}-${months + 1}-${date} ${hour}:${minutes}`,
                         selectedTime: publicSessionwithUserDetails.selectedTime,
                         roomType: publicSessionwithUserDetails.RoomType,
                         detail: publicSessionwithUserDetails.started == true ? `${publicSessionwithUserDetails.countJoinUser} people joining` : `${date} ${month} ${year} ${strTime}`,
@@ -815,8 +833,10 @@ exports.publicSession = async (req, res, next) => {
                     const dates = publicSessionwithUserDetails.selectedDate;
                     const finalDate = new Date(dates)
                     let month = finalDate.toLocaleString('en-us', { month: 'long' });
+                    let months = finalDate.getMonth();
                     let date = finalDate.getDate();
                     let year = finalDate.getFullYear();
+                    let hour = finalDate.getHours();
 
                     let hours = finalDate.getHours();
                     let minutes = finalDate.getMinutes();
@@ -831,7 +851,7 @@ exports.publicSession = async (req, res, next) => {
                         _id: publicSessionwithUserDetails._id,
                         cretedSessionUserId: findUser._id,
                         cretedSessionUsername: findUser.firstName,
-                        selectedDate: publicSessionwithUserDetails.selectedDate,
+                        selectedDate: `${year}-${months + 1}-${date} ${hour}:${minutes}`,
                         selectedTime: publicSessionwithUserDetails.selectedTime,
                         roomType: publicSessionwithUserDetails.RoomType,
                         detail: publicSessionwithUserDetails.started == true ? `${publicSessionwithUserDetails.countJoinUser} people joining` : `${date} ${month} ${year} ${strTime}`,
@@ -910,8 +930,10 @@ exports.publicSession = async (req, res, next) => {
                     const dates = publicSessionwithUserDetails.selectedDate;
                     const finalDate = new Date(dates)
                     let month = finalDate.toLocaleString('en-us', { month: 'long' });
+                    let months = finalDate.getMonth();
                     let date = finalDate.getDate();
                     let year = finalDate.getFullYear();
+                    let hour = finalDate.getHours();
 
                     let hours = finalDate.getHours();
                     let minutes = finalDate.getMinutes();
@@ -925,7 +947,7 @@ exports.publicSession = async (req, res, next) => {
                         _id: publicSessionwithUserDetails._id,
                         cretedSessionUserId: findUser._id,
                         cretedSessionUsername: findUser.firstName,
-                        selectedDate: publicSessionwithUserDetails.selectedDate,
+                        selectedDate: `${year}-${months + 1}-${date} ${hour}:${minutes}`,
                         selectedTime: publicSessionwithUserDetails.selectedTime,
                         roomType: publicSessionwithUserDetails.RoomType,
                         detail: publicSessionwithUserDetails.started == true ? `${publicSessionwithUserDetails.countJoinUser} people joining` : `${date} ${month} ${year} ${strTime}`,
@@ -947,8 +969,10 @@ exports.publicSession = async (req, res, next) => {
                     const dates = publicSessionwithUserDetails.selectedDate;
                     const finalDate = new Date(dates)
                     let month = finalDate.toLocaleString('en-us', { month: 'long' });
+                    let months = finalDate.getMonth();
                     let date = finalDate.getDate();
                     let year = finalDate.getFullYear();
+                    let hour = finalDate.getHours();
 
                     let hours = finalDate.getHours();
                     let minutes = finalDate.getMinutes();
@@ -962,7 +986,7 @@ exports.publicSession = async (req, res, next) => {
                         _id: publicSessionwithUserDetails._id,
                         cretedSessionUserId: findUser._id,
                         cretedSessionUsername: findUser.firstName,
-                        selectedDate: publicSessionwithUserDetails.selectedDate,
+                        selectedDate: `${year}-${months + 1}-${date} ${hour}:${minutes}`,
                         selectedTime: publicSessionwithUserDetails.selectedTime,
                         roomType: publicSessionwithUserDetails.RoomType,
                         detail: publicSessionwithUserDetails.started == true ? `${publicSessionwithUserDetails.countJoinUser} people joining` : `${date} ${month} ${year} ${strTime}`,
@@ -979,8 +1003,10 @@ exports.publicSession = async (req, res, next) => {
                     const dates = publicSessionwithUserDetails.selectedDate;
                     const finalDate = new Date(dates)
                     let month = finalDate.toLocaleString('en-us', { month: 'long' });
+                    let months = finalDate.getMonth();
                     let date = finalDate.getDate();
                     let year = finalDate.getFullYear();
+                    let hour = finalDate.getHours();
 
                     let hours = finalDate.getHours();
                     let minutes = finalDate.getMinutes();
@@ -995,7 +1021,7 @@ exports.publicSession = async (req, res, next) => {
                         _id: publicSessionwithUserDetails._id,
                         cretedSessionUserId: findUser._id,
                         cretedSessionUsername: findUser.firstName,
-                        selectedDate: publicSessionwithUserDetails.selectedDate,
+                        selectedDate: `${year}-${months + 1}-${date} ${hour}:${minutes}`,
                         selectedTime: publicSessionwithUserDetails.selectedTime,
                         roomType: publicSessionwithUserDetails.RoomType,
                         detail: publicSessionwithUserDetails.started == true ? `${publicSessionwithUserDetails.countJoinUser} people joining` : `${date} ${month} ${year} ${strTime}`,
@@ -1020,8 +1046,10 @@ exports.publicSession = async (req, res, next) => {
                     const dates = publicSessionwithUserDetails.selectedDate;
                     const finalDate = new Date(dates)
                     let month = finalDate.toLocaleString('en-us', { month: 'long' });
+                    let months = finalDate.getMonth();
                     let date = finalDate.getDate();
                     let year = finalDate.getFullYear();
+                    let hour = finalDate.getHours();
 
                     let hours = finalDate.getHours();
                     let minutes = finalDate.getMinutes();
@@ -1037,7 +1065,7 @@ exports.publicSession = async (req, res, next) => {
                         _id: publicSessionwithUserDetails._id,
                         cretedSessionUserId: findUser._id,
                         cretedSessionUsername: findUser.firstName,
-                        selectedDate: publicSessionwithUserDetails.selectedDate,
+                        selectedDate: `${year}-${months + 1}-${date} ${hour}:${minutes}`,
                         selectedTime: publicSessionwithUserDetails.selectedTime,
                         roomType: publicSessionwithUserDetails.RoomType,
                         detail: publicSessionwithUserDetails.started == true ? `${publicSessionwithUserDetails.countJoinUser} people joining` : `${date} ${month} ${year} ${strTime}`,
@@ -1059,8 +1087,10 @@ exports.publicSession = async (req, res, next) => {
                     const dates = publicSessionwithUserDetails.selectedDate;
                     const finalDate = new Date(dates)
                     let month = finalDate.toLocaleString('en-us', { month: 'long' });
+                    let months = finalDate.getMonth();
                     let date = finalDate.getDate();
                     let year = finalDate.getFullYear();
+                    let hour = finalDate.getHours();
 
                     let hours = finalDate.getHours();
                     let minutes = finalDate.getMinutes();
@@ -1075,7 +1105,7 @@ exports.publicSession = async (req, res, next) => {
                         _id: publicSessionwithUserDetails._id,
                         cretedSessionUserId: findUser._id,
                         cretedSessionUsername: findUser.firstName,
-                        selectedDate: publicSessionwithUserDetails.selectedDate,
+                        selectedDate: `${year}-${months + 1}-${date} ${hour}:${minutes}`,
                         selectedTime: publicSessionwithUserDetails.selectedTime,
                         roomType: publicSessionwithUserDetails.RoomType,
                         detail: publicSessionwithUserDetails.started == true ? `${publicSessionwithUserDetails.countJoinUser} people joining` : `${date} ${month} ${year} ${strTime}`,
@@ -1154,8 +1184,10 @@ exports.publicSession = async (req, res, next) => {
                     const dates = publicSessionwithUserDetails.selectedDate;
                     const finalDate = new Date(dates)
                     let month = finalDate.toLocaleString('en-us', { month: 'long' });
+                    let months = finalDate.getMonth();
                     let date = finalDate.getDate();
                     let year = finalDate.getFullYear();
+                    let hour = finalDate.getHours();
 
                     let hours = finalDate.getHours();
                     let minutes = finalDate.getMinutes();
@@ -1169,7 +1201,7 @@ exports.publicSession = async (req, res, next) => {
                         _id: publicSessionwithUserDetails._id,
                         cretedSessionUserId: findUser._id,
                         cretedSessionUsername: findUser.firstName,
-                        selectedDate: publicSessionwithUserDetails.selectedDate,
+                        selectedDate: `${year}-${months + 1}-${date} ${hour}:${minutes}`,
                         selectedTime: publicSessionwithUserDetails.selectedTime,
                         roomType: publicSessionwithUserDetails.RoomType,
                         detail: publicSessionwithUserDetails.started == true ? `${publicSessionwithUserDetails.countJoinUser} people joining` : `${date} ${month} ${year} ${strTime}`,
@@ -1191,8 +1223,10 @@ exports.publicSession = async (req, res, next) => {
                     const dates = publicSessionwithUserDetails.selectedDate;
                     const finalDate = new Date(dates)
                     let month = finalDate.toLocaleString('en-us', { month: 'long' });
+                    let months = finalDate.getMonth();
                     let date = finalDate.getDate();
                     let year = finalDate.getFullYear();
+                    let hour = finalDate.getHours();
 
                     let hours = finalDate.getHours();
                     let minutes = finalDate.getMinutes();
@@ -1206,7 +1240,7 @@ exports.publicSession = async (req, res, next) => {
                         _id: publicSessionwithUserDetails._id,
                         cretedSessionUserId: findUser._id,
                         cretedSessionUsername: findUser.firstName,
-                        selectedDate: publicSessionwithUserDetails.selectedDate,
+                        selectedDate: `${year}-${months + 1}-${date} ${hour}:${minutes}`,
                         selectedTime: publicSessionwithUserDetails.selectedTime,
                         roomType: publicSessionwithUserDetails.RoomType,
                         detail: publicSessionwithUserDetails.started == true ? `${publicSessionwithUserDetails.countJoinUser} people joining` : `${date} ${month} ${year} ${strTime}`,
@@ -1223,8 +1257,10 @@ exports.publicSession = async (req, res, next) => {
                     const dates = publicSessionwithUserDetails.selectedDate;
                     const finalDate = new Date(dates)
                     let month = finalDate.toLocaleString('en-us', { month: 'long' });
+                    let months = finalDate.getMonth();
                     let date = finalDate.getDate();
                     let year = finalDate.getFullYear();
+                    let hour = finalDate.getHours();
 
                     let hours = finalDate.getHours();
                     let minutes = finalDate.getMinutes();
@@ -1239,7 +1275,7 @@ exports.publicSession = async (req, res, next) => {
                         _id: publicSessionwithUserDetails._id,
                         cretedSessionUserId: findUser._id,
                         cretedSessionUsername: findUser.firstName,
-                        selectedDate: publicSessionwithUserDetails.selectedDate,
+                        selectedDate: `${year}-${months + 1}-${date} ${hour}:${minutes}`,
                         selectedTime: publicSessionwithUserDetails.selectedTime,
                         roomType: publicSessionwithUserDetails.RoomType,
                         detail: publicSessionwithUserDetails.started == true ? `${publicSessionwithUserDetails.countJoinUser} people joining` : `${date} ${month} ${year} ${strTime}`,
@@ -1264,8 +1300,10 @@ exports.publicSession = async (req, res, next) => {
                     const dates = publicSessionwithUserDetails.selectedDate;
                     const finalDate = new Date(dates)
                     let month = finalDate.toLocaleString('en-us', { month: 'long' });
+                    let months = finalDate.getMonth();
                     let date = finalDate.getDate();
                     let year = finalDate.getFullYear();
+                    let hour = finalDate.getHours();
 
                     let hours = finalDate.getHours();
                     let minutes = finalDate.getMinutes();
@@ -1281,7 +1319,7 @@ exports.publicSession = async (req, res, next) => {
                         _id: publicSessionwithUserDetails._id,
                         cretedSessionUserId: findUser._id,
                         cretedSessionUsername: findUser.firstName,
-                        selectedDate: publicSessionwithUserDetails.selectedDate,
+                        selectedDate: `${year}-${months + 1}-${date} ${hour}:${minutes}`,
                         selectedTime: publicSessionwithUserDetails.selectedTime,
                         roomType: publicSessionwithUserDetails.RoomType,
                         detail: publicSessionwithUserDetails.started == true ? `${publicSessionwithUserDetails.countJoinUser} people joining` : `${date} ${month} ${year} ${strTime}`,
@@ -1303,8 +1341,10 @@ exports.publicSession = async (req, res, next) => {
                     const dates = publicSessionwithUserDetails.selectedDate;
                     const finalDate = new Date(dates)
                     let month = finalDate.toLocaleString('en-us', { month: 'long' });
+                    let months = finalDate.getMonth();
                     let date = finalDate.getDate();
                     let year = finalDate.getFullYear();
+                    let hour = finalDate.getHours();
 
                     let hours = finalDate.getHours();
                     let minutes = finalDate.getMinutes();
@@ -1319,7 +1359,7 @@ exports.publicSession = async (req, res, next) => {
                         _id: publicSessionwithUserDetails._id,
                         cretedSessionUserId: findUser._id,
                         cretedSessionUsername: findUser.firstName,
-                        selectedDate: publicSessionwithUserDetails.selectedDate,
+                        selectedDate: `${year}-${months + 1}-${date} ${hour}:${minutes}`,
                         selectedTime: publicSessionwithUserDetails.selectedTime,
                         roomType: publicSessionwithUserDetails.RoomType,
                         detail: publicSessionwithUserDetails.started == true ? `${publicSessionwithUserDetails.countJoinUser} people joining` : `${date} ${month} ${year} ${strTime}`,
@@ -1398,8 +1438,10 @@ exports.publicSession = async (req, res, next) => {
                     const dates = publicSessionwithUserDetails.selectedDate;
                     const finalDate = new Date(dates)
                     let month = finalDate.toLocaleString('en-us', { month: 'long' });
+                    let months = finalDate.getMonth();
                     let date = finalDate.getDate();
                     let year = finalDate.getFullYear();
+                    let hour = finalDate.getHours();
 
                     let hours = finalDate.getHours();
                     let minutes = finalDate.getMinutes();
@@ -1413,7 +1455,7 @@ exports.publicSession = async (req, res, next) => {
                         _id: publicSessionwithUserDetails._id,
                         cretedSessionUserId: findUser._id,
                         cretedSessionUsername: findUser.firstName,
-                        selectedDate: publicSessionwithUserDetails.selectedDate,
+                        selectedDate: `${year}-${months + 1}-${date} ${hour}:${minutes}`,
                         selectedTime: publicSessionwithUserDetails.selectedTime,
                         roomType: publicSessionwithUserDetails.RoomType,
                         detail: publicSessionwithUserDetails.started == true ? `${publicSessionwithUserDetails.countJoinUser} people joining` : `${date} ${month} ${year} ${strTime}`,
@@ -1435,8 +1477,10 @@ exports.publicSession = async (req, res, next) => {
                     const dates = publicSessionwithUserDetails.selectedDate;
                     const finalDate = new Date(dates)
                     let month = finalDate.toLocaleString('en-us', { month: 'long' });
+                    let months = finalDate.getMonth();
                     let date = finalDate.getDate();
                     let year = finalDate.getFullYear();
+                    let hour = finalDate.getHours();
 
                     let hours = finalDate.getHours();
                     let minutes = finalDate.getMinutes();
@@ -1450,7 +1494,7 @@ exports.publicSession = async (req, res, next) => {
                         _id: publicSessionwithUserDetails._id,
                         cretedSessionUserId: findUser._id,
                         cretedSessionUsername: findUser.firstName,
-                        selectedDate: publicSessionwithUserDetails.selectedDate,
+                        selectedDate: `${year}-${months + 1}-${date} ${hour}:${minutes}`,
                         selectedTime: publicSessionwithUserDetails.selectedTime,
                         roomType: publicSessionwithUserDetails.RoomType,
                         detail: publicSessionwithUserDetails.started == true ? `${publicSessionwithUserDetails.countJoinUser} people joining` : `${date} ${month} ${year} ${strTime}`,
@@ -1467,8 +1511,10 @@ exports.publicSession = async (req, res, next) => {
                     const dates = publicSessionwithUserDetails.selectedDate;
                     const finalDate = new Date(dates)
                     let month = finalDate.toLocaleString('en-us', { month: 'long' });
+                    let months = finalDate.getMonth();
                     let date = finalDate.getDate();
                     let year = finalDate.getFullYear();
+                    let hour = finalDate.getHours();
 
                     let hours = finalDate.getHours();
                     let minutes = finalDate.getMinutes();
@@ -1483,7 +1529,7 @@ exports.publicSession = async (req, res, next) => {
                         _id: publicSessionwithUserDetails._id,
                         cretedSessionUserId: findUser._id,
                         cretedSessionUsername: findUser.firstName,
-                        selectedDate: publicSessionwithUserDetails.selectedDate,
+                        selectedDate: `${year}-${months + 1}-${date} ${hour}:${minutes}`,
                         selectedTime: publicSessionwithUserDetails.selectedTime,
                         roomType: publicSessionwithUserDetails.RoomType,
                         detail: publicSessionwithUserDetails.started == true ? `${publicSessionwithUserDetails.countJoinUser} people joining` : `${date} ${month} ${year} ${strTime}`,
@@ -1508,8 +1554,10 @@ exports.publicSession = async (req, res, next) => {
                     const dates = publicSessionwithUserDetails.selectedDate;
                     const finalDate = new Date(dates)
                     let month = finalDate.toLocaleString('en-us', { month: 'long' });
+                    let months = finalDate.getMonth();
                     let date = finalDate.getDate();
                     let year = finalDate.getFullYear();
+                    let hour = finalDate.getHours();
 
                     let hours = finalDate.getHours();
                     let minutes = finalDate.getMinutes();
@@ -1525,7 +1573,7 @@ exports.publicSession = async (req, res, next) => {
                         _id: publicSessionwithUserDetails._id,
                         cretedSessionUserId: findUser._id,
                         cretedSessionUsername: findUser.firstName,
-                        selectedDate: publicSessionwithUserDetails.selectedDate,
+                        selectedDate: `${year}-${months + 1}-${date} ${hour}:${minutes}`,
                         selectedTime: publicSessionwithUserDetails.selectedTime,
                         roomType: publicSessionwithUserDetails.RoomType,
                         detail: publicSessionwithUserDetails.started == true ? `${publicSessionwithUserDetails.countJoinUser} people joining` : `${date} ${month} ${year} ${strTime}`,
@@ -1547,8 +1595,10 @@ exports.publicSession = async (req, res, next) => {
                     const dates = publicSessionwithUserDetails.selectedDate;
                     const finalDate = new Date(dates)
                     let month = finalDate.toLocaleString('en-us', { month: 'long' });
+                    let months = finalDate.getMonth();
                     let date = finalDate.getDate();
                     let year = finalDate.getFullYear();
+                    let hour = finalDate.getHours();
 
                     let hours = finalDate.getHours();
                     let minutes = finalDate.getMinutes();
@@ -1563,7 +1613,7 @@ exports.publicSession = async (req, res, next) => {
                         _id: publicSessionwithUserDetails._id,
                         cretedSessionUserId: findUser._id,
                         cretedSessionUsername: findUser.firstName,
-                        selectedDate: publicSessionwithUserDetails.selectedDate,
+                        selectedDate: `${year}-${months + 1}-${date} ${hour}:${minutes}`,
                         selectedTime: publicSessionwithUserDetails.selectedTime,
                         roomType: publicSessionwithUserDetails.RoomType,
                         detail: publicSessionwithUserDetails.started == true ? `${publicSessionwithUserDetails.countJoinUser} people joining` : `${date} ${month} ${year} ${strTime}`,
@@ -1621,9 +1671,16 @@ exports.invitedInSession = async (req, res, next) => {
 
         for (const findInvited of findMyIdInSession) {
 
-
             if (findInvited.participants[0].participants_1 == req.params.user_id) {
 
+
+                const dateAll = new Date(findInvited.selectedDate)
+
+                let months = dateAll.getMonth();
+                let date = dateAll.getDate();
+                let year = dateAll.getFullYear();
+                let hour = dateAll.getHours();
+                let minutes = dateAll.getMinutes();
                 const createdSessionUser = await userModel.findOne({
                     _id: findInvited.cretedSessionUser,
                     polyDating: 0
@@ -1647,7 +1704,7 @@ exports.invitedInSession = async (req, res, next) => {
                         isAbleToJoin: findInvited.started,
                         RoomType: findInvited.RoomType,
                         selectedTime: findInvited.selectedTime,
-                        selectedDate: findInvited.selectedDate,
+                        selectedDate: `${year}-${months + 1}-${date} ${hour}:${minutes}`,
                         cretedSessionUserphoto: createdSessionUser.photo ? createdSessionUser.photo[0].res : "",
                         participants: [{
                             _id: participants_3 == null ? "" : participants_3._id,
@@ -1665,7 +1722,7 @@ exports.invitedInSession = async (req, res, next) => {
                         isAbleToJoin: findInvited.started,
                         RoomType: findInvited.RoomType,
                         selectedTime: findInvited.selectedTime,
-                        selectedDate: findInvited.selectedDate,
+                        selectedDate: `${year}-${months}-${date} ${hour}:${minutes}`,
                         cretedSessionUserphoto: createdSessionUser.photo ? createdSessionUser.photo[0].res : "",
                         participants: [{
                             _id: participants_2 == null ? "" : participants_2._id,
@@ -1683,7 +1740,7 @@ exports.invitedInSession = async (req, res, next) => {
                         isAbleToJoin: findInvited.started,
                         RoomType: findInvited.RoomType,
                         selectedTime: findInvited.selectedTime,
-                        selectedDate: findInvited.selectedDate,
+                        selectedDate: `${year}-${months}-${date} ${hour}:${minutes}`,
                         cretedSessionUserphoto: createdSessionUser.photo ? createdSessionUser.photo[0].res : "",
                         participants: [{
                             _id: participants_2 == null ? "" : participants_2._id,
@@ -1706,7 +1763,7 @@ exports.invitedInSession = async (req, res, next) => {
                         isAbleToJoin: findInvited.started,
                         RoomType: findInvited.RoomType,
                         selectedTime: findInvited.selectedTime,
-                        selectedDate: findInvited.selectedDate,
+                        selectedDate: `${year}-${months}-${date} ${hour}:${minutes}`,
                         cretedSessionUserphoto: createdSessionUser.photo ? createdSessionUser.photo[0].res : "",
                         participants: []
                     }
@@ -1714,6 +1771,15 @@ exports.invitedInSession = async (req, res, next) => {
                 }
 
             } else if (findInvited.participants[0].participants_2 == req.params.user_id) {
+
+                const dateAll = new Date(findInvited.selectedDate)
+
+                let months = dateAll.getMonth();
+                let date = dateAll.getDate();
+                let year = dateAll.getFullYear();
+                let hour = dateAll.getHours();
+                let minutes = dateAll.getMinutes();
+
                 const createdSessionUser = await userModel.findOne({
                     _id: findInvited.cretedSessionUser,
                     polyDating: 0
@@ -1736,7 +1802,7 @@ exports.invitedInSession = async (req, res, next) => {
                         isAbleToJoin: findInvited.started,
                         RoomType: findInvited.RoomType,
                         selectedTime: findInvited.selectedTime,
-                        selectedDate: findInvited.selectedDate,
+                        selectedDate: `${year}-${months + 1}-${date} ${hour}:${minutes}`,
                         cretedSessionUserphoto: createdSessionUser.photo ? createdSessionUser.photo[0].res : "",
                         participants: [{
                             _id: participants_3 == null ? "" : participants_3._id,
@@ -1754,7 +1820,7 @@ exports.invitedInSession = async (req, res, next) => {
                         isAbleToJoin: findInvited.started,
                         RoomType: findInvited.RoomType,
                         selectedTime: findInvited.selectedTime,
-                        selectedDate: findInvited.selectedDate,
+                        selectedDate: `${year}-${months}-${date} ${hour}:${minutes}`,
                         cretedSessionUserphoto: createdSessionUser.photo ? createdSessionUser.photo[0].res : "",
                         participants: [{
                             _id: participants_1 == null ? "" : participants_1._id,
@@ -1773,7 +1839,7 @@ exports.invitedInSession = async (req, res, next) => {
                         isAbleToJoin: findInvited.started,
                         RoomType: findInvited.RoomType,
                         selectedTime: findInvited.selectedTime,
-                        selectedDate: findInvited.selectedDate,
+                        selectedDate: `${year}-${months}-${date} ${hour}:${minutes}`,
                         cretedSessionUserphoto: createdSessionUser.photo ? createdSessionUser.photo[0].res : "",
                         participants: [{
                             _id: participants_1 == null ? "" : participants_1._id,
@@ -1795,7 +1861,7 @@ exports.invitedInSession = async (req, res, next) => {
                         isAbleToJoin: findInvited.started,
                         RoomType: findInvited.RoomType,
                         selectedTime: findInvited.selectedTime,
-                        selectedDate: findInvited.selectedDate,
+                        selectedDate: `${year}-${months}-${date} ${hour}:${minutes}`,
                         cretedSessionUserphoto: createdSessionUser.photo ? createdSessionUser.photo[0].res : "",
                         participants: []
                     }
@@ -1803,6 +1869,15 @@ exports.invitedInSession = async (req, res, next) => {
                 }
 
             } else if (findInvited.participants[0].participants_3 == req.params.user_id) {
+
+
+                const dateAll = new Date(findInvited.selectedDate)
+
+                let months = dateAll.getMonth();
+                let date = dateAll.getDate();
+                let year = dateAll.getFullYear();
+                let hour = dateAll.getHours();
+                let minutes = dateAll.getMinutes();
 
                 const createdSessionUser = await userModel.findOne({
                     _id: findInvited.cretedSessionUser,
@@ -1826,7 +1901,7 @@ exports.invitedInSession = async (req, res, next) => {
                         isAbleToJoin: findInvited.started,
                         RoomType: findInvited.RoomType,
                         selectedTime: findInvited.selectedTime,
-                        selectedDate: findInvited.selectedDate,
+                        selectedDate: `${year}-${months + 1}-${date} ${hour}:${minutes}`,
                         cretedSessionUserphoto: createdSessionUser.photo ? createdSessionUser.photo[0].res : "",
                         participants: [{
                             _id: participants_2 == null ? "" : participants_2._id,
@@ -1844,7 +1919,7 @@ exports.invitedInSession = async (req, res, next) => {
                         isAbleToJoin: findInvited.started,
                         RoomType: findInvited.RoomType,
                         selectedTime: findInvited.selectedTime,
-                        selectedDate: findInvited.selectedDate,
+                        selectedDate: `${year}-${months}-${date} ${hour}:${minutes}`,
                         cretedSessionUserphoto: createdSessionUser.photo ? createdSessionUser.photo[0].res : "",
                         participants: [{
                             _id: participants_1 == null ? "" : participants_1._id,
@@ -1863,7 +1938,7 @@ exports.invitedInSession = async (req, res, next) => {
                         isAbleToJoin: findInvited.started,
                         RoomType: findInvited.RoomType,
                         selectedTime: findInvited.selectedTime,
-                        selectedDate: findInvited.selectedDate,
+                        selectedDate: `${year}-${months}-${date} ${hour}:${minutes}`,
                         cretedSessionUserphoto: createdSessionUser.photo ? createdSessionUser.photo[0].res : "",
                         participants: [{
                             _id: participants_1 == null ? "" : participants_1._id,
@@ -1886,7 +1961,7 @@ exports.invitedInSession = async (req, res, next) => {
                         isAbleToJoin: findInvited.started,
                         RoomType: findInvited.RoomType,
                         selectedTime: findInvited.selectedTime,
-                        selectedDate: findInvited.selectedDate,
+                        selectedDate: `${year}-${months}-${date} ${hour}:${minutes}`,
                         cretedSessionUserphoto: createdSessionUser.photo ? createdSessionUser.photo[0].res : "",
                         participants: []
                     }
@@ -1965,6 +2040,7 @@ exports.mySession = async (req, res, next) => {
             let second = date.getUTCSeconds();
             now = new Date(`${year}-${month + 1}-${dates} ${hour}:${minute}:${second}`)
 
+
             console.log("now", now);
             var sec_num = (finalUserSessionDate - now) / 1000;
             var days = Math.floor(sec_num / (3600 * 24));
@@ -2004,7 +2080,7 @@ exports.mySession = async (req, res, next) => {
                     const response = {
                         _id: findMySession._id,
                         selectedTime: findMySession.selectedTime,
-                        selectedDate: findMySession.selectedDate,
+                        selectedDate: `${year}-${month + 1}-${dates} ${hour}:${minute}`,
                         isLive: ((days < 0 && hours >= 0 && minutes >= 0) || (days == 0 && hours == 0 && minutes == 0)) == true ? true : false,
                         RoomType: findMySession.RoomType,
                         cretedSessionUserId: findUserDeatil ? findUserDeatil._id : "",
@@ -2037,7 +2113,7 @@ exports.mySession = async (req, res, next) => {
                     const response = {
                         _id: findMySession._id,
                         selectedTime: findMySession.selectedTime,
-                        selectedDate: findMySession.selectedDate,
+                        selectedDate: `${year}-${month + 1}-${dates} ${hour}:${minute}`,
                         isLive: ((days < 0 && hours >= 0 && minutes >= 0) || (days == 0 && hours == 0 && minutes == 0)) == true ? true : false,
                         RoomType: findMySession.RoomType,
                         cretedSessionUserId: findUserDeatil ? findUserDeatil._id : "",
@@ -2053,7 +2129,7 @@ exports.mySession = async (req, res, next) => {
                     const response = {
                         _id: findMySession._id,
                         selectedTime: findMySession.selectedTime,
-                        selectedDate: findMySession.selectedDate,
+                        selectedDate: `${year}-${month + 1}-${dates} ${hour}:${minute}`,
                         isLive: ((days < 0 && hours >= 0 && minutes >= 0) || (days == 0 && hours == 0 && minutes == 0)) == true ? true : false,
                         RoomType: findMySession.RoomType,
                         cretedSessionUserId: findUserDeatil ? findUserDeatil._id : "",
@@ -2080,7 +2156,7 @@ exports.mySession = async (req, res, next) => {
                     const response = {
                         _id: findMySession._id,
                         selectedTime: findMySession.selectedTime,
-                        selectedDate: findMySession.selectedDate,
+                        selectedDate: `${year}-${month + 1}-${dates} ${hour}:${minute}`,
                         isLive: ((days < 0 && hours >= 0 && minutes >= 0) || (days == 0 && hours == 0 && minutes == 0)) == true ? true : false,
                         RoomType: findMySession.RoomType,
                         cretedSessionUserId: findUserDeatil ? findUserDeatil._id : "",
@@ -2105,7 +2181,7 @@ exports.mySession = async (req, res, next) => {
                     const response = {
                         _id: findMySession._id,
                         selectedTime: findMySession.selectedTime,
-                        selectedDate: findMySession.selectedDate,
+                        selectedDate: `${year}-${month + 1}-${dates} ${hour}:${minute}`,
                         isLive: ((days < 0 && hours >= 0 && minutes >= 0) || (days == 0 && hours == 0 && minutes == 0)) == true ? true : false,
                         RoomType: findMySession.RoomType,
                         cretedSessionUserId: findUserDeatil ? findUserDeatil._id : "",
@@ -2134,7 +2210,7 @@ exports.mySession = async (req, res, next) => {
                     const response = {
                         _id: findMySession._id,
                         selectedTime: findMySession.selectedTime,
-                        selectedDate: findMySession.selectedDate,
+                        selectedDate: `${year}-${month + 1}-${dates} ${hour}:${minute}`,
                         isLive: false,
                         RoomType: findMySession.RoomType,
                         cretedSessionUserId: findUserDeatil ? findUserDeatil._id : "",
@@ -2165,7 +2241,7 @@ exports.mySession = async (req, res, next) => {
                     const response = {
                         _id: findMySession._id,
                         selectedTime: findMySession.selectedTime,
-                        selectedDate: findMySession.selectedDate,
+                        selectedDate: `${year}-${month + 1}-${dates} ${hour}:${minute}`,
                         isLive: false,
                         RoomType: findMySession.RoomType,
                         cretedSessionUserId: findUserDeatil ? findUserDeatil._id : "",
@@ -2181,7 +2257,7 @@ exports.mySession = async (req, res, next) => {
                     const response = {
                         _id: findMySession._id,
                         selectedTime: findMySession.selectedTime,
-                        selectedDate: findMySession.selectedDate,
+                        selectedDate: `${year}-${month + 1}-${dates} ${hour}:${minute}`,
                         isLive: false,
                         RoomType: findMySession.RoomType,
                         cretedSessionUserId: findUserDeatil ? findUserDeatil._id : "",
@@ -2208,7 +2284,7 @@ exports.mySession = async (req, res, next) => {
                     const response = {
                         _id: findMySession._id,
                         selectedTime: findMySession.selectedTime,
-                        selectedDate: findMySession.selectedDate,
+                        selectedDate: `${year}-${month + 1}-${dates} ${hour}:${minute}`,
                         isLive: false,
                         RoomType: findMySession.RoomType,
                         cretedSessionUserId: findUserDeatil ? findUserDeatil._id : "",
@@ -2233,7 +2309,7 @@ exports.mySession = async (req, res, next) => {
                     const response = {
                         _id: findMySession._id,
                         selectedTime: findMySession.selectedTime,
-                        selectedDate: findMySession.selectedDate,
+                        selectedDate: `${year}-${month + 1}-${dates} ${hour}:${minute}`,
                         isLive: false,
                         RoomType: findMySession.RoomType,
                         cretedSessionUserId: findUserDeatil ? findUserDeatil._id : "",
