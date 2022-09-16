@@ -2622,7 +2622,7 @@ function socket(io) {
         })
 
         socket.on('callForJoin', async (arg) => {
-            io.emit("noeEnd", "successfully start now")
+            io.emit("nowEnd", "successfully start now")
         })
 
     })
