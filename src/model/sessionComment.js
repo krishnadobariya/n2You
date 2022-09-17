@@ -32,6 +32,15 @@ const sessionCommentSchema = mongoose.Schema({
         profile: {
             type: String,
         }
+    }],
+    raisHand: [{
+        userId: {
+            type: mongoose.Schema.Types.ObjectId
+        },
+        mute: {
+            type: Number,
+            default: 0
+        }
     }]
 }, {
     timestamps: true

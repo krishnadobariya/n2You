@@ -2877,6 +2877,12 @@ function socket(io) {
                 io.emit("commentResponse", "Not Found Session!");
             }
         })
+
+        socket.on("raiseHand", async (arg) => {
+
+            
+
+        })
     })
 }
 
