@@ -82,26 +82,26 @@ exports.sessionCreate = async (req, res, next) => {
 
 
                 for (const notification of allRequestedEmails) {
-
                     const findUser = await userModel.findOne({
                         _id: notification
                     })
+                    console.log("findUser", findUser.fcm_token, findUser._id);
+                    if (findUser.fcm_token) {
+                        const title = findUserInUserModel.firstName;
+                        const body = `${findUserInUserModel.firstName} create session ${timeSession}`;
 
-                    const title = findUserInUserModel.firstName;
-                    const body = `${findUserInUserModel.firstName} create session ${timeSession}`;
-
-                    const text = "join session";
-                    const sendBy = (findUserInUserModel._id).toString();
-                    const registrationToken = findUser.fcm_token
-                    Notification.sendPushNotificationFCM(
-                        registrationToken,
-                        title,
-                        body,
-                        text,
-                        sendBy,
-                        true
-                    );
-
+                        const text = "join session";
+                        const sendBy = (findUserInUserModel._id).toString();
+                        const registrationToken = findUser.fcm_token
+                        Notification.sendPushNotificationFCM(
+                            registrationToken,
+                            title,
+                            body,
+                            text,
+                            sendBy,
+                            true
+                        );
+                    }
                     const findInNotification = await notificationModel.findOne({
                         userId: notification
                     })
@@ -141,20 +141,25 @@ exports.sessionCreate = async (req, res, next) => {
                         _id: invitedUser
                     })
 
-                    const title = findUserInUserModel.firstName;
-                    const body = `${findUserInUserModel.firstName} invited you in session ${timeSession}`;
+                    console.log("findUser", findUser.fcm_token, findUser._id);
 
-                    const text = "join session";
-                    const sendBy = (findUserInUserModel._id).toString();
-                    const registrationToken = findUser.fcm_token
-                    Notification.sendPushNotificationFCM(
-                        registrationToken,
-                        title,
-                        body,
-                        text,
-                        sendBy,
-                        true
-                    );
+                    if (findUser.fcm_token) {
+                        const title = findUserInUserModel.firstName;
+                        const body = `${findUserInUserModel.firstName} invited you in session ${timeSession}`;
+
+                        const text = "join session";
+                        const sendBy = (findUserInUserModel._id).toString();
+                        const registrationToken = findUser.fcm_token
+                        Notification.sendPushNotificationFCM(
+                            registrationToken,
+                            title,
+                            body,
+                            text,
+                            sendBy,
+                            true
+                        );
+
+                    }
 
 
                     const findInNotification = await notificationModel.findOne({
@@ -215,21 +220,25 @@ exports.sessionCreate = async (req, res, next) => {
                         _id: notification
                     })
 
-                    const title = findUserInUserModel.firstName;
-                    const body = `${findUserInUserModel.firstName} invited you in session ${timeSession}`;
 
-                    const text = "join session";
-                    const sendBy = (findUserInUserModel._id).toString();
-                    const registrationToken = findUser.fcm_token
-                    Notification.sendPushNotificationFCM(
-                        registrationToken,
-                        title,
-                        body,
-                        text,
-                        sendBy,
-                        true
-                    );
+                    console.log("findUser", findUser.fcm_token, findUser._id);
+                    if (findUser.fcm_token) {
+                        const title = findUserInUserModel.firstName;
+                        const body = `${findUserInUserModel.firstName} invited you in session ${timeSession}`;
 
+                        const text = "join session";
+                        const sendBy = (findUserInUserModel._id).toString();
+                        const registrationToken = findUser.fcm_token
+                        Notification.sendPushNotificationFCM(
+                            registrationToken,
+                            title,
+                            body,
+                            text,
+                            sendBy,
+                            true
+                        );
+                    }
+                    
                     const findInNotification = await notificationModel.findOne({
                         userId: notification
                     })
