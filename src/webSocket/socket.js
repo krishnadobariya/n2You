@@ -211,22 +211,24 @@ function socket(io) {
 
                             const userRoom = `User${arg.user_2}`
                             io.to(userRoom).emit("chatReceive", chat);
+                            if (fcm_token) {
+                                console.log("chat", chat);
+                                const title = senderName.firstName;
+                                const body = arg.text;
+                                const text = arg.text;
+                                const sendBy = arg.user_1;
+                                const registrationToken = fcm_token
 
-                            console.log("chat", chat);
-                            const title = senderName.firstName;
-                            const body = arg.text;
-                            const text = arg.text;
-                            const sendBy = arg.user_1;
-                            const registrationToken = fcm_token
+                                Notification.sendPushNotificationFCM(
+                                    registrationToken,
+                                    title,
+                                    body,
+                                    text,
+                                    sendBy,
+                                    true
+                                );
 
-                            Notification.sendPushNotificationFCM(
-                                registrationToken,
-                                title,
-                                body,
-                                text,
-                                sendBy,
-                                true
-                            );
+                            }
 
                         } else {
                             io.emit("chatReceive", "sender not found");
@@ -275,20 +277,23 @@ function socket(io) {
 
                             const userRoom = `User${arg.user_2}`
                             io.to(userRoom).emit("chatReceive", chat);
-                            const title = senderName.firstName;
-                            const body = arg.text;
+                            if (fcm_token) {
+                                const title = senderName.firstName;
+                                const body = arg.text;
 
-                            const text = arg.text;
-                            const sendBy = arg.user_1;
-                            const registrationToken = fcm_token
-                            Notification.sendPushNotificationFCM(
-                                registrationToken,
-                                title,
-                                body,
-                                text,
-                                sendBy,
-                                true
-                            );
+                                const text = arg.text;
+                                const sendBy = arg.user_1;
+                                const registrationToken = fcm_token
+                                Notification.sendPushNotificationFCM(
+                                    registrationToken,
+                                    title,
+                                    body,
+                                    text,
+                                    sendBy,
+                                    true
+                                );
+                            }
+
 
                         } else {
                             io.emit("chatReceive", "sender not found");
@@ -370,19 +375,22 @@ function socket(io) {
 
                                 const userRoom = `User${arg.user_2}`
                                 io.to(userRoom).emit("chatReceive", chat);
-                                const title = senderName.firstName;
-                                const body = arg.text;
-                                const text = arg.text;
-                                const sendBy = arg.user_1;
-                                const registrationToken = fcm_token
-                                Notification.sendPushNotificationFCM(
-                                    registrationToken,
-                                    title,
-                                    body,
-                                    text,
-                                    sendBy,
-                                    true
-                                );
+                                if (fcm_token) {
+                                    const title = senderName.firstName;
+                                    const body = arg.text;
+                                    const text = arg.text;
+                                    const sendBy = arg.user_1;
+                                    const registrationToken = fcm_token
+                                    Notification.sendPushNotificationFCM(
+                                        registrationToken,
+                                        title,
+                                        body,
+                                        text,
+                                        sendBy,
+                                        true
+                                    );
+                                }
+
 
                             } else {
                                 console.log("else 3333");
@@ -433,19 +441,22 @@ function socket(io) {
                                 console.log("chat::::", chat);
                                 const userRoom = `User${arg.user_2}`
                                 io.to(userRoom).emit("chatReceive", chat);
-                                const title = senderName.firstName;
-                                const body = arg.text;
-                                const text = arg.text;
-                                const sendBy = arg.user_1;
-                                const registrationToken = fcm_token
-                                Notification.sendPushNotificationFCM(
-                                    registrationToken,
-                                    title,
-                                    body,
-                                    text,
-                                    sendBy,
-                                    true
-                                );
+                                if (fcm_token) {
+                                    const title = senderName.firstName;
+                                    const body = arg.text;
+                                    const text = arg.text;
+                                    const sendBy = arg.user_1;
+                                    const registrationToken = fcm_token
+                                    Notification.sendPushNotificationFCM(
+                                        registrationToken,
+                                        title,
+                                        body,
+                                        text,
+                                        sendBy,
+                                        true
+                                    );
+                                }
+
 
                             } else {
                                 io.emit("chatReceive", "sender not found");
@@ -492,21 +503,23 @@ function socket(io) {
                                 }
                                 const userRoom = `User${arg.user_2}`
                                 io.to(userRoom).emit("chatReceive", chat);
+                                if (fcm_token) {
+                                    const title = senderName.firstName;
+                                    const body = arg.text;
+                                    const text = arg.text;
+                                    const sendBy = arg.user_1;
 
-                                const title = senderName.firstName;
-                                const body = arg.text;
-                                const text = arg.text;
-                                const sendBy = arg.user_1;
+                                    const registrationToken = fcm_token
+                                    Notification.sendPushNotificationFCM(
+                                        registrationToken,
+                                        title,
+                                        body,
+                                        text,
+                                        sendBy,
+                                        true
+                                    );
+                                }
 
-                                const registrationToken = fcm_token
-                                Notification.sendPushNotificationFCM(
-                                    registrationToken,
-                                    title,
-                                    body,
-                                    text,
-                                    sendBy,
-                                    true
-                                );
 
                             } else {
                                 io.emit("chatReceive", "sender not found");
@@ -550,22 +563,24 @@ function socket(io) {
                                 }
                                 const userRoom = `User${arg.user_2}`
                                 io.to(userRoom).emit("chatReceive", chat);
+                                if (fcm_token) {
+                                    const title = senderName.firstName;
+                                    const body = arg.text;
+                                    const text = arg.text;
+                                    const sendBy = arg.user_1;
 
-                                const title = senderName.firstName;
-                                const body = arg.text;
-                                const text = arg.text;
-                                const sendBy = arg.user_1;
+                                    const registrationToken = fcm_token
 
-                                const registrationToken = fcm_token
+                                    Notification.sendPushNotificationFCM(
+                                        registrationToken,
+                                        title,
+                                        body,
+                                        text,
+                                        sendBy,
+                                        true
+                                    );
+                                }
 
-                                Notification.sendPushNotificationFCM(
-                                    registrationToken,
-                                    title,
-                                    body,
-                                    text,
-                                    sendBy,
-                                    true
-                                );
 
                             } else {
                                 io.emit("chatReceive", "sender not found");
@@ -638,20 +653,23 @@ function socket(io) {
                                 _id: findIdInSession.cretedSessionUser
                             })
 
-                            const title = findCreateSessionUser.firstName;
-                            const body = `session started which one is created by ${findCreateSessionUser.firstName}`;
+                            if (findUser.fcm_token) {
+                                const title = findCreateSessionUser.firstName;
+                                const body = `session started which one is created by ${findCreateSessionUser.firstName}`;
 
-                            const text = "join session";
-                            const sendBy = (findCreateSessionUser._id).toString();
-                            const registrationToken = findUser.fcm_token
-                            Notification.sendPushNotificationFCM(
-                                registrationToken,
-                                title,
-                                body,
-                                text,
-                                sendBy,
-                                true
-                            );
+                                const text = "join session";
+                                const sendBy = (findCreateSessionUser._id).toString();
+                                const registrationToken = findUser.fcm_token
+                                Notification.sendPushNotificationFCM(
+                                    registrationToken,
+                                    title,
+                                    body,
+                                    text,
+                                    sendBy,
+                                    true
+                                );
+                            }
+
 
 
                             const findInNotification = await notificationModel.findOne({
@@ -700,21 +718,23 @@ function socket(io) {
                             const findCreateSessionUser = await userModel.findOne({
                                 _id: findIdInSession.cretedSessionUser
                             })
+                            if (findUser.fcm_token) {
+                                const title = findCreateSessionUser.firstName;
+                                const body = `session started which one is created by ${findCreateSessionUser.firstName}`;
 
-                            const title = findCreateSessionUser.firstName;
-                            const body = `session started which one is created by ${findCreateSessionUser.firstName}`;
+                                const text = "join session";
+                                const sendBy = (findCreateSessionUser._id).toString();
+                                const registrationToken = findUser.fcm_token
+                                Notification.sendPushNotificationFCM(
+                                    registrationToken,
+                                    title,
+                                    body,
+                                    text,
+                                    sendBy,
+                                    true
+                                );
+                            }
 
-                            const text = "join session";
-                            const sendBy = (findCreateSessionUser._id).toString();
-                            const registrationToken = findUser.fcm_token
-                            Notification.sendPushNotificationFCM(
-                                registrationToken,
-                                title,
-                                body,
-                                text,
-                                sendBy,
-                                true
-                            );
 
                             const findInNotification = await notificationModel.findOne({
                                 userId: invitedUser
@@ -785,20 +805,23 @@ function socket(io) {
                                 _id: findIdInSession.cretedSessionUser
                             })
 
-                            const title = findCreateSessionUser.firstName;
-                            const body = `session started which one is created by ${findCreateSessionUser.firstName}`;
+                            if (findUser.fcm_token) {
+                                const title = findCreateSessionUser.firstName;
+                                const body = `session started which one is created by ${findCreateSessionUser.firstName}`;
 
-                            const text = "join session";
-                            const sendBy = (findCreateSessionUser._id).toString();
-                            const registrationToken = findUser.fcm_token
-                            Notification.sendPushNotificationFCM(
-                                registrationToken,
-                                title,
-                                body,
-                                text,
-                                sendBy,
-                                true
-                            );
+                                const text = "join session";
+                                const sendBy = (findCreateSessionUser._id).toString();
+                                const registrationToken = findUser.fcm_token
+                                Notification.sendPushNotificationFCM(
+                                    registrationToken,
+                                    title,
+                                    body,
+                                    text,
+                                    sendBy,
+                                    true
+                                );
+
+                            }
 
                             const findInNotification = await notificationModel.findOne({
                                 userId: notification
@@ -870,21 +893,23 @@ function socket(io) {
                         const findCreateSessionUser = await userModel.findOne({
                             _id: findIdInSession.participants[0].participants_1
                         })
+                        if (findUser.fcm_token) {
+                            const title = findCreateSessionUser.firstName;
+                            const body = `session is joing by ${findCreateSessionUser.firstName}`;
 
-                        const title = findCreateSessionUser.firstName;
-                        const body = `session is joing by ${findCreateSessionUser.firstName}`;
+                            const text = "join session";
+                            const sendBy = (findCreateSessionUser._id).toString();
+                            const registrationToken = findUser.fcm_token
+                            Notification.sendPushNotificationFCM(
+                                registrationToken,
+                                title,
+                                body,
+                                text,
+                                sendBy,
+                                true
+                            );
+                        }
 
-                        const text = "join session";
-                        const sendBy = (findCreateSessionUser._id).toString();
-                        const registrationToken = findUser.fcm_token
-                        Notification.sendPushNotificationFCM(
-                            registrationToken,
-                            title,
-                            body,
-                            text,
-                            sendBy,
-                            true
-                        );
 
                         const findInNotification = await notificationModel.findOne({
                             userId: notification
@@ -954,20 +979,23 @@ function socket(io) {
                             _id: findIdInSession.participants[0].participants_2
                         })
 
-                        const title = findCreateSessionUser.firstName;
-                        const body = `session is joing by ${findCreateSessionUser.firstName}`;
+                        if (findUser.fcm_token) {
+                            const title = findCreateSessionUser.firstName;
+                            const body = `session is joing by ${findCreateSessionUser.firstName}`;
 
-                        const text = "join session";
-                        const sendBy = (findCreateSessionUser._id).toString();
-                        const registrationToken = findUser.fcm_token
-                        Notification.sendPushNotificationFCM(
-                            registrationToken,
-                            title,
-                            body,
-                            text,
-                            sendBy,
-                            true
-                        );
+                            const text = "join session";
+                            const sendBy = (findCreateSessionUser._id).toString();
+                            const registrationToken = findUser.fcm_token
+                            Notification.sendPushNotificationFCM(
+                                registrationToken,
+                                title,
+                                body,
+                                text,
+                                sendBy,
+                                true
+                            );
+                        }
+
 
                         const findInNotification = await notificationModel.findOne({
                             userId: notification
@@ -1036,21 +1064,23 @@ function socket(io) {
                         const findCreateSessionUser = await userModel.findOne({
                             _id: findIdInSession.participants[0].participants_3
                         })
+                        if (findUser.fcm_token) {
+                            const title = findCreateSessionUser.firstName;
+                            const body = `session is joing by ${findCreateSessionUser.firstName}`;
 
-                        const title = findCreateSessionUser.firstName;
-                        const body = `session is joing by ${findCreateSessionUser.firstName}`;
+                            const text = "join session";
+                            const sendBy = (findCreateSessionUser._id).toString();
+                            const registrationToken = findUser.fcm_token
+                            Notification.sendPushNotificationFCM(
+                                registrationToken,
+                                title,
+                                body,
+                                text,
+                                sendBy,
+                                true
+                            );
+                        }
 
-                        const text = "join session";
-                        const sendBy = (findCreateSessionUser._id).toString();
-                        const registrationToken = findUser.fcm_token
-                        Notification.sendPushNotificationFCM(
-                            registrationToken,
-                            title,
-                            body,
-                            text,
-                            sendBy,
-                            true
-                        );
 
                         const findInNotification = await notificationModel.findOne({
                             userId: notification
@@ -1149,21 +1179,24 @@ function socket(io) {
             io.to(userRoom).emit("RoomCreated", "Chat Room Created....");
             for (const fcm_token of findRoom) {
 
-                const title = "n2you Notification";
-                const body = 'room Created';
+                if (fcm_token) {
+                    const title = "n2you Notification";
+                    const body = 'room Created';
 
-                const text = 'room Created';
-                const sendBy = arg.user_1;
-                const registrationToken = fcm_token.fcm_token
+                    const text = 'room Created';
+                    const sendBy = arg.user_1;
+                    const registrationToken = fcm_token.fcm_token
 
-                Notification.sendPushNotificationFCM(
-                    registrationToken,
-                    title,
-                    body,
-                    text,
-                    sendBy,
-                    true
-                );
+                    Notification.sendPushNotificationFCM(
+                        registrationToken,
+                        title,
+                        body,
+                        text,
+                        sendBy,
+                        true
+                    );
+                }
+
             }
         })
 
@@ -1242,21 +1275,24 @@ function socket(io) {
                         io.to(userRoom).emit("chatReceive", arg.text);
 
                         for (const fcm_token of findAllUser) {
-                            const title = "n2you Notification";
-                            const body = `${arg.sender_id} send request to `;
+                            if (fcm_token) {
+                                const title = "n2you Notification";
+                                const body = `${arg.sender_id} send request to `;
 
-                            const text = arg.text;
-                            const sendBy = arg.sender_id;
-                            const registrationToken = fcm_token.fcm_token
+                                const text = arg.text;
+                                const sendBy = arg.sender_id;
+                                const registrationToken = fcm_token.fcm_token
 
-                            Notification.sendPushNotificationFCM(
-                                registrationToken,
-                                title,
-                                body,
-                                text,
-                                sendBy,
-                                true
-                            );
+                                Notification.sendPushNotificationFCM(
+                                    registrationToken,
+                                    title,
+                                    body,
+                                    text,
+                                    sendBy,
+                                    true
+                                );
+                            }
+
                         }
                     } else {
 
@@ -1301,21 +1337,24 @@ function socket(io) {
                         })
 
                         for (const fcm_token of findAllUser) {
-                            const title = "n2you Notification";
-                            const body = `${arg.sender_id} send request to `;
+                            if (fcm_token) {
+                                const title = "n2you Notification";
+                                const body = `${arg.sender_id} send request to `;
 
-                            const text = arg.text;
-                            const sendBy = arg.sender_id;
-                            const registrationToken = fcm_token.fcm_token
+                                const text = arg.text;
+                                const sendBy = arg.sender_id;
+                                const registrationToken = fcm_token.fcm_token
 
-                            Notification.sendPushNotificationFCM(
-                                registrationToken,
-                                title,
-                                body,
-                                text,
-                                sendBy,
-                                true
-                            );
+                                Notification.sendPushNotificationFCM(
+                                    registrationToken,
+                                    title,
+                                    body,
+                                    text,
+                                    sendBy,
+                                    true
+                                );
+                            }
+
                         }
                     }
                 } else {
@@ -1869,24 +1908,24 @@ function socket(io) {
 
                         const userRoom = `User${arg.requested_id}`
                         io.to(userRoom).emit("getRequest", `Request Send successfully!`);
+                        if (checkRequestedEmail.fcm_token) {
+                            const fcm_token = checkRequestedEmail.fcm_token
+                            const title = "Friend Request";
+                            const body = `${checkUserExist.firstName} sent you a friend request.`;
+                            const text = `${checkUserExist.firstName} sent you a friend request.`;
+                            const sendBy = arg.user_id;
+                            const registrationToken = fcm_token
 
+                            Notification.sendPushNotificationFCM(
+                                registrationToken,
+                                title,
+                                body,
+                                text,
+                                sendBy,
+                                true
+                            );
+                        }
 
-                        checkRequestedEmail
-                        const fcm_token = checkRequestedEmail.fcm_token
-                        const title = "Friend Request";
-                        const body = `${checkUserExist.firstName} sent you a friend request.`;
-                        const text = `${checkUserExist.firstName} sent you a friend request.`;
-                        const sendBy = arg.user_id;
-                        const registrationToken = fcm_token
-
-                        Notification.sendPushNotificationFCM(
-                            registrationToken,
-                            title,
-                            body,
-                            text,
-                            sendBy,
-                            true
-                        );
 
                     } else {
                         const inRequested = [];
@@ -1984,22 +2023,25 @@ function socket(io) {
                             io.to(userRoom).emit("getRequest", `Request Send successfully!`);
 
 
-                            checkRequestedEmail
-                            const fcm_token = checkRequestedEmail.fcm_token
-                            const title = "Friend Request";
-                            const body = `${checkUserExist.firstName} sent you a friend request.`;
-                            const text = `${checkUserExist.firstName} sent you a friend request.`;
-                            const sendBy = arg.user_id;
-                            const registrationToken = fcm_token
+                            if (checkRequestedEmail.fcm_token) {
+                                const fcm_token = checkRequestedEmail.fcm_token
+                                const title = "Friend Request";
+                                const body = `${checkUserExist.firstName} sent you a friend request.`;
+                                const text = `${checkUserExist.firstName} sent you a friend request.`;
+                                const sendBy = arg.user_id;
+                                const registrationToken = fcm_token
 
-                            Notification.sendPushNotificationFCM(
-                                registrationToken,
-                                title,
-                                body,
-                                text,
-                                sendBy,
-                                true
-                            );
+                                Notification.sendPushNotificationFCM(
+                                    registrationToken,
+                                    title,
+                                    body,
+                                    text,
+                                    sendBy,
+                                    true
+                                );
+                            }
+
+
                         }
                     }
                 } else {
@@ -2364,21 +2406,24 @@ function socket(io) {
                             _id: arg.receiver_id
                         })
 
-                        const fcm_token = receiver.fcm_token
-                        const title = "video call Request";
-                        const body = `${sender.firstName} join video call.`;
-                        const text = `${sender.firstName} join video call.`;
-                        const sendBy = arg.sender_id;
-                        const registrationToken = fcm_token
+                        if (receiver.fcm_token) {
+                            const fcm_token = receiver.fcm_token
+                            const title = "video call Request";
+                            const body = `${sender.firstName} join video call.`;
+                            const text = `${sender.firstName} join video call.`;
+                            const sendBy = arg.sender_id;
+                            const registrationToken = fcm_token
 
-                        Notification.sendPushNotificationFCM(
-                            registrationToken,
-                            title,
-                            body,
-                            text,
-                            sendBy,
-                            true
-                        );
+                            Notification.sendPushNotificationFCM(
+                                registrationToken,
+                                title,
+                                body,
+                                text,
+                                sendBy,
+                                true
+                            );
+                        }
+
                     }
 
                 } else {
@@ -2425,21 +2470,24 @@ function socket(io) {
                     const receiver = await userModel.findOne({
                         _id: arg.receiver_id
                     })
-                    const fcm_token = receiver.fcm_token
-                    const title = "video call End Request";
-                    const body = `${sender.firstName} End video call.`;
-                    const text = `${sender.firstName} End video call.`;
-                    const sendBy = arg.sender_id;
-                    const registrationToken = fcm_token
+                    if (receiver.fcm_token) {
+                        const fcm_token = receiver.fcm_token
+                        const title = "video call End Request";
+                        const body = `${sender.firstName} End video call.`;
+                        const text = `${sender.firstName} End video call.`;
+                        const sendBy = arg.sender_id;
+                        const registrationToken = fcm_token
 
-                    Notification.sendPushNotificationFCM(
-                        registrationToken,
-                        title,
-                        body,
-                        text,
-                        sendBy,
-                        true
-                    );
+                        Notification.sendPushNotificationFCM(
+                            registrationToken,
+                            title,
+                            body,
+                            text,
+                            sendBy,
+                            true
+                        );
+                    }
+
                 } else {
 
                     io.emit("videoCallEndReceive", "not Create Any Video Call!")
@@ -2543,20 +2591,23 @@ function socket(io) {
                             _id: findSession.cretedSessionUser
                         })
 
-                        const title = findCreateSessionUser.firstName;
-                        const body = `session end by ${findCreateSessionUser.firstName}`;
+                        if (findUser.fcm_token) {
+                            const title = findCreateSessionUser.firstName;
+                            const body = `session end by ${findCreateSessionUser.firstName}`;
 
-                        const text = "join session";
-                        const sendBy = (findCreateSessionUser._id).toString();
-                        const registrationToken = findUser.fcm_token
-                        Notification.sendPushNotificationFCM(
-                            registrationToken,
-                            title,
-                            body,
-                            text,
-                            sendBy,
-                            true
-                        );
+                            const text = "join session";
+                            const sendBy = (findCreateSessionUser._id).toString();
+                            const registrationToken = findUser.fcm_token
+                            Notification.sendPushNotificationFCM(
+                                registrationToken,
+                                title,
+                                body,
+                                text,
+                                sendBy,
+                                true
+                            );
+                        }
+
 
                         const findInNotification = await notificationModel.findOne({
                             userId: notification
