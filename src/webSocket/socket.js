@@ -598,15 +598,13 @@ function socket(io) {
 
                 if ((findIdInSession.cretedSessionUser).toString() == (arg.create_session_user).toString()) {
 
-                    console.log("hrlloo");
-
                     const commentSession = await sessionCommentModel.findOne({
                         sessionId: arg.session_id
                     })
 
                     console.log(commentSession);
                     if (commentSession) { } else {
-                        console.log("yaaa right");
+
                         const saveData = sessionCommentModel({
                             sessionId: arg.session_id,
                             cretedSessionUser: arg.create_session_user
@@ -875,7 +873,8 @@ function socket(io) {
                         }, {
                             $push: {
                                 joinUser: {
-                                    userId: mongoose.Types.ObjectId(p1)
+                                    userId: mongoose.Types.ObjectId(p1),
+                                    status: 2
                                 }
                             }
                         })
@@ -978,7 +977,8 @@ function socket(io) {
                         }, {
                             $push: {
                                 joinUser: {
-                                    userId: mongoose.Types.ObjectId(p2)
+                                    userId: mongoose.Types.ObjectId(p2),
+                                    status: 2
                                 }
                             }
                         })
@@ -1079,7 +1079,8 @@ function socket(io) {
                         }, {
                             $push: {
                                 joinUser: {
-                                    userId: mongoose.Types.ObjectId(p3)
+                                    userId: mongoose.Types.ObjectId(p3),
+                                    status: 2
                                 }
                             }
                         })
@@ -1180,7 +1181,8 @@ function socket(io) {
                         }, {
                             $push: {
                                 joinUser: {
-                                    userId: mongoose.Types.ObjectId(arg.create_session_user)
+                                    userId: mongoose.Types.ObjectId(arg.create_session_user),
+                                    status: 3
                                 }
                             }
                         })
@@ -2808,9 +2810,17 @@ function socket(io) {
                 if (findInCommentSessionModel) {
 
                     const AllJoinUser = [];
-                    AllJoinUser.push(findInCommentSessionModel.cretedSessionUser)
+                    const statusWithId = {
+                        userId: findInCommentSessionModel.cretedSessionUser,
+                        status: 1
+                    }
+                    AllJoinUser.push(statusWithId)
                     for (const joinUser of findInCommentSessionModel.joinUser) {
-                        AllJoinUser.push(joinUser.userId)
+                        const statusWithId = {
+                            userId: joinUser.userId,
+                            status: joinUser.status
+                        }
+                        AllJoinUser.push(statusWithId)
                     }
 
                     console.log(AllJoinUser);
@@ -2834,7 +2844,10 @@ function socket(io) {
 
 
                     for (const sendComment of AllJoinUser) {
-                        if ((sendComment).toString() == (arg.user_id).toString()) { } else {
+                        console.log("sendComment", sendComment);
+                        if ((sendComment.userId).toString() == (arg.user_id).toString()) {
+                            console.log("helooo");
+                        } else {
 
                             const findUser = await userModel.findOne({
                                 _id: arg.user_id
@@ -2843,9 +2856,13 @@ function socket(io) {
                                 userId: arg.user_id,
                                 comment: arg.comment,
                                 userName: findUser.firstName,
-                                profile: findUser.photo[0] ? findUser.photo[0].res : ""
+                                profile: findUser.photo[0] ? findUser.photo[0].res : "",
+                                status: sendComment.status
                             }
-                            const userRoom = `User${sendComment}`
+
+                            console.log("commentData::::", commentData);
+
+                            const userRoom = `User${sendComment.userId}`
                             io.to(userRoom).emit("commentResponse", commentData);
 
                         }

@@ -14,6 +14,9 @@ const sessionCommentSchema = mongoose.Schema({
     joinUser: [{
         userId: {
             type: mongoose.Schema.Types.ObjectId
+        },
+        status: {
+            type: Number
         }
     }],
     commentWithUser: [{
