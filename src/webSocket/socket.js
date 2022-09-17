@@ -2500,7 +2500,12 @@ function socket(io) {
 
 
                 if ((findSession.cretedSessionUser).toString() == (arg.create_session_user).toString()) {
-                   
+                    await sessionModel.updateOne(
+                        {
+                            _id: arg.session_id,
+                        },
+                        { countJoinUser: 0 }
+                    )
 
                     await sessionModel.updateOne({
                         _id: arg.session_id
