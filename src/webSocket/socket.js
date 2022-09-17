@@ -14,16 +14,12 @@ const requestModel = require("../model/requests.model");
 const videoCallModel = require("./models/videoCall.model");
 const { deleteOne, updateOne, findOne } = require("../model/user.model");
 const sessionModel = require("../model/session.model");
+const sessionCommentModel = require("../model/sessionComment");
 function socket(io) {
 
     console.log("socket connected...");
 
     io.on('connection', (socket) => {
-
-        // socket.on("joinUser", function (data) {
-        //     const userRoom = `User${data.user_1}`
-        //     socket.join(userRoom)
-        // })
 
         socket.on("joinUser", function (data) {
             const userRoom = `User${data.user_id}`;
@@ -31,8 +27,6 @@ function socket(io) {
         });
 
         socket.on("chat", async (arg) => {
-
-            console.log("socket calllllll");
 
             if (arg.user_1 == arg.sender_id) {
 
@@ -591,12 +585,10 @@ function socket(io) {
             }
         })
 
-
         socket.on("joinSession", async (arg) => {
             const findIdInSession = await sessionModel.findOne({
                 _id: arg.session_id
             })
-
 
             const p1 = findIdInSession.participants[0].participants_1 == null ? "" : findIdInSession.participants[0].participants_1
             const p2 = findIdInSession.participants[0].participants_2 == null ? "" : findIdInSession.participants[0].participants_2
@@ -605,18 +597,30 @@ function socket(io) {
             if (findIdInSession) {
 
                 if ((findIdInSession.cretedSessionUser).toString() == (arg.create_session_user).toString()) {
+
+                    console.log("hrlloo");
+
+                    const commentSession = await sessionCommentModel.findOne({
+                        sessionId: arg.session_id
+                    })
+
+                    console.log(commentSession);
+                    if (commentSession) { } else {
+                        console.log("yaaa right");
+                        const saveData = sessionCommentModel({
+                            sessionId: arg.session_id,
+                            cretedSessionUser: arg.create_session_user
+                        })
+
+                        await saveData.save();
+                    }
                     if (findIdInSession.roomType == "Public") {
 
                         const allRequestedEmails = [];
                         const findAllFriend = await requestModel.findOne({
                             userId: findIdInSession.cretedSessionUser
                         })
-                        await sessionModel.updateOne(
-                            {
-                                _id: arg.session_id,
-                            },
-                            { $inc: { countJoinUser: 1 } }
-                        )
+
                         const p1 = findIdInSession.participants[0].participants_1 == null ? "" : findIdInSession.participants[0].participants_1
                         const p2 = findIdInSession.participants[0].participants_2 == null ? "" : findIdInSession.participants[0].participants_2
                         const p3 = findIdInSession.participants[0].participants_3 == null ? "" : findIdInSession.participants[0].participants_3
@@ -860,6 +864,23 @@ function socket(io) {
                     }
                 } else if ((p1).toString() == (arg.create_session_user).toString()) {
 
+                    const commentSession = await sessionCommentModel.findOne({
+                        sessionId: arg.session_id,
+                        "joinUser.userId": mongoose.Types.ObjectId(p1)
+                    })
+
+                    if (commentSession) { } else {
+                        await sessionCommentModel.updateOne({
+                            sessionId: arg.session_id,
+                        }, {
+                            $push: {
+                                joinUser: {
+                                    userId: mongoose.Types.ObjectId(p1)
+                                }
+                            }
+                        })
+                    }
+
                     await sessionModel.updateOne(
                         {
                             _id: arg.session_id,
@@ -946,6 +967,23 @@ function socket(io) {
 
                 } else if ((p2).toString() == (arg.create_session_user).toString()) {
 
+                    const commentSession = await sessionCommentModel.findOne({
+                        sessionId: arg.session_id,
+                        "joinUser.userId": mongoose.Types.ObjectId(p2)
+                    })
+
+                    if (commentSession) { } else {
+                        await sessionCommentModel.updateOne({
+                            sessionId: arg.session_id,
+                        }, {
+                            $push: {
+                                joinUser: {
+                                    userId: mongoose.Types.ObjectId(p2)
+                                }
+                            }
+                        })
+                    }
+
                     await sessionModel.updateOne(
                         {
                             _id: arg.session_id,
@@ -1030,6 +1068,23 @@ function socket(io) {
                     }
                 } else if ((p3).toString() == (arg.create_session_user).toString()) {
 
+                    const commentSession = await sessionCommentModel.findOne({
+                        sessionId: arg.session_id,
+                        "joinUser.userId": mongoose.Types.ObjectId(p3)
+                    })
+
+                    if (commentSession) { } else {
+                        await sessionCommentModel.updateOne({
+                            sessionId: arg.session_id,
+                        }, {
+                            $push: {
+                                joinUser: {
+                                    userId: mongoose.Types.ObjectId(p3)
+                                }
+                            }
+                        })
+                    }
+
                     await sessionModel.updateOne(
                         {
                             _id: arg.session_id,
@@ -1113,15 +1168,28 @@ function socket(io) {
 
                         }
                     }
+                } else {
+                    const commentSession = await sessionCommentModel.findOne({
+                        sessionId: arg.session_id,
+                        "joinUser.userId": mongoose.Types.ObjectId(arg.create_session_user)
+                    })
+
+                    if (commentSession) { } else {
+                        await sessionCommentModel.updateOne({
+                            sessionId: arg.session_id,
+                        }, {
+                            $push: {
+                                joinUser: {
+                                    userId: mongoose.Types.ObjectId(arg.create_session_user)
+                                }
+                            }
+                        })
+                    }
                 }
-
-
             } else {
                 io.emit("sessionJoinSuccess", "seesion not found");
             }
         })
-
-
 
         socket.on("createGroupRoom", async (arg) => {
 
@@ -2541,13 +2609,12 @@ function socket(io) {
             })
 
             if (findSession) {
-
-                const p1 = findSession.participants[0].participants_1 == null ? "" : findSession.participants[0].participants_1
-                const p2 = findSession.participants[0].participants_2 == null ? "" : findSession.participants[0].participants_2
-                const p3 = findSession.participants[0].participants_3 == null ? "" : findSession.participants[0].participants_3
-
-
                 if ((findSession.cretedSessionUser).toString() == (arg.create_session_user).toString()) {
+
+                    await sessionCommentModel.deleteOne({
+                        sessionId: arg.session_id
+                    })
+
                     await sessionModel.updateOne(
                         {
                             _id: arg.session_id,
@@ -2651,6 +2718,16 @@ function socket(io) {
 
                 } else {
 
+                    await sessionCommentModel.updateOne({
+                        sessionId: arg.session_id
+                    }, {
+                        $pull: {
+                            joinUser: {
+                                userId: arg.create_session_user
+                            }
+                        }
+                    })
+
                     await sessionModel.updateOne(
                         {
                             _id: arg.session_id,
@@ -2716,6 +2793,71 @@ function socket(io) {
                     io.to(userRoom).emit("nowEnd", "successfully start now");
                 }
 
+            }
+        })
+
+        socket.on("commentOnLiveSession", async (arg) => {
+            const findSession = await sessionModel.findOne({
+                _id: arg.session_id
+            })
+            if (findSession) {
+
+                const findInCommentSessionModel = await sessionCommentModel.findOne({
+                    sessionId: arg.session_id
+                })
+                if (findInCommentSessionModel) {
+
+                    const AllJoinUser = [];
+                    AllJoinUser.push(findInCommentSessionModel.cretedSessionUser)
+                    for (const joinUser of findInCommentSessionModel.joinUser) {
+                        AllJoinUser.push(joinUser.userId)
+                    }
+
+                    console.log(AllJoinUser);
+
+                    const findUser = await userModel.findOne({
+                        _id: arg.user_id
+                    })
+
+                    await sessionCommentModel.updateOne({
+                        sessionId: arg.session_id
+                    }, {
+                        $push: {
+                            commentWithUser: {
+                                userId: arg.user_id,
+                                comment: arg.comment,
+                                userName: findUser.firstName,
+                                profile: findUser.photo[0] ? findUser.photo[0].res : ""
+                            }
+                        }
+                    })
+
+
+                    for (const sendComment of AllJoinUser) {
+                        if ((sendComment).toString() == (arg.user_id).toString()) { } else {
+
+                            const findUser = await userModel.findOne({
+                                _id: arg.user_id
+                            })
+                            const commentData = {
+                                userId: arg.user_id,
+                                comment: arg.comment,
+                                userName: findUser.firstName,
+                                profile: findUser.photo[0] ? findUser.photo[0].res : ""
+                            }
+                            const userRoom = `User${sendComment}`
+                            io.to(userRoom).emit("commentResponse", commentData);
+
+                        }
+                    }
+
+                } else {
+                    io.emit("commentResponse", "Not Found Session!");
+                }
+
+            } else {
+
+                io.emit("commentResponse", "Not Found Session!");
             }
         })
     })
