@@ -58,21 +58,22 @@ cron.schedule("*/60 * * * * *", async function () {
             const findUserInUserModel = await userModel.findOne({
                 _id: getDate.cretedSessionUser
             })
+            if (findUserInUserModel.fcm_token) {
+                const title = findUserInUserModel.firstName;
+                const body = "after 30 min started your session";
 
-            const title = findUserInUserModel.firstName;
-            const body = "after 30 min started your session";
-
-            const text = "join session";
-            const sendBy = (findUserInUserModel._id).toString();
-            const registrationToken = findUserInUserModel.fcm_token
-            Notification.sendPushNotificationFCM(
-                registrationToken,
-                title,
-                body,
-                text,
-                sendBy,
-                true
-            );
+                const text = "join session";
+                const sendBy = (findUserInUserModel._id).toString();
+                const registrationToken = findUserInUserModel.fcm_token
+                Notification.sendPushNotificationFCM(
+                    registrationToken,
+                    title,
+                    body,
+                    text,
+                    sendBy,
+                    true
+                );
+            }
 
             const findInNotification = await notificationModel.findOne({
                 userId: findUserInUserModel._id
@@ -143,20 +144,23 @@ cron.schedule("*/60 * * * * *", async function () {
                         _id: getDate.cretedSessionUser
                     })
 
-                    const title = findCreateSessionUser.firstName;
-                    const body = "after 30 min join session";
+                    if (findUser.fcm_token) {
+                        const title = findCreateSessionUser.firstName;
+                        const body = "after 30 min join session";
 
-                    const text = "join session";
-                    const sendBy = (findCreateSessionUser._id).toString();
-                    const registrationToken = findUser.fcm_token
-                    Notification.sendPushNotificationFCM(
-                        registrationToken,
-                        title,
-                        body,
-                        text,
-                        sendBy,
-                        true
-                    );
+                        const text = "join session";
+                        const sendBy = (findCreateSessionUser._id).toString();
+                        const registrationToken = findUser.fcm_token
+                        Notification.sendPushNotificationFCM(
+                            registrationToken,
+                            title,
+                            body,
+                            text,
+                            sendBy,
+                            true
+                        );
+                    }
+
 
 
                     const findInNotification = await notificationModel.findOne({
@@ -197,20 +201,24 @@ cron.schedule("*/60 * * * * *", async function () {
                         _id: getDate.cretedSessionUser
                     })
 
-                    const title = findCreateSessionUser.firstName;
-                    const body = "after 30 min join session";
+                    if (findUser.fcm_token) {
+                        const title = findCreateSessionUser.firstName;
+                        const body = "after 30 min join session";
 
-                    const text = "join session";
-                    const sendBy = (findCreateSessionUser._id).toString();
-                    const registrationToken = findUser.fcm_token
-                    Notification.sendPushNotificationFCM(
-                        registrationToken,
-                        title,
-                        body,
-                        text,
-                        sendBy,
-                        true
-                    );
+                        const text = "join session";
+                        const sendBy = (findCreateSessionUser._id).toString();
+                        const registrationToken = findUser.fcm_token
+                        Notification.sendPushNotificationFCM(
+                            registrationToken,
+                            title,
+                            body,
+                            text,
+                            sendBy,
+                            true
+                        );
+                    }
+
+
 
                     const findInNotification = await notificationModel.findOne({
                         userId: invitedUser
@@ -267,20 +275,23 @@ cron.schedule("*/60 * * * * *", async function () {
                         _id: getDate.cretedSessionUser
                     })
 
-                    const title = findCreateSessionUser.firstName;
-                    const body = "after 30 min join session";
+                    if (findUser.fcm_token) {
+                        const title = findCreateSessionUser.firstName;
+                        const body = "after 30 min join session";
 
-                    const text = "join session";
-                    const sendBy = (findCreateSessionUser._id).toString();
-                    const registrationToken = findUser.fcm_token
-                    Notification.sendPushNotificationFCM(
-                        registrationToken,
-                        title,
-                        body,
-                        text,
-                        sendBy,
-                        true
-                    );
+                        const text = "join session";
+                        const sendBy = (findCreateSessionUser._id).toString();
+                        const registrationToken = findUser.fcm_token
+                        Notification.sendPushNotificationFCM(
+                            registrationToken,
+                            title,
+                            body,
+                            text,
+                            sendBy,
+                            true
+                        );
+                    }
+
 
                     const findInNotification = await notificationModel.findOne({
                         userId: notification
@@ -322,20 +333,23 @@ cron.schedule("*/60 * * * * *", async function () {
                 _id: getDate.cretedSessionUser
             })
 
-            const title = findUserInUserModel.firstName;
-            const body = "your session started!";
+            if (findUserInUserModel.fcm_token) {
+                const title = findUserInUserModel.firstName;
+                const body = "your session started!";
 
-            const text = "join session";
-            const sendBy = (findUserInUserModel._id).toString();
-            const registrationToken = findUserInUserModel.fcm_token
-            Notification.sendPushNotificationFCM(
-                registrationToken,
-                title,
-                body,
-                text,
-                sendBy,
-                true
-            );
+                const text = "join session";
+                const sendBy = (findUserInUserModel._id).toString();
+                const registrationToken = findUserInUserModel.fcm_token
+                Notification.sendPushNotificationFCM(
+                    registrationToken,
+                    title,
+                    body,
+                    text,
+                    sendBy,
+                    true
+                );
+            }
+
 
             const findInNotification = await notificationModel.findOne({
                 userId: findUserInUserModel._id
