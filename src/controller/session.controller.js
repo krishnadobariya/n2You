@@ -7,7 +7,8 @@ const notificationModel = require("../model/polyamorous/notification.model");
 const requestsModel = require("../model/requests.model");
 const { default: mongoose } = require("mongoose");
 const cron = require("node-cron");
-const Notification = require("../helper/firebaseHelper")
+const Notification = require("../helper/firebaseHelper");
+const sessionComment = require("../model/sessionComment");
 
 exports.sessionCreate = async (req, res, next) => {
     try {
@@ -2420,6 +2421,61 @@ exports.endSession = async (req, res, next) => {
         )
     }
 
+}
+
+exports.raisHandList = async(req,res,next) => {
+    try {
+        
+        const findInSession = await sessionModel.findOne({
+            _id : req.params.session_id
+        })
+
+        if(findInSession){
+
+            const findInSession = await sessionComment.findOne({
+                sessionId : req.params.session_id
+            })
+
+            if(findInSession){
+
+                const finalData = [];
+                for(const data of findInSession.raisHand){
+                    const findUser = await userModel.findOne({
+                        _id : data.userId
+                    })
+
+                    const response = {
+                        userId : findUser._id,
+                        firstName: findUser.firstName,
+                        profile: findUser.photo[0] ? findUser.photo[0].res : ""
+                    }
+                    finalData.push(response)
+                }
+
+                res.status(status.OK).json(
+                    new APIResponse("all rais hand user", "true", 200, "1", finalData)
+                )   
+
+            }else{
+
+                res.status(status.NOT_FOUND).json(
+                    new APIResponse("session not found", "true", 404, "1")
+                )   
+            }
+
+        }else{
+           
+            res.status(status.NOT_FOUND).json(
+                new APIResponse("session not found", "true", 404, "1")
+            )   
+        }
+
+    } catch (error) {
+        console.log("error", error);
+        res.status(status.INTERNAL_SERVER_ERROR).json(
+            new APIResponse("Something Went Wrong", "false", 500, "0", error.message)
+        )
+    }
 }
 
 
