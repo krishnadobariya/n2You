@@ -2844,9 +2844,9 @@ function socket(io) {
 
 
                     for (const sendComment of AllJoinUser) {
-                        console.log("sendComment", sendComment);
+                      
                         if ((sendComment.userId).toString() == (arg.user_id).toString()) {
-                            console.log("helooo");
+                          
                         } else {
 
                             const findUser = await userModel.findOne({
@@ -2859,8 +2859,6 @@ function socket(io) {
                                 profile: findUser.photo[0] ? findUser.photo[0].res : "",
                                 status: sendComment.status
                             }
-
-                            console.log("commentData::::", commentData);
 
                             const userRoom = `User${sendComment.userId}`
                             io.to(userRoom).emit("commentResponse", commentData);
@@ -2880,7 +2878,80 @@ function socket(io) {
 
         socket.on("raiseHand", async (arg) => {
 
-            
+            const findUser = await sessionModel.findOne({
+                _id : arg.session_id
+            })
+
+            if(findUser){
+                
+                const findUser1 = await sessionCommentModel.findOne({
+                    sessionId : arg.session_id,
+                    "raisHand.userId" : arg.user_id
+                })
+
+                if(findUser1){
+                    
+                    io.emit("raiseHandSuccess", "already raise hand list!");
+
+                }else{
+                    await sessionCommentModel.updateOne({
+                        session_id : arg.session_id
+                    }, {
+                        $push:{
+                            raisHand: {
+                                userId:arg.user_id
+                            }
+                        }
+                    })
+
+                    const userRoom = `User${findUser.cretedSessionUser}`
+                    io.to(userRoom).emit("raiseHandSuccess", "raise hand success!");
+
+                   
+                }
+            }else{    
+                io.emit("raiseHandSuccess", "Not Found Session!");
+            }
+
+        })
+
+
+        socket.on("raiseHandAccepted", async (arg) => {
+
+            const findUser = await sessionModel.findOne({
+                _id : arg.session_id
+            })
+
+            if(findUser){
+                
+                const findUser1 = await sessionCommentModel.findOne({
+                    sessionId : arg.session_id,
+                    "raisHand.userId" : arg.user_id
+                })
+
+
+                if(findUser1){
+                    await sessionCommentModel.updateOne({
+                        session_id : arg.session_id,
+                        "raisHand.userId":arg.user_id
+                    }, {
+                        $set:{
+                            raisHand: {
+                                mute:1,
+                                userId:arg.user_id
+                            }
+                        }
+                    })
+
+                    const userRoom = `User${findUser.cretedSessionUser}`
+                    io.to(userRoom).emit("raiseHandAcceptedSuccess", "raise hand success!");
+
+                }else{
+                    io.emit("raiseHandAcceptedSuccess", "already raise hand list!");
+                }
+            }else{    
+                io.emit("raiseHandAcceptedSuccess", "Not Found Session!");
+            }
 
         })
     })
