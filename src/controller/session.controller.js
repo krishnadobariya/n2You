@@ -239,7 +239,7 @@ exports.sessionCreate = async (req, res, next) => {
                             true
                         );
                     }
-                    
+
                     const findInNotification = await notificationModel.findOne({
                         userId: notification
                     })
@@ -2218,7 +2218,6 @@ exports.mySession = async (req, res, next) => {
                     mySession.push(response)
                 }
             } else if (findMySession.sessionEndOrNot == true) {
-                console.log("i am true");
                 if (findUserDeatil && findParticipantsiUserDeatil1 && findParticipantsiUserDeatil2 && findParticipantsiUserDeatil3) {
                     const response = {
                         _id: findMySession._id,
@@ -2423,29 +2422,29 @@ exports.endSession = async (req, res, next) => {
 
 }
 
-exports.raisHandList = async(req,res,next) => {
+exports.raisHandList = async (req, res, next) => {
     try {
-        
+
         const findInSession = await sessionModel.findOne({
-            _id : req.params.session_id
+            _id: req.params.session_id
         })
 
-        if(findInSession){
+        if (findInSession) {
 
             const findInSession = await sessionComment.findOne({
-                sessionId : req.params.session_id
+                sessionId: req.params.session_id
             })
 
-            if(findInSession){
+            if (findInSession) {
 
                 const finalData = [];
-                for(const data of findInSession.raisHand){
+                for (const data of findInSession.raisHand) {
                     const findUser = await userModel.findOne({
-                        _id : data.userId
+                        _id: data.userId
                     })
 
                     const response = {
-                        userId : findUser._id,
+                        userId: findUser._id,
                         firstName: findUser.firstName,
                         profile: findUser.photo[0] ? findUser.photo[0].res : ""
                     }
@@ -2454,20 +2453,20 @@ exports.raisHandList = async(req,res,next) => {
 
                 res.status(status.OK).json(
                     new APIResponse("all rais hand user", "true", 200, "1", finalData)
-                )   
+                )
 
-            }else{
+            } else {
 
                 res.status(status.NOT_FOUND).json(
                     new APIResponse("session not found", "true", 404, "1")
-                )   
+                )
             }
 
-        }else{
-           
+        } else {
+
             res.status(status.NOT_FOUND).json(
                 new APIResponse("session not found", "true", 404, "1")
-            )   
+            )
         }
 
     } catch (error) {
@@ -2479,4 +2478,351 @@ exports.raisHandList = async(req,res,next) => {
 }
 
 
+exports.sessionDetail = async (req, res, next) => {
+    try {
 
+        const mySession = [];
+        const findUserInsession = await sessionModel.findOne({
+            _id: req.params.session_id
+        })
+
+            var userSessionDate = new Date(new Date(findUserInsession.selectedDate).toUTCString())
+            let userSessionDates = userSessionDate.getUTCDate();
+            let userSessionmonth = userSessionDate.getUTCMonth();
+            let userSessionyear = userSessionDate.getUTCFullYear();
+            let userSessionhour = userSessionDate.getUTCHours();
+            let userSessionminute = userSessionDate.getUTCMinutes();
+
+            const finalMinute = userSessionminute >= 30 ? userSessionminute - 30 : userSessionminute + 30;
+            const finalHours = userSessionminute >= 30 ? userSessionhour - 5 : userSessionhour - 6;
+            let userSessionsecond = userSessionDate.getUTCSeconds();
+            const finalUserSessionDate = new Date(`${userSessionyear}-${userSessionmonth + 1}-${userSessionDates} ${finalHours}:${finalMinute}:${userSessionsecond}`)
+
+            const date = new Date(new Date().toUTCString())
+            let dates = date.getUTCDate();
+            let month = date.getUTCMonth()
+            let year = date.getUTCFullYear();
+            let hour = date.getUTCHours();
+            let minute = date.getUTCMinutes();
+            let second = date.getUTCSeconds();
+            now = new Date(`${year}-${month + 1}-${dates} ${hour}:${minute}:${second}`)
+
+            var sec_num = (finalUserSessionDate - now) / 1000;
+            var days = Math.floor(sec_num / (3600 * 24));
+            var hours = Math.floor((sec_num - (days * (3600 * 24))) / 3600);
+            var minutes = Math.floor((sec_num - (days * (3600 * 24)) - (hours * 3600)) / 60) + 1;
+
+            var getDate = new Date(findUserInsession.selectedDate)
+            const hoursOne = getDate.getHours()
+            const minutesOne = getDate.getMinutes()
+            console.log("hours", hours);
+            console.log("days", days);
+            console.log("minutes", minutes);
+
+            const findUserDeatil = await userModel.findOne({
+                _id: findUserInsession.cretedSessionUser,
+                polyDating: 0
+            })
+
+            const findParticipantsiUserDeatil1 = await userModel.findOne({
+                _id: findUserInsession.participants[0].participants_1,
+                polyDating: 0
+            })
+
+            const findParticipantsiUserDeatil2 = await userModel.findOne({
+                _id: findUserInsession.participants[0].participants_2,
+                polyDating: 0
+            })
+            const findParticipantsiUserDeatil3 = await userModel.findOne({
+                _id: findUserInsession.participants[0].participants_3,
+                polyDating: 0
+            })
+
+
+            if (findUserInsession.sessionEndOrNot == false) {
+                
+                if (findUserDeatil && findParticipantsiUserDeatil1 && findParticipantsiUserDeatil2 && findParticipantsiUserDeatil3) {
+
+                    console.log(((days < 0 && hours >= 0 && minutes >= 0) || (days == 0 && hours == 0 && minutes == 0)));
+                    const response = {
+                        _id: findUserInsession._id,
+                        selectedTime: findUserInsession.selectedTime,
+                        selectedDate: `${year}-${month + 1}-${dates} ${hoursOne}:${minutesOne}`,
+                        isLive: ((days < 0 && hours >= 0 && minutes >= 0) || (days == 0 && hours == 0 && minutes == 0)) == true ? true : false,
+                        RoomType: findUserInsession.RoomType,
+                        cretedSessionUserId: findUserDeatil ? findUserDeatil._id : "",
+                        cretedSessionUserphoto: findUserDeatil.photo ? findUserDeatil.photo[0] ? findUserDeatil.photo[0].res : "" : "",
+                        cretedSessionUsername: findUserDeatil ? findUserDeatil.firstName : "",
+                        isStart: ((days < 0 && hours >= 0 && minutes >= 0) || (days == 0 && hours == 0 && minutes == 0)) == true ? true : false,
+                        participants: [
+                            {
+                                _id: findParticipantsiUserDeatil1 ? findParticipantsiUserDeatil1._id : "",
+                                photo: findParticipantsiUserDeatil1 == null ? "" : findParticipantsiUserDeatil1.photo[0] ? findParticipantsiUserDeatil1.photo[0].res : "",
+                                name: findParticipantsiUserDeatil1 == null ? "" : findParticipantsiUserDeatil1.firstName
+                            },
+                            {
+                                _id: findParticipantsiUserDeatil2 ? findParticipantsiUserDeatil2._id : "",
+                                photo: findParticipantsiUserDeatil2 == null ? "" : findParticipantsiUserDeatil2.photo[0] ? findParticipantsiUserDeatil2.photo[0].res : "",
+                                name: findParticipantsiUserDeatil2 == null ? " " : findParticipantsiUserDeatil2.firstName
+                            },
+                            {
+                                _id: findParticipantsiUserDeatil3 ? findParticipantsiUserDeatil3._id : "",
+                                photo: findParticipantsiUserDeatil3 == null ? " " : findParticipantsiUserDeatil3.photo[0] ? findParticipantsiUserDeatil3.photo[0].res : "",
+                                name: findParticipantsiUserDeatil3 == null ? "" : findParticipantsiUserDeatil3.firstName
+                            }
+                        ]
+                    }
+
+                    mySession.push(response)
+                } else if (findUserDeatil && findParticipantsiUserDeatil1 == null && findParticipantsiUserDeatil2 == null && findParticipantsiUserDeatil3 == null) {
+
+                    console.log(((days < 0 && hours >= 0 && minutes >= 0) || (days == 0 && hours == 0 && minutes == 0)));
+                    const response = {
+                        _id: findUserInsession._id,
+                        selectedTime: findUserInsession.selectedTime,
+                        selectedDate: `${year}-${month + 1}-${dates} ${hoursOne}:${minutesOne}`,
+                        isLive: ((days < 0 && hours >= 0 && minutes >= 0) || (days == 0 && hours == 0 && minutes == 0)) == true ? true : false,
+                        RoomType: findUserInsession.RoomType,
+                        cretedSessionUserId: findUserDeatil ? findUserDeatil._id : "",
+                        cretedSessionUserphoto: findUserDeatil.photo ? findUserDeatil.photo[0] ? findUserDeatil.photo[0].res : "" : "",
+                        cretedSessionUsername: findUserDeatil ? findUserDeatil.firstName : "",
+                        isStart: ((days < 0 && hours >= 0 && minutes >= 0) || (days == 0 && hours == 0 && minutes == 0)) == true ? true : false,
+                        participants: []
+
+                    }
+
+                    mySession.push(response)
+                } else if (findUserDeatil && findParticipantsiUserDeatil1 == null && findParticipantsiUserDeatil2 && findParticipantsiUserDeatil3) {
+                    const response = {
+                        _id: findUserInsession._id,
+                        selectedTime: findUserInsession.selectedTime,
+                        selectedDate: `${year}-${month + 1}-${dates} ${hoursOne}:${minutesOne}`,
+                        isLive: ((days < 0 && hours >= 0 && minutes >= 0) || (days == 0 && hours == 0 && minutes == 0)) == true ? true : false,
+                        RoomType: findUserInsession.RoomType,
+                        cretedSessionUserId: findUserDeatil ? findUserDeatil._id : "",
+                        cretedSessionUserphoto: findUserDeatil.photo ? findUserDeatil.photo[0] ? findUserDeatil.photo[0].res : "" : "",
+                        cretedSessionUsername: findUserDeatil ? findUserDeatil.firstName : "",
+                        isStart: ((days < 0 && hours >= 0 && minutes >= 0) || (days == 0 && hours == 0 && minutes == 0)) == true ? true : false,
+                        participants: [
+                            {
+                                _id: findParticipantsiUserDeatil2 ? findParticipantsiUserDeatil2._id : "",
+                                photo: findParticipantsiUserDeatil2 == null ? "" : findParticipantsiUserDeatil2.photo[0] ? findParticipantsiUserDeatil2.photo[0].res : "",
+                                name: findParticipantsiUserDeatil2 == null ? "" : findParticipantsiUserDeatil2.firstName
+                            },
+                            {
+                                _id: findParticipantsiUserDeatil3 ? findParticipantsiUserDeatil3._id : "",
+                                photo: findParticipantsiUserDeatil3 == null ? " " : findParticipantsiUserDeatil3.photo[0] ? findParticipantsiUserDeatil3.photo[0].res : "",
+                                name: findParticipantsiUserDeatil3 == null ? "" : findParticipantsiUserDeatil3.firstName
+                            }
+                        ]
+
+                    }
+
+                    mySession.push(response)
+                } else if (findUserDeatil && findParticipantsiUserDeatil1 && findParticipantsiUserDeatil2 == null && findParticipantsiUserDeatil3) {
+                    const response = {
+                        _id: findUserInsession._id,
+                        selectedTime: findUserInsession.selectedTime,
+                        selectedDate: `${year}-${month + 1}-${dates} ${hoursOne}:${minutesOne}`,
+                        isLive: ((days < 0 && hours >= 0 && minutes >= 0) || (days == 0 && hours == 0 && minutes == 0)) == true ? true : false,
+                        RoomType: findUserInsession.RoomType,
+                        cretedSessionUserId: findUserDeatil ? findUserDeatil._id : "",
+                        cretedSessionUserphoto: findUserDeatil.photo ? findUserDeatil.photo[0] ? findUserDeatil.photo[0].res : "" : "",
+                        cretedSessionUsername: findUserDeatil ? findUserDeatil.firstName : "",
+                        isStart: ((days < 0 && hours >= 0 && minutes >= 0) || (days == 0 && hours == 0 && minutes == 0)) == true ? true : false,
+                        participants: [
+                            {
+                                _id: findParticipantsiUserDeatil1 ? findParticipantsiUserDeatil1._id : "",
+                                photo: findParticipantsiUserDeatil1 == null ? "" : findParticipantsiUserDeatil1.photo[0] ? findParticipantsiUserDeatil1.photo[0].res : "",
+                                name: findParticipantsiUserDeatil1 == null ? "" : findParticipantsiUserDeatil1.firstName
+                            }, {
+                                _id: findParticipantsiUserDeatil3 ? findParticipantsiUserDeatil3._id : "",
+                                photo: findParticipantsiUserDeatil3 == null ? " " : findParticipantsiUserDeatil3.photo[0] ? findParticipantsiUserDeatil3.photo[0].res : "",
+                                name: findParticipantsiUserDeatil3 == null ? "" : findParticipantsiUserDeatil3.firstName
+                            }
+                        ]
+                    }
+
+                    mySession.push(response)
+                } else if (findUserDeatil && findParticipantsiUserDeatil1 && findParticipantsiUserDeatil2 && findParticipantsiUserDeatil3 == null) {
+                    const response = {
+                        _id: findUserInsession._id,
+                        selectedTime: findUserInsession.selectedTime,
+                        selectedDate: `${year}-${month + 1}-${dates} ${hoursOne}:${minutesOne}`,
+                        isLive: ((days < 0 && hours >= 0 && minutes >= 0) || (days == 0 && hours == 0 && minutes == 0)) == true ? true : false,
+                        RoomType: findUserInsession.RoomType,
+                        cretedSessionUserId: findUserDeatil ? findUserDeatil._id : "",
+                        cretedSessionUserphoto: findUserDeatil.photo ? findUserDeatil.photo[0] ? findUserDeatil.photo[0].res : "" : "",
+                        cretedSessionUsername: findUserDeatil ? findUserDeatil.firstName : "",
+                        isStart: ((days < 0 && hours >= 0 && minutes >= 0) || (days == 0 && hours == 0 && minutes == 0)) == true ? true : false,
+                        participants: [
+                            {
+                                _id: findParticipantsiUserDeatil1 ? findParticipantsiUserDeatil1._id : "",
+                                photo: findParticipantsiUserDeatil1 == null ? "" : findParticipantsiUserDeatil1.photo[0] ? findParticipantsiUserDeatil1.photo[0].res : "",
+                                name: findParticipantsiUserDeatil1 == null ? "" : findParticipantsiUserDeatil1.firstName
+                            },
+                            {
+                                _id: findParticipantsiUserDeatil2 ? findParticipantsiUserDeatil2._id : "",
+                                photo: findParticipantsiUserDeatil2 == null ? "" : findParticipantsiUserDeatil2.photo[0] ? findParticipantsiUserDeatil2.photo[0].res : "",
+                                name: findParticipantsiUserDeatil2 == null ? " " : findParticipantsiUserDeatil2.firstName
+                            }
+                        ]
+                    }
+
+                    mySession.push(response)
+                }
+            } else if (findUserInsession.sessionEndOrNot == true) {
+                if (findUserDeatil && findParticipantsiUserDeatil1 && findParticipantsiUserDeatil2 && findParticipantsiUserDeatil3) {
+                    const response = {
+                        _id: findUserInsession._id,
+                        selectedTime: findUserInsession.selectedTime,
+                        selectedDate: `${year}-${month + 1}-${dates} ${hoursOne}:${minutesOne}`,
+                        isLive: false,
+                        RoomType: findUserInsession.RoomType,
+                        cretedSessionUserId: findUserDeatil ? findUserDeatil._id : "",
+                        cretedSessionUserphoto: findUserDeatil.photo ? findUserDeatil.photo[0] ? findUserDeatil.photo[0].res : "" : "",
+                        cretedSessionUsername: findUserDeatil ? findUserDeatil.firstName : "",
+                        isStart: false,
+                        participants: [
+                            {
+                                _id: findParticipantsiUserDeatil1 ? findParticipantsiUserDeatil1._id : "",
+                                photo: findParticipantsiUserDeatil1 == null ? "" : findParticipantsiUserDeatil1.photo[0] ? findParticipantsiUserDeatil1.photo[0].res : "",
+                                name: findParticipantsiUserDeatil1 == null ? "" : findParticipantsiUserDeatil1.firstName
+                            },
+                            {
+                                _id: findParticipantsiUserDeatil2 ? findParticipantsiUserDeatil2._id : "",
+                                photo: findParticipantsiUserDeatil2 == null ? "" : findParticipantsiUserDeatil2.photo[0] ? findParticipantsiUserDeatil2.photo[0].res : "",
+                                name: findParticipantsiUserDeatil2 == null ? " " : findParticipantsiUserDeatil2.firstName
+                            },
+                            {
+                                _id: findParticipantsiUserDeatil3 ? findParticipantsiUserDeatil3._id : "",
+                                photo: findParticipantsiUserDeatil3 == null ? " " : findParticipantsiUserDeatil3.photo[0] ? findParticipantsiUserDeatil3.photo[0].res : "",
+                                name: findParticipantsiUserDeatil3 == null ? "" : findParticipantsiUserDeatil3.firstName
+                            }
+                        ]
+                    }
+
+                    mySession.push(response)
+                } else if (findUserDeatil && findParticipantsiUserDeatil1 == null && findParticipantsiUserDeatil2 == null && findParticipantsiUserDeatil3 == null) {
+                    const response = {
+                        _id: findUserInsession._id,
+                        selectedTime: findUserInsession.selectedTime,
+                        selectedDate: `${year}-${month + 1}-${dates} ${hoursOne}:${minutesOne}`,
+                        isLive: false,
+                        RoomType: findUserInsession.RoomType,
+                        cretedSessionUserId: findUserDeatil ? findUserDeatil._id : "",
+                        cretedSessionUserphoto: findUserDeatil.photo ? findUserDeatil.photo[0] ? findUserDeatil.photo[0].res : "" : "",
+                        cretedSessionUsername: findUserDeatil ? findUserDeatil.firstName : "",
+                        isStart: false,
+                        participants: []
+
+                    }
+
+                    mySession.push(response)
+                } else if (findUserDeatil && findParticipantsiUserDeatil1 == null && findParticipantsiUserDeatil2 && findParticipantsiUserDeatil3) {
+                    const response = {
+                        _id: findUserInsession._id,
+                        selectedTime: findUserInsession.selectedTime,
+                        selectedDate: `${year}-${month + 1}-${dates} ${hoursOne}:${minutesOne}`,
+                        isLive: false,
+                        RoomType: findUserInsession.RoomType,
+                        cretedSessionUserId: findUserDeatil ? findUserDeatil._id : "",
+                        cretedSessionUserphoto: findUserDeatil.photo ? findUserDeatil.photo[0] ? findUserDeatil.photo[0].res : "" : "",
+                        cretedSessionUsername: findUserDeatil ? findUserDeatil.firstName : "",
+                        isStart: false,
+                        participants: [
+                            {
+                                _id: findParticipantsiUserDeatil2 ? findParticipantsiUserDeatil2._id : "",
+                                photo: findParticipantsiUserDeatil2 == null ? "" : findParticipantsiUserDeatil2.photo[0] ? findParticipantsiUserDeatil2.photo[0].res : "",
+                                name: findParticipantsiUserDeatil2 == null ? " " : findParticipantsiUserDeatil2.firstName
+                            },
+                            {
+                                _id: findParticipantsiUserDeatil3 ? findParticipantsiUserDeatil3._id : "",
+                                photo: findParticipantsiUserDeatil3 == null ? " " : findParticipantsiUserDeatil3.photo[0] ? findParticipantsiUserDeatil3.photo[0].res : "",
+                                name: findParticipantsiUserDeatil3 == null ? "" : findParticipantsiUserDeatil3.firstName
+                            }
+                        ]
+
+                    }
+
+                    mySession.push(response)
+                } else if (findUserDeatil && findParticipantsiUserDeatil1 && findParticipantsiUserDeatil2 == null && findParticipantsiUserDeatil3) {
+                    const response = {
+                        _id: findUserInsession._id,
+                        selectedTime: findUserInsession.selectedTime,
+                        selectedDate: `${year}-${month + 1}-${dates} ${hoursOne}:${minutesOne}`,
+                        isLive: false,
+                        RoomType: findUserInsession.RoomType,
+                        cretedSessionUserId: findUserDeatil ? findUserDeatil._id : "",
+                        cretedSessionUserphoto: findUserDeatil.photo ? findUserDeatil.photo[0] ? findUserDeatil.photo[0].res : "" : "",
+                        cretedSessionUsername: findUserDeatil ? findUserDeatil.firstName : "",
+                        isStart: false,
+                        participants: [
+                            {
+                                _id: findParticipantsiUserDeatil1 ? findParticipantsiUserDeatil1._id : "",
+                                photo: findParticipantsiUserDeatil1 == null ? "" : findParticipantsiUserDeatil1.photo[0] ? findParticipantsiUserDeatil1.photo[0].res : "",
+                                name: findParticipantsiUserDeatil1 == null ? "" : findParticipantsiUserDeatil1.firstName
+                            }, {
+                                _id: findParticipantsiUserDeatil3 ? findParticipantsiUserDeatil3._id : "",
+                                photo: findParticipantsiUserDeatil3 == null ? " " : findParticipantsiUserDeatil3.photo[0] ? findParticipantsiUserDeatil3.photo[0].res : "",
+                                name: findParticipantsiUserDeatil3 == null ? "" : findParticipantsiUserDeatil3.firstName
+                            }
+                        ]
+                    }
+
+                    mySession.push(response)
+                } else if (findUserDeatil && findParticipantsiUserDeatil1 && findParticipantsiUserDeatil2 && findParticipantsiUserDeatil3 == null) {
+                    const response = {
+                        _id: findUserInsession._id,
+                        selectedTime: findUserInsession.selectedTime,
+                        selectedDate: `${year}-${month + 1}-${dates} ${hoursOne}:${minutesOne}`,
+                        isLive: false,
+                        RoomType: findUserInsession.RoomType,
+                        cretedSessionUserId: findUserDeatil ? findUserDeatil._id : "",
+                        cretedSessionUserphoto: findUserDeatil.photo ? findUserDeatil.photo[0] ? findUserDeatil.photo[0].res : "" : "",
+                        cretedSessionUsername: findUserDeatil ? findUserDeatil.firstName : "",
+                        isStart: false,
+                        participants: [
+                            {
+                                _id: findParticipantsiUserDeatil1 ? findParticipantsiUserDeatil1._id : "",
+                                photo: findParticipantsiUserDeatil1 == null ? "" : findParticipantsiUserDeatil1.photo[0] ? findParticipantsiUserDeatil1.photo[0].res : "",
+                                name: findParticipantsiUserDeatil1 == null ? "" : findParticipantsiUserDeatil1.firstName
+                            },
+                            {
+                                _id: findParticipantsiUserDeatil2 ? findParticipantsiUserDeatil2._id : "",
+                                photo: findParticipantsiUserDeatil2 == null ? "" : findParticipantsiUserDeatil2.photo[0] ? findParticipantsiUserDeatil2.photo[0].res : "",
+                                name: findParticipantsiUserDeatil2 == null ? " " : findParticipantsiUserDeatil2.firstName
+                            }
+                        ]
+                    }
+
+                    mySession.push(response)
+                }
+            }
+
+        if (mySession[0] == undefined) {
+            res.status(status.OK).json({
+                "message": "don't create Any Session!",
+                "status": true,
+                "code": 200,
+                "statusCode": 1,
+                "data": []
+
+            })
+        } else {
+            res.status(status.OK).json({
+                "message": "successfully Show Session!",
+                "status": true,
+                "code": 200,
+                "statusCode": 1,
+                "data": mySession
+
+            })
+        }
+    } catch (error) {
+        console.log("error", error);
+        res.status(status.INTERNAL_SERVER_ERROR).json(
+            new APIResponse("Something Went Wrong", "false", 500, "0", error.message)
+        )
+    }
+}
