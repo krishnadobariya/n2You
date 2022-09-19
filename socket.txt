@@ -223,3 +223,63 @@ endSession
 }
 
 endSessionSuccess
+
+==============================================
+
+==>callForJoin
+
+==============================================
+callForJoin
+
+{
+    "session_id":"",
+    "create_session_user":""
+}
+
+nowEnd
+
+=============================================
+
+==>commentOnLiveSession
+
+============================================
+
+commentOnLiveSession
+
+{
+    "session_id":"",
+    "user_id":"",
+    "comment":
+}
+
+commentResponse
+
+============================================
+
+==>raiseHand
+
+============================================
+
+raiseHand
+
+{
+    "session_id":"",
+    "user_id":"",
+}
+
+raiseHandSuccess
+
+===============================================
+
+==>raiseHandAccepted
+
+==============================================
+
+raiseHandAccepted
+
+{
+    "session_id":"",
+    "user_id":"",
+}
+
+raiseHandAcceptedSuccess
