@@ -2844,9 +2844,9 @@ function socket(io) {
 
 
                     for (const sendComment of AllJoinUser) {
-                      
+
                         if ((sendComment.userId).toString() == (arg.user_id).toString()) {
-                          
+
                         } else {
 
                             const findUser = await userModel.findOne({
@@ -2879,27 +2879,27 @@ function socket(io) {
         socket.on("raiseHand", async (arg) => {
 
             const findUser = await sessionModel.findOne({
-                _id : arg.session_id
+                _id: arg.session_id
             })
 
-            if(findUser){
-                
+            if (findUser) {
+
                 const findUser1 = await sessionCommentModel.findOne({
-                    sessionId : arg.session_id,
-                    "raisHand.userId" : arg.user_id
+                    sessionId: arg.session_id,
+                    "raisHand.userId": arg.user_id
                 })
 
-                if(findUser1){
-                    
+                if (findUser1) {
+
                     io.emit("raiseHandSuccess", "already raise hand list!");
 
-                }else{
+                } else {
                     await sessionCommentModel.updateOne({
-                        session_id : arg.session_id
+                        session_id: arg.session_id
                     }, {
-                        $push:{
+                        $push: {
                             raisHand: {
-                                userId:arg.user_id
+                                userId: arg.user_id
                             }
                         }
                     })
@@ -2907,9 +2907,9 @@ function socket(io) {
                     const userRoom = `User${findUser.cretedSessionUser}`
                     io.to(userRoom).emit("raiseHandSuccess", "raise hand success!");
 
-                   
+
                 }
-            }else{    
+            } else {
                 io.emit("raiseHandSuccess", "Not Found Session!");
             }
 
@@ -2918,26 +2918,26 @@ function socket(io) {
         socket.on("raiseHandAccepted", async (arg) => {
 
             const findUser = await sessionModel.findOne({
-                _id : arg.session_id
+                _id: arg.session_id
             })
 
-            if(findUser){
-                
+            if (findUser) {
+
                 const findUser1 = await sessionCommentModel.findOne({
-                    sessionId : arg.session_id,
-                    "raisHand.userId" : arg.user_id
+                    sessionId: arg.session_id,
+                    "raisHand.userId": arg.user_id
                 })
 
 
-                if(findUser1){
+                if (findUser1) {
                     await sessionCommentModel.updateOne({
-                        session_id : arg.session_id,
-                        "raisHand.userId":arg.user_id
+                        session_id: arg.session_id,
+                        "raisHand.userId": arg.user_id
                     }, {
-                        $set:{
+                        $set: {
                             raisHand: {
-                                mute:1,
-                                userId:arg.user_id
+                                mute: 1,
+                                userId: arg.user_id
                             }
                         }
                     })
@@ -2945,12 +2945,97 @@ function socket(io) {
                     const userRoom = `User${findUser.cretedSessionUser}`
                     io.to(userRoom).emit("raiseHandAcceptedSuccess", "raise hand success!");
 
-                }else{
+                } else {
                     io.emit("raiseHandAcceptedSuccess", "already raise hand list!");
                 }
-            }else{    
+            } else {
                 io.emit("raiseHandAcceptedSuccess", "Not Found Session!");
             }
+
+        })
+
+        socket.on("liveSession", async (arg) => {
+
+            const data = await sessionModel.find({ started: true })
+            const publicData = [];
+            const privateData = [];
+
+            for (const res of data) {
+                console.log(res);
+                if (res.RoomType == "Public") {
+
+                    const findUser = await userModel.findOne({
+                        _id : mongoose.Types.ObjectId(res.cretedSessionUser)
+                    })
+                    const response = {
+                        profile : findUser.photo[0] ? findUser.photo[0].res : "",
+                        rommType : res.RoomType,
+                        cereatedUserId : findUser._id,
+                        cereatedUserName : findUser.firstName
+                    }
+
+                    publicData.push(response)
+
+                } else {
+
+                    for (const participant of res.participants) {
+
+                        if ((participant.participants_1).toString() == (arg.user_id).toString()) {
+
+                            const findUser = await userModel.findOne({
+                                _id : mongoose.Types.ObjectId(res.cretedSessionUser)
+                            })
+                            const response = {
+                                profile : findUser.photo[0] ? findUser.photo[0].res : "",
+                                rommType : res.RoomType,
+                                cereatedUserId : findUser._id,
+                                cereatedUserName : findUser.firstName
+                            }
+        
+                            privateData.push(response)
+
+
+
+                        }else if((participant.participants_2).toString() == (arg.user_id).toString()){
+
+                            const findUser = await userModel.findOne({
+                                _id : mongoose.Types.ObjectId(res.cretedSessionUser)
+                            })
+                            const response = {
+                                profile : findUser.photo[0] ? findUser.photo[0].res : "",
+                                rommType : res.RoomType,
+                                cereatedUserId : findUser._id,
+                                cereatedUserName : findUser.firstName
+                            }
+        
+                            privateData.push(response)
+
+
+                        }else if((participant.participants_3).toString() == (arg.user_id).toString()){
+
+                            const findUser = await userModel.findOne({
+                                _id : mongoose.Types.ObjectId(res.cretedSessionUser)
+                            })
+                            const response = {
+                                profile : findUser.photo[0] ? findUser.photo[0].res : "",
+                                rommType : res.RoomType,
+                                cereatedUserId : findUser._id,
+                                cereatedUserName : findUser.firstName
+                            }
+        
+                            privateData.push(response)   
+                            
+                        }
+                    }
+
+                }
+            }
+            
+            const final_data = [...privateData , ...publicData];
+
+            const userRoom = `User${arg.user_id}`
+            io.to(userRoom).emit("liveSessionSuccess", final_data);
+
 
         })
     })
