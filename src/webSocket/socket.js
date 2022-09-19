@@ -2915,7 +2915,6 @@ function socket(io) {
 
         })
 
-
         socket.on("raiseHandAccepted", async (arg) => {
 
             const findUser = await sessionModel.findOne({
