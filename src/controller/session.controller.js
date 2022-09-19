@@ -3138,7 +3138,7 @@ exports.commentSessionList = async (req, res, next) => {
                     _id : res.userId
                 })
 
-                if((res.userId).toString() == (joinUser.userId).toString()){
+                if((joinUser.userId).toString() == (res.userId).toString()){
                     const commentData = {
                         userId: res.userId,
                         comment: res.comment,
@@ -3148,13 +3148,13 @@ exports.commentSessionList = async (req, res, next) => {
                     }
     
                     final_response.push(commentData)
-                }else{
+                }else if((data.cretedSessionUser).toString() == (res.userId).toString()){
                     const commentData = {
                         userId: res.userId,
                         comment: res.comment,
                         userName: res.userName,
                         profile: findUser.photo[0] ? findUser.photo[0].res : "",
-                        status: joinUser.status ? joinUser.status : 1
+                        status: 1
                     }
     
                     final_response.push(commentData)
