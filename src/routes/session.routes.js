@@ -12,6 +12,7 @@ router.get('/my/:user_id', sessionController.mySession);
 router.get('/end/:session_id', sessionController.endSession);
 router.get('/raisHandList/:session_id' , sessionController.raisHandList);
 router.get('/detail/:session_id' , sessionController.sessionDetail);
+router.get('/list/:session_id' , sessionController.userList);
 router.post('/uploadImages/:session_id/:user_id' , upload.array('upload') ,sessionController.uploadImages);
 router.post('/uploadVideos/:session_id/:user_id' , upload.array('upload') ,sessionController.uploadVideos);
 router.get('/getUploadeVedioOrImages/:session_id' , sessionController.getUploadeVedioOrImages);
