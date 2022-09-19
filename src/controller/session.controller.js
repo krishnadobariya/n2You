@@ -2829,6 +2829,53 @@ exports.sessionDetail = async (req, res, next) => {
     }
 }
 
+exports.userList = async(req,res,next) => {
+    try {
+
+        const findUser = await sessionComment.findOne({
+            sessionId : req.params.session_id
+        })
+
+        if(findUser){
+
+            const data = findUser.joinUser
+            const final_response = [];
+            for(const res of data){
+
+             
+                const findUser = await userModel.findOne({
+                    _id : res.userId
+                })
+
+                console.log(findUser);
+                const response = {
+                    userId : findUser._id,
+                    userName : findUser.firstName,
+                    profile : findUser.photo[0] ? findUser.photo[0].res : "",
+                }
+
+                final_response.push(response)
+            }
+
+            res.status(status.OK).json(
+                new APIResponse("show join user list", "true", 200, "1" , final_response)
+            )
+
+
+        }else{
+            res.status(status.NOT_FOUND).json(
+                new APIResponse("session not found", "false", 404, "0")
+            )
+        }
+        
+    } catch (error) {
+        console.log("Error:", error);
+        res.status(status.INTERNAL_SERVER_ERROR).json(
+            new APIResponse("Something Went Wrong", "false", 500, "0", error.message)
+        )
+    }
+}
+
 
 exports.uploadImages = async (req, res, next) => {
     try {
