@@ -15,4 +15,5 @@ router.get('/detail/:session_id' , sessionController.sessionDetail);
 router.post('/uploadImages/:session_id/:user_id' , upload.array('upload') ,sessionController.uploadImages);
 router.post('/uploadVideos/:session_id/:user_id' , upload.array('upload') ,sessionController.uploadVideos);
 router.get('/getUploadeVedioOrImages/:session_id' , sessionController.getUploadeVedioOrImages);
+router.get('/commentSessionList/:session_id' , sessionController.commentSessionList);
 module.exports = router;
