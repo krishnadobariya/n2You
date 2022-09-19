@@ -33,6 +33,20 @@ const sessionCommentSchema = mongoose.Schema({
             type: String,
         }
     }],
+    upload: [{
+        userId: {
+            type: mongoose.Schema.Types.ObjectId
+        },
+        uploadImgOrVideo: {
+            type: Array,
+        },
+        userName: {
+            type: String,
+        },
+        profile: {
+            type: String,
+        }
+    }],
     raisHand: [{
         userId: {
             type: mongoose.Schema.Types.ObjectId
