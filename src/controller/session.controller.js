@@ -3057,9 +3057,9 @@ exports.getUploadeVedioOrImages = async (req, res, next) => {
 
                 for (const uploadImages of allData.uploadImgOrVideo) {
 
-                 
+
                     for (const img of uploadImages) {
-                       
+
                         const getExt1Name = path.extname(img.res);
                         if (getExt1Name == ".mp4" || getExt1Name == ".mov" || getExt1Name == ".avi" || getExt1Name == ".wmv" || getExt1Name == ".m3u8" || getExt1Name == ".webm" || getExt1Name == ".flv" || getExt1Name == ".ts" || getExt1Name == ".3gp") {
                             imgFinal.push({
@@ -3072,13 +3072,13 @@ exports.getUploadeVedioOrImages = async (req, res, next) => {
                                 type: "image"
                             })
                         }
-                      
+
                     }
 
 
                 }
 
-               
+
 
 
                 const res = {
@@ -3092,14 +3092,14 @@ exports.getUploadeVedioOrImages = async (req, res, next) => {
             }
 
 
-            
 
-            res.status(status.NOT_FOUND).json(
-                new APIResponse("show all uploder", "true", 200, "1" , final_response)
+
+            res.status(status.OK).json(
+                new APIResponse("show all uploder", "true", 200, "1", final_response)
             )
 
         } else {
-            console.log("dqwdqde");
+
             res.status(status.NOT_FOUND).json(
                 new APIResponse("session not found", "false", 404, "0")
             )
@@ -3112,4 +3112,73 @@ exports.getUploadeVedioOrImages = async (req, res, next) => {
         )
     }
 
+}
+
+
+exports.commentSessionList = async (req, res, next) => {
+    try {
+
+
+        const data = await sessionComment.findOne({
+            sessionId: req.params.session_id
+        })
+
+        if (data) {
+
+            const final_response = [];
+            const response = data.commentWithUser
+
+        
+
+            for(const joinUser of data.joinUser){
+               for(const res of response){
+
+
+                const findUser = await userModel.findOne({
+                    _id : res.userId
+                })
+
+                if((res.userId).toString() == (joinUser.userId).toString()){
+                    const commentData = {
+                        userId: res.userId,
+                        comment: res.comment,
+                        userName: res.userName,
+                        profile: findUser.photo[0] ? findUser.photo[0].res : "",
+                        status: joinUser.status ? joinUser.status : 1
+                    }
+    
+                    final_response.push(commentData)
+                }else{
+                    const commentData = {
+                        userId: res.userId,
+                        comment: res.comment,
+                        userName: res.userName,
+                        profile: findUser.photo[0] ? findUser.photo[0].res : "",
+                        status: joinUser.status ? joinUser.status : 1
+                    }
+    
+                    final_response.push(commentData)
+                }
+               }
+            }
+
+       
+
+            res.status(status.OK).json(
+                new APIResponse("comment list", "true", 200, "1" , final_response)
+            )
+
+        } else {
+            res.status(status.NOT_FOUND).json(
+                new APIResponse("session not found", "false", 404, "0")
+            )
+        }
+
+
+    } catch (error) {
+        console.log("error", error);
+        res.status(status.INTERNAL_SERVER_ERROR).json(
+            new APIResponse("Something Went Wrong", "false", 500, "0", error.message)
+        )
+    }
 }
