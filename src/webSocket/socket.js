@@ -2861,7 +2861,7 @@ function socket(io) {
                             }
 
                             const userRoom = `User${sendComment.userId}`
-                            io.emit("commentResponse", commentData);
+                            io.to(userRoom).emit("commentResponse", commentData);
 
                         }
                     }
