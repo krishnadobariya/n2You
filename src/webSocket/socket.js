@@ -2859,7 +2859,7 @@ function socket(io) {
                             }
 
                             const userRoom = `User${sendComment.userId}`
-                            io.emit("commentResponse", commentData);
+                            io.to(userRoom).emit("commentResponse", commentData);
                         } else if(sendComment.status == 2) {
 
                             const findUser = await userModel.findOne({
@@ -2874,7 +2874,7 @@ function socket(io) {
                             }
 
                             const userRoom = `User${sendComment.userId}`
-                            io.emit("commentResponse", commentData);
+                            io.to(userRoom).emit("commentResponse", commentData);
                         }
                         else if(sendComment.status == 3) {
 
@@ -2888,9 +2888,9 @@ function socket(io) {
                                 profile: findUser.photo[0] ? findUser.photo[0].res : "",
                                 status: sendComment.status
                             }
-                            
+
                             const userRoom = `User${sendComment.userId}`
-                            io.emit("commentResponse", commentData);
+                            io.to(userRoom).emit("commentResponse", commentData);
                         }
                     }
 
