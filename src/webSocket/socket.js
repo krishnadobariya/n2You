@@ -2958,7 +2958,7 @@ function socket(io) {
 
             const data = await sessionModel.find({
                 started: true, cretedSessionUser: {
-                    $ne: req.params.user_id
+                    $ne: arg.user_id
                 },
             })
             const publicData = [];

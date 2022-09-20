@@ -3474,7 +3474,7 @@ exports.thumbUpCountInSession = async (req, res, next) => {
     
                     }
     
-                    console.log(" req.params.session_id", req.params.session_id);
+                    console.log("req.params.session_id", req.params.session_id);
     
                     const findParticipant1 = await sessionComment.findOne({
                         sessionId: req.params.session_id
