@@ -2853,7 +2853,7 @@ function socket(io) {
                                 _id: arg.user_id
                             })
                             const commentData = {
-                                userId: arg.user_id,
+                                userId: sendComment.userId,
                                 comment: arg.comment,
                                 userName: findUser.firstName,
                                 profile: findUser.photo[0] ? findUser.photo[0].res : "",
@@ -2861,7 +2861,7 @@ function socket(io) {
                             }
 
                             const userRoom = `User${sendComment.userId}`
-                            io.to(userRoom).emit("commentResponse", commentData);
+                            io.emit("commentResponse", commentData);
 
                         }
                     }
