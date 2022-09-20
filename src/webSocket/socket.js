@@ -2968,6 +2968,7 @@ function socket(io) {
                         _id : mongoose.Types.ObjectId(res.cretedSessionUser)
                     })
                     const response = {
+                        session_id : res._id,
                         profile : findUser.photo[0] ? findUser.photo[0].res : "",
                         rommType : res.RoomType,
                         cereatedUserId : findUser._id,
@@ -2987,6 +2988,7 @@ function socket(io) {
                                 _id : mongoose.Types.ObjectId(res.cretedSessionUser)
                             })
                             const response = {
+                                session_id : res._id,
                                 profile : findUser.photo[0] ? findUser.photo[0].res : "",
                                 rommType : res.RoomType,
                                 cereatedUserId : findUser._id,
@@ -3004,6 +3006,7 @@ function socket(io) {
                                 _id : mongoose.Types.ObjectId(res.cretedSessionUser)
                             })
                             const response = {
+                                session_id : res._id,
                                 profile : findUser.photo[0] ? findUser.photo[0].res : "",
                                 rommType : res.RoomType,
                                 cereatedUserId : findUser._id,
@@ -3020,11 +3023,12 @@ function socket(io) {
                                 _id : mongoose.Types.ObjectId(res.cretedSessionUser)
                             })
                             const response = {
+                                session_id : res._id,
                                 profile : findUser.photo[0] ? findUser.photo[0].res : "",
                                 rommType : res.RoomType,
                                 cereatedUserId : findUser._id,
                                 cereatedUserName : findUser.firstName,
-                                role : 3
+                                role : 2
                             }
         
                             privateData.push(response)   
