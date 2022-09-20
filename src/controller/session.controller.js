@@ -3092,12 +3092,18 @@ exports.getUploadeVedioOrImages = async (req, res, next) => {
 
     try {
 
-        const sessionId = await sessionComment.findOne({
-            sessionId: req.params.session_id
+        const sessionId = await sessionModel.findOne({
+            _id: req.params.session_id
         })
 
         if (sessionId) {
 
+            
+        const sessionId = await sessionComment.findOne({
+            sessionId: req.params.session_id
+        })
+
+        if(sessionId){
             const data = sessionId.upload
             var imgFinal = []
             const final_response = []
@@ -3145,6 +3151,14 @@ exports.getUploadeVedioOrImages = async (req, res, next) => {
             res.status(status.OK).json(
                 new APIResponse("show all uploder", "true", 200, "1", final_response)
             )
+        }else{
+
+            res.status(status.OK).json(
+                new APIResponse("no data found", "true", 200, "1", [])
+            )
+        }
+
+        
 
         } else {
 
@@ -3167,54 +3181,66 @@ exports.commentSessionList = async (req, res, next) => {
     try {
 
 
-        const data = await sessionComment.findOne({
-            sessionId: req.params.session_id
+        const data = await sessionModel.findOne({
+            _id: req.params.session_id
         })
 
         if (data) {
 
-            const final_response = [];
-            const response = data.commentWithUser
-
-
-
-            for (const joinUser of data.joinUser) {
-                for (const res of response) {
-
-
-                    const findUser = await userModel.findOne({
-                        _id: res.userId
-                    })
-
-                    if ((joinUser.userId).toString() == (res.userId).toString()) {
-                        const commentData = {
-                            userId: res.userId,
-                            comment: res.comment,
-                            userName: res.userName,
-                            profile: findUser.photo[0] ? findUser.photo[0].res : "",
-                            status: joinUser.status ? joinUser.status : 1
+            const data = await sessionComment.findOne({
+                sessionId: req.params.session_id
+            })
+    
+            if(data){
+                const final_response = [];
+                const response = data.commentWithUser
+    
+    
+    
+                for (const joinUser of data.joinUser) {
+                    for (const res of response) {
+    
+    
+                        const findUser = await userModel.findOne({
+                            _id: res.userId
+                        })
+    
+                        if ((joinUser.userId).toString() == (res.userId).toString()) {
+                            const commentData = {
+                                userId: res.userId,
+                                comment: res.comment,
+                                userName: res.userName,
+                                profile: findUser.photo[0] ? findUser.photo[0].res : "",
+                                status: joinUser.status ? joinUser.status : 1
+                            }
+    
+                            final_response.push(commentData)
+                        } else if ((data.cretedSessionUser).toString() == (res.userId).toString()) {
+                            const commentData = {
+                                userId: res.userId,
+                                comment: res.comment,
+                                userName: res.userName,
+                                profile: findUser.photo[0] ? findUser.photo[0].res : "",
+                                status: 1
+                            }
+    
+                            final_response.push(commentData)
                         }
-
-                        final_response.push(commentData)
-                    } else if ((data.cretedSessionUser).toString() == (res.userId).toString()) {
-                        const commentData = {
-                            userId: res.userId,
-                            comment: res.comment,
-                            userName: res.userName,
-                            profile: findUser.photo[0] ? findUser.photo[0].res : "",
-                            status: 1
-                        }
-
-                        final_response.push(commentData)
                     }
                 }
+    
+    
+    
+                res.status(status.OK).json(
+                    new APIResponse("comment list", "true", 200, "1", final_response)
+                )
+            }else{
+                res.status(status.OK).json(
+                    new APIResponse("data not found", "true", 200, "1", [])
+                )
             }
 
-
-
-            res.status(status.OK).json(
-                new APIResponse("comment list", "true", 200, "1", final_response)
-            )
+        
 
         } else {
             res.status(status.NOT_FOUND).json(
@@ -3234,353 +3260,365 @@ exports.commentSessionList = async (req, res, next) => {
 exports.thumbUpCountInSession = async (req, res, next) => {
     try {
 
-        const findSession = await sessionComment.findOne({
-            sessionId: mongoose.Types.ObjectId(req.params.session_id)
+        const findSession = await sessionModel.findOne({
+            _id: mongoose.Types.ObjectId(req.params.session_id)
         })
 
         if (findSession) {
 
-            const findParticipant = await sessionComment.findOne({
-                sessionId: req.params.session_id,
-                $or: [{
-                    "participants.participants_1.userId": req.params.participants_id
-                }, {
-                    "participants.participants_2.userId": req.params.participants_id
-                }, {
-                    "participants.participants_3.userId": req.params.participants_id
-                }]
-
+            const findSession = await sessionModel.findOne({
+                sessionId: mongoose.Types.ObjectId(req.params.session_id)
             })
-
-            if (findParticipant) {
-
-                const findSession = await thumbUpCountInSession.findOne({
-                    sessionId: req.params.session_id
-                })
-
-                if (findSession) {
-                    await thumbUpCountInSession.updateOne({
-                        sessionId: req.params.session_id,
+            if(findSession){
+                const findParticipant = await sessionComment.findOne({
+                    sessionId: req.params.session_id,
+                    $or: [{
+                        "participants.participants_1.userId": req.params.participants_id
                     }, {
-                        $push: {
+                        "participants.participants_2.userId": req.params.participants_id
+                    }, {
+                        "participants.participants_3.userId": req.params.participants_id
+                    }]
+    
+                })
+    
+                if (findParticipant) {
+    
+                    const findSession = await thumbUpCountInSession.findOne({
+                        sessionId: req.params.session_id
+                    })
+    
+                    if (findSession) {
+                        await thumbUpCountInSession.updateOne({
+                            sessionId: req.params.session_id,
+                        }, {
+                            $push: {
+                                thumbupUserId: {
+                                    userId: req.params.user_id,
+                                    participantUserId: req.params.participants_id
+                                }
+                            }
+                        })
+    
+    
+                    } else {
+    
+                        const data = thumbUpCountInSession({
+                            sessionId: req.params.session_id,
                             thumbupUserId: {
                                 userId: req.params.user_id,
                                 participantUserId: req.params.participants_id
                             }
-                        }
-                    })
-
-
-                } else {
-
-                    const data = thumbUpCountInSession({
-                        sessionId: req.params.session_id,
-                        thumbupUserId: {
-                            userId: req.params.user_id,
-                            participantUserId: req.params.participants_id
-                        }
-                    })
-
-                    await data.save();
-
-                }
-
-
-
-                const findParticipant1 = await sessionComment.findOne({
-                    sessionId: req.params.session_id,
-                    "participants.participants_1.userId": req.params.participants_id
-                })
-                const findParticipant2 = await sessionComment.findOne({
-                    sessionId: req.params.session_id,
-                    "participants.participants_2.userId": req.params.participants_id
-                })
-                const findParticipant3 = await sessionComment.findOne({
-                    sessionId: req.params.session_id,
-                    "participants.participants_3.userId": req.params.participants_id
-                })
-
-
-                if (findParticipant1) {
-                    await sessionComment.updateOne({
+                        })
+    
+                        await data.save();
+    
+                    }
+    
+    
+    
+                    const findParticipant1 = await sessionComment.findOne({
                         sessionId: req.params.session_id,
                         "participants.participants_1.userId": req.params.participants_id
-                    },
-                        { $inc: { "participants.participants_1.thumbUp": 1 } },
-                        { arrayFilters: [{ "i.userId": req.params.participants_id }] }
-                    )
-                } else if (findParticipant2) {
-                    await sessionComment.updateOne({
+                    })
+                    const findParticipant2 = await sessionComment.findOne({
                         sessionId: req.params.session_id,
-                    },
-                        { $inc: { "participants.participants_2.thumbUp": 1 } },
-                        { arrayFilters: [{ "i.userId": req.params.participants_id }] }
-                    )
-                } else if (findParticipant3) {
-                    await sessionComment.updateOne({
+                        "participants.participants_2.userId": req.params.participants_id
+                    })
+                    const findParticipant3 = await sessionComment.findOne({
                         sessionId: req.params.session_id,
                         "participants.participants_3.userId": req.params.participants_id
-                    },
-                        { $inc: { "participants.participants_3.thumbUp": 1 } },
-                        { arrayFilters: [{ "i.userId": req.params.participants_id }] }
-                    )
-                }
-
-                const data = await sessionComment.findOne({
-                    sessionId: req.params.session_id
-                })
-
-                const participantData = [];
-                for (const res of data.participants) {
-
-                    console.log("res.participants_1[0] " , res.participants_1[0] );
-                    if(res.participants_1[0] == undefined){
-
-                    }else{
-                        const findUser1 = await userModel.findOne({
-                            _id: res.participants_1[0].userId
-                        })
-
-                        console.log(findUser1);
-                        const response = {
-                            participants_1: {
-                                userId: findUser1._id,
-                                profile: findUser1.photo[0] ? findUser1.photo[0].res : "",
-                                userName: findUser1.firstName,
-                                thumbUp:res.participants_1[0].thumbUp
-                            }   
+                    })
+    
+    
+                    if (findParticipant1) {
+                        await sessionComment.updateOne({
+                            sessionId: req.params.session_id,
+                            "participants.participants_1.userId": req.params.participants_id
+                        },
+                            { $inc: { "participants.participants_1.thumbUp": 1 } },
+                            { arrayFilters: [{ "i.userId": req.params.participants_id }] }
+                        )
+                    } else if (findParticipant2) {
+                        await sessionComment.updateOne({
+                            sessionId: req.params.session_id,
+                        },
+                            { $inc: { "participants.participants_2.thumbUp": 1 } },
+                            { arrayFilters: [{ "i.userId": req.params.participants_id }] }
+                        )
+                    } else if (findParticipant3) {
+                        await sessionComment.updateOne({
+                            sessionId: req.params.session_id,
+                            "participants.participants_3.userId": req.params.participants_id
+                        },
+                            { $inc: { "participants.participants_3.thumbUp": 1 } },
+                            { arrayFilters: [{ "i.userId": req.params.participants_id }] }
+                        )
                     }
-                    participantData.push(response)
+    
+                    const data = await sessionComment.findOne({
+                        sessionId: req.params.session_id
+                    })
+    
+                    const participantData = [];
+                    for (const res of data.participants) {
+    
+                        console.log("res.participants_1[0] " , res.participants_1[0] );
+                        if(res.participants_1[0] == undefined){
+    
+                        }else{
+                            const findUser1 = await userModel.findOne({
+                                _id: res.participants_1[0].userId
+                            })
+    
+                            console.log(findUser1);
+                            const response = {
+                                participants_1: {
+                                    userId: findUser1._id,
+                                    profile: findUser1.photo[0] ? findUser1.photo[0].res : "",
+                                    userName: findUser1.firstName,
+                                    thumbUp:res.participants_1[0].thumbUp
+                                }   
+                        }
+                        participantData.push(response)
+                        
+                        }
+                      
+    
+                        if(res.participants_2[0] == undefined){
+    
+                        }else{
+    
+                            const findUser2 = await userModel.findOne({
+                                _id: res.participants_2[0].userId
+                            })
+    
+                            const response = {
+                                participants_2: {
+                                    userId: findUser2._id,
+                                    profile: findUser2.photo[0] ? findUser2.photo[0].res : "",
+                                    userName: findUser2.firstName,
+                                    thumbUp:res.participants_2[0].thumbUp
+                                }   
+                        }
+                        participantData.push(response)
+                        }
+                       
+    
+                        if(res.participants_3[0] == undefined){
+    
+                        }else{
+                            const findUser3 = await userModel.findOne({
+                                _id:  res.participants_3[0].userId
+                            })
+    
+                            const response = {
+                                participants_3: {
+                                    userId: findUser3._id,
+                                    profile: findUser3.photo[0] ? findUser3.photo[0].res : "",
+                                    userName: findUser3.firstName,
+                                    thumbUp:res.participants_3[0].thumbUp
+                                }   
+                        }
+                        participantData.push(response)
+                        }
+                       
                     
+    
                     }
-                  
-
-                    if(res.participants_2[0] == undefined){
-
-                    }else{
-
-                        const findUser2 = await userModel.findOne({
-                            _id: res.participants_2[0].userId
+    
+    
+                    const final_response = {
+                        session_id : data.sessionId,
+                        cretedSessionUser: data.cretedSessionUser,
+                        participantData
+                    }
+    
+                    res.status(status.OK).json(
+                        new APIResponse("participant list with thumbUp", "true", 200, "1", final_response)
+                    )
+    
+    
+                } else {
+    
+                    const findSession = await thumbUpCountInSession.findOne({
+                        sessionId: req.params.session_id
+                    })
+    
+                    if (findSession) {
+    
+                        await thumbUpCountInSession.updateOne({
+                            sessionId: req.params.session_id,
+                        }, {
+                            $push: {
+                                thumbupUserId: {
+                                    userId: req.params.user_id,
+                                    participantUserId: req.params.participants_id
+                                }
+                            }
                         })
-
-                        const response = {
-                            participants_2: {
-                                userId: findUser2._id,
-                                profile: findUser2.photo[0] ? findUser2.photo[0].res : "",
-                                userName: findUser2.firstName,
-                                thumbUp:res.participants_2[0].thumbUp
-                            }   
-                    }
-                    participantData.push(response)
-                    }
-                   
-
-                    if(res.participants_3[0] == undefined){
-
-                    }else{
-                        const findUser3 = await userModel.findOne({
-                            _id:  res.participants_3[0].userId
-                        })
-
-                        const response = {
-                            participants_3: {
-                                userId: findUser3._id,
-                                profile: findUser3.photo[0] ? findUser3.photo[0].res : "",
-                                userName: findUser3.firstName,
-                                thumbUp:res.participants_3[0].thumbUp
-                            }   
-                    }
-                    participantData.push(response)
-                    }
-                   
-                
-
-                }
-
-
-                const final_response = {
-                    session_id : data.sessionId,
-                    cretedSessionUser: data.cretedSessionUser,
-                    participantData
-                }
-
-                res.status(status.OK).json(
-                    new APIResponse("participant list with thumbUp", "true", 200, "1", final_response)
-                )
-
-
-            } else {
-
-                const findSession = await thumbUpCountInSession.findOne({
-                    sessionId: req.params.session_id
-                })
-
-                if (findSession) {
-
-                    await thumbUpCountInSession.updateOne({
-                        sessionId: req.params.session_id,
-                    }, {
-                        $push: {
+    
+    
+                    } else {
+    
+                        const data = thumbUpCountInSession({
+                            sessionId: req.params.session_id,
                             thumbupUserId: {
                                 userId: req.params.user_id,
                                 participantUserId: req.params.participants_id
                             }
-                        }
-                    })
-
-
-                } else {
-
-                    const data = thumbUpCountInSession({
-                        sessionId: req.params.session_id,
-                        thumbupUserId: {
-                            userId: req.params.user_id,
-                            participantUserId: req.params.participants_id
-                        }
-                    })
-
-                    await data.save();
-
-
-                }
-
-                console.log(" req.params.session_id", req.params.session_id);
-
-                const findParticipant1 = await sessionComment.findOne({
-                    sessionId: req.params.session_id
-                })
-
-                if (findParticipant1.participants[0] == undefined) {
-                    await sessionComment.updateOne({
-                        sessionId: req.params.session_id,
-                    },
-                        {
-                            $set: {
-                                "participants.participants_1": {
-                                    userId: req.params.participants_id,
-                                    thumbUp: 1
-                                }
-
-                            }
-                        }
-                    )
-                } else if (findParticipant1.participants[0].participants_2[0] == undefined) {
-                    await sessionComment.updateOne({
-                        sessionId: req.params.session_id,
-                    },
-                        {
-                            $set: {
-                                "participants.participants_2": {
-                                    userId: req.params.participants_id,
-                                    thumbUp: 1
-                                }
-                            }
-                        }
-                    )
-                } else if (findParticipant1.participants[0].participants_3[0] == undefined) {
-                    await sessionComment.updateOne({
-                        sessionId: req.params.session_id,
-                    },
-                        {
-                            $set: {
-                                "participants.participants_3": {
-                                    userId: req.params.participants_id,
-                                    thumbUp: 1
-                                }
-                            }
-                        }
-                    )
-                }
-                // console.log("findParticipant1[0].participants_1[0].userId" , findParticipant1.participants[0].participants_1[0].userId);
-                // if()
-                // if()
-
-
-              
-                const data = await sessionComment.findOne({
-                    sessionId: req.params.session_id
-                })
-
-                const participantData = [];
-                for (const res of data.participants) {
-
-                    console.log("res.participants_1[0] " , res.participants_1[0] );
-                    if(res.participants_1[0] == undefined){
-
-                    }else{
-                        const findUser1 = await userModel.findOne({
-                            _id: res.participants_1[0].userId
                         })
-
-                        console.log(findUser1);
-                        const response = {
-                            participants_1: {
-                                userId: findUser1._id,
-                                profile: findUser1.photo[0] ? findUser1.photo[0].res : "",
-                                userName: findUser1.firstName,
-                                thumbUp:res.participants_1[0].thumbUp
-                            }   
+    
+                        await data.save();
+    
+    
                     }
-                    participantData.push(response)
-                    
+    
+                    console.log(" req.params.session_id", req.params.session_id);
+    
+                    const findParticipant1 = await sessionComment.findOne({
+                        sessionId: req.params.session_id
+                    })
+    
+                    if (findParticipant1.participants[0] == undefined) {
+                        await sessionComment.updateOne({
+                            sessionId: req.params.session_id,
+                        },
+                            {
+                                $set: {
+                                    "participants.participants_1": {
+                                        userId: req.params.participants_id,
+                                        thumbUp: 1
+                                    }
+    
+                                }
+                            }
+                        )
+                    } else if (findParticipant1.participants[0].participants_2[0] == undefined) {
+                        await sessionComment.updateOne({
+                            sessionId: req.params.session_id,
+                        },
+                            {
+                                $set: {
+                                    "participants.participants_2": {
+                                        userId: req.params.participants_id,
+                                        thumbUp: 1
+                                    }
+                                }
+                            }
+                        )
+                    } else if (findParticipant1.participants[0].participants_3[0] == undefined) {
+                        await sessionComment.updateOne({
+                            sessionId: req.params.session_id,
+                        },
+                            {
+                                $set: {
+                                    "participants.participants_3": {
+                                        userId: req.params.participants_id,
+                                        thumbUp: 1
+                                    }
+                                }
+                            }
+                        )
                     }
+                    // console.log("findParticipant1[0].participants_1[0].userId" , findParticipant1.participants[0].participants_1[0].userId);
+                    // if()
+                    // if()
+    
+    
                   
-
-                    if(res.participants_2[0] == undefined){
-
-                    }else{
-
-                        const findUser2 = await userModel.findOne({
-                            _id: res.participants_2[0].userId
-                        })
-
-                        const response = {
-                            participants_2: {
-                                userId: findUser2._id,
-                                profile: findUser2.photo[0] ? findUser2.photo[0].res : "",
-                                userName: findUser2.firstName,
-                                thumbUp:res.participants_2[0].thumbUp
-                            }   
+                    const data = await sessionComment.findOne({
+                        sessionId: req.params.session_id
+                    })
+    
+                    const participantData = [];
+                    for (const res of data.participants) {
+    
+                        console.log("res.participants_1[0] " , res.participants_1[0] );
+                        if(res.participants_1[0] == undefined){
+    
+                        }else{
+                            const findUser1 = await userModel.findOne({
+                                _id: res.participants_1[0].userId
+                            })
+    
+                            console.log(findUser1);
+                            const response = {
+                                participants_1: {
+                                    userId: findUser1._id,
+                                    profile: findUser1.photo[0] ? findUser1.photo[0].res : "",
+                                    userName: findUser1.firstName,
+                                    thumbUp:res.participants_1[0].thumbUp
+                                }   
+                        }
+                        participantData.push(response)
+                        
+                        }
+                      
+    
+                        if(res.participants_2[0] == undefined){
+    
+                        }else{
+    
+                            const findUser2 = await userModel.findOne({
+                                _id: res.participants_2[0].userId
+                            })
+    
+                            const response = {
+                                participants_2: {
+                                    userId: findUser2._id,
+                                    profile: findUser2.photo[0] ? findUser2.photo[0].res : "",
+                                    userName: findUser2.firstName,
+                                    thumbUp:res.participants_2[0].thumbUp
+                                }   
+                        }
+                        participantData.push(response)
+                        }
+                       
+    
+                        if(res.participants_3[0] == undefined){
+    
+                        }else{
+                            const findUser3 = await userModel.findOne({
+                                _id:  res.participants_3[0].userId
+                            })
+    
+                            const response = {
+                                participants_3: {
+                                    userId: findUser3._id,
+                                    profile: findUser3.photo[0] ? findUser3.photo[0].res : "",
+                                    userName: findUser3.firstName,
+                                    thumbUp:res.participants_3[0].thumbUp
+                                }   
+                        }
+                        participantData.push(response)
+                        }
+                       
+                    
+    
                     }
-                    participantData.push(response)
+    
+    
+                    const final_response = {
+                        session_id : data.sessionId,
+                        cretedSessionUser: data.cretedSessionUser,
+                        participantData
                     }
-                   
-
-                    if(res.participants_3[0] == undefined){
-
-                    }else{
-                        const findUser3 = await userModel.findOne({
-                            _id:  res.participants_3[0].userId
-                        })
-
-                        const response = {
-                            participants_3: {
-                                userId: findUser3._id,
-                                profile: findUser3.photo[0] ? findUser3.photo[0].res : "",
-                                userName: findUser3.firstName,
-                                thumbUp:res.participants_3[0].thumbUp
-                            }   
-                    }
-                    participantData.push(response)
-                    }
-                   
-                
-
+    
+                    res.status(status.OK).json(
+                        new APIResponse("participant list with thumbUp", "true", 200, "1", final_response)
+                    )
+    
+    
                 }
-
-
-                const final_response = {
-                    session_id : data.sessionId,
-                    cretedSessionUser: data.cretedSessionUser,
-                    participantData
-                }
+            }else{
 
                 res.status(status.OK).json(
-                    new APIResponse("participant list with thumbUp", "true", 200, "1", final_response)
+                    new APIResponse("no data found", "true", 200, "1", [])
                 )
-
-
             }
+
+        
         } else {
             res.status(status.NOT_FOUND).json(
                 new APIResponse("session not found", "false", 404, "0")
