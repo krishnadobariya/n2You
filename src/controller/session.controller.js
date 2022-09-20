@@ -11,6 +11,9 @@ const cron = require("node-cron");
 const Notification = require("../helper/firebaseHelper");
 const sessionComment = require("../model/sessionComment");
 const path = require('path');
+const { log } = require("console");
+const { updateOne } = require("../model/session.model");
+const thumbUpCountInSession = require('../model/sessionThumbUp.model')
 
 exports.sessionCreate = async (req, res, next) => {
     try {
@@ -2829,45 +2832,45 @@ exports.sessionDetail = async (req, res, next) => {
     }
 }
 
-exports.userList = async(req,res,next) => {
+exports.userList = async (req, res, next) => {
     try {
 
         const findUser = await sessionComment.findOne({
-            sessionId : req.params.session_id
+            sessionId: req.params.session_id
         })
 
-        if(findUser){
+        if (findUser) {
 
             const data = findUser.joinUser
             const final_response = [];
-            for(const res of data){
+            for (const res of data) {
 
-             
+
                 const findUser = await userModel.findOne({
-                    _id : res.userId
+                    _id: res.userId
                 })
 
                 console.log(findUser);
                 const response = {
-                    userId : findUser._id,
-                    userName : findUser.firstName,
-                    profile : findUser.photo[0] ? findUser.photo[0].res : "",
+                    userId: findUser._id,
+                    userName: findUser.firstName,
+                    profile: findUser.photo[0] ? findUser.photo[0].res : "",
                 }
 
                 final_response.push(response)
             }
 
             res.status(status.OK).json(
-                new APIResponse("show join user list", "true", 200, "1" , final_response)
+                new APIResponse("show join user list", "true", 200, "1", final_response)
             )
 
 
-        }else{
+        } else {
             res.status(status.NOT_FOUND).json(
                 new APIResponse("session not found", "false", 404, "0")
             )
         }
-        
+
     } catch (error) {
         console.log("Error:", error);
         res.status(status.INTERNAL_SERVER_ERROR).json(
@@ -2893,8 +2896,6 @@ exports.uploadImages = async (req, res, next) => {
 
         const id = req.params.user_id;
         const userFindForImages = await userModel.findOne({ _id: id, polyDating: 0 });
-
-        console.log("userFindForImages", userFindForImages);
 
         if (userFindForImages) {
 
@@ -3056,8 +3057,8 @@ exports.uploadVideos = async (req, res, next) => {
                             upload: {
                                 userId: req.params.user_id,
                                 uploadImgOrVideo: [urls],
-                                userName: userFindForImages.firstName,
-                                profile: userFindForImages.photo[0] ? userFindForImages.photo[0].res : ""
+                                userName: userFindForVideos.firstName,
+                                profile: userFindForVideos.photo[0] ? userFindForVideos.photo[0].res : ""
                             }
                         }
 
@@ -3175,44 +3176,44 @@ exports.commentSessionList = async (req, res, next) => {
             const final_response = [];
             const response = data.commentWithUser
 
-        
-
-            for(const joinUser of data.joinUser){
-               for(const res of response){
 
 
-                const findUser = await userModel.findOne({
-                    _id : res.userId
-                })
+            for (const joinUser of data.joinUser) {
+                for (const res of response) {
 
-                if((joinUser.userId).toString() == (res.userId).toString()){
-                    const commentData = {
-                        userId: res.userId,
-                        comment: res.comment,
-                        userName: res.userName,
-                        profile: findUser.photo[0] ? findUser.photo[0].res : "",
-                        status: joinUser.status ? joinUser.status : 1
+
+                    const findUser = await userModel.findOne({
+                        _id: res.userId
+                    })
+
+                    if ((joinUser.userId).toString() == (res.userId).toString()) {
+                        const commentData = {
+                            userId: res.userId,
+                            comment: res.comment,
+                            userName: res.userName,
+                            profile: findUser.photo[0] ? findUser.photo[0].res : "",
+                            status: joinUser.status ? joinUser.status : 1
+                        }
+
+                        final_response.push(commentData)
+                    } else if ((data.cretedSessionUser).toString() == (res.userId).toString()) {
+                        const commentData = {
+                            userId: res.userId,
+                            comment: res.comment,
+                            userName: res.userName,
+                            profile: findUser.photo[0] ? findUser.photo[0].res : "",
+                            status: 1
+                        }
+
+                        final_response.push(commentData)
                     }
-    
-                    final_response.push(commentData)
-                }else if((data.cretedSessionUser).toString() == (res.userId).toString()){
-                    const commentData = {
-                        userId: res.userId,
-                        comment: res.comment,
-                        userName: res.userName,
-                        profile: findUser.photo[0] ? findUser.photo[0].res : "",
-                        status: 1
-                    }
-    
-                    final_response.push(commentData)
                 }
-               }
             }
 
-       
+
 
             res.status(status.OK).json(
-                new APIResponse("comment list", "true", 200, "1" , final_response)
+                new APIResponse("comment list", "true", 200, "1", final_response)
             )
 
         } else {
@@ -3221,6 +3222,212 @@ exports.commentSessionList = async (req, res, next) => {
             )
         }
 
+
+    } catch (error) {
+        console.log("error", error);
+        res.status(status.INTERNAL_SERVER_ERROR).json(
+            new APIResponse("Something Went Wrong", "false", 500, "0", error.message)
+        )
+    }
+}
+
+exports.thumbUpCountInSession = async (req, res, next) => {
+    try {
+
+        const findSession = await sessionComment.findOne({
+            sessionId: mongoose.Types.ObjectId(req.params.session_id)
+        })
+
+        if (findSession) {
+
+            const findParticipant = await sessionComment.findOne({
+                sessionId: req.params.session_id,
+                $or: [{
+                    "participants.participants_1.userId": req.params.participants_id
+                }, {
+                    "participants.participants_2.userId": req.params.participants_id
+                }, {
+                    "participants.participants_3.userId": req.params.participants_id
+                }]
+
+            })
+
+            if (findParticipant) {
+
+                const findSession = await thumbUpCountInSession.findOne({
+                    sessionId: req.params.session_id
+                })
+
+                if (findSession) {
+
+                    const data = thumbUpCountInSession({
+                        sessionId: req.params.session_id,
+                        thumbupUserId: {
+                            userId: req.params.user_id,
+                            participantUserId: req.params.participants_id
+                        }
+                    })
+
+                    await data.save();
+
+                } else {
+
+                    await thumbUpCountInSession.updateOne({
+                        sessionId: req.params.session_id,
+                    }, {
+                        $push: {
+                            thumbupUserId: {
+                                userId: req.params.user_id,
+                                participantUserId: req.params.participants_id
+                            }
+                        }
+                    })
+
+                }
+
+
+
+                const findParticipant1 = await sessionComment.findOne({
+                    sessionId: req.params.session_id,
+                    "participants.participants_1.userId": req.params.participants_id
+                })
+                const findParticipant2 = await sessionComment.findOne({
+                    sessionId: req.params.session_id,
+                    "participants.participants_2.userId": req.params.participants_id
+                })
+                const findParticipant3 = await sessionComment.findOne({
+                    sessionId: req.params.session_id,
+                    "participants.participants_3.userId": req.params.participants_id
+                })
+
+                console.log("this is 1" ,findParticipant1);
+                console.log("this is 3" ,findParticipant3);
+
+                console.log("this is 2" ,findParticipant2);
+
+                if (findParticipant1) {
+                    await sessionComment.updateOne({
+                        sessionId: req.params.session_id,
+                        "participants.participants_1.userId": req.params.participants_id
+                    },
+                        { $inc: { "participants.$.participants_1.[i].thumbUp": 1 } },
+                        { arrayFilters: [{ "i.userId": req.params.participants_id }] }
+                    )
+                } else if (findParticipant2) {
+
+                    console.log( "hello" );
+                    await sessionComment.updateOne({
+                        sessionId: req.params.session_id,
+                        "participants.participants_2.userId": req.params.participants_id
+                    },
+                        { $inc: { "participants.$.participants_2.[i].thumbUp": 1 } },
+                        { arrayFilters: [{ "i.userId": req.params.participants_id }] }
+                    )
+                } else if (findParticipant3) {
+                    await sessionComment.updateOne({
+                        sessionId: req.params.session_id,
+                        "participants.participants_3.userId": req.params.participants_id
+                    },
+                        { $inc: { "participants.$.participants_3.[i].thumbUp": 1 } },
+                        { arrayFilters: [{ "i.userId": req.params.participants_id }] }
+                    )
+                }
+
+
+            } else {
+
+                const findSession = await thumbUpCountInSession.findOne({
+                    sessionId: req.params.session_id
+                })
+
+                if (findSession) {
+
+                    await thumbUpCountInSession.updateOne({
+                        sessionId: req.params.session_id,
+                    }, {
+                        $push: {
+                            thumbupUserId: {
+                                userId: req.params.user_id,
+                                participantUserId: req.params.participants_id
+                            }
+                        }
+                    })
+
+
+                } else {
+
+                    const data = thumbUpCountInSession({
+                        sessionId: req.params.session_id,
+                        thumbupUserId: {
+                            userId: req.params.user_id,
+                            participantUserId: req.params.participants_id
+                        }
+                    })
+
+                    await data.save();
+
+
+                }
+
+                console.log(" req.params.session_id", req.params.session_id);
+
+                const findParticipant1 = await sessionComment.findOne({
+                    sessionId: req.params.session_id
+                })
+
+                if (findParticipant1.participants[0] == undefined) {
+                    await sessionComment.updateOne({
+                        sessionId: req.params.session_id,
+                    },
+                        {
+                            $set: {
+                               "participants.participants_1": {
+                                        userId: req.params.participants_id,
+                                        thumbUp: 1
+                                    }
+                                
+                            }
+                        }
+                    )
+                } else if (findParticipant1.participants[0].participants_2[0] == undefined) {
+                    await sessionComment.updateOne({
+                        sessionId: req.params.session_id,
+                    },
+                        {
+                                $set: {
+                                   "participants.participants_2": {
+                                        userId: req.params.participants_id,
+                                        thumbUp: 1
+                                    }
+                                }
+                        }
+                    )
+                } else if (findParticipant1.participants[0].participants_3[0] == undefined) {
+                    await sessionComment.updateOne({
+                        sessionId: req.params.session_id,
+                    },
+                        {
+                           
+                                $set: {
+                                   "participants.participants_3": {
+                                        userId: req.params.participants_id,
+                                        thumbUp: 1
+                                    }
+                                }
+                        }
+                    )
+                }
+                // console.log("findParticipant1[0].participants_1[0].userId" , findParticipant1.participants[0].participants_1[0].userId);
+                // if()
+                // if()
+
+
+            }
+        } else {
+            res.status(status.NOT_FOUND).json(
+                new APIResponse("session not found", "false", 404, "0")
+            )
+        }
 
     } catch (error) {
         console.log("error", error);

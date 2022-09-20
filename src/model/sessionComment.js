@@ -55,7 +55,31 @@ const sessionCommentSchema = mongoose.Schema({
             type: Number,
             default: 0
         }
-    }]
+    }],
+    participants: [{
+        participants_1: [{
+           userId : mongoose.Schema.Types.ObjectId,
+           thumbUp: {
+            type:Number,
+            default: 0
+           }
+        }],
+        participants_2: [{
+            userId : mongoose.Schema.Types.ObjectId,
+            thumbUp: {
+             type:Number,
+             default: 0
+            }
+         }],
+         participants_3: [{
+            userId : mongoose.Schema.Types.ObjectId,
+            thumbUp: {
+             type:Number,
+             default: 0
+            }
+         }]
+    }],
+
 }, {
     timestamps: true
 }, {

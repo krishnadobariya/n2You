@@ -198,6 +198,8 @@ acceptVideoCallReceive
 
 ======================================================
 
+.......................................................................... session ........................................................
+
 ==>joinSession
 
 ======================================================
@@ -219,7 +221,7 @@ endSession
 
 {
     "session_id":"",
-    "create_session_user":""
+    "create_session_user":""   // login user id
 }
 
 endSessionSuccess
@@ -233,7 +235,7 @@ callForJoin
 
 {
     "session_id":"",
-    "create_session_user":""
+    "create_session_user":""    // login user id
 }
 
 nowEnd
@@ -248,7 +250,7 @@ commentOnLiveSession
 
 {
     "session_id":"",
-    "user_id":"",
+    "user_id":"",      // login user id
     "comment":
 }
 
@@ -264,7 +266,7 @@ raiseHand
 
 {
     "session_id":"",
-    "user_id":"",
+    "user_id":"",           // login user id
 }
 
 raiseHandSuccess
@@ -279,7 +281,7 @@ raiseHandAccepted
 
 {
     "session_id":"",
-    "user_id":"",
+    "user_id":"",          // seeion created user id
 }
 
 raiseHandAcceptedSuccess

@@ -17,4 +17,5 @@ router.post('/uploadImages/:session_id/:user_id' , upload.array('upload') ,sessi
 router.post('/uploadVideos/:session_id/:user_id' , upload.array('upload') ,sessionController.uploadVideos);
 router.get('/getUploadeVedioOrImages/:session_id' , sessionController.getUploadeVedioOrImages);
 router.get('/commentSessionList/:session_id' , sessionController.commentSessionList);
+router.get('/thumbUpCount/:session_id/:participants_id/:user_id' , sessionController.thumbUpCountInSession);
 module.exports = router;
