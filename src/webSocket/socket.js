@@ -2844,6 +2844,7 @@ function socket(io) {
 
 
                     for (const sendComment of AllJoinUser) {
+                        const final_data = []
                         if ((sendComment.userId).toString() == (arg.user_id).toString()) {
                             const commentData = {
                                 userId: arg.userId,
@@ -2852,11 +2853,14 @@ function socket(io) {
                                 profile: findUser.photo[0] ? findUser.photo[0].res : "",
                                 status: sendComment.status
                             }
+                            final_data.push(commentData)
                         } else {
                         }
 
+                      
                         const userRoom = `User${sendComment.userId}`
-                        io.to(userRoom).emit("commentResponse", commentData);
+                        console.log(userRoom);
+                        io.to(userRoom).emit("commentResponse", final_data);
 
                     }
 
