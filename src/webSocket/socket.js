@@ -2842,9 +2842,9 @@ function socket(io) {
                         }
                     })
 
-
+                    const final_data = []
                     for (const sendComment of AllJoinUser) {
-                        const final_data = []
+                     
                         if ((sendComment.userId).toString() == (arg.user_id).toString()) {
                             const commentData = {
                                 userId: arg.userId,
@@ -2855,13 +2855,13 @@ function socket(io) {
                             }
                             final_data.push(commentData)
                         } else {
+
                         }
+                    }
 
-                      
+                    for(const sendComment of AllJoinUser){
                         const userRoom = `User${sendComment.userId}`
-                        console.log(userRoom);
-                        io.to(userRoom).emit("commentResponse", final_data);
-
+                        io.to(userRoom).emit("commentResponse", ...final_data);
                     }
 
                 } else {
