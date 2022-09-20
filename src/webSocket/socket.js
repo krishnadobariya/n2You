@@ -2847,7 +2847,7 @@ function socket(io) {
                      
                         if ((sendComment.userId).toString() == (arg.user_id).toString()) {
                             const commentData = {
-                                userId: arg.userId,
+                                userId: arg.user_id,
                                 comment: arg.comment,
                                 userName: findUser.firstName,
                                 profile: findUser.photo[0] ? findUser.photo[0].res : "",
