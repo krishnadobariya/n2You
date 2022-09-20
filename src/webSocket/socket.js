@@ -2844,26 +2844,20 @@ function socket(io) {
 
 
                     for (const sendComment of AllJoinUser) {
-
                         if ((sendComment.userId).toString() == (arg.user_id).toString()) {
-
-                        } else {
-
-                            const findUser = await userModel.findOne({
-                                _id: arg.user_id
-                            })
                             const commentData = {
-                                userId: arg.user_id,
+                                userId: arg.userId,
                                 comment: arg.comment,
                                 userName: findUser.firstName,
                                 profile: findUser.photo[0] ? findUser.photo[0].res : "",
                                 status: sendComment.status
                             }
-
-                            const userRoom = `User${sendComment.userId}`
-                            io.to(userRoom).emit("commentResponse", commentData);
-
+                        } else {
                         }
+
+                        const userRoom = `User${sendComment.userId}`
+                        io.to(userRoom).emit("commentResponse", commentData);
+
                     }
 
                 } else {
