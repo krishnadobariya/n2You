@@ -585,613 +585,6 @@ function socket(io) {
             }
         })
 
-        socket.on("joinSession", async (arg) => {
-            const findIdInSession = await sessionModel.findOne({
-                _id: arg.session_id
-            })
-
-            const p1 = findIdInSession.participants[0].participants_1 == null ? "" : findIdInSession.participants[0].participants_1
-            const p2 = findIdInSession.participants[0].participants_2 == null ? "" : findIdInSession.participants[0].participants_2
-            const p3 = findIdInSession.participants[0].participants_3 == null ? "" : findIdInSession.participants[0].participants_3
-
-            if (findIdInSession) {
-
-                if ((findIdInSession.cretedSessionUser).toString() == (arg.create_session_user).toString()) {
-
-                    const commentSession = await sessionCommentModel.findOne({
-                        sessionId: arg.session_id
-                    })
-
-                    console.log(commentSession);
-                    if (commentSession) { } else {
-
-                        const saveData = sessionCommentModel({
-                            sessionId: arg.session_id,
-                            cretedSessionUser: arg.create_session_user
-                        })
-
-                        await saveData.save();
-                    }
-                    if (findIdInSession.roomType == "Public") {
-
-                        const allRequestedEmails = [];
-                        const findAllFriend = await requestModel.findOne({
-                            userId: findIdInSession.cretedSessionUser
-                        })
-
-                        const p1 = findIdInSession.participants[0].participants_1 == null ? "" : findIdInSession.participants[0].participants_1
-                        const p2 = findIdInSession.participants[0].participants_2 == null ? "" : findIdInSession.participants[0].participants_2
-                        const p3 = findIdInSession.participants[0].participants_3 == null ? "" : findIdInSession.participants[0].participants_3
-
-
-                        for (const allRequestedEmail of findAllFriend.RequestedEmails) {
-
-                            if (allRequestedEmail.accepted == 1) {
-                                if (((allRequestedEmail.userId).toString() != (p1).toString()) && ((allRequestedEmail.userId).toString() != (p2).toString()) && ((allRequestedEmail.userId).toString() != (p3).toString())) {
-                                    allRequestedEmails.push(allRequestedEmail.userId)
-                                }
-                            }
-                        }
-
-                        const invitedUsers = [];
-                        if (p1 != null) {
-                            invitedUsers.push(findIdInSession.participants[0].participants_1)
-                        }
-                        if (p2 != null) {
-                            invitedUsers.push(findIdInSession.participants[0].participants_2)
-                        }
-                        if (p3 != null) {
-                            invitedUsers.push(findIdInSession.participants[0].participants_3)
-                        }
-
-                        for (const notification of allRequestedEmails) {
-
-
-                            const findUser = await userModel.findOne({
-                                _id: notification
-                            })
-
-                            const findCreateSessionUser = await userModel.findOne({
-                                _id: findIdInSession.cretedSessionUser
-                            })
-
-                            if (findUser.fcm_token) {
-                                const title = findCreateSessionUser.firstName;
-                                const body = `session started which one is created by ${findCreateSessionUser.firstName}`;
-
-                                const text = "join session";
-                                const sendBy = (findCreateSessionUser._id).toString();
-                                const registrationToken = findUser.fcm_token
-                                Notification.sendPushNotificationFCM(
-                                    registrationToken,
-                                    title,
-                                    body,
-                                    text,
-                                    sendBy,
-                                    true
-                                );
-                            }
-
-
-
-                            const findInNotification = await notificationModel.findOne({
-                                userId: notification
-                            })
-                            if (findInNotification) {
-
-                                await notificationModel.updateOne({
-                                    userId: notification
-                                }, {
-                                    $push: {
-                                        notifications: {
-                                            notifications: `session started which one is created by ${findCreateSessionUser.firstName}`,
-                                            userId: findCreateSessionUser._id,
-                                            status: 9
-                                        }
-                                    }
-                                })
-                            } else {
-                                const savedata = notificationModel({
-                                    userId: notification,
-                                    notifications: {
-                                        notifications: `session started which one is created by ${findCreateSessionUser.firstName}`,
-                                        userId: findCreateSessionUser._id,
-                                        status: 9
-                                    }
-                                })
-                                await savedata.save();
-                            }
-                        }
-
-                        for (const invitedUser of invitedUsers) {
-
-                            await sessionModel.updateOne({
-                                _id: arg.session_id
-                            },
-                                {
-                                    $set: {
-                                        started: true
-                                    }
-                                })
-                            const findUser = await userModel.findOne({
-                                _id: invitedUser
-                            })
-
-                            const findCreateSessionUser = await userModel.findOne({
-                                _id: findIdInSession.cretedSessionUser
-                            })
-                            if (findUser.fcm_token) {
-                                const title = findCreateSessionUser.firstName;
-                                const body = `session started which one is created by ${findCreateSessionUser.firstName}`;
-
-                                const text = "join session";
-                                const sendBy = (findCreateSessionUser._id).toString();
-                                const registrationToken = findUser.fcm_token
-                                Notification.sendPushNotificationFCM(
-                                    registrationToken,
-                                    title,
-                                    body,
-                                    text,
-                                    sendBy,
-                                    true
-                                );
-                            }
-
-
-                            const findInNotification = await notificationModel.findOne({
-                                userId: invitedUser
-                            })
-
-                            if (findInNotification) {
-                                await notificationModel.updateOne({
-                                    userId: invitedUser
-                                }, {
-                                    $push: {
-                                        notifications: {
-                                            notifications: `session started which one is created by ${findCreateSessionUser.firstName}`,
-                                            userId: findCreateSessionUser._id,
-                                            status: 9
-                                        }
-                                    }
-                                })
-                            } else {
-                                const savedata = notificationModel({
-                                    userId: invitedUser,
-                                    notifications: {
-                                        notifications: `session started which one is created by ${findCreateSessionUser.firstName}`,
-                                        userId: findCreateSessionUser._id,
-                                        status: 9
-                                    }
-                                })
-                                await savedata.save();
-                            }
-                        }
-
-                        io.emit("sessionJoinSuccess", "session started");
-                    } else {
-                        const allRequestedEmails = [];
-
-                        const p1 = findIdInSession.participants[0].participants_1 == null ? "" : findIdInSession.participants[0].participants_1
-                        const p2 = findIdInSession.participants[0].participants_2 == null ? "" : findIdInSession.participants[0].participants_2
-                        const p3 = findIdInSession.participants[0].participants_3 == null ? "" : findIdInSession.participants[0].participants_3
-
-                        if (p1) {
-                            allRequestedEmails.push(findIdInSession.participants[0].participants_1)
-                        }
-                        if (p2) {
-                            allRequestedEmails.push(findIdInSession.participants[0].participants_2)
-                        }
-                        if (p3) {
-                            allRequestedEmails.push(findIdInSession.participants[0].participants_3)
-                        }
-
-
-                        for (const notification of allRequestedEmails) {
-
-                            await sessionModel.updateOne({
-                                _id: arg.session_id
-                            },
-                                {
-                                    $set: {
-                                        started: true
-                                    }
-                                })
-
-
-
-                            const findUser = await userModel.findOne({
-                                _id: notification
-                            })
-
-                            const findCreateSessionUser = await userModel.findOne({
-                                _id: findIdInSession.cretedSessionUser
-                            })
-
-                            if (findUser.fcm_token) {
-                                const title = findCreateSessionUser.firstName;
-                                const body = `session started which one is created by ${findCreateSessionUser.firstName}`;
-
-                                const text = "join session";
-                                const sendBy = (findCreateSessionUser._id).toString();
-                                const registrationToken = findUser.fcm_token
-                                Notification.sendPushNotificationFCM(
-                                    registrationToken,
-                                    title,
-                                    body,
-                                    text,
-                                    sendBy,
-                                    true
-                                );
-
-                            }
-
-                            const findInNotification = await notificationModel.findOne({
-                                userId: notification
-                            })
-
-                            if (findInNotification) {
-
-                                await notificationModel.updateOne({
-                                    userId: notification
-                                }, {
-                                    $push: {
-                                        notifications: {
-                                            notifications: `session started which one is created by ${findCreateSessionUser.firstName}`,
-                                            userId: findCreateSessionUser._id,
-                                            status: 9
-                                        }
-                                    }
-                                })
-
-                            } else {
-                                const savedata = notificationModel({
-                                    userId: notification,
-                                    notifications: {
-                                        notifications: `session started which one is created by ${findCreateSessionUser.firstName}`,
-                                        userId: findCreateSessionUser._id,
-                                        status: 9
-                                    }
-                                })
-                                await savedata.save();
-
-                            }
-                        }
-
-                        io.emit("sessionJoinSuccess", "session started");
-
-                    }
-                } else if ((p1).toString() == (arg.create_session_user).toString()) {
-
-                    const commentSession = await sessionCommentModel.findOne({
-                        sessionId: arg.session_id,
-                        "joinUser.userId": mongoose.Types.ObjectId(p1)
-                    })
-
-                    if (commentSession) { } else {
-                        await sessionCommentModel.updateOne({
-                            sessionId: arg.session_id,
-                        }, {
-                            $push: {
-                                joinUser: {
-                                    userId: mongoose.Types.ObjectId(p1),
-                                    status: 2
-                                }
-                            }
-                        })
-                    }
-
-                    await sessionModel.updateOne(
-                        {
-                            _id: arg.session_id,
-                        },
-                        { $inc: { countJoinUser: 1 } }
-                    )
-
-                    const allRequestedEmails = [];
-
-                    const sessionUser = findIdInSession.cretedSessionUser == null ? "" : findIdInSession.cretedSessionUser
-                    const p2 = findIdInSession.participants[0].participants_2 == null ? "" : findIdInSession.participants[0].participants_2
-                    const p3 = findIdInSession.participants[0].participants_3 == null ? "" : findIdInSession.participants[0].participants_3
-
-                    if (sessionUser) {
-                        allRequestedEmails.push(findIdInSession.cretedSessionUser)
-                    }
-                    if (p2) {
-                        allRequestedEmails.push(findIdInSession.participants[0].participants_2)
-                    }
-                    if (p3) {
-                        allRequestedEmails.push(findIdInSession.participants[0].participants_3)
-                    }
-
-
-                    for (const notification of allRequestedEmails) {
-
-                        const findUser = await userModel.findOne({
-                            _id: notification
-                        })
-
-                        const findCreateSessionUser = await userModel.findOne({
-                            _id: findIdInSession.participants[0].participants_1
-                        })
-                        if (findUser.fcm_token) {
-                            const title = findCreateSessionUser.firstName;
-                            const body = `session is joing by ${findCreateSessionUser.firstName}`;
-
-                            const text = "join session";
-                            const sendBy = (findCreateSessionUser._id).toString();
-                            const registrationToken = findUser.fcm_token
-                            Notification.sendPushNotificationFCM(
-                                registrationToken,
-                                title,
-                                body,
-                                text,
-                                sendBy,
-                                true
-                            );
-                        }
-
-
-                        const findInNotification = await notificationModel.findOne({
-                            userId: notification
-                        })
-
-                        if (findInNotification) {
-
-                            await notificationModel.updateOne({
-                                userId: notification
-                            }, {
-                                $push: {
-                                    notifications: {
-                                        notifications: `session started which one is created by ${findCreateSessionUser.firstName}`,
-                                        userId: findCreateSessionUser._id,
-                                        status: 9
-                                    }
-                                }
-                            })
-
-                        } else {
-                            const savedata = notificationModel({
-                                userId: notification,
-                                notifications: {
-                                    notifications: `session started which one is created by ${findCreateSessionUser.firstName}`,
-                                    userId: findCreateSessionUser._id,
-                                    status: 9
-                                }
-                            })
-                            await savedata.save();
-
-                        }
-                    }
-
-
-                } else if ((p2).toString() == (arg.create_session_user).toString()) {
-
-                    const commentSession = await sessionCommentModel.findOne({
-                        sessionId: arg.session_id,
-                        "joinUser.userId": mongoose.Types.ObjectId(p2)
-                    })
-
-                    if (commentSession) { } else {
-                        await sessionCommentModel.updateOne({
-                            sessionId: arg.session_id,
-                        }, {
-                            $push: {
-                                joinUser: {
-                                    userId: mongoose.Types.ObjectId(p2),
-                                    status: 2
-                                }
-                            }
-                        })
-                    }
-
-                    await sessionModel.updateOne(
-                        {
-                            _id: arg.session_id,
-                        },
-                        { $inc: { countJoinUser: 1 } }
-                    )
-                    const allRequestedEmails = [];
-
-                    const sessionUser = findIdInSession.cretedSessionUser == null ? "" : findIdInSession.cretedSessionUser
-                    const p1 = findIdInSession.participants[0].participants_1 == null ? "" : findIdInSession.participants[0].participants_1
-                    const p3 = findIdInSession.participants[0].participants_3 == null ? "" : findIdInSession.participants[0].participants_3
-
-                    if (sessionUser) {
-                        allRequestedEmails.push(findIdInSession.cretedSessionUser)
-                    }
-                    if (p1) {
-                        allRequestedEmails.push(findIdInSession.participants[0].participants_1)
-                    }
-                    if (p3) {
-                        allRequestedEmails.push(findIdInSession.participants[0].participants_3)
-                    }
-
-
-                    for (const notification of allRequestedEmails) {
-
-                        const findUser = await userModel.findOne({
-                            _id: notification
-                        })
-
-                        const findCreateSessionUser = await userModel.findOne({
-                            _id: findIdInSession.participants[0].participants_2
-                        })
-
-                        if (findUser.fcm_token) {
-                            const title = findCreateSessionUser.firstName;
-                            const body = `session is joing by ${findCreateSessionUser.firstName}`;
-
-                            const text = "join session";
-                            const sendBy = (findCreateSessionUser._id).toString();
-                            const registrationToken = findUser.fcm_token
-                            Notification.sendPushNotificationFCM(
-                                registrationToken,
-                                title,
-                                body,
-                                text,
-                                sendBy,
-                                true
-                            );
-                        }
-
-
-                        const findInNotification = await notificationModel.findOne({
-                            userId: notification
-                        })
-
-                        if (findInNotification) {
-
-                            await notificationModel.updateOne({
-                                userId: notification
-                            }, {
-                                $push: {
-                                    notifications: {
-                                        notifications: `session started which one is created by ${findCreateSessionUser.firstName}`,
-                                        userId: findCreateSessionUser._id,
-                                        status: 9
-                                    }
-                                }
-                            })
-
-                        } else {
-                            const savedata = notificationModel({
-                                userId: notification,
-                                notifications: {
-                                    notifications: `session started which one is created by ${findCreateSessionUser.firstName}`,
-                                    userId: findCreateSessionUser._id,
-                                    status: 9
-                                }
-                            })
-                            await savedata.save();
-
-                        }
-                    }
-                } else if ((p3).toString() == (arg.create_session_user).toString()) {
-
-                    const commentSession = await sessionCommentModel.findOne({
-                        sessionId: arg.session_id,
-                        "joinUser.userId": mongoose.Types.ObjectId(p3)
-                    })
-
-                    if (commentSession) { } else {
-                        await sessionCommentModel.updateOne({
-                            sessionId: arg.session_id,
-                        }, {
-                            $push: {
-                                joinUser: {
-                                    userId: mongoose.Types.ObjectId(p3),
-                                    status: 2
-                                }
-                            }
-                        })
-                    }
-
-                    await sessionModel.updateOne(
-                        {
-                            _id: arg.session_id,
-                        },
-                        { $inc: { countJoinUser: 1 } }
-                    )
-
-
-                    const allRequestedEmails = [];
-
-                    const sessionUser = findIdInSession.cretedSessionUser == null ? "" : findIdInSession.cretedSessionUser
-                    const p2 = findIdInSession.participants[0].participants_2 == null ? "" : findIdInSession.participants[0].participants_2
-                    const p1 = findIdInSession.participants[0].participants_1 == null ? "" : findIdInSession.participants[0].participants_1
-
-                    if (sessionUser) {
-                        allRequestedEmails.push(findIdInSession.cretedSessionUser)
-                    }
-                    if (p2) {
-                        allRequestedEmails.push(findIdInSession.participants[0].participants_2)
-                    }
-                    if (p1) {
-                        allRequestedEmails.push(findIdInSession.participants[0].participants_1)
-                    }
-
-
-                    for (const notification of allRequestedEmails) {
-
-                        const findUser = await userModel.findOne({
-                            _id: notification
-                        })
-
-                        const findCreateSessionUser = await userModel.findOne({
-                            _id: findIdInSession.participants[0].participants_3
-                        })
-                        if (findUser.fcm_token) {
-                            const title = findCreateSessionUser.firstName;
-                            const body = `session is joing by ${findCreateSessionUser.firstName}`;
-
-                            const text = "join session";
-                            const sendBy = (findCreateSessionUser._id).toString();
-                            const registrationToken = findUser.fcm_token
-                            Notification.sendPushNotificationFCM(
-                                registrationToken,
-                                title,
-                                body,
-                                text,
-                                sendBy,
-                                true
-                            );
-                        }
-
-
-                        const findInNotification = await notificationModel.findOne({
-                            userId: notification
-                        })
-
-                        if (findInNotification) {
-
-                            await notificationModel.updateOne({
-                                userId: notification
-                            }, {
-                                $push: {
-                                    notifications: {
-                                        notifications: `session started which one is created by ${findCreateSessionUser.firstName}`,
-                                        userId: findCreateSessionUser._id,
-                                        status: 9
-                                    }
-                                }
-                            })
-
-                        } else {
-                            const savedata = notificationModel({
-                                userId: notification,
-                                notifications: {
-                                    notifications: `session started which one is created by ${findCreateSessionUser.firstName}`,
-                                    userId: findCreateSessionUser._id,
-                                    status: 9
-                                }
-                            })
-                            await savedata.save();
-
-                        }
-                    }
-                } else {
-                    const commentSession = await sessionCommentModel.findOne({
-                        sessionId: arg.session_id,
-                        "joinUser.userId": mongoose.Types.ObjectId(arg.create_session_user)
-                    })
-
-                    if (commentSession) { } else {
-                        await sessionCommentModel.updateOne({
-                            sessionId: arg.session_id,
-                        }, {
-                            $push: {
-                                joinUser: {
-                                    userId: mongoose.Types.ObjectId(arg.create_session_user),
-                                    status: 3
-                                }
-                            }
-                        })
-                    }
-                }
-            } else {
-                io.emit("sessionJoinSuccess", "seesion not found");
-            }
-        })
 
         socket.on("createGroupRoom", async (arg) => {
 
@@ -2604,6 +1997,620 @@ function socket(io) {
 
         })
 
+        socket.on("joinSession", async (arg) => {
+            const findIdInSession = await sessionModel.findOne({
+                _id: arg.session_id
+            })
+
+            const p1 = findIdInSession.participants[0].participants_1 == null ? "" : findIdInSession.participants[0].participants_1
+            const p2 = findIdInSession.participants[0].participants_2 == null ? "" : findIdInSession.participants[0].participants_2
+            const p3 = findIdInSession.participants[0].participants_3 == null ? "" : findIdInSession.participants[0].participants_3
+
+            if (findIdInSession) {
+
+                if ((findIdInSession.cretedSessionUser).toString() == (arg.create_session_user).toString()) {
+
+                    const commentSession = await sessionCommentModel.findOne({
+                        sessionId: arg.session_id
+                    })
+
+                    console.log(commentSession);
+                    if (commentSession) { } else {
+
+                        const saveData = sessionCommentModel({
+                            sessionId: arg.session_id,
+                            cretedSessionUser: arg.create_session_user
+                        })
+
+                        await saveData.save();
+                    }
+                    if (findIdInSession.roomType == "Public") {
+
+                        const allRequestedEmails = [];
+                        const findAllFriend = await requestModel.findOne({
+                            userId: findIdInSession.cretedSessionUser
+                        })
+
+                        const p1 = findIdInSession.participants[0].participants_1 == null ? "" : findIdInSession.participants[0].participants_1
+                        const p2 = findIdInSession.participants[0].participants_2 == null ? "" : findIdInSession.participants[0].participants_2
+                        const p3 = findIdInSession.participants[0].participants_3 == null ? "" : findIdInSession.participants[0].participants_3
+
+
+                        for (const allRequestedEmail of findAllFriend.RequestedEmails) {
+
+                            if (allRequestedEmail.accepted == 1) {
+                                if (((allRequestedEmail.userId).toString() != (p1).toString()) && ((allRequestedEmail.userId).toString() != (p2).toString()) && ((allRequestedEmail.userId).toString() != (p3).toString())) {
+                                    allRequestedEmails.push(allRequestedEmail.userId)
+                                }
+                            }
+                        }
+
+                        const invitedUsers = [];
+                        if (p1 != null) {
+                            invitedUsers.push(findIdInSession.participants[0].participants_1)
+                        }
+                        if (p2 != null) {
+                            invitedUsers.push(findIdInSession.participants[0].participants_2)
+                        }
+                        if (p3 != null) {
+                            invitedUsers.push(findIdInSession.participants[0].participants_3)
+                        }
+
+                        for (const notification of allRequestedEmails) {
+
+
+                            const findUser = await userModel.findOne({
+                                _id: notification
+                            })
+
+                            const findCreateSessionUser = await userModel.findOne({
+                                _id: findIdInSession.cretedSessionUser
+                            })
+
+                            if (findUser.fcm_token) {
+                                const title = findCreateSessionUser.firstName;
+                                const body = `session started which one is created by ${findCreateSessionUser.firstName}`;
+
+                                const text = "join session";
+                                const sendBy = (findCreateSessionUser._id).toString();
+                                const registrationToken = findUser.fcm_token
+                                Notification.sendPushNotificationFCM(
+                                    registrationToken,
+                                    title,
+                                    body,
+                                    text,
+                                    sendBy,
+                                    true
+                                );
+                            }
+
+
+
+                            const findInNotification = await notificationModel.findOne({
+                                userId: notification
+                            })
+                            if (findInNotification) {
+
+                                await notificationModel.updateOne({
+                                    userId: notification
+                                }, {
+                                    $push: {
+                                        notifications: {
+                                            notifications: `session started which one is created by ${findCreateSessionUser.firstName}`,
+                                            userId: findCreateSessionUser._id,
+                                            status: 9
+                                        }
+                                    }
+                                })
+                            } else {
+                                const savedata = notificationModel({
+                                    userId: notification,
+                                    notifications: {
+                                        notifications: `session started which one is created by ${findCreateSessionUser.firstName}`,
+                                        userId: findCreateSessionUser._id,
+                                        status: 9
+                                    }
+                                })
+                                await savedata.save();
+                            }
+                        }
+
+                        for (const invitedUser of invitedUsers) {
+
+                            await sessionModel.updateOne({
+                                _id: arg.session_id
+                            },
+                                {
+                                    $set: {
+                                        started: true
+                                    }
+                                })
+                            const findUser = await userModel.findOne({
+                                _id: invitedUser
+                            })
+
+                            const findCreateSessionUser = await userModel.findOne({
+                                _id: findIdInSession.cretedSessionUser
+                            })
+                            if (findUser.fcm_token) {
+                                const title = findCreateSessionUser.firstName;
+                                const body = `session started which one is created by ${findCreateSessionUser.firstName}`;
+
+                                const text = "join session";
+                                const sendBy = (findCreateSessionUser._id).toString();
+                                const registrationToken = findUser.fcm_token
+                                Notification.sendPushNotificationFCM(
+                                    registrationToken,
+                                    title,
+                                    body,
+                                    text,
+                                    sendBy,
+                                    true
+                                );
+                            }
+
+
+                            const findInNotification = await notificationModel.findOne({
+                                userId: invitedUser
+                            })
+
+                            if (findInNotification) {
+                                await notificationModel.updateOne({
+                                    userId: invitedUser
+                                }, {
+                                    $push: {
+                                        notifications: {
+                                            notifications: `session started which one is created by ${findCreateSessionUser.firstName}`,
+                                            userId: findCreateSessionUser._id,
+                                            status: 9
+                                        }
+                                    }
+                                })
+                            } else {
+                                const savedata = notificationModel({
+                                    userId: invitedUser,
+                                    notifications: {
+                                        notifications: `session started which one is created by ${findCreateSessionUser.firstName}`,
+                                        userId: findCreateSessionUser._id,
+                                        status: 9
+                                    }
+                                })
+                                await savedata.save();
+                            }
+                        }
+
+                        io.emit("sessionJoinSuccess", "session started");
+                    } else {
+                        const allRequestedEmails = [];
+
+                        const p1 = findIdInSession.participants[0].participants_1 == null ? "" : findIdInSession.participants[0].participants_1
+                        const p2 = findIdInSession.participants[0].participants_2 == null ? "" : findIdInSession.participants[0].participants_2
+                        const p3 = findIdInSession.participants[0].participants_3 == null ? "" : findIdInSession.participants[0].participants_3
+
+                        if (p1) {
+                            allRequestedEmails.push(findIdInSession.participants[0].participants_1)
+                        }
+                        if (p2) {
+                            allRequestedEmails.push(findIdInSession.participants[0].participants_2)
+                        }
+                        if (p3) {
+                            allRequestedEmails.push(findIdInSession.participants[0].participants_3)
+                        }
+
+
+                        for (const notification of allRequestedEmails) {
+
+                            await sessionModel.updateOne({
+                                _id: arg.session_id
+                            },
+                                {
+                                    $set: {
+                                        started: true
+                                    }
+                                })
+
+
+
+                            const findUser = await userModel.findOne({
+                                _id: notification
+                            })
+
+                            const findCreateSessionUser = await userModel.findOne({
+                                _id: findIdInSession.cretedSessionUser
+                            })
+
+                            if (findUser.fcm_token) {
+                                const title = findCreateSessionUser.firstName;
+                                const body = `session started which one is created by ${findCreateSessionUser.firstName}`;
+
+                                const text = "join session";
+                                const sendBy = (findCreateSessionUser._id).toString();
+                                const registrationToken = findUser.fcm_token
+                                Notification.sendPushNotificationFCM(
+                                    registrationToken,
+                                    title,
+                                    body,
+                                    text,
+                                    sendBy,
+                                    true
+                                );
+
+                            }
+
+                            const findInNotification = await notificationModel.findOne({
+                                userId: notification
+                            })
+
+                            if (findInNotification) {
+
+                                await notificationModel.updateOne({
+                                    userId: notification
+                                }, {
+                                    $push: {
+                                        notifications: {
+                                            notifications: `session started which one is created by ${findCreateSessionUser.firstName}`,
+                                            userId: findCreateSessionUser._id,
+                                            status: 9
+                                        }
+                                    }
+                                })
+
+                            } else {
+                                const savedata = notificationModel({
+                                    userId: notification,
+                                    notifications: {
+                                        notifications: `session started which one is created by ${findCreateSessionUser.firstName}`,
+                                        userId: findCreateSessionUser._id,
+                                        status: 9
+                                    }
+                                })
+                                await savedata.save();
+
+                            }
+                        }
+
+                        io.emit("sessionJoinSuccess", "session started");
+
+                    }
+                } else if ((p1).toString() == (arg.create_session_user).toString()) {
+
+                    const commentSession = await sessionCommentModel.findOne({
+                        sessionId: arg.session_id,
+                        "joinUser.userId": mongoose.Types.ObjectId(p1)
+                    })
+
+                    if (commentSession) { } else {
+                        await sessionCommentModel.updateOne({
+                            sessionId: arg.session_id,
+                        }, {
+                            $push: {
+                                joinUser: {
+                                    userId: mongoose.Types.ObjectId(p1),
+                                    status: 2
+                                }
+                            }
+                        })
+                    }
+
+                    await sessionModel.updateOne(
+                        {
+                            _id: arg.session_id,
+                        },
+                        { $inc: { countJoinUser: 1 } }
+                    )
+
+                    const allRequestedEmails = [];
+
+                    const sessionUser = findIdInSession.cretedSessionUser == null ? "" : findIdInSession.cretedSessionUser
+                    const p2 = findIdInSession.participants[0].participants_2 == null ? "" : findIdInSession.participants[0].participants_2
+                    const p3 = findIdInSession.participants[0].participants_3 == null ? "" : findIdInSession.participants[0].participants_3
+
+                    if (sessionUser) {
+                        allRequestedEmails.push(findIdInSession.cretedSessionUser)
+                    }
+                    if (p2) {
+                        allRequestedEmails.push(findIdInSession.participants[0].participants_2)
+                    }
+                    if (p3) {
+                        allRequestedEmails.push(findIdInSession.participants[0].participants_3)
+                    }
+
+
+                    for (const notification of allRequestedEmails) {
+
+                        const findUser = await userModel.findOne({
+                            _id: notification
+                        })
+
+                        const findCreateSessionUser = await userModel.findOne({
+                            _id: findIdInSession.participants[0].participants_1
+                        })
+                        if (findUser.fcm_token) {
+                            const title = findCreateSessionUser.firstName;
+                            const body = `session is joing by ${findCreateSessionUser.firstName}`;
+
+                            const text = "join session";
+                            const sendBy = (findCreateSessionUser._id).toString();
+                            const registrationToken = findUser.fcm_token
+                            Notification.sendPushNotificationFCM(
+                                registrationToken,
+                                title,
+                                body,
+                                text,
+                                sendBy,
+                                true
+                            );
+                        }
+
+
+                        const findInNotification = await notificationModel.findOne({
+                            userId: notification
+                        })
+
+                        if (findInNotification) {
+
+                            await notificationModel.updateOne({
+                                userId: notification
+                            }, {
+                                $push: {
+                                    notifications: {
+                                        notifications: `session started which one is created by ${findCreateSessionUser.firstName}`,
+                                        userId: findCreateSessionUser._id,
+                                        status: 9
+                                    }
+                                }
+                            })
+
+                        } else {
+                            const savedata = notificationModel({
+                                userId: notification,
+                                notifications: {
+                                    notifications: `session started which one is created by ${findCreateSessionUser.firstName}`,
+                                    userId: findCreateSessionUser._id,
+                                    status: 9
+                                }
+                            })
+                            await savedata.save();
+
+                        }
+                    }
+
+                    io.emit("sessionJoinSuccess", "session started");
+
+                } else if ((p2).toString() == (arg.create_session_user).toString()) {
+
+                    const commentSession = await sessionCommentModel.findOne({
+                        sessionId: arg.session_id,
+                        "joinUser.userId": mongoose.Types.ObjectId(p2)
+                    })
+
+                    if (commentSession) { } else {
+                        await sessionCommentModel.updateOne({
+                            sessionId: arg.session_id,
+                        }, {
+                            $push: {
+                                joinUser: {
+                                    userId: mongoose.Types.ObjectId(p2),
+                                    status: 2
+                                }
+                            }
+                        })
+                    }
+
+                    await sessionModel.updateOne(
+                        {
+                            _id: arg.session_id,
+                        },
+                        { $inc: { countJoinUser: 1 } }
+                    )
+                    const allRequestedEmails = [];
+
+                    const sessionUser = findIdInSession.cretedSessionUser == null ? "" : findIdInSession.cretedSessionUser
+                    const p1 = findIdInSession.participants[0].participants_1 == null ? "" : findIdInSession.participants[0].participants_1
+                    const p3 = findIdInSession.participants[0].participants_3 == null ? "" : findIdInSession.participants[0].participants_3
+
+                    if (sessionUser) {
+                        allRequestedEmails.push(findIdInSession.cretedSessionUser)
+                    }
+                    if (p1) {
+                        allRequestedEmails.push(findIdInSession.participants[0].participants_1)
+                    }
+                    if (p3) {
+                        allRequestedEmails.push(findIdInSession.participants[0].participants_3)
+                    }
+
+
+                    for (const notification of allRequestedEmails) {
+
+                        const findUser = await userModel.findOne({
+                            _id: notification
+                        })
+
+                        const findCreateSessionUser = await userModel.findOne({
+                            _id: findIdInSession.participants[0].participants_2
+                        })
+
+                        if (findUser.fcm_token) {
+                            const title = findCreateSessionUser.firstName;
+                            const body = `session is joing by ${findCreateSessionUser.firstName}`;
+
+                            const text = "join session";
+                            const sendBy = (findCreateSessionUser._id).toString();
+                            const registrationToken = findUser.fcm_token
+                            Notification.sendPushNotificationFCM(
+                                registrationToken,
+                                title,
+                                body,
+                                text,
+                                sendBy,
+                                true
+                            );
+                        }
+
+
+                        const findInNotification = await notificationModel.findOne({
+                            userId: notification
+                        })
+
+                        if (findInNotification) {
+
+                            await notificationModel.updateOne({
+                                userId: notification
+                            }, {
+                                $push: {
+                                    notifications: {
+                                        notifications: `session started which one is created by ${findCreateSessionUser.firstName}`,
+                                        userId: findCreateSessionUser._id,
+                                        status: 9
+                                    }
+                                }
+                            })
+
+                        } else {
+                            const savedata = notificationModel({
+                                userId: notification,
+                                notifications: {
+                                    notifications: `session started which one is created by ${findCreateSessionUser.firstName}`,
+                                    userId: findCreateSessionUser._id,
+                                    status: 9
+                                }
+                            })
+                            await savedata.save();
+
+                        }
+                    }
+                    io.emit("sessionJoinSuccess", "session started");
+
+                } else if ((p3).toString() == (arg.create_session_user).toString()) {
+
+                    const commentSession = await sessionCommentModel.findOne({
+                        sessionId: arg.session_id,
+                        "joinUser.userId": mongoose.Types.ObjectId(p3)
+                    })
+
+                    if (commentSession) { } else {
+                        await sessionCommentModel.updateOne({
+                            sessionId: arg.session_id,
+                        }, {
+                            $push: {
+                                joinUser: {
+                                    userId: mongoose.Types.ObjectId(p3),
+                                    status: 2
+                                }
+                            }
+                        })
+                    }
+
+                    await sessionModel.updateOne(
+                        {
+                            _id: arg.session_id,
+                        },
+                        { $inc: { countJoinUser: 1 } }
+                    )
+
+
+                    const allRequestedEmails = [];
+
+                    const sessionUser = findIdInSession.cretedSessionUser == null ? "" : findIdInSession.cretedSessionUser
+                    const p2 = findIdInSession.participants[0].participants_2 == null ? "" : findIdInSession.participants[0].participants_2
+                    const p1 = findIdInSession.participants[0].participants_1 == null ? "" : findIdInSession.participants[0].participants_1
+
+                    if (sessionUser) {
+                        allRequestedEmails.push(findIdInSession.cretedSessionUser)
+                    }
+                    if (p2) {
+                        allRequestedEmails.push(findIdInSession.participants[0].participants_2)
+                    }
+                    if (p1) {
+                        allRequestedEmails.push(findIdInSession.participants[0].participants_1)
+                    }
+
+
+                    for (const notification of allRequestedEmails) {
+
+                        const findUser = await userModel.findOne({
+                            _id: notification
+                        })
+
+                        const findCreateSessionUser = await userModel.findOne({
+                            _id: findIdInSession.participants[0].participants_3
+                        })
+                        if (findUser.fcm_token) {
+                            const title = findCreateSessionUser.firstName;
+                            const body = `session is joing by ${findCreateSessionUser.firstName}`;
+
+                            const text = "join session";
+                            const sendBy = (findCreateSessionUser._id).toString();
+                            const registrationToken = findUser.fcm_token
+                            Notification.sendPushNotificationFCM(
+                                registrationToken,
+                                title,
+                                body,
+                                text,
+                                sendBy,
+                                true
+                            );
+                        }
+
+
+                        const findInNotification = await notificationModel.findOne({
+                            userId: notification
+                        })
+
+                        if (findInNotification) {
+
+                            await notificationModel.updateOne({
+                                userId: notification
+                            }, {
+                                $push: {
+                                    notifications: {
+                                        notifications: `session started which one is created by ${findCreateSessionUser.firstName}`,
+                                        userId: findCreateSessionUser._id,
+                                        status: 9
+                                    }
+                                }
+                            })
+
+                        } else {
+                            const savedata = notificationModel({
+                                userId: notification,
+                                notifications: {
+                                    notifications: `session started which one is created by ${findCreateSessionUser.firstName}`,
+                                    userId: findCreateSessionUser._id,
+                                    status: 9
+                                }
+                            })
+                            await savedata.save();
+
+                        }
+                    }
+                    io.emit("sessionJoinSuccess", "session started");
+                } else {
+                    const commentSession = await sessionCommentModel.findOne({
+                        sessionId: arg.session_id,
+                        "joinUser.userId": mongoose.Types.ObjectId(arg.create_session_user)
+                    })
+
+                    if (commentSession) { } else {
+                        await sessionCommentModel.updateOne({
+                            sessionId: arg.session_id,
+                        }, {
+                            $push: {
+                                joinUser: {
+                                    userId: mongoose.Types.ObjectId(arg.create_session_user),
+                                    status: 3
+                                }
+                            }
+                        })
+                    }
+                }
+                io.emit("sessionJoinSuccess", "session started");
+            } else {
+                io.emit("sessionJoinSuccess", "seesion not found");
+            }
+        })
+
+
         socket.on('endSession', async (arg) => {
 
             const findSession = await sessionModel.findOne({
@@ -2757,7 +2764,7 @@ function socket(io) {
                 _id: arg.session_id
             })
 
-            if (findSession.roomType == "Pblic") {
+            if (findSession.roomType == "Public") {
 
                 const findUser = await userModel.find({
                     _id: {
@@ -2904,16 +2911,16 @@ function socket(io) {
 
 
                     const findUser = await userModel.findOne({
-                        _id : arg.user_id
+                        _id: arg.user_id
                     })
                     const response = {
-                            userId: findUser._id,
-                            firstName: findUser.firstName,
-                            profile: findUser.photo[0] ? findUser.photo[0].res : "",
-                            mute: 0
+                        userId: findUser._id,
+                        firstName: findUser.firstName,
+                        profile: findUser.photo[0] ? findUser.photo[0].res : "",
+                        mute: 0
                     }
                     const userRoom = `User${findUser.cretedSessionUser}`
-                    io.to(userRoom).emit("raiseHandSuccess", [response]);
+                    io.emit("raiseHandSuccess", response);
 
 
                 }
@@ -2950,7 +2957,7 @@ function socket(io) {
                         }
                     })
 
-                    const userRoom = `User${findUser.cretedSessionUser}`
+                    const userRoom = `User${arg.user_id}`
                     io.to(userRoom).emit("raiseHandAcceptedSuccess", "raise hand success!");
 
                 } else {
@@ -3220,7 +3227,7 @@ function socket(io) {
                     let minutes = date.getMinutes();
                     let second = date.getSeconds();
                     const dateNow = `${year}-${months + 1}-${dates} ${hour}:${minutes}:${second}`
-                    console.log("dateNow" , dateNow);
+                    console.log("dateNow", dateNow);
 
                     console.log(`${year}-${months + 1}-${dates} ${hour}:${minutes}:${second}`);
 
@@ -3283,11 +3290,11 @@ function socket(io) {
                     for (const users of joinUser) {
 
                         const findUser1 = await userModel.findOne({
-                            _id : arg.participant_id
+                            _id: arg.participant_id
                         })
 
                         const response = {
-                            sessionId : arg.session_id,
+                            sessionId: arg.session_id,
                             participantId: arg.participant_id,
                             participantName: findUser1.firstName,
                             participantProfile: findUser1.photo[0] ? findUser1.photo[0].res : ""
@@ -3325,34 +3332,49 @@ function socket(io) {
                     }
 
 
-                    setInterval(async function() {
-                        
+                    setInterval(async function () {
+
+
+                        const findUser = await userModel.findOne({
+                            _id: sessionFindInCommentModel.cretedSessionUser
+                        })
+
+                        const response = {
+                            sessionId: arg.session_id,
+                            participantId: arg.participant_id,
+                            participantName: findUser.firstName,
+                            participantProfile: findUser.photo[0] ? findUser.photo[0].res : ""
+                        }
+
+                        const userRoom = `User${findUser._id}`
+                        io.to(userRoom).emit("participantsEndSuccess", response);
+
                         for (const users of joinUser) {
 
                             const findUser1 = await userModel.findOne({
-                                _id : arg.participant_id
+                                _id: arg.participant_id
                             })
-    
+
                             const response = {
-                                sessionId : arg.session_id,
+                                sessionId: arg.session_id,
                                 participantId: arg.participant_id,
                                 participantName: findUser1.firstName,
                                 participantProfile: findUser1.photo[0] ? findUser1.photo[0].res : ""
                             }
-    
-    
+
+
                             const userRoom = `User${users}`
-                            io.to(userRoom).emit("liveSessionSuccess", response);
-    
+                            io.to(userRoom).emit("participantsEndSuccess", response);
+
                             const findUser = await userModel.findOne({
                                 _id: sessionFindInCommentModel.cretedSessionUser
                             })
-    
+
                             console.log(findUser);
                             const user = await userModel.findOne({
                                 _id: users
                             })
-    
+
                             if (user.fcm_token) {
                                 const title = (findUser.firstName);
                                 const body = "timeOut!";
@@ -3368,7 +3390,7 @@ function socket(io) {
                                     true
                                 );
                             }
-    
+
                         }
 
                     }, 90000);
