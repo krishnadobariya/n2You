@@ -3119,7 +3119,7 @@ function socket(io) {
             const final_data = [...privateData, ...publicData];
 
             const userRoom = `User${arg.user_id}`
-            io.emit("liveSessionSuccess", final_data);
+            io.to(userRoom).emit("liveSessionSuccess", final_data);
 
 
         })
