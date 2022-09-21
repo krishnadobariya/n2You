@@ -2451,7 +2451,8 @@ exports.raisHandList = async (req, res, next) => {
                     const response = {
                         userId: findUser._id,
                         firstName: findUser.firstName,
-                        profile: findUser.photo[0] ? findUser.photo[0].res : ""
+                        profile: findUser.photo[0] ? findUser.photo[0].res : "",
+                        mute: data.mute
                     }
                     finalData.push(response)
                 }
@@ -3350,6 +3351,7 @@ exports.thumbUpCountInSession = async (req, res, next) => {
                     } else if (findParticipant2) {
                         await sessionComment.updateOne({
                             sessionId: req.params.session_id,
+                            "participants.participants_2.userId": req.params.participants_id
                         },
                             { $inc: { "participants.participants_2.thumbUp": 1 } },
                             { arrayFilters: [{ "i.userId": req.params.participants_id }] }

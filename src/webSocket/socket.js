@@ -2844,7 +2844,7 @@ function socket(io) {
 
                     const final_data = []
                     for (const sendComment of AllJoinUser) {
-                     
+
                         if ((sendComment.userId).toString() == (arg.user_id).toString()) {
                             const commentData = {
                                 userId: arg.user_id,
@@ -2859,7 +2859,7 @@ function socket(io) {
                         }
                     }
 
-                    for(const sendComment of AllJoinUser){
+                    for (const sendComment of AllJoinUser) {
                         const userRoom = `User${sendComment.userId}`
                         io.to(userRoom).emit("commentResponse", ...final_data);
                     }
@@ -2893,7 +2893,7 @@ function socket(io) {
 
                 } else {
                     await sessionCommentModel.updateOne({
-                        session_id: arg.session_id
+                        sessionId: arg.session_id
                     }, {
                         $push: {
                             raisHand: {
@@ -2902,8 +2902,18 @@ function socket(io) {
                         }
                     })
 
+
+                    const findUser = await userModel.findOne({
+                        _id : arg.user_id
+                    })
+                    const response = {
+                            userId: findUser._id,
+                            firstName: findUser.firstName,
+                            profile: findUser.photo[0] ? findUser.photo[0].res : "",
+                            mute: 0
+                    }
                     const userRoom = `User${findUser.cretedSessionUser}`
-                    io.to(userRoom).emit("raiseHandSuccess", "raise hand success!");
+                    io.to(userRoom).emit("raiseHandSuccess", [response]);
 
 
                 }
@@ -2929,7 +2939,7 @@ function socket(io) {
 
                 if (findUser1) {
                     await sessionCommentModel.updateOne({
-                        session_id: arg.session_id,
+                        sessionId: arg.session_id,
                         "raisHand.userId": arg.user_id
                     }, {
                         $set: {
@@ -3020,7 +3030,7 @@ function socket(io) {
 
                             publicData.push(response)
 
-                        } else if ((res.cretedSessionUser).toString() == (arg.user_id).toString()){
+                        } else if ((res.cretedSessionUser).toString() == (arg.user_id).toString()) {
                             const findUser = await userModel.findOne({
                                 _id: mongoose.Types.ObjectId(res.cretedSessionUser)
                             })
@@ -3032,9 +3042,9 @@ function socket(io) {
                                 cereatedUserName: findUser.firstName,
                                 role: 1
                             }
-        
+
                             publicData.push(response)
-                        }else {
+                        } else {
                             const findUser = await userModel.findOne({
                                 _id: mongoose.Types.ObjectId(res.cretedSessionUser)
                             })
@@ -3046,14 +3056,14 @@ function socket(io) {
                                 cereatedUserName: findUser.firstName,
                                 role: 3
                             }
-        
+
                             publicData.push(response)
                         }
                     }
 
-                    
 
-                  
+
+
 
                 } else {
 
@@ -3121,6 +3131,256 @@ function socket(io) {
             const userRoom = `User${arg.user_id}`
             io.to(userRoom).emit("liveSessionSuccess", final_data);
 
+
+        })
+
+        socket.on("timeForAllow", async (arg) => {
+
+
+            const findSession = await sessionModel.findOne({
+                _id: arg.session_id
+            })
+
+
+            if (findSession) {
+
+                const sessionFindInCommentModel = await sessionCommentModel.findOne({
+                    sessionId: arg.session_id
+                })
+
+                if (sessionFindInCommentModel) {
+
+                    const joinUser = [];
+                    for (const user of sessionFindInCommentModel.joinUser) {
+                        joinUser.push(user.userId)
+                    }
+
+
+                    console.log("findSession.participants[0].participants_1", findSession.participants[0].participants_1);
+
+                    await sessionCommentModel.updateOne({
+                        sessionId: arg.session_id,
+                    },
+                        {
+                            $set: {
+                                "liveSession.participants_1": {
+                                    userId: findSession.participants[0].participants_1,
+                                }
+
+                            }
+                        }
+                    )
+
+                    await sessionCommentModel.updateOne({
+                        sessionId: arg.session_id,
+                    },
+                        {
+                            $set: {
+                                "liveSession.participants_2": {
+                                    userId: findSession.participants[0].participants_2,
+                                }
+
+                            }
+                        }
+                    )
+
+                    await sessionCommentModel.updateOne({
+                        sessionId: arg.session_id,
+                    },
+                        {
+                            $set: {
+                                "liveSession.participants_3": {
+                                    userId: findSession.participants[0].participants_3,
+                                }
+
+                            }
+                        }
+                    )
+
+
+                    const findParticipant1 = await sessionCommentModel.findOne({
+                        sessionId: arg.session_id,
+                        "liveSession.participants_1.userId": arg.participant_id
+                    })
+                    const findParticipant2 = await sessionCommentModel.findOne({
+                        sessionId: arg.session_id,
+                        "liveSession.participants_2.userId": arg.participant_id
+                    })
+                    const findParticipant3 = await sessionCommentModel.findOne({
+                        sessionId: arg.session_id,
+                        "liveSession.participants_3.userId": arg.participant_id
+                    })
+
+                    const date = new Date;
+                    let dates = date.getDate();
+                    let months = date.getMonth()
+                    let year = date.getFullYear();
+                    let hour = date.getHours();
+                    let hours = date.getHours();
+                    let minutes = date.getMinutes();
+                    let second = date.getSeconds();
+                    const dateNow = `${year}-${months + 1}-${dates} ${hour}:${minutes}:${second}`
+                    console.log("dateNow" , dateNow);
+
+                    console.log(`${year}-${months + 1}-${dates} ${hour}:${minutes}:${second}`);
+
+                    if (findParticipant1) {
+
+                        await sessionCommentModel.updateOne({
+                            sessionId: arg.session_id,
+                            "liveSession.participants_1.userId": arg.participant_id
+                        },
+                            {
+                                $set: {
+
+                                    "liveSession.participants_1": {
+                                        userId: arg.participant_id,
+                                        allow: 1,
+                                        date: `${year}-${months + 1}-${dates} ${hour}:${minutes}:${second}`
+                                    }
+
+                                }
+                            }
+                        )
+
+                    } else if (findParticipant2) {
+
+
+                        await sessionCommentModel.updateOne({
+                            sessionId: arg.session_id,
+                            "liveSession.participants_2.userId": arg.participant_id
+                        },
+                            {
+                                $set: {
+                                    "liveSession.participants_1": {
+                                        userId: arg.participant_id,
+                                        allow: 1,
+                                        date: `${year}-${months + 1}-${dates} ${hour}:${minutes}:${second}`
+                                    }
+                                }
+                            }
+                        )
+
+                    } else if (findParticipant3) {
+
+                        await sessionCommentModel.updateOne({
+                            sessionId: arg.session_id,
+                            "liveSession.participants_2.userId": arg.participant_id
+                        },
+                            {
+                                $set: {
+                                    "liveSession.participants_1": {
+                                        userId: arg.participant_id,
+                                        allow: 1,
+                                        date: `${year}-${months + 1}-${dates} ${hour}:${minutes}:${second}`
+                                    }
+                                }
+                            }
+                        )
+                    }
+
+
+                    for (const users of joinUser) {
+
+                        const findUser1 = await userModel.findOne({
+                            _id : arg.participant_id
+                        })
+
+                        const response = {
+                            sessionId : arg.session_id,
+                            participantId: arg.participant_id,
+                            participantName: findUser1.firstName,
+                            participantProfile: findUser1.photo[0] ? findUser1.photo[0].res : ""
+                        }
+
+
+                        const userRoom = `User${users}`
+                        io.to(userRoom).emit("liveSessionSuccess", response);
+
+                        const findUser = await userModel.findOne({
+                            _id: sessionFindInCommentModel.cretedSessionUser
+                        })
+
+                        console.log(findUser);
+                        const user = await userModel.findOne({
+                            _id: users
+                        })
+
+                        if (user.fcm_token) {
+                            const title = (findUser.firstName);
+                            const body = "Allow In Session!";
+                            const text = "Session";
+                            const sendBy = (findUser._id).toString();
+                            const registrationToken = user.fcm_token
+                            Notification.sendPushNotificationFCM(
+                                registrationToken,
+                                title,
+                                body,
+                                text,
+                                sendBy,
+                                true
+                            );
+                        }
+
+                    }
+
+
+                    setInterval(async function() {
+                        
+                        for (const users of joinUser) {
+
+                            const findUser1 = await userModel.findOne({
+                                _id : arg.participant_id
+                            })
+    
+                            const response = {
+                                sessionId : arg.session_id,
+                                participantId: arg.participant_id,
+                                participantName: findUser1.firstName,
+                                participantProfile: findUser1.photo[0] ? findUser1.photo[0].res : ""
+                            }
+    
+    
+                            const userRoom = `User${users}`
+                            io.to(userRoom).emit("liveSessionSuccess", response);
+    
+                            const findUser = await userModel.findOne({
+                                _id: sessionFindInCommentModel.cretedSessionUser
+                            })
+    
+                            console.log(findUser);
+                            const user = await userModel.findOne({
+                                _id: users
+                            })
+    
+                            if (user.fcm_token) {
+                                const title = (findUser.firstName);
+                                const body = "timeOut!";
+                                const text = "Session";
+                                const sendBy = (findUser._id).toString();
+                                const registrationToken = user.fcm_token
+                                Notification.sendPushNotificationFCM(
+                                    registrationToken,
+                                    title,
+                                    body,
+                                    text,
+                                    sendBy,
+                                    true
+                                );
+                            }
+    
+                        }
+
+                    }, 90000);
+
+
+                } else {
+                    io.emit("timeForAllowSuccess", "not in live session");
+                }
+
+            } else {
+                io.emit("timeForAllowSuccess", "session not found");
+            }
 
         })
     })

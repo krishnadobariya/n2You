@@ -77,8 +77,34 @@ const sessionCommentSchema = mongoose.Schema({
              type:Number,
              default: 0
             }
-         }]
+         }],
     }],
+    liveSession:[{
+        participants_1: [{
+            userId : mongoose.Schema.Types.ObjectId,
+            allow: {
+                type: Number,
+                default: 0
+            },
+            date:String
+         }],
+         participants_2: [{
+             userId : mongoose.Schema.Types.ObjectId,
+             allow: {   
+                type: Number,
+                default: 0
+            },
+            date:String
+          }],
+          participants_3: [{
+             userId : mongoose.Schema.Types.ObjectId,
+             allow: {
+                type: Number,
+                default: 0
+            },
+            date:String
+          }], 
+     }]
 
 }, {
     timestamps: true
