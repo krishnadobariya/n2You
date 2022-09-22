@@ -54,6 +54,9 @@ exports.sessionCreate = async (req, res, next) => {
             })
 
             const saveData = await createSession.save();
+            res.status(status.CREATED).json(
+                new APIResponse("successfully Session Created!", "true", 201, "1")
+            )
 
             if (req.body.room_type == "Public") {
 
@@ -66,11 +69,17 @@ exports.sessionCreate = async (req, res, next) => {
                 const p2 = req.body.participants_2 ? req.body.participants_2 : ""
                 const p3 = req.body.participants_3 ? req.body.participants_3 : ""
 
+                const findUser = await userModel.find({
+                    _id : {
+                        $ne : req.body.creted_session_user
+                    },
+                    polyDating : 0
+                })
 
-                for (const allRequestedEmail of findAllFriend.RequestedEmails) {
+                for (const allRequestedEmail of findUser) {
 
-                    if (((allRequestedEmail.userId).toString() != (p1).toString()) && ((allRequestedEmail.userId).toString() != (p2).toString()) && ((allRequestedEmail.userId).toString() != (p3).toString())) {
-                        allRequestedEmails.push(allRequestedEmail.userId)
+                    if (((allRequestedEmail._id).toString() != (p1).toString()) && ((allRequestedEmail._id).toString() != (p2).toString()) && ((allRequestedEmail._id).toString() != (p3).toString())) {
+                        allRequestedEmails.push(allRequestedEmail._id)
                     }
 
                 }
@@ -281,9 +290,7 @@ exports.sessionCreate = async (req, res, next) => {
 
             }
 
-            res.status(status.CREATED).json(
-                new APIResponse("successfully Session Created!", "true", 201, "1")
-            )
+           
         } else {
             res.status(status.NOT_FOUND).json(
                 new APIResponse("usernot found!", "false", 404, "0")
@@ -3314,7 +3321,7 @@ exports.invitedInSession = async (req, res, next) => {
         const data = allInvited.length;
         const pageCount = Math.ceil(data / limit);
 
-        if (allInvited[0] == undefined) {
+        if (response[0] == undefined) {
             res.status(status.OK).json({
                 "message": "Not have any Invited!",
                 "status": true,
@@ -3354,10 +3361,9 @@ exports.mySession = async (req, res, next) => {
             cretedSessionUser: req.params.user_id
         })
 
+        console.log(findUserInsession);
+
         for (const findMySession of findUserInsession) {
-
-
-
             var userSessionDate = new Date(new Date(findMySession.selectedDate).toUTCString())
             let userSessionDates = userSessionDate.getUTCDate();
             let userSessionmonth = userSessionDate.getUTCMonth();
@@ -3681,11 +3687,10 @@ exports.mySession = async (req, res, next) => {
         const pageCount = Math.ceil(data / limit);
 
 
-
        const res1 = mySession.sort((a, b) => new Date(a.selectedDate) - new Date(b.selectedDate))
         const response = [...res1 , ...mySession1]
 
-        if (mySession[0] == undefined) {
+        if (response[0] == undefined) {
             res.status(status.OK).json({
                 "message": "I don't create Any Session!",
                 "status": true,
