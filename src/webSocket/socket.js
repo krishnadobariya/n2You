@@ -2919,8 +2919,11 @@ function socket(io) {
                         profile: findUser.photo[0] ? findUser.photo[0].res : "",
                         mute: 0
                     }
+
+                    console.log(response);
                     const userRoom = `User${arg.user_id}`
                     console.log("raiseHandSuccess :" , userRoom);
+                    console.log(response);
                     io.to(userRoom).emit("raiseHandSuccess", response);
 
 
