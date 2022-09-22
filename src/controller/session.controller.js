@@ -4981,3 +4981,134 @@ exports.thumbUpCountInSession = async (req, res, next) => {
         )
     }
 }
+
+
+exports.sessionInfo = async(req,res,next) => {
+    try {
+
+        const sessionFind = await sessionModel.findOne({
+            _id : req.params.session_id
+        })
+
+        if(sessionFind){
+
+
+            const session = await sessionComment.findOne({
+                sessionId : req.params.session_id
+            })
+
+            if(session){
+
+            const allPrticipant = [];
+
+            for(const participant of session.joinUser){
+                if(participant.status == 2){
+                    allPrticipant.push(participant.userId)
+                }
+            }
+
+            console.log(allPrticipant);
+
+            const InSession =  session.raisHand
+            console.log(InSession);
+
+            if(InSession == undefined){
+
+                const final_response = [];
+                for(const user of allPrticipant){
+
+                    const findUser = await userModel.findOne({
+                        _id : user
+                    })
+                    const response = {
+                    userId: (findUser._id).toString(),
+                    profile: findUser.photo[0] ? findUser.photo[0].res : "",
+                    userName : findUser.firstName,
+                    sessionId : req.params.session_id,
+                    status : 0
+                    }
+
+                    final_response.push(response)
+                }
+                res.status(status.OK).json(
+                    new APIResponse("session information!", "true", 200, "1", final_response)
+                )
+              
+
+               
+            }else{
+
+                const raiseHandUser = [];
+                const data = session.raisHand
+                for(const raiseHand of data){
+                    raiseHandUser.push({
+                        userId : raiseHand.userId,
+                        status : raiseHand.mute
+                    })
+                }
+
+                const final_response = [];
+
+                for(const res of allPrticipant){
+                    for(res1 of raiseHandUser){
+
+                        if((res).toString() == (res1.userId).toString()){
+
+                            const findUser = await userModel.findOne({
+                                _id : res1.userId
+                            })
+
+                            const response = {
+                                userId: (findUser._id).toString(),
+                                profile: findUser.photo[0] ? findUser.photo[0].res : "",
+                                userName : findUser.firstName,
+                                sessionId : req.params.session_id,
+                                status : res1.status
+                                }
+                        
+                            final_response.push(response)
+                        }else{
+                            const findUser = await userModel.findOne({
+                                _id : res
+                            })
+
+                            const response = {
+                                userId: (findUser._id).toString(),
+                                profile: findUser.photo[0] ? findUser.photo[0].res : "",
+                                userName : findUser.firstName,
+                                sessionId : req.params.session_id,
+                                status : 0
+                                }
+                        
+                            final_response.push(response)
+                        }
+                    }
+                }
+
+                let uniqueObjArray = [...new Map(final_response.map((item) => [item["userId"], item])).values()];
+
+                res.status(status.OK).json(
+                    new APIResponse("session information!", "true", 200, "1", uniqueObjArray)
+                )
+               
+            }
+
+            }else{
+                res.status(status.NOT_FOUND).json(
+                    new APIResponse("session not live", "true", 404, "1", )
+                )
+            }
+
+        }else{
+            res.status(status.NOT_FOUND).json(
+                new APIResponse("session not found", "true", 404, "1", )
+            )
+        }
+        
+    } catch (error) {
+        console.log("error", error);
+        res.status(status.INTERNAL_SERVER_ERROR).json(
+            new APIResponse("Something Went Wrong", "false", 500, "0", error.message)
+        )
+    }
+}
