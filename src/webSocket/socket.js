@@ -2002,9 +2002,12 @@ function socket(io) {
                 _id: arg.session_id
             })
 
+            console.log("joinSession" , joinSession);
+
             const p1 = findIdInSession.participants[0].participants_1 == null ? "" : findIdInSession.participants[0].participants_1
             const p2 = findIdInSession.participants[0].participants_2 == null ? "" : findIdInSession.participants[0].participants_2
             const p3 = findIdInSession.participants[0].participants_3 == null ? "" : findIdInSession.participants[0].participants_3
+
 
             if (findIdInSession) {
 
@@ -2275,6 +2278,8 @@ function socket(io) {
                     }
                 } else if ((p1).toString() == (arg.create_session_user).toString()) {
 
+
+                    console.log("p1");
                     const commentSession = await sessionCommentModel.findOne({
                         sessionId: arg.session_id,
                         "joinUser.userId": mongoose.Types.ObjectId(p1)
@@ -2380,6 +2385,8 @@ function socket(io) {
 
                 } else if ((p2).toString() == (arg.create_session_user).toString()) {
 
+                    console.log("p2");
+
                     const commentSession = await sessionCommentModel.findOne({
                         sessionId: arg.session_id,
                         "joinUser.userId": mongoose.Types.ObjectId(p2)
@@ -2484,6 +2491,7 @@ function socket(io) {
 
                 } else if ((p3).toString() == (arg.create_session_user).toString()) {
 
+                    console.log("p3");
                     const commentSession = await sessionCommentModel.findOne({
                         sessionId: arg.session_id,
                         "joinUser.userId": mongoose.Types.ObjectId(p3)
@@ -2587,10 +2595,91 @@ function socket(io) {
                     }
                     io.emit("sessionJoinSuccess", "session started");
                 } else {
+
+
                     const commentSession = await sessionCommentModel.findOne({
                         sessionId: arg.session_id,
                         "joinUser.userId": mongoose.Types.ObjectId(arg.create_session_user)
                     })
+
+                    const allRequestedEmails = [];
+
+                    const sessionUser = findIdInSession.cretedSessionUser == null ? "" : findIdInSession.cretedSessionUser
+                    const p2 = findIdInSession.participants[0].participants_2 == null ? "" : findIdInSession.participants[0].participants_2
+                    const p1 = findIdInSession.participants[0].participants_1 == null ? "" : findIdInSession.participants[0].participants_1
+                    const p3 = findIdInSession.participants[0].participants_3 == null ? "" : findIdInSession.participants[0].participants_3
+
+                    if (sessionUser) {
+                        allRequestedEmails.push(findIdInSession.cretedSessionUser)
+                    }
+                    if (p2) {
+                        allRequestedEmails.push(findIdInSession.participants[0].participants_2)
+                    }
+                    if (p1) {
+                        allRequestedEmails.push(findIdInSession.participants[0].participants_1)
+                    } if (p3) {
+                        allRequestedEmails.push(findIdInSession.participants[0].participants_3)
+                    }
+
+
+                    for (const notification of allRequestedEmails) {
+
+                        const findUser = await userModel.findOne({
+                            _id: notification
+                        })
+
+                        const findCreateSessionUser = await userModel.findOne({
+                            _id: findIdInSession.participants[0].participants_3
+                        })
+                        if (findUser.fcm_token) {
+                            const title = findCreateSessionUser.firstName;
+                            const body = `session is joing by ${findCreateSessionUser.firstName}`;
+
+                            const text = "join session";
+                            const sendBy = (findCreateSessionUser._id).toString();
+                            const registrationToken = findUser.fcm_token
+                            Notification.sendPushNotificationFCM(
+                                registrationToken,
+                                title,
+                                body,
+                                text,
+                                sendBy,
+                                true
+                            );
+                        }
+
+
+                        const findInNotification = await notificationModel.findOne({
+                            userId: notification
+                        })
+
+                        if (findInNotification) {
+
+                            await notificationModel.updateOne({
+                                userId: notification
+                            }, {
+                                $push: {
+                                    notifications: {
+                                        notifications: `session started which one is created by ${findCreateSessionUser.firstName}`,
+                                        userId: findCreateSessionUser._id,
+                                        status: 9
+                                    }
+                                }
+                            })
+
+                        } else {
+                            const savedata = notificationModel({
+                                userId: notification,
+                                notifications: {
+                                    notifications: `session started which one is created by ${findCreateSessionUser.firstName}`,
+                                    userId: findCreateSessionUser._id,
+                                    status: 9
+                                }
+                            })
+                            await savedata.save();
+
+                        }
+                    }
 
                     await sessionModel.updateOne(
                         {
@@ -3239,11 +3328,6 @@ function socket(io) {
                             publicData.push(response)
                         }
                     }
-
-
-
-
-
                 } else {
 
                     for (const participant of res.participants) {
