@@ -22,6 +22,7 @@ exports.sessionCreate = async (req, res, next) => {
             _id: req.body.creted_session_user
         })
 
+
         if (findUserInUserModel) {
 
             console.log("req.body.selected_date", req.body.selected_date);
@@ -61,15 +62,17 @@ exports.sessionCreate = async (req, res, next) => {
 
                 const allRequestedEmails = [];
                 const findUser = await userModel.find({
+                    polyDating : 0,
                     _id : {
-                        $ne : req.body.creted_session_user
-                    },
-                    polyDating : 0
+                        $ne : mongoose.Types.ObjectId(req.body.creted_session_user)
+                    }
                 })
               
-                const findAllFriend = await requestsModel.findOne({
-                    userId: req.body.creted_session_user
-                })
+                // console.log(findUser);
+                for(const find of findUser){
+                    console.log(find._id);
+                }
+                
 
                 const p1 = req.body.participants_1 ? req.body.participants_1 : ""
                 const p2 = req.body.participants_2 ? req.body.participants_2 : ""
@@ -84,6 +87,8 @@ exports.sessionCreate = async (req, res, next) => {
                     }
 
                 }
+
+                // console.log("allRequestedEmails" , allRequestedEmails);
                 const invitedUsers = [];
                 if (p1) {
                     invitedUsers.push(mongoose.Types.ObjectId(req.body.participants_1))
@@ -96,6 +101,8 @@ exports.sessionCreate = async (req, res, next) => {
                 }
 
 
+                console.log("allRequestedEmails" , allRequestedEmails);
+                console.log("invitedUsers" , invitedUsers);
 
                 for (const notification of allRequestedEmails) {
                     const findUser = await userModel.findOne({
@@ -151,6 +158,7 @@ exports.sessionCreate = async (req, res, next) => {
                     }
                 }
 
+               
                 for (const invitedUser of invitedUsers) {
 
                     const findUser = await userModel.findOne({
@@ -290,7 +298,7 @@ exports.sessionCreate = async (req, res, next) => {
                 }
 
             }
-            
+
             res.status(status.CREATED).json(
                 new APIResponse("successfully Session Created!", "true", 201, "1")
             )
