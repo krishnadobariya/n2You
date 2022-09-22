@@ -2919,8 +2919,11 @@ function socket(io) {
                         profile: findUser.photo[0] ? findUser.photo[0].res : "",
                         mute: 0
                     }
-                    const userRoom = `User${findUser.cretedSessionUser}`
+                    const userRoom = `User${arg.user_id}`
+                    console.log("raiseHandSuccess :" , userRoom);
                     io.to(userRoom).emit("raiseHandSuccess", response);
+
+
                 }
             } else {
                 io.emit("raiseHandSuccess", "Not Found Session!");
@@ -2940,8 +2943,6 @@ function socket(io) {
                     sessionId: arg.session_id,
                     "raisHand.userId": arg.user_id
                 })
-
-                console.log(findUser1);
 
 
                 if (findUser1) {
