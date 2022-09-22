@@ -2921,7 +2921,7 @@ function socket(io) {
                     }
 
                     console.log(response);
-                    const userRoom = `User${arg.user_id}`
+                    const userRoom = `User${findUser1.cretedSessionUser}`
                     console.log("raiseHandSuccess :" , userRoom);
                     console.log(response);
                     io.to(userRoom).emit("raiseHandSuccess", response);
