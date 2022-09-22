@@ -2920,8 +2920,12 @@ function socket(io) {
                         mute: 0
                     }
 
+                    const sessionUser = await sessionModel.findOne({
+                        _id: arg.session_id
+                    })
+
                     console.log(response);
-                    const userRoom = `User${findUser.cretedSessionUser}`
+                    const userRoom = `User${sessionUser.cretedSessionUser}`
                     console.log("raiseHandSuccess :" , userRoom);
                     console.log(response);
                     io.to(userRoom).emit("raiseHandSuccess", response);
