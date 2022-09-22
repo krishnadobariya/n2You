@@ -2592,6 +2592,13 @@ function socket(io) {
                         "joinUser.userId": mongoose.Types.ObjectId(arg.create_session_user)
                     })
 
+                    await sessionModel.updateOne(
+                        {
+                            _id: arg.session_id,
+                        },
+                        { $inc: { countJoinUser: 1 } }
+                    )
+
                     if (commentSession) { } else {
                         await sessionCommentModel.updateOne({
                             sessionId: arg.session_id,
