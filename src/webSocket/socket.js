@@ -2919,7 +2919,7 @@ function socket(io) {
                         profile: findUser.photo[0] ? findUser.photo[0].res : "",
                         mute: 0
                     }
-                    const userRoom = `User${arg.user_id}`
+                    const userRoom = `User${findUser.cretedSessionUser}`
                     io.to(userRoom).emit("raiseHandSuccess", response);
                 }
             } else {
