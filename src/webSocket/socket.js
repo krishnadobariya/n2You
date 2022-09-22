@@ -2002,8 +2002,6 @@ function socket(io) {
                 _id: arg.session_id
             })
 
-            console.log("joinSession" , joinSession);
-
             const p1 = findIdInSession.participants[0].participants_1 == null ? "" : findIdInSession.participants[0].participants_1
             const p2 = findIdInSession.participants[0].participants_2 == null ? "" : findIdInSession.participants[0].participants_2
             const p3 = findIdInSession.participants[0].participants_3 == null ? "" : findIdInSession.participants[0].participants_3
