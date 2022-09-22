@@ -3125,11 +3125,8 @@ function socket(io) {
                         "raisHand.userId": arg.user_id
                     }, {
                         $set: {
-                            raisHand: {
-                                mute: 1,
-                                userId: arg.user_id
-                            }
-                        }
+                            "raisHand.$.mute": 1
+                        }   
                     })
 
                     const userRoom = `User${arg.user_id}`
