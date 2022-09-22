@@ -2920,7 +2920,7 @@ function socket(io) {
                         mute: 0
                     }
                     const userRoom = `User${findUser.cretedSessionUser}`
-                    io.emit("raiseHandSuccess", response);
+                    io.to(userRoom).emit("raiseHandSuccess", response);
 
 
                 }
