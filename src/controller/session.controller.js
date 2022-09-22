@@ -52,6 +52,13 @@ exports.sessionCreate = async (req, res, next) => {
                 },
                 RoomType: req.body.room_type
             })
+            const allRequestedEmails = [];
+            const findUser = await userModel.find({
+                _id : {
+                    $ne : req.body.creted_session_user
+                },
+                polyDating : 0
+            })
 
             const saveData = await createSession.save();
             res.status(status.CREATED).json(
@@ -60,7 +67,7 @@ exports.sessionCreate = async (req, res, next) => {
 
             if (req.body.room_type == "Public") {
 
-                const allRequestedEmails = [];
+              
                 const findAllFriend = await requestsModel.findOne({
                     userId: req.body.creted_session_user
                 })
@@ -69,12 +76,7 @@ exports.sessionCreate = async (req, res, next) => {
                 const p2 = req.body.participants_2 ? req.body.participants_2 : ""
                 const p3 = req.body.participants_3 ? req.body.participants_3 : ""
 
-                const findUser = await userModel.find({
-                    _id : {
-                        $ne : req.body.creted_session_user
-                    },
-                    polyDating : 0
-                })
+              
 
                 for (const allRequestedEmail of findUser) {
 
