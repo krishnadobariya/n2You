@@ -2943,6 +2943,8 @@ function socket(io) {
                     "raisHand.userId": arg.user_id
                 })
 
+                console.log(findUser1);
+
 
                 if (findUser1) {
                     await sessionCommentModel.updateOne({
@@ -2958,10 +2960,10 @@ function socket(io) {
                     })
 
                     const userRoom = `User${arg.user_id}`
-                    io.to(userRoom).emit("raiseHandAcceptedSuccess", "raise hand success!");
+                    io.to(userRoom).emit("raiseHandAcceptedSuccess", "raise hand accept success!");
 
                 } else {
-                    io.emit("raiseHandAcceptedSuccess", "already raise hand list!");
+                    io.emit("raiseHandAcceptedSuccess", "no found!");
                 }
             } else {
                 io.emit("raiseHandAcceptedSuccess", "Not Found Session!");
