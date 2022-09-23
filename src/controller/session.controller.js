@@ -5006,7 +5006,7 @@ exports.sessionInfo = async(req,res,next) => {
                 }
             }
 
-        
+            const InSession =  session.liveSession
             if(InSession[0].participants_1[0] == undefined){
 
                 const final_response = [];
@@ -5033,8 +5033,6 @@ exports.sessionInfo = async(req,res,next) => {
                
             }else{
 
-
-                console.log("InSession" , InSession);
 
                 const raiseHandUser = [];
                 const data = session.liveSession
