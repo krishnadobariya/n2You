@@ -5006,9 +5006,8 @@ exports.sessionInfo = async(req,res,next) => {
                 }
             }
 
-            const InSession =  session.liveSession
-
-            if(InSession == undefined){
+        
+            if(InSession[0].participants_1[0] == undefined){
 
                 const final_response = [];
                 for(const user of allPrticipant){
@@ -5055,7 +5054,7 @@ exports.sessionInfo = async(req,res,next) => {
                         userId : data[0].participants_3[0].userId,
                         status : data[0].participants_3[0].allow
                     })
-                    
+
                     console.log("raiseHandUser" , raiseHandUser);
                 const final_response = [];
                 const userId = [];
