@@ -2015,7 +2015,6 @@ function socket(io) {
                         sessionId: arg.session_id
                     })
 
-                    console.log(commentSession);
                     if (commentSession) { } else {
 
                         const saveData = sessionCommentModel({
@@ -3513,7 +3512,7 @@ function socket(io) {
                         },
                             {
                                 $set: {
-                                    "liveSession.participants_1": {
+                                    "liveSession.participants_2": {
                                         userId: arg.participant_id,
                                         allow: 1,
                                         date: `${year}-${months + 1}-${dates} ${hour}:${minutes}:${second}`
@@ -3530,7 +3529,7 @@ function socket(io) {
                         },
                             {
                                 $set: {
-                                    "liveSession.participants_1": {
+                                    "liveSession.participants_3": {
                                         userId: arg.participant_id,
                                         allow: 1,
                                         date: `${year}-${months + 1}-${dates} ${hour}:${minutes}:${second}`
@@ -3594,25 +3593,49 @@ function socket(io) {
                         })
 
 
-                        const findUser1 = await sessionCommentModel.findOne({
+                        const findParticipant1 = await sessionCommentModel.findOne({
                             sessionId: arg.session_id,
-                            "raisHand.userId": arg.participant_id
+                            "liveSession.participants_1.userId": arg.participant_id
+                        })
+                        const findParticipant2 = await sessionCommentModel.findOne({
+                            sessionId: arg.session_id,
+                            "liveSession.participants_2.userId": arg.participant_id
+                        })
+                        const findParticipant3 = await sessionCommentModel.findOne({
+                            sessionId: arg.session_id,
+                            "liveSession.participants_3.userId": arg.participant_id
                         })
         
-        
-                        if (findUser1) {
+                        if (findParticipant1) {
                             await sessionCommentModel.updateOne({
                                 sessionId: arg.session_id,
-                                "raisHand.userId": arg.participant_id
+                                "liveSession.participants_1.userId": arg.participant_id
                             }, {
                                 $set: {
-                                    "raisHand.$.mute": 3    
+                                    "liveSession.participants_1.allow": 3    
                                 }   
                             })
         
         
-                        } else {
-                           
+                        } else if(findParticipant2){
+                            await sessionCommentModel.updateOne({
+                                sessionId: arg.session_id,
+                                "liveSession.participants_2.userId": arg.participant_id
+                            }, {
+                                $set: {
+                                    "liveSession.participants_2.allow": 3    
+                                }   
+                            })
+        
+                        }else if(findParticipant3){
+                            await sessionCommentModel.updateOne({
+                                sessionId: arg.session_id,
+                                "liveSession.participants_3.userId": arg.participant_id
+                            }, {
+                                $set: {
+                                    "liveSession.participants_3.allow": 3    
+                                }   
+                            })
                         }
 
 

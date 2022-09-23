@@ -4991,8 +4991,7 @@ exports.sessionInfo = async(req,res,next) => {
         })
 
         if(sessionFind){
-
-
+            
             const session = await sessionComment.findOne({
                 sessionId : req.params.session_id
             })
@@ -5007,10 +5006,7 @@ exports.sessionInfo = async(req,res,next) => {
                 }
             }
 
-            console.log(allPrticipant);
-
-            const InSession =  session.raisHand
-            console.log(InSession);
+            const InSession =  session.liveSession
 
             if(InSession == undefined){
 
@@ -5038,15 +5034,29 @@ exports.sessionInfo = async(req,res,next) => {
                
             }else{
 
-                const raiseHandUser = [];
-                const data = session.raisHand
-                for(const raiseHand of data){
-                    raiseHandUser.push({
-                        userId : raiseHand.userId,
-                        status : raiseHand.mute
-                    })
-                }
 
+                console.log("InSession" , InSession);
+
+                const raiseHandUser = [];
+                const data = session.liveSession
+                console.log(data[0]);
+
+                    raiseHandUser.push({
+                        userId : data[0].participants_1[0].userId,
+                        status : data[0].participants_1[0].allow
+                    })
+
+                    raiseHandUser.push({
+                        userId : data[0].participants_2[0].userId,
+                        status : data[0].participants_2[0].allow
+                    })
+
+                    raiseHandUser.push({
+                        userId : data[0].participants_3[0].userId,
+                        status : data[0].participants_3[0].allow
+                    })
+                    
+                    console.log("raiseHandUser" , raiseHandUser);
                 const final_response = [];
                 const userId = [];
 
