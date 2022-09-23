@@ -5007,7 +5007,30 @@ exports.sessionInfo = async(req,res,next) => {
             }
 
             const InSession =  session.liveSession
-            if(InSession[0].participants_1[0] == undefined){
+            console.log(InSession);
+            if(InSession[0] == undefined){
+                const final_response = [];
+                for(const user of allPrticipant){
+
+                    const findUser = await userModel.findOne({
+                        _id : user
+                    })
+                    const response = {
+                    userId: (findUser._id).toString(),
+                    profile: findUser.photo[0] ? findUser.photo[0].res : "",
+                    userName : findUser.firstName,
+                    sessionId : req.params.session_id,
+                    status : 0
+                    }
+
+                    final_response.push(response)
+                }
+                res.status(status.OK).json(
+                    new APIResponse("session information!", "true", 200, "1", final_response)
+                )
+              
+            }
+            else if(InSession[0].participants_1[0] == undefined){
 
                 const final_response = [];
                 for(const user of allPrticipant){
