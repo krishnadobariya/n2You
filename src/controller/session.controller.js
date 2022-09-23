@@ -53,32 +53,32 @@ exports.sessionCreate = async (req, res, next) => {
                 },
                 RoomType: req.body.room_type
             })
-          
+
 
             const saveData = await createSession.save();
-          
+
 
             if (req.body.room_type == "Public") {
 
                 const allRequestedEmails = [];
                 const findUser = await userModel.find({
-                    polyDating : 0,
-                    _id : {
-                        $ne : mongoose.Types.ObjectId(req.body.creted_session_user)
+                    polyDating: 0,
+                    _id: {
+                        $ne: mongoose.Types.ObjectId(req.body.creted_session_user)
                     }
                 })
-              
+
                 // console.log(findUser);
-                for(const find of findUser){
+                for (const find of findUser) {
                     console.log(find._id);
                 }
-                
+
 
                 const p1 = req.body.participants_1 ? req.body.participants_1 : ""
                 const p2 = req.body.participants_2 ? req.body.participants_2 : ""
                 const p3 = req.body.participants_3 ? req.body.participants_3 : ""
 
-              
+
 
                 for (const allRequestedEmail of findUser) {
 
@@ -101,8 +101,8 @@ exports.sessionCreate = async (req, res, next) => {
                 }
 
 
-                console.log("allRequestedEmails" , allRequestedEmails);
-                console.log("invitedUsers" , invitedUsers);
+                console.log("allRequestedEmails", allRequestedEmails);
+                console.log("invitedUsers", invitedUsers);
 
                 for (const notification of allRequestedEmails) {
                     const findUser = await userModel.findOne({
@@ -158,7 +158,7 @@ exports.sessionCreate = async (req, res, next) => {
                     }
                 }
 
-               
+
                 for (const invitedUser of invitedUsers) {
 
                     const findUser = await userModel.findOne({
@@ -302,7 +302,7 @@ exports.sessionCreate = async (req, res, next) => {
             res.status(status.CREATED).json(
                 new APIResponse("successfully Session Created!", "true", 201, "1")
             )
-           
+
         } else {
             res.status(status.NOT_FOUND).json(
                 new APIResponse("usernot found!", "false", 404, "0")
@@ -445,405 +445,405 @@ exports.publicSession = async (req, res, next) => {
                 }
 
                 if (publicSessionwithUserDetails.sessionEndOrNot == false) {
-                    
-                if (participants1Find && participants2Find && participants3Find) {
-                    // const sessionDetail = 
-                    // const response = {
-                    //     sessionDetail
-                    // }
 
-                    const dates = publicSessionwithUserDetails.selectedDate;
-                    const finalDate = new Date(dates)
-                    let month = finalDate.toLocaleString('en-us', { month: 'long' });
-                    let months = finalDate.getMonth();
-                    let date = finalDate.getDate();
-                    let year = finalDate.getFullYear();
-                    let hour = finalDate.getHours();
+                    if (participants1Find && participants2Find && participants3Find) {
+                        // const sessionDetail = 
+                        // const response = {
+                        //     sessionDetail
+                        // }
 
-                    let hours = finalDate.getHours();
-                    let minutes = finalDate.getMinutes();
-                    let ampm = hours >= 12 ? 'pm' : 'am';
-                    hours = hours % 12;
-                    hours = hours ? hours : 12;
-                    minutes = minutes.toString().padStart(2, '0');
-                    let strTime = hours + ':' + minutes + ' ' + ampm;
+                        const dates = publicSessionwithUserDetails.selectedDate;
+                        const finalDate = new Date(dates)
+                        let month = finalDate.toLocaleString('en-us', { month: 'long' });
+                        let months = finalDate.getMonth();
+                        let date = finalDate.getDate();
+                        let year = finalDate.getFullYear();
+                        let hour = finalDate.getHours();
 
-                    publicSession.push({
-                        _id: publicSessionwithUserDetails._id,
-                        cretedSessionUserId: findUser._id,
-                        cretedSessionUsername: findUser.firstName,
-                        selectedDate: `${year}-${months + 1}-${date} ${hour}:${minutes}`,
-                        selectedTime: publicSessionwithUserDetails.selectedTime,
-                        roomType: publicSessionwithUserDetails.RoomType,
-                        detail: publicSessionwithUserDetails.started == true ? `${publicSessionwithUserDetails.countJoinUser} people joining` : `${date} ${month} ${year} ${strTime}`,
-                        isLive: publicSessionwithUserDetails.started,
-                        isAbleToJoin: publicSessionwithUserDetails.started,
-                        cretedSessionUserphoto: findUser.photo == undefined ? "" : findUser.photo[0] ? findUser.photo[0].res : "",
-                        participants: [
-                            participants_1,
-                            participants_2,
-                            participants_3
-                        ]
-                    })
-                } else if (participants1Find == null && participants2Find && participants3Find) {
-                    // const sessionDetail = 
-                    // const response = {
-                    //     sessionDetail
-                    // }
+                        let hours = finalDate.getHours();
+                        let minutes = finalDate.getMinutes();
+                        let ampm = hours >= 12 ? 'pm' : 'am';
+                        hours = hours % 12;
+                        hours = hours ? hours : 12;
+                        minutes = minutes.toString().padStart(2, '0');
+                        let strTime = hours + ':' + minutes + ' ' + ampm;
 
-                    const dates = publicSessionwithUserDetails.selectedDate;
-                    const finalDate = new Date(dates)
-                    let month = finalDate.toLocaleString('en-us', { month: 'long' });
-                    let months = finalDate.getMonth();
-                    let date = finalDate.getDate();
-                    let year = finalDate.getFullYear();
-                    let hour = finalDate.getHours();
+                        publicSession.push({
+                            _id: publicSessionwithUserDetails._id,
+                            cretedSessionUserId: findUser._id,
+                            cretedSessionUsername: findUser.firstName,
+                            selectedDate: `${year}-${months + 1}-${date} ${hour}:${minutes}`,
+                            selectedTime: publicSessionwithUserDetails.selectedTime,
+                            roomType: publicSessionwithUserDetails.RoomType,
+                            detail: publicSessionwithUserDetails.started == true ? `${publicSessionwithUserDetails.countJoinUser} people joining` : `${date} ${month} ${year} ${strTime}`,
+                            isLive: publicSessionwithUserDetails.started,
+                            isAbleToJoin: publicSessionwithUserDetails.started,
+                            cretedSessionUserphoto: findUser.photo == undefined ? "" : findUser.photo[0] ? findUser.photo[0].res : "",
+                            participants: [
+                                participants_1,
+                                participants_2,
+                                participants_3
+                            ]
+                        })
+                    } else if (participants1Find == null && participants2Find && participants3Find) {
+                        // const sessionDetail = 
+                        // const response = {
+                        //     sessionDetail
+                        // }
 
-                    let hours = finalDate.getHours();
-                    let minutes = finalDate.getMinutes();
-                    let ampm = hours >= 12 ? 'pm' : 'am';
-                    hours = hours % 12;
-                    hours = hours ? hours : 12;
-                    minutes = minutes.toString().padStart(2, '0');
-                    let strTime = hours + ':' + minutes + ' ' + ampm;
+                        const dates = publicSessionwithUserDetails.selectedDate;
+                        const finalDate = new Date(dates)
+                        let month = finalDate.toLocaleString('en-us', { month: 'long' });
+                        let months = finalDate.getMonth();
+                        let date = finalDate.getDate();
+                        let year = finalDate.getFullYear();
+                        let hour = finalDate.getHours();
 
-                    publicSession.push({
-                        _id: publicSessionwithUserDetails._id,
-                        cretedSessionUserId: findUser._id,
-                        cretedSessionUsername: findUser.firstName,
-                        selectedDate: `${year}-${months + 1}-${date} ${hour}:${minutes}`,
-                        selectedTime: publicSessionwithUserDetails.selectedTime,
-                        roomType: publicSessionwithUserDetails.RoomType,
-                        detail: publicSessionwithUserDetails.started == true ? `${publicSessionwithUserDetails.countJoinUser} people joining` : `${date} ${month} ${year} ${strTime}`,
-                        isLive: publicSessionwithUserDetails.started,
-                        isAbleToJoin: publicSessionwithUserDetails.started,
-                        cretedSessionUserphoto: findUser.photo == undefined ? "" : findUser.photo[0] ? findUser.photo[0].res : "",
-                        participants: [
-                            participants_2,
-                            participants_3
-                        ]
-                    })
-                } else if (participants1Find && participants2Find == null && participants3Find) {
+                        let hours = finalDate.getHours();
+                        let minutes = finalDate.getMinutes();
+                        let ampm = hours >= 12 ? 'pm' : 'am';
+                        hours = hours % 12;
+                        hours = hours ? hours : 12;
+                        minutes = minutes.toString().padStart(2, '0');
+                        let strTime = hours + ':' + minutes + ' ' + ampm;
 
-                    const dates = publicSessionwithUserDetails.selectedDate;
-                    const finalDate = new Date(dates)
-                    let month = finalDate.toLocaleString('en-us', { month: 'long' });
-                    let months = finalDate.getMonth();
-                    let date = finalDate.getDate();
-                    let year = finalDate.getFullYear();
-                    let hour = finalDate.getHours();
+                        publicSession.push({
+                            _id: publicSessionwithUserDetails._id,
+                            cretedSessionUserId: findUser._id,
+                            cretedSessionUsername: findUser.firstName,
+                            selectedDate: `${year}-${months + 1}-${date} ${hour}:${minutes}`,
+                            selectedTime: publicSessionwithUserDetails.selectedTime,
+                            roomType: publicSessionwithUserDetails.RoomType,
+                            detail: publicSessionwithUserDetails.started == true ? `${publicSessionwithUserDetails.countJoinUser} people joining` : `${date} ${month} ${year} ${strTime}`,
+                            isLive: publicSessionwithUserDetails.started,
+                            isAbleToJoin: publicSessionwithUserDetails.started,
+                            cretedSessionUserphoto: findUser.photo == undefined ? "" : findUser.photo[0] ? findUser.photo[0].res : "",
+                            participants: [
+                                participants_2,
+                                participants_3
+                            ]
+                        })
+                    } else if (participants1Find && participants2Find == null && participants3Find) {
 
-                    let hours = finalDate.getHours();
-                    let minutes = finalDate.getMinutes();
-                    let ampm = hours >= 12 ? 'pm' : 'am';
-                    hours = hours % 12;
-                    hours = hours ? hours : 12;
-                    minutes = minutes.toString().padStart(2, '0');
-                    let strTime = hours + ':' + minutes + ' ' + ampm;
+                        const dates = publicSessionwithUserDetails.selectedDate;
+                        const finalDate = new Date(dates)
+                        let month = finalDate.toLocaleString('en-us', { month: 'long' });
+                        let months = finalDate.getMonth();
+                        let date = finalDate.getDate();
+                        let year = finalDate.getFullYear();
+                        let hour = finalDate.getHours();
+
+                        let hours = finalDate.getHours();
+                        let minutes = finalDate.getMinutes();
+                        let ampm = hours >= 12 ? 'pm' : 'am';
+                        hours = hours % 12;
+                        hours = hours ? hours : 12;
+                        minutes = minutes.toString().padStart(2, '0');
+                        let strTime = hours + ':' + minutes + ' ' + ampm;
 
 
-                    const sessionDetail = {
-                        _id: publicSessionwithUserDetails._id,
-                        cretedSessionUserId: findUser._id,
-                        cretedSessionUsername: findUser.firstName,
-                        selectedDate: `${year}-${months + 1}-${date} ${hour}:${minutes}`,
-                        selectedTime: publicSessionwithUserDetails.selectedTime,
-                        roomType: publicSessionwithUserDetails.RoomType,
-                        detail: publicSessionwithUserDetails.started == true ? `${publicSessionwithUserDetails.countJoinUser} people joining` : `${date} ${month} ${year} ${strTime}`,
-                        isLive: publicSessionwithUserDetails.started,
-                        isAbleToJoin: publicSessionwithUserDetails.started,
-                        cretedSessionUserphoto: findUser.photo == undefined ? "" : findUser.photo[0] ? findUser.photo[0].res : "",
-                        participants: [
-                            participants_1,
-                            participants_3
-                        ]
+                        const sessionDetail = {
+                            _id: publicSessionwithUserDetails._id,
+                            cretedSessionUserId: findUser._id,
+                            cretedSessionUsername: findUser.firstName,
+                            selectedDate: `${year}-${months + 1}-${date} ${hour}:${minutes}`,
+                            selectedTime: publicSessionwithUserDetails.selectedTime,
+                            roomType: publicSessionwithUserDetails.RoomType,
+                            detail: publicSessionwithUserDetails.started == true ? `${publicSessionwithUserDetails.countJoinUser} people joining` : `${date} ${month} ${year} ${strTime}`,
+                            isLive: publicSessionwithUserDetails.started,
+                            isAbleToJoin: publicSessionwithUserDetails.started,
+                            cretedSessionUserphoto: findUser.photo == undefined ? "" : findUser.photo[0] ? findUser.photo[0].res : "",
+                            participants: [
+                                participants_1,
+                                participants_3
+                            ]
+                        }
+                        const response = {
+                            sessionDetail
+                        }
+                        publicSession.push(response)
+                    } else if (participants1Find && participants2Find && participants3Find == null) {
+                        // const sessionDetail = 
+                        // const response = {
+                        //     sessionDetail
+                        // }
+
+                        const dates = publicSessionwithUserDetails.selectedDate;
+                        const finalDate = new Date(dates)
+                        let month = finalDate.toLocaleString('en-us', { month: 'long' });
+                        let months = finalDate.getMonth();
+                        let date = finalDate.getDate();
+                        let year = finalDate.getFullYear();
+                        let hour = finalDate.getHours();
+
+                        let hours = finalDate.getHours();
+                        let minutes = finalDate.getMinutes();
+                        let ampm = hours >= 12 ? 'pm' : 'am';
+                        hours = hours % 12;
+                        hours = hours ? hours : 12;
+                        minutes = minutes.toString().padStart(2, '0');
+                        let strTime = hours + ':' + minutes + ' ' + ampm;
+
+
+
+                        publicSession.push({
+                            _id: publicSessionwithUserDetails._id,
+                            cretedSessionUserId: findUser._id,
+                            cretedSessionUsername: findUser.firstName,
+                            selectedDate: `${year}-${months + 1}-${date} ${hour}:${minutes}`,
+                            selectedTime: publicSessionwithUserDetails.selectedTime,
+                            roomType: publicSessionwithUserDetails.RoomType,
+                            detail: publicSessionwithUserDetails.started == true ? `${publicSessionwithUserDetails.countJoinUser} people joining` : `${date} ${month} ${year} ${strTime}`,
+                            isLive: publicSessionwithUserDetails.started,
+                            isAbleToJoin: publicSessionwithUserDetails.started,
+                            cretedSessionUserphoto: findUser.photo == undefined ? "" : findUser.photo[0] ? findUser.photo[0].res : "",
+                            participants: [
+                                participants_1,
+                                participants_2
+                            ]
+                        })
+
+                    } else if (participants1Find == null && participants2Find == null && participants3Find == null) {
+                        // const sessionDetail =
+                        // const response = {
+                        //     sessionDetail
+                        // }
+
+                        const dates = publicSessionwithUserDetails.selectedDate;
+                        const finalDate = new Date(dates)
+                        let month = finalDate.toLocaleString('en-us', { month: 'long' });
+                        let months = finalDate.getMonth();
+                        let date = finalDate.getDate();
+                        let year = finalDate.getFullYear();
+                        let hour = finalDate.getHours();
+
+                        let hours = finalDate.getHours();
+                        let minutes = finalDate.getMinutes();
+                        let ampm = hours >= 12 ? 'pm' : 'am';
+                        hours = hours % 12;
+                        hours = hours ? hours : 12;
+                        minutes = minutes.toString().padStart(2, '0');
+                        let strTime = hours + ':' + minutes + ' ' + ampm;
+
+
+                        publicSession.push({
+                            _id: publicSessionwithUserDetails._id,
+                            cretedSessionUserId: findUser._id,
+                            cretedSessionUsername: findUser.firstName,
+                            selectedDate: `${year}-${months + 1}-${date} ${hour}:${minutes}`,
+                            selectedTime: publicSessionwithUserDetails.selectedTime,
+                            roomType: publicSessionwithUserDetails.RoomType,
+                            detail: publicSessionwithUserDetails.started == true ? `${publicSessionwithUserDetails.countJoinUser} people joining` : `${date} ${month} ${year} ${strTime}`,
+                            isLive: publicSessionwithUserDetails.started,
+                            isAbleToJoin: publicSessionwithUserDetails.started,
+                            cretedSessionUserphoto: findUser.photo == undefined ? "" : findUser.photo[0] ? findUser.photo[0].res : "",
+                            participants: []
+                        })
                     }
-                    const response = {
-                        sessionDetail
+
+                } else {
+
+                    if (participants1Find && participants2Find && participants3Find) {
+                        // const sessionDetail = 
+                        // const response = {
+                        //     sessionDetail
+                        // }
+
+                        const dates = publicSessionwithUserDetails.selectedDate;
+                        const finalDate = new Date(dates)
+                        let month = finalDate.toLocaleString('en-us', { month: 'long' });
+                        let months = finalDate.getMonth();
+                        let date = finalDate.getDate();
+                        let year = finalDate.getFullYear();
+                        let hour = finalDate.getHours();
+
+                        let hours = finalDate.getHours();
+                        let minutes = finalDate.getMinutes();
+                        let ampm = hours >= 12 ? 'pm' : 'am';
+                        hours = hours % 12;
+                        hours = hours ? hours : 12;
+                        minutes = minutes.toString().padStart(2, '0');
+                        let strTime = hours + ':' + minutes + ' ' + ampm;
+
+                        publicSession1.push({
+                            _id: publicSessionwithUserDetails._id,
+                            cretedSessionUserId: findUser._id,
+                            cretedSessionUsername: findUser.firstName,
+                            selectedDate: `${year}-${months + 1}-${date} ${hour}:${minutes}`,
+                            selectedTime: publicSessionwithUserDetails.selectedTime,
+                            roomType: publicSessionwithUserDetails.RoomType,
+                            detail: publicSessionwithUserDetails.started == true ? `${publicSessionwithUserDetails.countJoinUser} people joining` : `${date} ${month} ${year} ${strTime}`,
+                            isLive: publicSessionwithUserDetails.started,
+                            isAbleToJoin: publicSessionwithUserDetails.started,
+                            cretedSessionUserphoto: findUser.photo == undefined ? "" : findUser.photo[0] ? findUser.photo[0].res : "",
+                            participants: [
+                                participants_1,
+                                participants_2,
+                                participants_3
+                            ]
+                        })
+                    } else if (participants1Find == null && participants2Find && participants3Find) {
+                        // const sessionDetail = 
+                        // const response = {
+                        //     sessionDetail
+                        // }
+
+                        const dates = publicSessionwithUserDetails.selectedDate;
+                        const finalDate = new Date(dates)
+                        let month = finalDate.toLocaleString('en-us', { month: 'long' });
+                        let months = finalDate.getMonth();
+                        let date = finalDate.getDate();
+                        let year = finalDate.getFullYear();
+                        let hour = finalDate.getHours();
+
+                        let hours = finalDate.getHours();
+                        let minutes = finalDate.getMinutes();
+                        let ampm = hours >= 12 ? 'pm' : 'am';
+                        hours = hours % 12;
+                        hours = hours ? hours : 12;
+                        minutes = minutes.toString().padStart(2, '0');
+                        let strTime = hours + ':' + minutes + ' ' + ampm;
+
+                        publicSession1.push({
+                            _id: publicSessionwithUserDetails._id,
+                            cretedSessionUserId: findUser._id,
+                            cretedSessionUsername: findUser.firstName,
+                            selectedDate: `${year}-${months + 1}-${date} ${hour}:${minutes}`,
+                            selectedTime: publicSessionwithUserDetails.selectedTime,
+                            roomType: publicSessionwithUserDetails.RoomType,
+                            detail: publicSessionwithUserDetails.started == true ? `${publicSessionwithUserDetails.countJoinUser} people joining` : `${date} ${month} ${year} ${strTime}`,
+                            isLive: publicSessionwithUserDetails.started,
+                            isAbleToJoin: publicSessionwithUserDetails.started,
+                            cretedSessionUserphoto: findUser.photo == undefined ? "" : findUser.photo[0] ? findUser.photo[0].res : "",
+                            participants: [
+                                participants_2,
+                                participants_3
+                            ]
+                        })
+                    } else if (participants1Find && participants2Find == null && participants3Find) {
+
+                        const dates = publicSessionwithUserDetails.selectedDate;
+                        const finalDate = new Date(dates)
+                        let month = finalDate.toLocaleString('en-us', { month: 'long' });
+                        let months = finalDate.getMonth();
+                        let date = finalDate.getDate();
+                        let year = finalDate.getFullYear();
+                        let hour = finalDate.getHours();
+
+                        let hours = finalDate.getHours();
+                        let minutes = finalDate.getMinutes();
+                        let ampm = hours >= 12 ? 'pm' : 'am';
+                        hours = hours % 12;
+                        hours = hours ? hours : 12;
+                        minutes = minutes.toString().padStart(2, '0');
+                        let strTime = hours + ':' + minutes + ' ' + ampm;
+
+
+                        const sessionDetail = {
+                            _id: publicSessionwithUserDetails._id,
+                            cretedSessionUserId: findUser._id,
+                            cretedSessionUsername: findUser.firstName,
+                            selectedDate: `${year}-${months + 1}-${date} ${hour}:${minutes}`,
+                            selectedTime: publicSessionwithUserDetails.selectedTime,
+                            roomType: publicSessionwithUserDetails.RoomType,
+                            detail: publicSessionwithUserDetails.started == true ? `${publicSessionwithUserDetails.countJoinUser} people joining` : `${date} ${month} ${year} ${strTime}`,
+                            isLive: publicSessionwithUserDetails.started,
+                            isAbleToJoin: publicSessionwithUserDetails.started,
+                            cretedSessionUserphoto: findUser.photo == undefined ? "" : findUser.photo[0] ? findUser.photo[0].res : "",
+                            participants: [
+                                participants_1,
+                                participants_3
+                            ]
+                        }
+                        const response = {
+                            sessionDetail
+                        }
+                        publicSession1.push(response)
+                    } else if (participants1Find && participants2Find && participants3Find == null) {
+                        // const sessionDetail = 
+                        // const response = {
+                        //     sessionDetail
+                        // }
+
+                        const dates = publicSessionwithUserDetails.selectedDate;
+                        const finalDate = new Date(dates)
+                        let month = finalDate.toLocaleString('en-us', { month: 'long' });
+                        let months = finalDate.getMonth();
+                        let date = finalDate.getDate();
+                        let year = finalDate.getFullYear();
+                        let hour = finalDate.getHours();
+
+                        let hours = finalDate.getHours();
+                        let minutes = finalDate.getMinutes();
+                        let ampm = hours >= 12 ? 'pm' : 'am';
+                        hours = hours % 12;
+                        hours = hours ? hours : 12;
+                        minutes = minutes.toString().padStart(2, '0');
+                        let strTime = hours + ':' + minutes + ' ' + ampm;
+
+
+
+                        publicSession1.push({
+                            _id: publicSessionwithUserDetails._id,
+                            cretedSessionUserId: findUser._id,
+                            cretedSessionUsername: findUser.firstName,
+                            selectedDate: `${year}-${months + 1}-${date} ${hour}:${minutes}`,
+                            selectedTime: publicSessionwithUserDetails.selectedTime,
+                            roomType: publicSessionwithUserDetails.RoomType,
+                            detail: publicSessionwithUserDetails.started == true ? `${publicSessionwithUserDetails.countJoinUser} people joining` : `${date} ${month} ${year} ${strTime}`,
+                            isLive: publicSessionwithUserDetails.started,
+                            isAbleToJoin: publicSessionwithUserDetails.started,
+                            cretedSessionUserphoto: findUser.photo == undefined ? "" : findUser.photo[0] ? findUser.photo[0].res : "",
+                            participants: [
+                                participants_1,
+                                participants_2
+                            ]
+                        })
+
+                    } else if (participants1Find == null && participants2Find == null && participants3Find == null) {
+                        // const sessionDetail =
+                        // const response = {
+                        //     sessionDetail
+                        // }
+
+                        const dates = publicSessionwithUserDetails.selectedDate;
+                        const finalDate = new Date(dates)
+                        let month = finalDate.toLocaleString('en-us', { month: 'long' });
+                        let months = finalDate.getMonth();
+                        let date = finalDate.getDate();
+                        let year = finalDate.getFullYear();
+                        let hour = finalDate.getHours();
+
+                        let hours = finalDate.getHours();
+                        let minutes = finalDate.getMinutes();
+                        let ampm = hours >= 12 ? 'pm' : 'am';
+                        hours = hours % 12;
+                        hours = hours ? hours : 12;
+                        minutes = minutes.toString().padStart(2, '0');
+                        let strTime = hours + ':' + minutes + ' ' + ampm;
+
+
+                        publicSession1.push({
+                            _id: publicSessionwithUserDetails._id,
+                            cretedSessionUserId: findUser._id,
+                            cretedSessionUsername: findUser.firstName,
+                            selectedDate: `${year}-${months + 1}-${date} ${hour}:${minutes}`,
+                            selectedTime: publicSessionwithUserDetails.selectedTime,
+                            roomType: publicSessionwithUserDetails.RoomType,
+                            detail: publicSessionwithUserDetails.started == true ? `${publicSessionwithUserDetails.countJoinUser} people joining` : `${date} ${month} ${year} ${strTime}`,
+                            isLive: publicSessionwithUserDetails.started,
+                            isAbleToJoin: publicSessionwithUserDetails.started,
+                            cretedSessionUserphoto: findUser.photo == undefined ? "" : findUser.photo[0] ? findUser.photo[0].res : "",
+                            participants: []
+                        })
                     }
-                    publicSession.push(response)
-                } else if (participants1Find && participants2Find && participants3Find == null) {
-                    // const sessionDetail = 
-                    // const response = {
-                    //     sessionDetail
-                    // }
-
-                    const dates = publicSessionwithUserDetails.selectedDate;
-                    const finalDate = new Date(dates)
-                    let month = finalDate.toLocaleString('en-us', { month: 'long' });
-                    let months = finalDate.getMonth();
-                    let date = finalDate.getDate();
-                    let year = finalDate.getFullYear();
-                    let hour = finalDate.getHours();
-
-                    let hours = finalDate.getHours();
-                    let minutes = finalDate.getMinutes();
-                    let ampm = hours >= 12 ? 'pm' : 'am';
-                    hours = hours % 12;
-                    hours = hours ? hours : 12;
-                    minutes = minutes.toString().padStart(2, '0');
-                    let strTime = hours + ':' + minutes + ' ' + ampm;
-
-
-
-                    publicSession.push({
-                        _id: publicSessionwithUserDetails._id,
-                        cretedSessionUserId: findUser._id,
-                        cretedSessionUsername: findUser.firstName,
-                        selectedDate: `${year}-${months + 1}-${date} ${hour}:${minutes}`,
-                        selectedTime: publicSessionwithUserDetails.selectedTime,
-                        roomType: publicSessionwithUserDetails.RoomType,
-                        detail: publicSessionwithUserDetails.started == true ? `${publicSessionwithUserDetails.countJoinUser} people joining` : `${date} ${month} ${year} ${strTime}`,
-                        isLive: publicSessionwithUserDetails.started,
-                        isAbleToJoin: publicSessionwithUserDetails.started,
-                        cretedSessionUserphoto: findUser.photo == undefined ? "" : findUser.photo[0] ? findUser.photo[0].res : "",
-                        participants: [
-                            participants_1,
-                            participants_2
-                        ]
-                    })
-
-                } else if (participants1Find == null && participants2Find == null && participants3Find == null) {
-                    // const sessionDetail =
-                    // const response = {
-                    //     sessionDetail
-                    // }
-
-                    const dates = publicSessionwithUserDetails.selectedDate;
-                    const finalDate = new Date(dates)
-                    let month = finalDate.toLocaleString('en-us', { month: 'long' });
-                    let months = finalDate.getMonth();
-                    let date = finalDate.getDate();
-                    let year = finalDate.getFullYear();
-                    let hour = finalDate.getHours();
-
-                    let hours = finalDate.getHours();
-                    let minutes = finalDate.getMinutes();
-                    let ampm = hours >= 12 ? 'pm' : 'am';
-                    hours = hours % 12;
-                    hours = hours ? hours : 12;
-                    minutes = minutes.toString().padStart(2, '0');
-                    let strTime = hours + ':' + minutes + ' ' + ampm;
-
-
-                    publicSession.push({
-                        _id: publicSessionwithUserDetails._id,
-                        cretedSessionUserId: findUser._id,
-                        cretedSessionUsername: findUser.firstName,
-                        selectedDate: `${year}-${months + 1}-${date} ${hour}:${minutes}`,
-                        selectedTime: publicSessionwithUserDetails.selectedTime,
-                        roomType: publicSessionwithUserDetails.RoomType,
-                        detail: publicSessionwithUserDetails.started == true ? `${publicSessionwithUserDetails.countJoinUser} people joining` : `${date} ${month} ${year} ${strTime}`,
-                        isLive: publicSessionwithUserDetails.started,
-                        isAbleToJoin: publicSessionwithUserDetails.started,
-                        cretedSessionUserphoto: findUser.photo == undefined ? "" : findUser.photo[0] ? findUser.photo[0].res : "",
-                        participants: []
-                    })
-                }
-
-                }else{
-                    
-                if (participants1Find && participants2Find && participants3Find) {
-                    // const sessionDetail = 
-                    // const response = {
-                    //     sessionDetail
-                    // }
-
-                    const dates = publicSessionwithUserDetails.selectedDate;
-                    const finalDate = new Date(dates)
-                    let month = finalDate.toLocaleString('en-us', { month: 'long' });
-                    let months = finalDate.getMonth();
-                    let date = finalDate.getDate();
-                    let year = finalDate.getFullYear();
-                    let hour = finalDate.getHours();
-
-                    let hours = finalDate.getHours();
-                    let minutes = finalDate.getMinutes();
-                    let ampm = hours >= 12 ? 'pm' : 'am';
-                    hours = hours % 12;
-                    hours = hours ? hours : 12;
-                    minutes = minutes.toString().padStart(2, '0');
-                    let strTime = hours + ':' + minutes + ' ' + ampm;
-
-                    publicSession1.push({
-                        _id: publicSessionwithUserDetails._id,
-                        cretedSessionUserId: findUser._id,
-                        cretedSessionUsername: findUser.firstName,
-                        selectedDate: `${year}-${months + 1}-${date} ${hour}:${minutes}`,
-                        selectedTime: publicSessionwithUserDetails.selectedTime,
-                        roomType: publicSessionwithUserDetails.RoomType,
-                        detail: publicSessionwithUserDetails.started == true ? `${publicSessionwithUserDetails.countJoinUser} people joining` : `${date} ${month} ${year} ${strTime}`,
-                        isLive: publicSessionwithUserDetails.started,
-                        isAbleToJoin: publicSessionwithUserDetails.started,
-                        cretedSessionUserphoto: findUser.photo == undefined ? "" : findUser.photo[0] ? findUser.photo[0].res : "",
-                        participants: [
-                            participants_1,
-                            participants_2,
-                            participants_3
-                        ]
-                    })
-                } else if (participants1Find == null && participants2Find && participants3Find) {
-                    // const sessionDetail = 
-                    // const response = {
-                    //     sessionDetail
-                    // }
-
-                    const dates = publicSessionwithUserDetails.selectedDate;
-                    const finalDate = new Date(dates)
-                    let month = finalDate.toLocaleString('en-us', { month: 'long' });
-                    let months = finalDate.getMonth();
-                    let date = finalDate.getDate();
-                    let year = finalDate.getFullYear();
-                    let hour = finalDate.getHours();
-
-                    let hours = finalDate.getHours();
-                    let minutes = finalDate.getMinutes();
-                    let ampm = hours >= 12 ? 'pm' : 'am';
-                    hours = hours % 12;
-                    hours = hours ? hours : 12;
-                    minutes = minutes.toString().padStart(2, '0');
-                    let strTime = hours + ':' + minutes + ' ' + ampm;
-
-                    publicSession1.push({
-                        _id: publicSessionwithUserDetails._id,
-                        cretedSessionUserId: findUser._id,
-                        cretedSessionUsername: findUser.firstName,
-                        selectedDate: `${year}-${months + 1}-${date} ${hour}:${minutes}`,
-                        selectedTime: publicSessionwithUserDetails.selectedTime,
-                        roomType: publicSessionwithUserDetails.RoomType,
-                        detail: publicSessionwithUserDetails.started == true ? `${publicSessionwithUserDetails.countJoinUser} people joining` : `${date} ${month} ${year} ${strTime}`,
-                        isLive: publicSessionwithUserDetails.started,
-                        isAbleToJoin: publicSessionwithUserDetails.started,
-                        cretedSessionUserphoto: findUser.photo == undefined ? "" : findUser.photo[0] ? findUser.photo[0].res : "",
-                        participants: [
-                            participants_2,
-                            participants_3
-                        ]
-                    })
-                } else if (participants1Find && participants2Find == null && participants3Find) {
-
-                    const dates = publicSessionwithUserDetails.selectedDate;
-                    const finalDate = new Date(dates)
-                    let month = finalDate.toLocaleString('en-us', { month: 'long' });
-                    let months = finalDate.getMonth();
-                    let date = finalDate.getDate();
-                    let year = finalDate.getFullYear();
-                    let hour = finalDate.getHours();
-
-                    let hours = finalDate.getHours();
-                    let minutes = finalDate.getMinutes();
-                    let ampm = hours >= 12 ? 'pm' : 'am';
-                    hours = hours % 12;
-                    hours = hours ? hours : 12;
-                    minutes = minutes.toString().padStart(2, '0');
-                    let strTime = hours + ':' + minutes + ' ' + ampm;
-
-
-                    const sessionDetail = {
-                        _id: publicSessionwithUserDetails._id,
-                        cretedSessionUserId: findUser._id,
-                        cretedSessionUsername: findUser.firstName,
-                        selectedDate: `${year}-${months + 1}-${date} ${hour}:${minutes}`,
-                        selectedTime: publicSessionwithUserDetails.selectedTime,
-                        roomType: publicSessionwithUserDetails.RoomType,
-                        detail: publicSessionwithUserDetails.started == true ? `${publicSessionwithUserDetails.countJoinUser} people joining` : `${date} ${month} ${year} ${strTime}`,
-                        isLive: publicSessionwithUserDetails.started,
-                        isAbleToJoin: publicSessionwithUserDetails.started,
-                        cretedSessionUserphoto: findUser.photo == undefined ? "" : findUser.photo[0] ? findUser.photo[0].res : "",
-                        participants: [
-                            participants_1,
-                            participants_3
-                        ]
-                    }
-                    const response = {
-                        sessionDetail
-                    }
-                    publicSession1.push(response)
-                } else if (participants1Find && participants2Find && participants3Find == null) {
-                    // const sessionDetail = 
-                    // const response = {
-                    //     sessionDetail
-                    // }
-
-                    const dates = publicSessionwithUserDetails.selectedDate;
-                    const finalDate = new Date(dates)
-                    let month = finalDate.toLocaleString('en-us', { month: 'long' });
-                    let months = finalDate.getMonth();
-                    let date = finalDate.getDate();
-                    let year = finalDate.getFullYear();
-                    let hour = finalDate.getHours();
-
-                    let hours = finalDate.getHours();
-                    let minutes = finalDate.getMinutes();
-                    let ampm = hours >= 12 ? 'pm' : 'am';
-                    hours = hours % 12;
-                    hours = hours ? hours : 12;
-                    minutes = minutes.toString().padStart(2, '0');
-                    let strTime = hours + ':' + minutes + ' ' + ampm;
-
-
-
-                    publicSession1.push({
-                        _id: publicSessionwithUserDetails._id,
-                        cretedSessionUserId: findUser._id,
-                        cretedSessionUsername: findUser.firstName,
-                        selectedDate: `${year}-${months + 1}-${date} ${hour}:${minutes}`,
-                        selectedTime: publicSessionwithUserDetails.selectedTime,
-                        roomType: publicSessionwithUserDetails.RoomType,
-                        detail: publicSessionwithUserDetails.started == true ? `${publicSessionwithUserDetails.countJoinUser} people joining` : `${date} ${month} ${year} ${strTime}`,
-                        isLive: publicSessionwithUserDetails.started,
-                        isAbleToJoin: publicSessionwithUserDetails.started,
-                        cretedSessionUserphoto: findUser.photo == undefined ? "" : findUser.photo[0] ? findUser.photo[0].res : "",
-                        participants: [
-                            participants_1,
-                            participants_2
-                        ]
-                    })
-
-                } else if (participants1Find == null && participants2Find == null && participants3Find == null) {
-                    // const sessionDetail =
-                    // const response = {
-                    //     sessionDetail
-                    // }
-
-                    const dates = publicSessionwithUserDetails.selectedDate;
-                    const finalDate = new Date(dates)
-                    let month = finalDate.toLocaleString('en-us', { month: 'long' });
-                    let months = finalDate.getMonth();
-                    let date = finalDate.getDate();
-                    let year = finalDate.getFullYear();
-                    let hour = finalDate.getHours();
-
-                    let hours = finalDate.getHours();
-                    let minutes = finalDate.getMinutes();
-                    let ampm = hours >= 12 ? 'pm' : 'am';
-                    hours = hours % 12;
-                    hours = hours ? hours : 12;
-                    minutes = minutes.toString().padStart(2, '0');
-                    let strTime = hours + ':' + minutes + ' ' + ampm;
-
-
-                    publicSession1.push({
-                        _id: publicSessionwithUserDetails._id,
-                        cretedSessionUserId: findUser._id,
-                        cretedSessionUsername: findUser.firstName,
-                        selectedDate: `${year}-${months + 1}-${date} ${hour}:${minutes}`,
-                        selectedTime: publicSessionwithUserDetails.selectedTime,
-                        roomType: publicSessionwithUserDetails.RoomType,
-                        detail: publicSessionwithUserDetails.started == true ? `${publicSessionwithUserDetails.countJoinUser} people joining` : `${date} ${month} ${year} ${strTime}`,
-                        isLive: publicSessionwithUserDetails.started,
-                        isAbleToJoin: publicSessionwithUserDetails.started,
-                        cretedSessionUserphoto: findUser.photo == undefined ? "" : findUser.photo[0] ? findUser.photo[0].res : "",
-                        participants: []
-                    })
-                }
 
                 }
 
             }
 
             const res1 = publicSession.sort((a, b) => new Date(a.selectedDate) - new Date(b.selectedDate))
-            const response = [...res1 , ...publicSession1]
+            const response = [...res1, ...publicSession1]
 
             const page = parseInt(req.query.page)
             const limit = parseInt(req.query.limit)
@@ -863,9 +863,9 @@ exports.publicSession = async (req, res, next) => {
 
 
         } else if (findPublicSessionParticipant1Match[0] != undefined) {
-            
 
-     
+
+
             const publicSession = [];
             const publicSession1 = [];
 
@@ -905,14 +905,14 @@ exports.publicSession = async (req, res, next) => {
                     profile: participants3Find ? participants3Find.photo[0] ? participants3Find.photo[0].res : "" : "",
                 }
 
-                if (publicSessionwithUserDetails.sessionEndOrNot == false){
+                if (publicSessionwithUserDetails.sessionEndOrNot == false) {
 
                     if (participants1Find && participants2Find && participants3Find) {
                         // const sessionDetail = 
                         // const response = {
                         //     sessionDetail
                         // }
-    
+
                         const dates = publicSessionwithUserDetails.selectedDate;
                         const finalDate = new Date(dates)
                         let month = finalDate.toLocaleString('en-us', { month: 'long' });
@@ -920,7 +920,7 @@ exports.publicSession = async (req, res, next) => {
                         let date = finalDate.getDate();
                         let year = finalDate.getFullYear();
                         let hour = finalDate.getHours();
-    
+
                         let hours = finalDate.getHours();
                         let minutes = finalDate.getMinutes();
                         let ampm = hours >= 12 ? 'pm' : 'am';
@@ -928,7 +928,7 @@ exports.publicSession = async (req, res, next) => {
                         hours = hours ? hours : 12;
                         minutes = minutes.toString().padStart(2, '0');
                         let strTime = hours + ':' + minutes + ' ' + ampm;
-    
+
                         publicSession.push({
                             _id: publicSessionwithUserDetails._id,
                             cretedSessionUserId: findUser._id,
@@ -951,7 +951,7 @@ exports.publicSession = async (req, res, next) => {
                         // const response = {
                         //     sessionDetail
                         // }
-    
+
                         const dates = publicSessionwithUserDetails.selectedDate;
                         const finalDate = new Date(dates)
                         let month = finalDate.toLocaleString('en-us', { month: 'long' });
@@ -959,7 +959,7 @@ exports.publicSession = async (req, res, next) => {
                         let date = finalDate.getDate();
                         let year = finalDate.getFullYear();
                         let hour = finalDate.getHours();
-    
+
                         let hours = finalDate.getHours();
                         let minutes = finalDate.getMinutes();
                         let ampm = hours >= 12 ? 'pm' : 'am';
@@ -967,7 +967,7 @@ exports.publicSession = async (req, res, next) => {
                         hours = hours ? hours : 12;
                         minutes = minutes.toString().padStart(2, '0');
                         let strTime = hours + ':' + minutes + ' ' + ampm;
-    
+
                         publicSession.push({
                             _id: publicSessionwithUserDetails._id,
                             cretedSessionUserId: findUser._id,
@@ -985,7 +985,7 @@ exports.publicSession = async (req, res, next) => {
                             ]
                         })
                     } else if (participants1Find && participants2Find == null && participants3Find) {
-    
+
                         const dates = publicSessionwithUserDetails.selectedDate;
                         const finalDate = new Date(dates)
                         let month = finalDate.toLocaleString('en-us', { month: 'long' });
@@ -993,7 +993,7 @@ exports.publicSession = async (req, res, next) => {
                         let date = finalDate.getDate();
                         let year = finalDate.getFullYear();
                         let hour = finalDate.getHours();
-    
+
                         let hours = finalDate.getHours();
                         let minutes = finalDate.getMinutes();
                         let ampm = hours >= 12 ? 'pm' : 'am';
@@ -1001,8 +1001,8 @@ exports.publicSession = async (req, res, next) => {
                         hours = hours ? hours : 12;
                         minutes = minutes.toString().padStart(2, '0');
                         let strTime = hours + ':' + minutes + ' ' + ampm;
-    
-    
+
+
                         const sessionDetail = {
                             _id: publicSessionwithUserDetails._id,
                             cretedSessionUserId: findUser._id,
@@ -1028,7 +1028,7 @@ exports.publicSession = async (req, res, next) => {
                         // const response = {
                         //     sessionDetail
                         // }
-    
+
                         const dates = publicSessionwithUserDetails.selectedDate;
                         const finalDate = new Date(dates)
                         let month = finalDate.toLocaleString('en-us', { month: 'long' });
@@ -1036,7 +1036,7 @@ exports.publicSession = async (req, res, next) => {
                         let date = finalDate.getDate();
                         let year = finalDate.getFullYear();
                         let hour = finalDate.getHours();
-    
+
                         let hours = finalDate.getHours();
                         let minutes = finalDate.getMinutes();
                         let ampm = hours >= 12 ? 'pm' : 'am';
@@ -1044,9 +1044,9 @@ exports.publicSession = async (req, res, next) => {
                         hours = hours ? hours : 12;
                         minutes = minutes.toString().padStart(2, '0');
                         let strTime = hours + ':' + minutes + ' ' + ampm;
-    
-    
-    
+
+
+
                         publicSession.push({
                             _id: publicSessionwithUserDetails._id,
                             cretedSessionUserId: findUser._id,
@@ -1063,13 +1063,13 @@ exports.publicSession = async (req, res, next) => {
                                 participants_2
                             ]
                         })
-    
+
                     } else if (participants1Find == null && participants2Find == null && participants3Find == null) {
                         // const sessionDetail =
                         // const response = {
                         //     sessionDetail
                         // }
-    
+
                         const dates = publicSessionwithUserDetails.selectedDate;
                         const finalDate = new Date(dates)
                         let month = finalDate.toLocaleString('en-us', { month: 'long' });
@@ -1077,7 +1077,7 @@ exports.publicSession = async (req, res, next) => {
                         let date = finalDate.getDate();
                         let year = finalDate.getFullYear();
                         let hour = finalDate.getHours();
-    
+
                         let hours = finalDate.getHours();
                         let minutes = finalDate.getMinutes();
                         let ampm = hours >= 12 ? 'pm' : 'am';
@@ -1085,8 +1085,8 @@ exports.publicSession = async (req, res, next) => {
                         hours = hours ? hours : 12;
                         minutes = minutes.toString().padStart(2, '0');
                         let strTime = hours + ':' + minutes + ' ' + ampm;
-    
-    
+
+
                         publicSession.push({
                             _id: publicSessionwithUserDetails._id,
                             cretedSessionUserId: findUser._id,
@@ -1102,14 +1102,14 @@ exports.publicSession = async (req, res, next) => {
                         })
                     }
 
-                }else{
+                } else {
 
                     if (participants1Find && participants2Find && participants3Find) {
                         // const sessionDetail = 
                         // const response = {
                         //     sessionDetail
                         // }
-    
+
                         const dates = publicSessionwithUserDetails.selectedDate;
                         const finalDate = new Date(dates)
                         let month = finalDate.toLocaleString('en-us', { month: 'long' });
@@ -1117,7 +1117,7 @@ exports.publicSession = async (req, res, next) => {
                         let date = finalDate.getDate();
                         let year = finalDate.getFullYear();
                         let hour = finalDate.getHours();
-    
+
                         let hours = finalDate.getHours();
                         let minutes = finalDate.getMinutes();
                         let ampm = hours >= 12 ? 'pm' : 'am';
@@ -1125,7 +1125,7 @@ exports.publicSession = async (req, res, next) => {
                         hours = hours ? hours : 12;
                         minutes = minutes.toString().padStart(2, '0');
                         let strTime = hours + ':' + minutes + ' ' + ampm;
-    
+
                         publicSession1.push({
                             _id: publicSessionwithUserDetails._id,
                             cretedSessionUserId: findUser._id,
@@ -1148,7 +1148,7 @@ exports.publicSession = async (req, res, next) => {
                         // const response = {
                         //     sessionDetail
                         // }
-    
+
                         const dates = publicSessionwithUserDetails.selectedDate;
                         const finalDate = new Date(dates)
                         let month = finalDate.toLocaleString('en-us', { month: 'long' });
@@ -1156,7 +1156,7 @@ exports.publicSession = async (req, res, next) => {
                         let date = finalDate.getDate();
                         let year = finalDate.getFullYear();
                         let hour = finalDate.getHours();
-    
+
                         let hours = finalDate.getHours();
                         let minutes = finalDate.getMinutes();
                         let ampm = hours >= 12 ? 'pm' : 'am';
@@ -1164,7 +1164,7 @@ exports.publicSession = async (req, res, next) => {
                         hours = hours ? hours : 12;
                         minutes = minutes.toString().padStart(2, '0');
                         let strTime = hours + ':' + minutes + ' ' + ampm;
-    
+
                         publicSession1.push({
                             _id: publicSessionwithUserDetails._id,
                             cretedSessionUserId: findUser._id,
@@ -1182,7 +1182,7 @@ exports.publicSession = async (req, res, next) => {
                             ]
                         })
                     } else if (participants1Find && participants2Find == null && participants3Find) {
-    
+
                         const dates = publicSessionwithUserDetails.selectedDate;
                         const finalDate = new Date(dates)
                         let month = finalDate.toLocaleString('en-us', { month: 'long' });
@@ -1190,7 +1190,7 @@ exports.publicSession = async (req, res, next) => {
                         let date = finalDate.getDate();
                         let year = finalDate.getFullYear();
                         let hour = finalDate.getHours();
-    
+
                         let hours = finalDate.getHours();
                         let minutes = finalDate.getMinutes();
                         let ampm = hours >= 12 ? 'pm' : 'am';
@@ -1198,8 +1198,8 @@ exports.publicSession = async (req, res, next) => {
                         hours = hours ? hours : 12;
                         minutes = minutes.toString().padStart(2, '0');
                         let strTime = hours + ':' + minutes + ' ' + ampm;
-    
-    
+
+
                         const sessionDetail = {
                             _id: publicSessionwithUserDetails._id,
                             cretedSessionUserId: findUser._id,
@@ -1225,7 +1225,7 @@ exports.publicSession = async (req, res, next) => {
                         // const response = {
                         //     sessionDetail
                         // }
-    
+
                         const dates = publicSessionwithUserDetails.selectedDate;
                         const finalDate = new Date(dates)
                         let month = finalDate.toLocaleString('en-us', { month: 'long' });
@@ -1233,7 +1233,7 @@ exports.publicSession = async (req, res, next) => {
                         let date = finalDate.getDate();
                         let year = finalDate.getFullYear();
                         let hour = finalDate.getHours();
-    
+
                         let hours = finalDate.getHours();
                         let minutes = finalDate.getMinutes();
                         let ampm = hours >= 12 ? 'pm' : 'am';
@@ -1241,9 +1241,9 @@ exports.publicSession = async (req, res, next) => {
                         hours = hours ? hours : 12;
                         minutes = minutes.toString().padStart(2, '0');
                         let strTime = hours + ':' + minutes + ' ' + ampm;
-    
-    
-    
+
+
+
                         publicSession1.push({
                             _id: publicSessionwithUserDetails._id,
                             cretedSessionUserId: findUser._id,
@@ -1260,13 +1260,13 @@ exports.publicSession = async (req, res, next) => {
                                 participants_2
                             ]
                         })
-    
+
                     } else if (participants1Find == null && participants2Find == null && participants3Find == null) {
                         // const sessionDetail =
                         // const response = {
                         //     sessionDetail
                         // }
-    
+
                         const dates = publicSessionwithUserDetails.selectedDate;
                         const finalDate = new Date(dates)
                         let month = finalDate.toLocaleString('en-us', { month: 'long' });
@@ -1274,7 +1274,7 @@ exports.publicSession = async (req, res, next) => {
                         let date = finalDate.getDate();
                         let year = finalDate.getFullYear();
                         let hour = finalDate.getHours();
-    
+
                         let hours = finalDate.getHours();
                         let minutes = finalDate.getMinutes();
                         let ampm = hours >= 12 ? 'pm' : 'am';
@@ -1282,8 +1282,8 @@ exports.publicSession = async (req, res, next) => {
                         hours = hours ? hours : 12;
                         minutes = minutes.toString().padStart(2, '0');
                         let strTime = hours + ':' + minutes + ' ' + ampm;
-    
-    
+
+
                         publicSession1.push({
                             _id: publicSessionwithUserDetails._id,
                             cretedSessionUserId: findUser._id,
@@ -1301,14 +1301,14 @@ exports.publicSession = async (req, res, next) => {
 
                 }
 
-             
+
 
 
             }
 
 
             const res1 = publicSession.sort((a, b) => new Date(a.selectedDate) - new Date(b.selectedDate))
-            const response = [...res1 , ...publicSession1]
+            const response = [...res1, ...publicSession1]
 
             const page = parseInt(req.query.page)
             const limit = parseInt(req.query.limit)
@@ -1329,7 +1329,7 @@ exports.publicSession = async (req, res, next) => {
 
             const publicSession = [];
             const publicSession1 = [];
-            
+
             for (const publicSessionwithUserDetails of findPublicSessionParticipant2) {
 
                 const findUser = await userModel.findOne({
@@ -1366,14 +1366,14 @@ exports.publicSession = async (req, res, next) => {
                     profile: participants3Find ? participants3Find.photo[0] ? participants3Find.photo[0].res : "" : "",
                 }
 
-                
-                if (publicSessionwithUserDetails.sessionEndOrNot == false){
+
+                if (publicSessionwithUserDetails.sessionEndOrNot == false) {
                     if (participants1Find && participants2Find && participants3Find) {
                         // const sessionDetail = 
                         // const response = {
                         //     sessionDetail
                         // }
-    
+
                         const dates = publicSessionwithUserDetails.selectedDate;
                         const finalDate = new Date(dates)
                         let month = finalDate.toLocaleString('en-us', { month: 'long' });
@@ -1381,7 +1381,7 @@ exports.publicSession = async (req, res, next) => {
                         let date = finalDate.getDate();
                         let year = finalDate.getFullYear();
                         let hour = finalDate.getHours();
-    
+
                         let hours = finalDate.getHours();
                         let minutes = finalDate.getMinutes();
                         let ampm = hours >= 12 ? 'pm' : 'am';
@@ -1389,7 +1389,7 @@ exports.publicSession = async (req, res, next) => {
                         hours = hours ? hours : 12;
                         minutes = minutes.toString().padStart(2, '0');
                         let strTime = hours + ':' + minutes + ' ' + ampm;
-    
+
                         publicSession.push({
                             _id: publicSessionwithUserDetails._id,
                             cretedSessionUserId: findUser._id,
@@ -1412,7 +1412,7 @@ exports.publicSession = async (req, res, next) => {
                         // const response = {
                         //     sessionDetail
                         // }
-    
+
                         const dates = publicSessionwithUserDetails.selectedDate;
                         const finalDate = new Date(dates)
                         let month = finalDate.toLocaleString('en-us', { month: 'long' });
@@ -1420,7 +1420,7 @@ exports.publicSession = async (req, res, next) => {
                         let date = finalDate.getDate();
                         let year = finalDate.getFullYear();
                         let hour = finalDate.getHours();
-    
+
                         let hours = finalDate.getHours();
                         let minutes = finalDate.getMinutes();
                         let ampm = hours >= 12 ? 'pm' : 'am';
@@ -1428,7 +1428,7 @@ exports.publicSession = async (req, res, next) => {
                         hours = hours ? hours : 12;
                         minutes = minutes.toString().padStart(2, '0');
                         let strTime = hours + ':' + minutes + ' ' + ampm;
-    
+
                         publicSession.push({
                             _id: publicSessionwithUserDetails._id,
                             cretedSessionUserId: findUser._id,
@@ -1446,7 +1446,7 @@ exports.publicSession = async (req, res, next) => {
                             ]
                         })
                     } else if (participants1Find && participants2Find == null && participants3Find) {
-    
+
                         const dates = publicSessionwithUserDetails.selectedDate;
                         const finalDate = new Date(dates)
                         let month = finalDate.toLocaleString('en-us', { month: 'long' });
@@ -1454,7 +1454,7 @@ exports.publicSession = async (req, res, next) => {
                         let date = finalDate.getDate();
                         let year = finalDate.getFullYear();
                         let hour = finalDate.getHours();
-    
+
                         let hours = finalDate.getHours();
                         let minutes = finalDate.getMinutes();
                         let ampm = hours >= 12 ? 'pm' : 'am';
@@ -1462,8 +1462,8 @@ exports.publicSession = async (req, res, next) => {
                         hours = hours ? hours : 12;
                         minutes = minutes.toString().padStart(2, '0');
                         let strTime = hours + ':' + minutes + ' ' + ampm;
-    
-    
+
+
                         const sessionDetail = {
                             _id: publicSessionwithUserDetails._id,
                             cretedSessionUserId: findUser._id,
@@ -1489,7 +1489,7 @@ exports.publicSession = async (req, res, next) => {
                         // const response = {
                         //     sessionDetail
                         // }
-    
+
                         const dates = publicSessionwithUserDetails.selectedDate;
                         const finalDate = new Date(dates)
                         let month = finalDate.toLocaleString('en-us', { month: 'long' });
@@ -1497,7 +1497,7 @@ exports.publicSession = async (req, res, next) => {
                         let date = finalDate.getDate();
                         let year = finalDate.getFullYear();
                         let hour = finalDate.getHours();
-    
+
                         let hours = finalDate.getHours();
                         let minutes = finalDate.getMinutes();
                         let ampm = hours >= 12 ? 'pm' : 'am';
@@ -1505,9 +1505,9 @@ exports.publicSession = async (req, res, next) => {
                         hours = hours ? hours : 12;
                         minutes = minutes.toString().padStart(2, '0');
                         let strTime = hours + ':' + minutes + ' ' + ampm;
-    
-    
-    
+
+
+
                         publicSession.push({
                             _id: publicSessionwithUserDetails._id,
                             cretedSessionUserId: findUser._id,
@@ -1524,13 +1524,13 @@ exports.publicSession = async (req, res, next) => {
                                 participants_2
                             ]
                         })
-    
+
                     } else if (participants1Find == null && participants2Find == null && participants3Find == null) {
                         // const sessionDetail =
                         // const response = {
                         //     sessionDetail
                         // }
-    
+
                         const dates = publicSessionwithUserDetails.selectedDate;
                         const finalDate = new Date(dates)
                         let month = finalDate.toLocaleString('en-us', { month: 'long' });
@@ -1538,7 +1538,7 @@ exports.publicSession = async (req, res, next) => {
                         let date = finalDate.getDate();
                         let year = finalDate.getFullYear();
                         let hour = finalDate.getHours();
-    
+
                         let hours = finalDate.getHours();
                         let minutes = finalDate.getMinutes();
                         let ampm = hours >= 12 ? 'pm' : 'am';
@@ -1546,8 +1546,8 @@ exports.publicSession = async (req, res, next) => {
                         hours = hours ? hours : 12;
                         minutes = minutes.toString().padStart(2, '0');
                         let strTime = hours + ':' + minutes + ' ' + ampm;
-    
-    
+
+
                         publicSession.push({
                             _id: publicSessionwithUserDetails._id,
                             cretedSessionUserId: findUser._id,
@@ -1562,13 +1562,13 @@ exports.publicSession = async (req, res, next) => {
                             participants: []
                         })
                     }
-                }else{
+                } else {
                     if (participants1Find && participants2Find && participants3Find) {
                         // const sessionDetail = 
                         // const response = {
                         //     sessionDetail
                         // }
-    
+
                         const dates = publicSessionwithUserDetails.selectedDate;
                         const finalDate = new Date(dates)
                         let month = finalDate.toLocaleString('en-us', { month: 'long' });
@@ -1576,7 +1576,7 @@ exports.publicSession = async (req, res, next) => {
                         let date = finalDate.getDate();
                         let year = finalDate.getFullYear();
                         let hour = finalDate.getHours();
-    
+
                         let hours = finalDate.getHours();
                         let minutes = finalDate.getMinutes();
                         let ampm = hours >= 12 ? 'pm' : 'am';
@@ -1584,7 +1584,7 @@ exports.publicSession = async (req, res, next) => {
                         hours = hours ? hours : 12;
                         minutes = minutes.toString().padStart(2, '0');
                         let strTime = hours + ':' + minutes + ' ' + ampm;
-    
+
                         publicSession1.push({
                             _id: publicSessionwithUserDetails._id,
                             cretedSessionUserId: findUser._id,
@@ -1607,7 +1607,7 @@ exports.publicSession = async (req, res, next) => {
                         // const response = {
                         //     sessionDetail
                         // }
-    
+
                         const dates = publicSessionwithUserDetails.selectedDate;
                         const finalDate = new Date(dates)
                         let month = finalDate.toLocaleString('en-us', { month: 'long' });
@@ -1615,7 +1615,7 @@ exports.publicSession = async (req, res, next) => {
                         let date = finalDate.getDate();
                         let year = finalDate.getFullYear();
                         let hour = finalDate.getHours();
-    
+
                         let hours = finalDate.getHours();
                         let minutes = finalDate.getMinutes();
                         let ampm = hours >= 12 ? 'pm' : 'am';
@@ -1623,7 +1623,7 @@ exports.publicSession = async (req, res, next) => {
                         hours = hours ? hours : 12;
                         minutes = minutes.toString().padStart(2, '0');
                         let strTime = hours + ':' + minutes + ' ' + ampm;
-    
+
                         publicSession1.push({
                             _id: publicSessionwithUserDetails._id,
                             cretedSessionUserId: findUser._id,
@@ -1641,7 +1641,7 @@ exports.publicSession = async (req, res, next) => {
                             ]
                         })
                     } else if (participants1Find && participants2Find == null && participants3Find) {
-    
+
                         const dates = publicSessionwithUserDetails.selectedDate;
                         const finalDate = new Date(dates)
                         let month = finalDate.toLocaleString('en-us', { month: 'long' });
@@ -1649,7 +1649,7 @@ exports.publicSession = async (req, res, next) => {
                         let date = finalDate.getDate();
                         let year = finalDate.getFullYear();
                         let hour = finalDate.getHours();
-    
+
                         let hours = finalDate.getHours();
                         let minutes = finalDate.getMinutes();
                         let ampm = hours >= 12 ? 'pm' : 'am';
@@ -1657,8 +1657,8 @@ exports.publicSession = async (req, res, next) => {
                         hours = hours ? hours : 12;
                         minutes = minutes.toString().padStart(2, '0');
                         let strTime = hours + ':' + minutes + ' ' + ampm;
-    
-    
+
+
                         const sessionDetail = {
                             _id: publicSessionwithUserDetails._id,
                             cretedSessionUserId: findUser._id,
@@ -1684,7 +1684,7 @@ exports.publicSession = async (req, res, next) => {
                         // const response = {
                         //     sessionDetail
                         // }
-    
+
                         const dates = publicSessionwithUserDetails.selectedDate;
                         const finalDate = new Date(dates)
                         let month = finalDate.toLocaleString('en-us', { month: 'long' });
@@ -1692,7 +1692,7 @@ exports.publicSession = async (req, res, next) => {
                         let date = finalDate.getDate();
                         let year = finalDate.getFullYear();
                         let hour = finalDate.getHours();
-    
+
                         let hours = finalDate.getHours();
                         let minutes = finalDate.getMinutes();
                         let ampm = hours >= 12 ? 'pm' : 'am';
@@ -1700,9 +1700,9 @@ exports.publicSession = async (req, res, next) => {
                         hours = hours ? hours : 12;
                         minutes = minutes.toString().padStart(2, '0');
                         let strTime = hours + ':' + minutes + ' ' + ampm;
-    
-    
-    
+
+
+
                         publicSession1.push({
                             _id: publicSessionwithUserDetails._id,
                             cretedSessionUserId: findUser._id,
@@ -1719,13 +1719,13 @@ exports.publicSession = async (req, res, next) => {
                                 participants_2
                             ]
                         })
-    
+
                     } else if (participants1Find == null && participants2Find == null && participants3Find == null) {
                         // const sessionDetail =
                         // const response = {
                         //     sessionDetail
                         // }
-    
+
                         const dates = publicSessionwithUserDetails.selectedDate;
                         const finalDate = new Date(dates)
                         let month = finalDate.toLocaleString('en-us', { month: 'long' });
@@ -1733,7 +1733,7 @@ exports.publicSession = async (req, res, next) => {
                         let date = finalDate.getDate();
                         let year = finalDate.getFullYear();
                         let hour = finalDate.getHours();
-    
+
                         let hours = finalDate.getHours();
                         let minutes = finalDate.getMinutes();
                         let ampm = hours >= 12 ? 'pm' : 'am';
@@ -1741,8 +1741,8 @@ exports.publicSession = async (req, res, next) => {
                         hours = hours ? hours : 12;
                         minutes = minutes.toString().padStart(2, '0');
                         let strTime = hours + ':' + minutes + ' ' + ampm;
-    
-    
+
+
                         publicSession1.push({
                             _id: publicSessionwithUserDetails._id,
                             cretedSessionUserId: findUser._id,
@@ -1758,13 +1758,13 @@ exports.publicSession = async (req, res, next) => {
                         })
                     }
                 }
-           
+
 
 
             }
 
             const res1 = publicSession.sort((a, b) => new Date(a.selectedDate) - new Date(b.selectedDate))
-            const response = [...res1 , ...publicSession1]
+            const response = [...res1, ...publicSession1]
 
             const page = parseInt(req.query.page)
             const limit = parseInt(req.query.limit)
@@ -1778,7 +1778,7 @@ exports.publicSession = async (req, res, next) => {
                 "code": 200,
                 "statusCode": 1,
                 "pageCount": (pageCount).toString() == (NaN).toString() ? 0 : pageCount,
-                "data":  (startIndex).toString() == (NaN).toString() ? response : response.slice(startIndex, endIndex)
+                "data": (startIndex).toString() == (NaN).toString() ? response : response.slice(startIndex, endIndex)
 
             })
         } else if (findPublicSessionParticipant3Match[0] != undefined) {
@@ -1823,13 +1823,13 @@ exports.publicSession = async (req, res, next) => {
                     profile: participants3Find ? participants3Find.photo[0] ? participants3Find.photo[0].res : "" : "",
                 }
 
-                if (publicSessionwithUserDetails.sessionEndOrNot == false){
+                if (publicSessionwithUserDetails.sessionEndOrNot == false) {
                     if (participants1Find && participants2Find && participants3Find) {
                         // const sessionDetail = 
                         // const response = {
                         //     sessionDetail
                         // }
-    
+
                         const dates = publicSessionwithUserDetails.selectedDate;
                         const finalDate = new Date(dates)
                         let month = finalDate.toLocaleString('en-us', { month: 'long' });
@@ -1837,7 +1837,7 @@ exports.publicSession = async (req, res, next) => {
                         let date = finalDate.getDate();
                         let year = finalDate.getFullYear();
                         let hour = finalDate.getHours();
-    
+
                         let hours = finalDate.getHours();
                         let minutes = finalDate.getMinutes();
                         let ampm = hours >= 12 ? 'pm' : 'am';
@@ -1845,7 +1845,7 @@ exports.publicSession = async (req, res, next) => {
                         hours = hours ? hours : 12;
                         minutes = minutes.toString().padStart(2, '0');
                         let strTime = hours + ':' + minutes + ' ' + ampm;
-    
+
                         publicSession.push({
                             _id: publicSessionwithUserDetails._id,
                             cretedSessionUserId: findUser._id,
@@ -1868,7 +1868,7 @@ exports.publicSession = async (req, res, next) => {
                         // const response = {
                         //     sessionDetail
                         // }
-    
+
                         const dates = publicSessionwithUserDetails.selectedDate;
                         const finalDate = new Date(dates)
                         let month = finalDate.toLocaleString('en-us', { month: 'long' });
@@ -1876,7 +1876,7 @@ exports.publicSession = async (req, res, next) => {
                         let date = finalDate.getDate();
                         let year = finalDate.getFullYear();
                         let hour = finalDate.getHours();
-    
+
                         let hours = finalDate.getHours();
                         let minutes = finalDate.getMinutes();
                         let ampm = hours >= 12 ? 'pm' : 'am';
@@ -1884,7 +1884,7 @@ exports.publicSession = async (req, res, next) => {
                         hours = hours ? hours : 12;
                         minutes = minutes.toString().padStart(2, '0');
                         let strTime = hours + ':' + minutes + ' ' + ampm;
-    
+
                         publicSession.push({
                             _id: publicSessionwithUserDetails._id,
                             cretedSessionUserId: findUser._id,
@@ -1902,7 +1902,7 @@ exports.publicSession = async (req, res, next) => {
                             ]
                         })
                     } else if (participants1Find && participants2Find == null && participants3Find) {
-    
+
                         const dates = publicSessionwithUserDetails.selectedDate;
                         const finalDate = new Date(dates)
                         let month = finalDate.toLocaleString('en-us', { month: 'long' });
@@ -1910,7 +1910,7 @@ exports.publicSession = async (req, res, next) => {
                         let date = finalDate.getDate();
                         let year = finalDate.getFullYear();
                         let hour = finalDate.getHours();
-    
+
                         let hours = finalDate.getHours();
                         let minutes = finalDate.getMinutes();
                         let ampm = hours >= 12 ? 'pm' : 'am';
@@ -1918,8 +1918,8 @@ exports.publicSession = async (req, res, next) => {
                         hours = hours ? hours : 12;
                         minutes = minutes.toString().padStart(2, '0');
                         let strTime = hours + ':' + minutes + ' ' + ampm;
-    
-    
+
+
                         const sessionDetail = {
                             _id: publicSessionwithUserDetails._id,
                             cretedSessionUserId: findUser._id,
@@ -1945,7 +1945,7 @@ exports.publicSession = async (req, res, next) => {
                         // const response = {
                         //     sessionDetail
                         // }
-    
+
                         const dates = publicSessionwithUserDetails.selectedDate;
                         const finalDate = new Date(dates)
                         let month = finalDate.toLocaleString('en-us', { month: 'long' });
@@ -1953,7 +1953,7 @@ exports.publicSession = async (req, res, next) => {
                         let date = finalDate.getDate();
                         let year = finalDate.getFullYear();
                         let hour = finalDate.getHours();
-    
+
                         let hours = finalDate.getHours();
                         let minutes = finalDate.getMinutes();
                         let ampm = hours >= 12 ? 'pm' : 'am';
@@ -1961,9 +1961,9 @@ exports.publicSession = async (req, res, next) => {
                         hours = hours ? hours : 12;
                         minutes = minutes.toString().padStart(2, '0');
                         let strTime = hours + ':' + minutes + ' ' + ampm;
-    
-    
-    
+
+
+
                         publicSession.push({
                             _id: publicSessionwithUserDetails._id,
                             cretedSessionUserId: findUser._id,
@@ -1980,13 +1980,13 @@ exports.publicSession = async (req, res, next) => {
                                 participants_2
                             ]
                         })
-    
+
                     } else if (participants1Find == null && participants2Find == null && participants3Find == null) {
                         // const sessionDetail =
                         // const response = {
                         //     sessionDetail
                         // }
-    
+
                         const dates = publicSessionwithUserDetails.selectedDate;
                         const finalDate = new Date(dates)
                         let month = finalDate.toLocaleString('en-us', { month: 'long' });
@@ -1994,7 +1994,7 @@ exports.publicSession = async (req, res, next) => {
                         let date = finalDate.getDate();
                         let year = finalDate.getFullYear();
                         let hour = finalDate.getHours();
-    
+
                         let hours = finalDate.getHours();
                         let minutes = finalDate.getMinutes();
                         let ampm = hours >= 12 ? 'pm' : 'am';
@@ -2002,8 +2002,8 @@ exports.publicSession = async (req, res, next) => {
                         hours = hours ? hours : 12;
                         minutes = minutes.toString().padStart(2, '0');
                         let strTime = hours + ':' + minutes + ' ' + ampm;
-    
-    
+
+
                         publicSession.push({
                             _id: publicSessionwithUserDetails._id,
                             cretedSessionUserId: findUser._id,
@@ -2018,13 +2018,13 @@ exports.publicSession = async (req, res, next) => {
                             participants: []
                         })
                     }
-                }else{
+                } else {
                     if (participants1Find && participants2Find && participants3Find) {
                         // const sessionDetail = 
                         // const response = {
                         //     sessionDetail
                         // }
-    
+
                         const dates = publicSessionwithUserDetails.selectedDate;
                         const finalDate = new Date(dates)
                         let month = finalDate.toLocaleString('en-us', { month: 'long' });
@@ -2032,7 +2032,7 @@ exports.publicSession = async (req, res, next) => {
                         let date = finalDate.getDate();
                         let year = finalDate.getFullYear();
                         let hour = finalDate.getHours();
-    
+
                         let hours = finalDate.getHours();
                         let minutes = finalDate.getMinutes();
                         let ampm = hours >= 12 ? 'pm' : 'am';
@@ -2040,7 +2040,7 @@ exports.publicSession = async (req, res, next) => {
                         hours = hours ? hours : 12;
                         minutes = minutes.toString().padStart(2, '0');
                         let strTime = hours + ':' + minutes + ' ' + ampm;
-    
+
                         publicSession1.push({
                             _id: publicSessionwithUserDetails._id,
                             cretedSessionUserId: findUser._id,
@@ -2063,7 +2063,7 @@ exports.publicSession = async (req, res, next) => {
                         // const response = {
                         //     sessionDetail
                         // }
-    
+
                         const dates = publicSessionwithUserDetails.selectedDate;
                         const finalDate = new Date(dates)
                         let month = finalDate.toLocaleString('en-us', { month: 'long' });
@@ -2071,7 +2071,7 @@ exports.publicSession = async (req, res, next) => {
                         let date = finalDate.getDate();
                         let year = finalDate.getFullYear();
                         let hour = finalDate.getHours();
-    
+
                         let hours = finalDate.getHours();
                         let minutes = finalDate.getMinutes();
                         let ampm = hours >= 12 ? 'pm' : 'am';
@@ -2079,7 +2079,7 @@ exports.publicSession = async (req, res, next) => {
                         hours = hours ? hours : 12;
                         minutes = minutes.toString().padStart(2, '0');
                         let strTime = hours + ':' + minutes + ' ' + ampm;
-    
+
                         publicSession1.push({
                             _id: publicSessionwithUserDetails._id,
                             cretedSessionUserId: findUser._id,
@@ -2097,7 +2097,7 @@ exports.publicSession = async (req, res, next) => {
                             ]
                         })
                     } else if (participants1Find && participants2Find == null && participants3Find) {
-    
+
                         const dates = publicSessionwithUserDetails.selectedDate;
                         const finalDate = new Date(dates)
                         let month = finalDate.toLocaleString('en-us', { month: 'long' });
@@ -2105,7 +2105,7 @@ exports.publicSession = async (req, res, next) => {
                         let date = finalDate.getDate();
                         let year = finalDate.getFullYear();
                         let hour = finalDate.getHours();
-    
+
                         let hours = finalDate.getHours();
                         let minutes = finalDate.getMinutes();
                         let ampm = hours >= 12 ? 'pm' : 'am';
@@ -2113,8 +2113,8 @@ exports.publicSession = async (req, res, next) => {
                         hours = hours ? hours : 12;
                         minutes = minutes.toString().padStart(2, '0');
                         let strTime = hours + ':' + minutes + ' ' + ampm;
-    
-    
+
+
                         const sessionDetail = {
                             _id: publicSessionwithUserDetails._id,
                             cretedSessionUserId: findUser._id,
@@ -2140,7 +2140,7 @@ exports.publicSession = async (req, res, next) => {
                         // const response = {
                         //     sessionDetail
                         // }
-    
+
                         const dates = publicSessionwithUserDetails.selectedDate;
                         const finalDate = new Date(dates)
                         let month = finalDate.toLocaleString('en-us', { month: 'long' });
@@ -2148,7 +2148,7 @@ exports.publicSession = async (req, res, next) => {
                         let date = finalDate.getDate();
                         let year = finalDate.getFullYear();
                         let hour = finalDate.getHours();
-    
+
                         let hours = finalDate.getHours();
                         let minutes = finalDate.getMinutes();
                         let ampm = hours >= 12 ? 'pm' : 'am';
@@ -2156,9 +2156,9 @@ exports.publicSession = async (req, res, next) => {
                         hours = hours ? hours : 12;
                         minutes = minutes.toString().padStart(2, '0');
                         let strTime = hours + ':' + minutes + ' ' + ampm;
-    
-    
-    
+
+
+
                         publicSession1.push({
                             _id: publicSessionwithUserDetails._id,
                             cretedSessionUserId: findUser._id,
@@ -2175,13 +2175,13 @@ exports.publicSession = async (req, res, next) => {
                                 participants_2
                             ]
                         })
-    
+
                     } else if (participants1Find == null && participants2Find == null && participants3Find == null) {
                         // const sessionDetail =
                         // const response = {
                         //     sessionDetail
                         // }
-    
+
                         const dates = publicSessionwithUserDetails.selectedDate;
                         const finalDate = new Date(dates)
                         let month = finalDate.toLocaleString('en-us', { month: 'long' });
@@ -2189,7 +2189,7 @@ exports.publicSession = async (req, res, next) => {
                         let date = finalDate.getDate();
                         let year = finalDate.getFullYear();
                         let hour = finalDate.getHours();
-    
+
                         let hours = finalDate.getHours();
                         let minutes = finalDate.getMinutes();
                         let ampm = hours >= 12 ? 'pm' : 'am';
@@ -2197,8 +2197,8 @@ exports.publicSession = async (req, res, next) => {
                         hours = hours ? hours : 12;
                         minutes = minutes.toString().padStart(2, '0');
                         let strTime = hours + ':' + minutes + ' ' + ampm;
-    
-    
+
+
                         publicSession1.push({
                             _id: publicSessionwithUserDetails._id,
                             cretedSessionUserId: findUser._id,
@@ -2218,7 +2218,7 @@ exports.publicSession = async (req, res, next) => {
             }
 
             const res1 = publicSession.sort((a, b) => new Date(a.selectedDate) - new Date(b.selectedDate))
-            const response = [...res1 , ...publicSession1]
+            const response = [...res1, ...publicSession1]
 
             const page = parseInt(req.query.page)
             const limit = parseInt(req.query.limit)
@@ -2276,14 +2276,14 @@ exports.publicSession = async (req, res, next) => {
                     profile: participants3Find ? participants3Find.photo[0] ? participants3Find.photo[0].res : "" : "",
                 }
 
-                if (publicSessionwithUserDetails.sessionEndOrNot == false){
+                if (publicSessionwithUserDetails.sessionEndOrNot == false) {
 
                     if (participants1Find && participants2Find && participants3Find) {
                         // const sessionDetail = 
                         // const response = {
                         //     sessionDetail
                         // }
-    
+
                         const dates = publicSessionwithUserDetails.selectedDate;
                         const finalDate = new Date(dates)
                         let month = finalDate.toLocaleString('en-us', { month: 'long' });
@@ -2291,7 +2291,7 @@ exports.publicSession = async (req, res, next) => {
                         let date = finalDate.getDate();
                         let year = finalDate.getFullYear();
                         let hour = finalDate.getHours();
-    
+
                         let hours = finalDate.getHours();
                         let minutes = finalDate.getMinutes();
                         let ampm = hours >= 12 ? 'pm' : 'am';
@@ -2299,7 +2299,7 @@ exports.publicSession = async (req, res, next) => {
                         hours = hours ? hours : 12;
                         minutes = minutes.toString().padStart(2, '0');
                         let strTime = hours + ':' + minutes + ' ' + ampm;
-    
+
                         publicSession.push({
                             _id: publicSessionwithUserDetails._id,
                             cretedSessionUserId: findUser._id,
@@ -2322,7 +2322,7 @@ exports.publicSession = async (req, res, next) => {
                         // const response = {
                         //     sessionDetail
                         // }
-    
+
                         const dates = publicSessionwithUserDetails.selectedDate;
                         const finalDate = new Date(dates)
                         let month = finalDate.toLocaleString('en-us', { month: 'long' });
@@ -2330,7 +2330,7 @@ exports.publicSession = async (req, res, next) => {
                         let date = finalDate.getDate();
                         let year = finalDate.getFullYear();
                         let hour = finalDate.getHours();
-    
+
                         let hours = finalDate.getHours();
                         let minutes = finalDate.getMinutes();
                         let ampm = hours >= 12 ? 'pm' : 'am';
@@ -2338,7 +2338,7 @@ exports.publicSession = async (req, res, next) => {
                         hours = hours ? hours : 12;
                         minutes = minutes.toString().padStart(2, '0');
                         let strTime = hours + ':' + minutes + ' ' + ampm;
-    
+
                         publicSession.push({
                             _id: publicSessionwithUserDetails._id,
                             cretedSessionUserId: findUser._id,
@@ -2356,7 +2356,7 @@ exports.publicSession = async (req, res, next) => {
                             ]
                         })
                     } else if (participants1Find && participants2Find == null && participants3Find) {
-    
+
                         const dates = publicSessionwithUserDetails.selectedDate;
                         const finalDate = new Date(dates)
                         let month = finalDate.toLocaleString('en-us', { month: 'long' });
@@ -2364,7 +2364,7 @@ exports.publicSession = async (req, res, next) => {
                         let date = finalDate.getDate();
                         let year = finalDate.getFullYear();
                         let hour = finalDate.getHours();
-    
+
                         let hours = finalDate.getHours();
                         let minutes = finalDate.getMinutes();
                         let ampm = hours >= 12 ? 'pm' : 'am';
@@ -2372,8 +2372,8 @@ exports.publicSession = async (req, res, next) => {
                         hours = hours ? hours : 12;
                         minutes = minutes.toString().padStart(2, '0');
                         let strTime = hours + ':' + minutes + ' ' + ampm;
-    
-    
+
+
                         const sessionDetail = {
                             _id: publicSessionwithUserDetails._id,
                             cretedSessionUserId: findUser._id,
@@ -2399,7 +2399,7 @@ exports.publicSession = async (req, res, next) => {
                         // const response = {
                         //     sessionDetail
                         // }
-    
+
                         const dates = publicSessionwithUserDetails.selectedDate;
                         const finalDate = new Date(dates)
                         let month = finalDate.toLocaleString('en-us', { month: 'long' });
@@ -2407,7 +2407,7 @@ exports.publicSession = async (req, res, next) => {
                         let date = finalDate.getDate();
                         let year = finalDate.getFullYear();
                         let hour = finalDate.getHours();
-    
+
                         let hours = finalDate.getHours();
                         let minutes = finalDate.getMinutes();
                         let ampm = hours >= 12 ? 'pm' : 'am';
@@ -2415,9 +2415,9 @@ exports.publicSession = async (req, res, next) => {
                         hours = hours ? hours : 12;
                         minutes = minutes.toString().padStart(2, '0');
                         let strTime = hours + ':' + minutes + ' ' + ampm;
-    
-    
-    
+
+
+
                         publicSession.push({
                             _id: publicSessionwithUserDetails._id,
                             cretedSessionUserId: findUser._id,
@@ -2434,13 +2434,13 @@ exports.publicSession = async (req, res, next) => {
                                 participants_2
                             ]
                         })
-    
+
                     } else if (participants1Find == null && participants2Find == null && participants3Find == null) {
                         // const sessionDetail =
                         // const response = {
                         //     sessionDetail
                         // }
-    
+
                         const dates = publicSessionwithUserDetails.selectedDate;
                         const finalDate = new Date(dates)
                         let month = finalDate.toLocaleString('en-us', { month: 'long' });
@@ -2448,7 +2448,7 @@ exports.publicSession = async (req, res, next) => {
                         let date = finalDate.getDate();
                         let year = finalDate.getFullYear();
                         let hour = finalDate.getHours();
-    
+
                         let hours = finalDate.getHours();
                         let minutes = finalDate.getMinutes();
                         let ampm = hours >= 12 ? 'pm' : 'am';
@@ -2456,8 +2456,8 @@ exports.publicSession = async (req, res, next) => {
                         hours = hours ? hours : 12;
                         minutes = minutes.toString().padStart(2, '0');
                         let strTime = hours + ':' + minutes + ' ' + ampm;
-    
-    
+
+
                         publicSession.push({
                             _id: publicSessionwithUserDetails._id,
                             cretedSessionUserId: findUser._id,
@@ -2472,14 +2472,14 @@ exports.publicSession = async (req, res, next) => {
                             participants: []
                         })
                     }
-                }else{
+                } else {
 
                     if (participants1Find && participants2Find && participants3Find) {
                         // const sessionDetail = 
                         // const response = {
                         //     sessionDetail
                         // }
-    
+
                         const dates = publicSessionwithUserDetails.selectedDate;
                         const finalDate = new Date(dates)
                         let month = finalDate.toLocaleString('en-us', { month: 'long' });
@@ -2487,7 +2487,7 @@ exports.publicSession = async (req, res, next) => {
                         let date = finalDate.getDate();
                         let year = finalDate.getFullYear();
                         let hour = finalDate.getHours();
-    
+
                         let hours = finalDate.getHours();
                         let minutes = finalDate.getMinutes();
                         let ampm = hours >= 12 ? 'pm' : 'am';
@@ -2495,7 +2495,7 @@ exports.publicSession = async (req, res, next) => {
                         hours = hours ? hours : 12;
                         minutes = minutes.toString().padStart(2, '0');
                         let strTime = hours + ':' + minutes + ' ' + ampm;
-    
+
                         publicSession1.push({
                             _id: publicSessionwithUserDetails._id,
                             cretedSessionUserId: findUser._id,
@@ -2518,7 +2518,7 @@ exports.publicSession = async (req, res, next) => {
                         // const response = {
                         //     sessionDetail
                         // }
-    
+
                         const dates = publicSessionwithUserDetails.selectedDate;
                         const finalDate = new Date(dates)
                         let month = finalDate.toLocaleString('en-us', { month: 'long' });
@@ -2526,7 +2526,7 @@ exports.publicSession = async (req, res, next) => {
                         let date = finalDate.getDate();
                         let year = finalDate.getFullYear();
                         let hour = finalDate.getHours();
-    
+
                         let hours = finalDate.getHours();
                         let minutes = finalDate.getMinutes();
                         let ampm = hours >= 12 ? 'pm' : 'am';
@@ -2534,7 +2534,7 @@ exports.publicSession = async (req, res, next) => {
                         hours = hours ? hours : 12;
                         minutes = minutes.toString().padStart(2, '0');
                         let strTime = hours + ':' + minutes + ' ' + ampm;
-    
+
                         publicSession1.push({
                             _id: publicSessionwithUserDetails._id,
                             cretedSessionUserId: findUser._id,
@@ -2552,7 +2552,7 @@ exports.publicSession = async (req, res, next) => {
                             ]
                         })
                     } else if (participants1Find && participants2Find == null && participants3Find) {
-    
+
                         const dates = publicSessionwithUserDetails.selectedDate;
                         const finalDate = new Date(dates)
                         let month = finalDate.toLocaleString('en-us', { month: 'long' });
@@ -2560,7 +2560,7 @@ exports.publicSession = async (req, res, next) => {
                         let date = finalDate.getDate();
                         let year = finalDate.getFullYear();
                         let hour = finalDate.getHours();
-    
+
                         let hours = finalDate.getHours();
                         let minutes = finalDate.getMinutes();
                         let ampm = hours >= 12 ? 'pm' : 'am';
@@ -2568,8 +2568,8 @@ exports.publicSession = async (req, res, next) => {
                         hours = hours ? hours : 12;
                         minutes = minutes.toString().padStart(2, '0');
                         let strTime = hours + ':' + minutes + ' ' + ampm;
-    
-    
+
+
                         const sessionDetail = {
                             _id: publicSessionwithUserDetails._id,
                             cretedSessionUserId: findUser._id,
@@ -2595,7 +2595,7 @@ exports.publicSession = async (req, res, next) => {
                         // const response = {
                         //     sessionDetail
                         // }
-    
+
                         const dates = publicSessionwithUserDetails.selectedDate;
                         const finalDate = new Date(dates)
                         let month = finalDate.toLocaleString('en-us', { month: 'long' });
@@ -2603,7 +2603,7 @@ exports.publicSession = async (req, res, next) => {
                         let date = finalDate.getDate();
                         let year = finalDate.getFullYear();
                         let hour = finalDate.getHours();
-    
+
                         let hours = finalDate.getHours();
                         let minutes = finalDate.getMinutes();
                         let ampm = hours >= 12 ? 'pm' : 'am';
@@ -2611,9 +2611,9 @@ exports.publicSession = async (req, res, next) => {
                         hours = hours ? hours : 12;
                         minutes = minutes.toString().padStart(2, '0');
                         let strTime = hours + ':' + minutes + ' ' + ampm;
-    
-    
-    
+
+
+
                         publicSession1.push({
                             _id: publicSessionwithUserDetails._id,
                             cretedSessionUserId: findUser._id,
@@ -2630,13 +2630,13 @@ exports.publicSession = async (req, res, next) => {
                                 participants_2
                             ]
                         })
-    
+
                     } else if (participants1Find == null && participants2Find == null && participants3Find == null) {
                         // const sessionDetail =
                         // const response = {
                         //     sessionDetail
                         // }
-    
+
                         const dates = publicSessionwithUserDetails.selectedDate;
                         const finalDate = new Date(dates)
                         let month = finalDate.toLocaleString('en-us', { month: 'long' });
@@ -2644,7 +2644,7 @@ exports.publicSession = async (req, res, next) => {
                         let date = finalDate.getDate();
                         let year = finalDate.getFullYear();
                         let hour = finalDate.getHours();
-    
+
                         let hours = finalDate.getHours();
                         let minutes = finalDate.getMinutes();
                         let ampm = hours >= 12 ? 'pm' : 'am';
@@ -2652,8 +2652,8 @@ exports.publicSession = async (req, res, next) => {
                         hours = hours ? hours : 12;
                         minutes = minutes.toString().padStart(2, '0');
                         let strTime = hours + ':' + minutes + ' ' + ampm;
-    
-    
+
+
                         publicSession1.push({
                             _id: publicSessionwithUserDetails._id,
                             cretedSessionUserId: findUser._id,
@@ -2675,8 +2675,8 @@ exports.publicSession = async (req, res, next) => {
             }
 
             const res1 = publicSession.sort((a, b) => new Date(a.selectedDate) - new Date(b.selectedDate))
-            const response = [...res1 , ...publicSession1]
-            
+            const response = [...res1, ...publicSession1]
+
             const page = parseInt(req.query.page)
             const limit = parseInt(req.query.limit)
             const startIndex = (page - 1) * limit;
@@ -2722,12 +2722,12 @@ exports.invitedInSession = async (req, res, next) => {
 
         for (const findInvited of findMyIdInSession) {
 
-            if(findInvited.sessionEndOrNot == false){
+            if (findInvited.sessionEndOrNot == false) {
                 if (findInvited.participants[0].participants_1 == req.params.user_id) {
 
 
                     const dateAll = new Date(findInvited.selectedDate)
-    
+
                     let months = dateAll.getMonth();
                     let date = dateAll.getDate();
                     let year = dateAll.getFullYear();
@@ -2737,7 +2737,7 @@ exports.invitedInSession = async (req, res, next) => {
                         _id: findInvited.cretedSessionUser,
                         polyDating: 0
                     })
-    
+
                     const participants_2 = await userModel.findOne({
                         _id: findInvited.participants[0].participants_2,
                         polyDating: 0
@@ -2746,7 +2746,7 @@ exports.invitedInSession = async (req, res, next) => {
                         _id: findInvited.participants[0].participants_3,
                         polyDating: 0
                     })
-    
+
                     if (participants_2 == null && participants_3) {
                         const createdSessionUserDetail = {
                             _id: findInvited._id,
@@ -2821,17 +2821,17 @@ exports.invitedInSession = async (req, res, next) => {
                         }
                         allInvited.push(createdSessionUserDetail)
                     }
-    
+
                 } else if (findInvited.participants[0].participants_2 == req.params.user_id) {
-    
+
                     const dateAll = new Date(findInvited.selectedDate)
-    
+
                     let months = dateAll.getMonth();
                     let date = dateAll.getDate();
                     let year = dateAll.getFullYear();
                     let hour = dateAll.getHours();
                     let minutes = dateAll.getMinutes();
-    
+
                     const createdSessionUser = await userModel.findOne({
                         _id: findInvited.cretedSessionUser,
                         polyDating: 0
@@ -2844,7 +2844,7 @@ exports.invitedInSession = async (req, res, next) => {
                         _id: findInvited.participants[0].participants_3,
                         polyDating: 0
                     })
-    
+
                     if (participants_1 == null && participants_3) {
                         const createdSessionUserDetail = {
                             _id: findInvited._id,
@@ -2881,7 +2881,7 @@ exports.invitedInSession = async (req, res, next) => {
                             }]
                         }
                         allInvited.push(createdSessionUserDetail)
-    
+
                     } else if (participants_1 && participants_3) {
                         const createdSessionUserDetail = {
                             _id: findInvited._id,
@@ -2919,18 +2919,18 @@ exports.invitedInSession = async (req, res, next) => {
                         }
                         allInvited.push(createdSessionUserDetail)
                     }
-    
+
                 } else if (findInvited.participants[0].participants_3 == req.params.user_id) {
-    
-    
+
+
                     const dateAll = new Date(findInvited.selectedDate)
-    
+
                     let months = dateAll.getMonth();
                     let date = dateAll.getDate();
                     let year = dateAll.getFullYear();
                     let hour = dateAll.getHours();
                     let minutes = dateAll.getMinutes();
-    
+
                     const createdSessionUser = await userModel.findOne({
                         _id: findInvited.cretedSessionUser,
                         polyDating: 0
@@ -2943,7 +2943,7 @@ exports.invitedInSession = async (req, res, next) => {
                         _id: findInvited.participants[0].participants_2,
                         polyDating: 0
                     })
-    
+
                     if (participants_1 == null && participants_2) {
                         const createdSessionUserDetail = {
                             _id: findInvited._id,
@@ -2980,7 +2980,7 @@ exports.invitedInSession = async (req, res, next) => {
                             }]
                         }
                         allInvited.push(createdSessionUserDetail)
-    
+
                     } else if (participants_1 && participants_2) {
                         const createdSessionUserDetail = {
                             _id: findInvited._id,
@@ -3003,7 +3003,7 @@ exports.invitedInSession = async (req, res, next) => {
                             }]
                         }
                         allInvited.push(createdSessionUserDetail)
-    
+
                     } else if (participants_1 == null && participants_2 == null) {
                         const createdSessionUserDetail = {
                             _id: findInvited._id,
@@ -3020,12 +3020,12 @@ exports.invitedInSession = async (req, res, next) => {
                         allInvited.push(createdSessionUserDetail)
                     }
                 }
-            }else{
+            } else {
                 if (findInvited.participants[0].participants_1 == req.params.user_id) {
 
 
                     const dateAll = new Date(findInvited.selectedDate)
-    
+
                     let months = dateAll.getMonth();
                     let date = dateAll.getDate();
                     let year = dateAll.getFullYear();
@@ -3035,7 +3035,7 @@ exports.invitedInSession = async (req, res, next) => {
                         _id: findInvited.cretedSessionUser,
                         polyDating: 0
                     })
-    
+
                     const participants_2 = await userModel.findOne({
                         _id: findInvited.participants[0].participants_2,
                         polyDating: 0
@@ -3044,7 +3044,7 @@ exports.invitedInSession = async (req, res, next) => {
                         _id: findInvited.participants[0].participants_3,
                         polyDating: 0
                     })
-    
+
                     if (participants_2 == null && participants_3) {
                         const createdSessionUserDetail = {
                             _id: findInvited._id,
@@ -3119,17 +3119,17 @@ exports.invitedInSession = async (req, res, next) => {
                         }
                         allInvited1.push(createdSessionUserDetail)
                     }
-    
+
                 } else if (findInvited.participants[0].participants_2 == req.params.user_id) {
-    
+
                     const dateAll = new Date(findInvited.selectedDate)
-    
+
                     let months = dateAll.getMonth();
                     let date = dateAll.getDate();
                     let year = dateAll.getFullYear();
                     let hour = dateAll.getHours();
                     let minutes = dateAll.getMinutes();
-    
+
                     const createdSessionUser = await userModel.findOne({
                         _id: findInvited.cretedSessionUser,
                         polyDating: 0
@@ -3142,7 +3142,7 @@ exports.invitedInSession = async (req, res, next) => {
                         _id: findInvited.participants[0].participants_3,
                         polyDating: 0
                     })
-    
+
                     if (participants_1 == null && participants_3) {
                         const createdSessionUserDetail = {
                             _id: findInvited._id,
@@ -3179,7 +3179,7 @@ exports.invitedInSession = async (req, res, next) => {
                             }]
                         }
                         allInvited1.push(createdSessionUserDetail)
-    
+
                     } else if (participants_1 && participants_3) {
                         const createdSessionUserDetail = {
                             _id: findInvited._id,
@@ -3217,18 +3217,18 @@ exports.invitedInSession = async (req, res, next) => {
                         }
                         allInvited1.push(createdSessionUserDetail)
                     }
-    
+
                 } else if (findInvited.participants[0].participants_3 == req.params.user_id) {
-    
-    
+
+
                     const dateAll = new Date(findInvited.selectedDate)
-    
+
                     let months = dateAll.getMonth();
                     let date = dateAll.getDate();
                     let year = dateAll.getFullYear();
                     let hour = dateAll.getHours();
                     let minutes = dateAll.getMinutes();
-    
+
                     const createdSessionUser = await userModel.findOne({
                         _id: findInvited.cretedSessionUser,
                         polyDating: 0
@@ -3241,7 +3241,7 @@ exports.invitedInSession = async (req, res, next) => {
                         _id: findInvited.participants[0].participants_2,
                         polyDating: 0
                     })
-    
+
                     if (participants_1 == null && participants_2) {
                         const createdSessionUserDetail = {
                             _id: findInvited._id,
@@ -3278,7 +3278,7 @@ exports.invitedInSession = async (req, res, next) => {
                             }]
                         }
                         allInvited1.push(createdSessionUserDetail)
-    
+
                     } else if (participants_1 && participants_2) {
                         const createdSessionUserDetail = {
                             _id: findInvited._id,
@@ -3301,7 +3301,7 @@ exports.invitedInSession = async (req, res, next) => {
                             }]
                         }
                         allInvited1.push(createdSessionUserDetail)
-    
+
                     } else if (participants_1 == null && participants_2 == null) {
                         const createdSessionUserDetail = {
                             _id: findInvited._id,
@@ -3319,12 +3319,12 @@ exports.invitedInSession = async (req, res, next) => {
                     }
                 }
             }
-        
+
         }
 
-        
+
         const res1 = allInvited.sort((a, b) => new Date(a.selectedDate) - new Date(b.selectedDate))
-        const response = [...res1 , ...allInvited1]
+        const response = [...res1, ...allInvited1]
 
         const page = parseInt(req.query.page)
         const limit = parseInt(req.query.limit)
@@ -3699,8 +3699,8 @@ exports.mySession = async (req, res, next) => {
         const pageCount = Math.ceil(data / limit);
 
 
-       const res1 = mySession.sort((a, b) => new Date(a.selectedDate) - new Date(b.selectedDate))
-        const response = [...res1 , ...mySession1]
+        const res1 = mySession.sort((a, b) => new Date(a.selectedDate) - new Date(b.selectedDate))
+        const response = [...res1, ...mySession1]
 
         if (response[0] == undefined) {
             res.status(status.OK).json({
@@ -4445,11 +4445,24 @@ exports.getUploadeVedioOrImages = async (req, res, next) => {
 
     try {
 
-        const sessionId = await sessionModel.findOne({
+        const sessionIds = await sessionModel.findOne({
             _id: req.params.session_id
         })
 
-        if (sessionId) {
+        const paricipant = [];
+        const p1 = sessionIds.participants[0].participants_1 == null ? "" : sessionIds.participants[0].participants_1
+        const p2 = sessionIds.participants[0].participants_2 == null ? "" : sessionIds.participants[0].participants_2
+        const p3 = sessionIds.participants[0].participants_3 == null ? "" : sessionIds.participants[0].participants_3
+        if (p1) {
+            paricipant.push((sessionIds.participants[0].participants_1).toString())
+        } if (p2) {
+            paricipant.push((sessionIds.participants[0].participants_2).toString())
+        } if (p3) {
+            paricipant.push((sessionIds.participants[0].participants_3).toString())
+        }
+
+
+        if (sessionIds) {
 
 
             const sessionId = await sessionComment.findOne({
@@ -4458,52 +4471,90 @@ exports.getUploadeVedioOrImages = async (req, res, next) => {
 
             if (sessionId) {
                 const data = sessionId.upload
-                var imgFinal = []
-                const final_response = []
-                for (const allData of data) {
-
-                    for (const uploadImages of allData.uploadImgOrVideo) {
+                console.log(data);
+                const id = [];
+                if (data[0] == undefined) {
 
 
-                        for (const img of uploadImages) {
 
-                            const getExt1Name = path.extname(img.res);
-                            if (getExt1Name == ".mp4" || getExt1Name == ".mov" || getExt1Name == ".avi" || getExt1Name == ".wmv" || getExt1Name == ".m3u8" || getExt1Name == ".webm" || getExt1Name == ".flv" || getExt1Name == ".ts" || getExt1Name == ".3gp") {
-                                imgFinal.push({
-                                    res: img.res,
-                                    type: "video",
-                                })
-                            } else {
-                                imgFinal.push({
-                                    res: img.res,
-                                    type: "image"
-                                })
+                    const final_response = [];
+                    for (const ids of paricipant) {
+                        const findUser = await userModel.findOne({
+                            _id: ids
+                        })
+                        const res = {
+                            userId: findUser._id,
+                            userName: findUser.firstName,
+                            profile: findUser.photo[0] ? findUser.photo[0].res : "",
+                            img: []
+                        }
+                        final_response.push(res)
+                    }
+
+
+                    res.status(status.OK).json(
+                        new APIResponse("show all uploder", "true", 200, "1", final_response)
+                    )
+                } else {
+                    var imgFinal = []
+                    const final_response = []
+                    for (const allData of data) {
+
+                        for (const uploadImages of allData.uploadImgOrVideo) {
+
+
+                            for (const img of uploadImages) {
+
+                                const getExt1Name = path.extname(img.res);
+                                if (getExt1Name == ".mp4" || getExt1Name == ".mov" || getExt1Name == ".avi" || getExt1Name == ".wmv" || getExt1Name == ".m3u8" || getExt1Name == ".webm" || getExt1Name == ".flv" || getExt1Name == ".ts" || getExt1Name == ".3gp") {
+                                    imgFinal.push({
+                                        res: img.res,
+                                        type: "video",
+                                    })
+                                } else {
+                                    imgFinal.push({
+                                        res: img.res,
+                                        type: "image"
+                                    })
+                                }
+
                             }
+
 
                         }
 
 
+
+                        id.push((allData.userId).toString())
+                        const res = {
+                            userId: allData.userId,
+                            userName: allData.userName,
+                            profile: allData.profile,
+                            img: imgFinal
+                        }
+                        final_response.push(res)
+                        var imgFinal = []
                     }
 
+                    const unique = paricipant.filter(obj => id.indexOf(obj) == -1)
 
-
-
-                    const res = {
-                        userId: allData.userId,
-                        userName: allData.userName,
-                        profile: allData.profile,
-                        img: imgFinal
+                    for (const ids of unique) {
+                        const findUser = await userModel.findOne({
+                            _id: ids
+                        })
+                        const res = {
+                            userId: findUser._id,
+                            userName: findUser.firstName,
+                            profile: findUser.photo[0] ? findUser.photo[0].res : "",
+                            img: []
+                        }
+                        final_response.push(res)
                     }
-                    final_response.push(res)
-                    var imgFinal = []
+                    res.status(status.OK).json(
+                        new APIResponse("show all uploder", "true", 200, "1", final_response)
+                    )
                 }
 
-
-
-
-                res.status(status.OK).json(
-                    new APIResponse("show all uploder", "true", 200, "1", final_response)
-                )
             } else {
 
                 res.status(status.OK).json(
@@ -4983,170 +5034,170 @@ exports.thumbUpCountInSession = async (req, res, next) => {
 }
 
 
-exports.sessionInfo = async(req,res,next) => {
+exports.sessionInfo = async (req, res, next) => {
     try {
 
         const sessionFind = await sessionModel.findOne({
-            _id : req.params.session_id
+            _id: req.params.session_id
         })
 
-        if(sessionFind){
-            
+        if (sessionFind) {
+
             const session = await sessionComment.findOne({
-                sessionId : req.params.session_id
+                sessionId: req.params.session_id
             })
 
-            if(session){
+            if (session) {
 
-            const allPrticipant = [];
+                const allPrticipant = [];
 
-            for(const participant of session.joinUser){
-                if(participant.status == 2){
-                    allPrticipant.push(participant.userId)
-                }
-            }
-
-            const InSession =  session.liveSession
-            console.log(InSession);
-            if(InSession[0] == undefined){
-                const final_response = [];
-                for(const user of allPrticipant){
-
-                    const findUser = await userModel.findOne({
-                        _id : user
-                    })
-                    const response = {
-                    userId: (findUser._id).toString(),
-                    profile: findUser.photo[0] ? findUser.photo[0].res : "",
-                    userName : findUser.firstName,
-                    sessionId : req.params.session_id,
-                    status : 0
+                for (const participant of session.joinUser) {
+                    if (participant.status == 2) {
+                        allPrticipant.push(participant.userId)
                     }
-
-                    final_response.push(response)
                 }
-                res.status(status.OK).json(
-                    new APIResponse("session information!", "true", 200, "1", final_response)
-                )
-              
-            }
-            else if(InSession[0].participants_1[0] == undefined){
 
-                const final_response = [];
-                for(const user of allPrticipant){
+                const InSession = session.liveSession
+                console.log(InSession);
+                if (InSession[0] == undefined) {
+                    const final_response = [];
+                    for (const user of allPrticipant) {
 
-                    const findUser = await userModel.findOne({
-                        _id : user
-                    })
-                    const response = {
-                    userId: (findUser._id).toString(),
-                    profile: findUser.photo[0] ? findUser.photo[0].res : "",
-                    userName : findUser.firstName,
-                    sessionId : req.params.session_id,
-                    status : 0
+                        const findUser = await userModel.findOne({
+                            _id: user
+                        })
+                        const response = {
+                            userId: (findUser._id).toString(),
+                            profile: findUser.photo[0] ? findUser.photo[0].res : "",
+                            userName: findUser.firstName,
+                            sessionId: req.params.session_id,
+                            status: 0
+                        }
+
+                        final_response.push(response)
                     }
+                    res.status(status.OK).json(
+                        new APIResponse("session information!", "true", 200, "1", final_response)
+                    )
 
-                    final_response.push(response)
                 }
-                res.status(status.OK).json(
-                    new APIResponse("session information!", "true", 200, "1", final_response)
-                )
-              
+                else if (InSession[0].participants_1[0] == undefined) {
 
-               
-            }else{
+                    const final_response = [];
+                    for (const user of allPrticipant) {
+
+                        const findUser = await userModel.findOne({
+                            _id: user
+                        })
+                        const response = {
+                            userId: (findUser._id).toString(),
+                            profile: findUser.photo[0] ? findUser.photo[0].res : "",
+                            userName: findUser.firstName,
+                            sessionId: req.params.session_id,
+                            status: 0
+                        }
+
+                        final_response.push(response)
+                    }
+                    res.status(status.OK).json(
+                        new APIResponse("session information!", "true", 200, "1", final_response)
+                    )
 
 
-                const raiseHandUser = [];
-                const data = session.liveSession
-                console.log(data[0]);
+
+                } else {
+
+
+                    const raiseHandUser = [];
+                    const data = session.liveSession
+                    console.log(data[0]);
 
                     raiseHandUser.push({
-                        userId : data[0].participants_1[0].userId,
-                        status : data[0].participants_1[0].allow
+                        userId: data[0].participants_1[0].userId,
+                        status: data[0].participants_1[0].allow
                     })
 
                     raiseHandUser.push({
-                        userId : data[0].participants_2[0].userId,
-                        status : data[0].participants_2[0].allow
+                        userId: data[0].participants_2[0].userId,
+                        status: data[0].participants_2[0].allow
                     })
 
                     raiseHandUser.push({
-                        userId : data[0].participants_3[0].userId,
-                        status : data[0].participants_3[0].allow
+                        userId: data[0].participants_3[0].userId,
+                        status: data[0].participants_3[0].allow
                     })
 
-                    console.log("raiseHandUser" , raiseHandUser);
-                const final_response = [];
-                const userId = [];
+                    console.log("raiseHandUser", raiseHandUser);
+                    const final_response = [];
+                    const userId = [];
 
-                for(const res of allPrticipant){
-                    for(const res1 of raiseHandUser){
+                    for (const res of allPrticipant) {
+                        for (const res1 of raiseHandUser) {
 
-                        if((res).toString() == (res1.userId).toString()){
+                            if ((res).toString() == (res1.userId).toString()) {
 
-                            const findUser = await userModel.findOne({
-                                _id : res1.userId
-                            })
+                                const findUser = await userModel.findOne({
+                                    _id: res1.userId
+                                })
 
-                            const response = {
-                                userId: (findUser._id).toString(),
-                                profile: findUser.photo[0] ? findUser.photo[0].res : "",
-                                userName : findUser.firstName,
-                                sessionId : req.params.session_id,
-                                status : res1.status
+                                const response = {
+                                    userId: (findUser._id).toString(),
+                                    profile: findUser.photo[0] ? findUser.photo[0].res : "",
+                                    userName: findUser.firstName,
+                                    sessionId: req.params.session_id,
+                                    status: res1.status
                                 }
-                        
-                            final_response.push(response)
-                            userId.push(findUser._id)
-                        }else{
+
+                                final_response.push(response)
+                                userId.push(findUser._id)
+                            } else {
+                            }
                         }
                     }
-                }
 
-                console.log(userId);
-                const ids =  [...allPrticipant, ...userId]
-                for(const findres of ids){
-                    for(const id of userId){
-                        if((findres).toString() == (id).toString()){
+                    console.log(userId);
+                    const ids = [...allPrticipant, ...userId]
+                    for (const findres of ids) {
+                        for (const id of userId) {
+                            if ((findres).toString() == (id).toString()) {
 
-                        }else{
-                            const findUser = await userModel.findOne({
-                                _id : ids
-                            })
+                            } else {
+                                const findUser = await userModel.findOne({
+                                    _id: ids
+                                })
 
-                            const response = {
-                                userId: (findUser._id).toString(),
-                                profile: findUser.photo[0] ? findUser.photo[0].res : "",
-                                userName : findUser.firstName,
-                                sessionId : req.params.session_id,
-                                status : 0
+                                const response = {
+                                    userId: (findUser._id).toString(),
+                                    profile: findUser.photo[0] ? findUser.photo[0].res : "",
+                                    userName: findUser.firstName,
+                                    sessionId: req.params.session_id,
+                                    status: 0
                                 }
-                        
-                            final_response.push(response)
+
+                                final_response.push(response)
+                            }
                         }
                     }
+                    let uniqueObjArray = [...new Map(final_response.map((item) => [item["userId"], item])).values()];
+
+                    res.status(status.OK).json(
+                        new APIResponse("session information!", "true", 200, "1", uniqueObjArray)
+                    )
+
                 }
-                let uniqueObjArray = [...new Map(final_response.map((item) => [item["userId"], item])).values()];
 
-                res.status(status.OK).json(
-                    new APIResponse("session information!", "true", 200, "1", uniqueObjArray)
-                )
-               
-            }
-
-            }else{
+            } else {
                 res.status(status.NOT_FOUND).json(
-                    new APIResponse("session not live", "true", 404, "1", )
+                    new APIResponse("session not live", "true", 404, "1",)
                 )
             }
 
-        }else{
+        } else {
             res.status(status.NOT_FOUND).json(
-                new APIResponse("session not found", "true", 404, "1", )
+                new APIResponse("session not found", "true", 404, "1",)
             )
         }
-        
+
     } catch (error) {
         console.log("error", error);
         res.status(status.INTERNAL_SERVER_ERROR).json(
