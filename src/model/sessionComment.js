@@ -81,28 +81,37 @@ const sessionCommentSchema = mongoose.Schema({
     }],
     liveSession:[{
         participants_1: [{
-            userId : mongoose.Schema.Types.ObjectId,
+            userId :
+            {   
+                type: mongoose.Schema.Types.ObjectId,
+                default: mongoose.Types.ObjectId("5f92cbf10cf217478ba93561")
+            } ,
             allow: {
                 type: Number,
                 default: 0
-            },
-            date:String
+            }
          }],
          participants_2: [{
-             userId : mongoose.Schema.Types.ObjectId,
+            userId :
+            {   
+                type: mongoose.Schema.Types.ObjectId,
+                default:  mongoose.Types.ObjectId("5f92cbf10cf217478ba93561")
+            } ,
              allow: {   
                 type: Number,
                 default: 0
-            },
-            date:String
+            }
           }],
           participants_3: [{
-             userId : mongoose.Schema.Types.ObjectId,
+            userId :
+            {   
+                type: mongoose.Schema.Types.ObjectId,
+                default:  mongoose.Types.ObjectId("5f92cbf10cf217478ba93561")
+            } ,
              allow: {
                 type: Number,
                 default: 0
-            },
-            date:String
+            }
           }], 
      }]
 

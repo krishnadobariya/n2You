@@ -3593,6 +3593,30 @@ function socket(io) {
                             _id: sessionFindInCommentModel.cretedSessionUser
                         })
 
+
+                        const findUser1 = await sessionCommentModel.findOne({
+                            sessionId: arg.session_id,
+                            "raisHand.userId": arg.participant_id
+                        })
+        
+        
+                        if (findUser1) {
+                            await sessionCommentModel.updateOne({
+                                sessionId: arg.session_id,
+                                "raisHand.userId": arg.participant_id
+                            }, {
+                                $set: {
+                                    "raisHand.$.mute": 3    
+                                }   
+                            })
+        
+        
+                        } else {
+                           
+                        }
+
+
+
                         const response = {
                             sessionId: arg.session_id,
                             participantId: arg.participant_id,
@@ -3647,7 +3671,7 @@ function socket(io) {
 
                         }
 
-                    }, 90000);
+                    }, 1000);
 
 
                 } else {

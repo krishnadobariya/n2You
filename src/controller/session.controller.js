@@ -6,7 +6,7 @@ const userModel = require("../model/user.model");
 const e = require("express");
 const notificationModel = require("../model/polyamorous/notification.model");
 const requestsModel = require("../model/requests.model");
-const { default: mongoose } = require("mongoose");
+const { default: mongoose, set } = require("mongoose");
 const cron = require("node-cron");
 const Notification = require("../helper/firebaseHelper");
 const sessionComment = require("../model/sessionComment");
@@ -5048,9 +5048,10 @@ exports.sessionInfo = async(req,res,next) => {
                 }
 
                 const final_response = [];
+                const userId = [];
 
                 for(const res of allPrticipant){
-                    for(res1 of raiseHandUser){
+                    for(const res1 of raiseHandUser){
 
                         if((res).toString() == (res1.userId).toString()){
 
@@ -5067,9 +5068,21 @@ exports.sessionInfo = async(req,res,next) => {
                                 }
                         
                             final_response.push(response)
+                            userId.push(findUser._id)
+                        }else{
+                        }
+                    }
+                }
+
+                console.log(userId);
+                const ids =  [...allPrticipant, ...userId]
+                for(const findres of ids){
+                    for(const id of userId){
+                        if((findres).toString() == (id).toString()){
+
                         }else{
                             const findUser = await userModel.findOne({
-                                _id : res
+                                _id : ids
                             })
 
                             const response = {
@@ -5084,7 +5097,6 @@ exports.sessionInfo = async(req,res,next) => {
                         }
                     }
                 }
-
                 let uniqueObjArray = [...new Map(final_response.map((item) => [item["userId"], item])).values()];
 
                 res.status(status.OK).json(
