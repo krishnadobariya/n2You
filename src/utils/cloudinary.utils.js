@@ -2,9 +2,9 @@ const cloudinary = require("cloudinary").v2
 
 
 cloudinary.config({
-    cloud_name: 'dts1dlmxw',
-    api_key: '414977289425792',
-    api_secret: 'CDkm4O9NuMlBe6KAEapRX5gDm5o'
+    cloud_name: 'tcloud',
+    api_key: '691732984517939',
+    api_secret: '9GQ_ExlgyIARoxknsPyWTFWEs9k'
 })
 
 module.exports = cloudinary;
