@@ -3262,7 +3262,7 @@ function socket(io) {
 
 
 
-                        } else if ((participant.participants_2).toString() == (arg.user_id).toString()) {
+                        } else if ((participant.participants_2 == null ? "" : ( participant.participants_2).toString()).toString() == (arg.user_id).toString()) {
 
                             const findUser = await userModel.findOne({
                                 _id: mongoose.Types.ObjectId(res.cretedSessionUser)
@@ -3279,7 +3279,7 @@ function socket(io) {
                             publicData.push(response)
 
 
-                        } else if ((participant.participants_3).toString() == (arg.user_id).toString()) {
+                        } else if ((participant.participants_3 == null ? "" : ( participant.participants_3).toString())== (arg.user_id).toString()) {
 
                             const findUser = await userModel.findOne({
                                 _id: mongoose.Types.ObjectId(res.cretedSessionUser)
