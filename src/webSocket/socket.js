@@ -2006,6 +2006,10 @@ function socket(io) {
             const p2 = findIdInSession.participants[0].participants_2 == null ? "" : findIdInSession.participants[0].participants_2
             const p3 = findIdInSession.participants[0].participants_3 == null ? "" : findIdInSession.participants[0].participants_3
 
+            console.log("p1 is" , p1);
+            console.log("p2 is ", p2);
+            console.log("p3 is ", p3);
+
 
             if (findIdInSession) {
 
