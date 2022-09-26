@@ -2013,8 +2013,7 @@ function socket(io) {
             
 
             const findUser = await sessionCommentModel.findOne({
-                sessionId : arg.session_id,
-                "joinUser.userId" : arg.create_session_user
+                sessionId : arg.session_id
             })
 
             if(findUser.joinUser[0] == undefined){
