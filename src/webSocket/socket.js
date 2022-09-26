@@ -665,7 +665,7 @@ function socket(io) {
         })
 
         socket.on("chatByGroup", async (arg) => {
-            const userRoom = arg.chat_room_id
+            const userRoom = `User${arg.chat_room_id}`
             socket.join(userRoom);
 
             const validGroupInGroupRoom = await groupChatRoomModels.findOne({
@@ -1772,7 +1772,7 @@ function socket(io) {
         })
 
         socket.on('conflictOfIntrest', async (arg) => {
-            const userRoom = arg.group_room_id;
+            const userRoom = `User${arg.group_room_id}`;
             socket.join(userRoom);
 
             const findRoom = groupChatRoomModels.findOne({
