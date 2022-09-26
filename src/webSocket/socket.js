@@ -2016,7 +2016,14 @@ function socket(io) {
                 sessionId : arg.session_id
             })
 
-            if(findUser.joinUser[0] == undefined){
+            if(findUser == null){
+                const response = {
+                    intUserId : val
+                }
+                const userRoom = `User${arg.create_session_user}`
+                console.log("userroom" , userRoom);
+                io.to(userRoom).emit("onIntUser", response);
+            }else if(findUser.joinUser[0] == undefined){
                 const response = {
                     intUserId : val
                 }
