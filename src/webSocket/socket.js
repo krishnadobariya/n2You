@@ -2607,7 +2607,6 @@ function socket(io) {
                     io.emit("sessionJoinSuccess", "session started");
                 } else {
 
-
                     const commentSession = await sessionCommentModel.findOne({
                         sessionId: arg.session_id,
                         "joinUser.userId": mongoose.Types.ObjectId(arg.create_session_user)
