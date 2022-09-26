@@ -277,7 +277,7 @@ raiseHandSuccess
 
 ==============================================
 
-raiseHandAccepted
+raiseHandAccepted   
 
 {
     "session_id":"",
