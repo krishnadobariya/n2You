@@ -2010,13 +2010,43 @@ function socket(io) {
         
             var val = Math.floor(1000 + Math.random() * 9000);
             console.log(val);
-            const response = {
-                intUserId : val
-            }
-            const userRoom = `User${arg.create_session_user}`
-            console.log("userroom" , userRoom);
-            io.to(userRoom).emit("onIntUser", response);
+            
 
+            const findUser = await sessionCommentModel.findOne({
+                sessionId : arg.session_id,
+                "joinUser.userId" : arg.create_session_user
+            })
+
+            if(findUser.joinUser[0] == undefined){
+                const response = {
+                    intUserId : val
+                }
+                const userRoom = `User${arg.create_session_user}`
+                console.log("userroom" , userRoom);
+                io.to(userRoom).emit("onIntUser", response);
+            }else{
+                for(const data of findUser.joinUser){
+                    if(data.userId == arg.create_session_user){
+                        const response = {
+                            intUserId : data.intId
+                        }
+                        const userRoom = `User${arg.create_session_user}`
+                        console.log("userroom" , userRoom);
+                        io.to(userRoom).emit("onIntUser", response);
+            
+                    }else{
+                        const response = {
+                            intUserId : val
+                        }
+                        const userRoom = `User${arg.create_session_user}`
+                        console.log("userroom" , userRoom);
+                        io.to(userRoom).emit("onIntUser", response);
+            
+                    }
+                }
+            }
+           
+           
 
             if (findIdInSession) {
 

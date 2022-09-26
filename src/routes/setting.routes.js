@@ -8,4 +8,4 @@ router.put('/comment/:user_id', settingController.settingComment);
 router.get('/basketAccess/:user_id', settingController.getBasketSetting);
 router.get('/commentAccess/:user_id', settingController.getCommentSetting);
 
-module.exports = router;
+module.exports = router;    
