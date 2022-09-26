@@ -2013,7 +2013,8 @@ function socket(io) {
             const response = {
                 intUserId : val
             }
-            const userRoom = arg.create_session_user
+            const userRoom = `User${arg.create_session_user}`
+            console.log("userroom" , userRoom);
             io.to(userRoom).emit("onIntUser", response);
 
 
@@ -2687,7 +2688,6 @@ function socket(io) {
                                 }
                             })
                             await savedata.save();
-
                         }
                     }
 
@@ -2714,8 +2714,6 @@ function socket(io) {
 
                     io.emit("sessionJoinSuccess", "session started");
                 }
-
-
         
             } else {
                 io.emit("sessionJoinSuccess", "seesion not found");
