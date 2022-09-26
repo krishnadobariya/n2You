@@ -2607,7 +2607,6 @@ function socket(io) {
                     io.emit("sessionJoinSuccess", "session started");
                 } else {
 
-
                     const commentSession = await sessionCommentModel.findOne({
                         sessionId: arg.session_id,
                         "joinUser.userId": mongoose.Types.ObjectId(arg.create_session_user)
@@ -3254,7 +3253,7 @@ function socket(io) {
 
 
                     const userRoom = `User${arg.user_id}`
-                    io.to(userRoom).emit("removeMuteSuccess",response);
+                    io.emit("removeMuteSuccess",response);
 
             
                 } else {
@@ -3267,6 +3266,7 @@ function socket(io) {
 
 
         })
+
         socket.on("raiseHandAccepted", async (arg) => {
 
             const findUser = await sessionModel.findOne({
