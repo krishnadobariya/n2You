@@ -17,6 +17,9 @@ const sessionCommentSchema = mongoose.Schema({
         },
         status: {
             type: Number
+        },
+        intId:{
+            type: Number
         }
     }],
     commentWithUser: [{
