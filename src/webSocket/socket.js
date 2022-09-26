@@ -15,6 +15,7 @@ const videoCallModel = require("./models/videoCall.model");
 const { deleteOne, updateOne, findOne } = require("../model/user.model");
 const sessionModel = require("../model/session.model");
 const sessionCommentModel = require("../model/sessionComment");
+const { FORBIDDEN } = require("http-status");
 function socket(io) {
 
     console.log("socket connected...");
@@ -2006,9 +2007,14 @@ function socket(io) {
             const p2 = findIdInSession.participants[0].participants_2 == null ? "" : findIdInSession.participants[0].participants_2
             const p3 = findIdInSession.participants[0].participants_3 == null ? "" : findIdInSession.participants[0].participants_3
 
-            console.log("p1 is" , p1);
-            console.log("p2 is ", p2);
-            console.log("p3 is ", p3);
+        
+            var val = Math.floor(1000 + Math.random() * 9000);
+            console.log(val);
+            const response = {
+                intUserId : val
+            }
+            const userRoom = arg.create_session_user
+            io.to(userRoom).emit("onIntUser", response);
 
 
             if (findIdInSession) {
@@ -2031,25 +2037,25 @@ function socket(io) {
                     if (findIdInSession.roomType == "Public") {
 
                         const allRequestedEmails = [];
-                        
+
                         const p1 = findIdInSession.participants[0].participants_1 == null ? "" : findIdInSession.participants[0].participants_1
                         const p2 = findIdInSession.participants[0].participants_2 == null ? "" : findIdInSession.participants[0].participants_2
                         const p3 = findIdInSession.participants[0].participants_3 == null ? "" : findIdInSession.participants[0].participants_3
 
                         const findUser = await userModel.find({
-                            _id : {
-                                $ne : arg.create_session_user
+                            _id: {
+                                $ne: arg.create_session_user
                             },
-                            polyDating : 0
+                            polyDating: 0
                         })
-        
+
                         for (const allRequestedEmail of findUser) {
                             if (((allRequestedEmail._id).toString() != (p1).toString()) && ((allRequestedEmail._id).toString() != (p2).toString()) && ((allRequestedEmail._id).toString() != (p3).toString())) {
                                 allRequestedEmails.push(allRequestedEmail._id)
-                        }
+                            }
                         }
 
-                      
+
                         const invitedUsers = [];
                         if (p1 != null) {
                             invitedUsers.push(findIdInSession.participants[0].participants_1)
@@ -2280,7 +2286,6 @@ function socket(io) {
                 } else if ((p1).toString() == (arg.create_session_user).toString()) {
 
 
-                    console.log("p1");
                     const commentSession = await sessionCommentModel.findOne({
                         sessionId: arg.session_id,
                         "joinUser.userId": mongoose.Types.ObjectId(p1)
@@ -2293,6 +2298,7 @@ function socket(io) {
                             $push: {
                                 joinUser: {
                                     userId: mongoose.Types.ObjectId(p1),
+                                    intId: val,
                                     status: 2
                                 }
                             }
@@ -2400,7 +2406,8 @@ function socket(io) {
                             $push: {
                                 joinUser: {
                                     userId: mongoose.Types.ObjectId(p2),
-                                    status: 2
+                                    status: 2,
+                                    intId: val,
                                 }
                             }
                         })
@@ -2488,6 +2495,7 @@ function socket(io) {
 
                         }
                     }
+
                     io.emit("sessionJoinSuccess", "session started");
 
                 } else if ((p3).toString() == (arg.create_session_user).toString()) {
@@ -2505,7 +2513,8 @@ function socket(io) {
                             $push: {
                                 joinUser: {
                                     userId: mongoose.Types.ObjectId(p3),
-                                    status: 2
+                                    status: 2,
+                                    intId : val
                                 }
                             }
                         })
@@ -2594,6 +2603,7 @@ function socket(io) {
 
                         }
                     }
+
                     io.emit("sessionJoinSuccess", "session started");
                 } else {
 
@@ -2696,20 +2706,24 @@ function socket(io) {
                             $push: {
                                 joinUser: {
                                     userId: mongoose.Types.ObjectId(arg.create_session_user),
-                                    status: 3
+                                    status: 3,
+                                    intId: val,
                                 }
                             }
                         })
                     }
+
+                    io.emit("sessionJoinSuccess", "session started");
                 }
-                io.emit("sessionJoinSuccess", "session started");
+
+
+        
             } else {
                 io.emit("sessionJoinSuccess", "seesion not found");
             }
         })
 
-
-        socket.on('endSession', async (arg) => {
+        socket.on('endSession', async (arg) => {    
 
             const findSession = await sessionModel.findOne({
                 _id: arg.session_id
@@ -2726,7 +2740,7 @@ function socket(io) {
                         {
                             _id: arg.session_id,
                         },
-                        { $set : {countJoinUser: 0} }
+                        { $set: { countJoinUser: 0 } }
                     )
 
                     await sessionModel.updateOne({
@@ -2739,28 +2753,28 @@ function socket(io) {
                     })
 
 
-                    if(findSession.roomType == "Public"){
+                    if (findSession.roomType == "Public") {
 
                         const allRequestedEmails = [];
-                        
+
                         const p1 = findSession.participants[0].participants_1 == null ? "" : findSession.participants[0].participants_1
                         const p2 = findSession.participants[0].participants_2 == null ? "" : findSession.participants[0].participants_2
                         const p3 = findSession.participants[0].participants_3 == null ? "" : findSession.participants[0].participants_3
 
                         const findUser = await userModel.find({
-                            _id : {
-                                $ne : arg.create_session_user
+                            _id: {
+                                $ne: arg.create_session_user
                             },
-                            polyDating : 0
-                        })  
-        
+                            polyDating: 0
+                        })
+
                         for (const allRequestedEmail of findUser) {
                             if (((allRequestedEmail._id).toString() != (p1).toString()) && ((allRequestedEmail._id).toString() != (p2).toString()) && ((allRequestedEmail._id).toString() != (p3).toString())) {
                                 allRequestedEmails.push(allRequestedEmail._id)
-                        }
+                            }
                         }
 
-                     
+
                         const invitedUsers = [];
                         if (p1 != null) {
                             invitedUsers.push(findSession.participants[0].participants_1)
@@ -2771,21 +2785,21 @@ function socket(io) {
                         if (p3 != null) {
                             invitedUsers.push(findSession.participants[0].participants_3)
                         }
-    
+
                         for (const notification of allRequestedEmails) {
-    
+
                             const findUser = await userModel.findOne({
                                 _id: notification
                             })
-    
+
                             const findCreateSessionUser = await userModel.findOne({
                                 _id: findSession.cretedSessionUser
                             })
-    
+
                             if (findUser.fcm_token) {
                                 const title = findCreateSessionUser.firstName;
                                 const body = `session end by ${findCreateSessionUser.firstName}`;
-    
+
                                 const text = "join session";
                                 const sendBy = (findCreateSessionUser._id).toString();
                                 const registrationToken = findUser.fcm_token
@@ -2798,14 +2812,14 @@ function socket(io) {
                                     true
                                 );
                             }
-    
-    
+
+
                             const findInNotification = await notificationModel.findOne({
                                 userId: notification
                             })
-    
+
                             if (findInNotification) {
-    
+
                                 await notificationModel.updateOne({
                                     userId: notification
                                 }, {
@@ -2817,7 +2831,7 @@ function socket(io) {
                                         }
                                     }
                                 })
-    
+
                             } else {
                                 const savedata = notificationModel({
                                     userId: notification,
@@ -2828,26 +2842,26 @@ function socket(io) {
                                     }
                                 })
                                 await savedata.save();
-    
+
                             }
                         }
 
-    
-    
+
+
                         for (const notification of invitedUsers) {
-    
+
                             const findUser = await userModel.findOne({
                                 _id: notification
                             })
-    
+
                             const findCreateSessionUser = await userModel.findOne({
                                 _id: findSession.cretedSessionUser
                             })
-    
+
                             if (findUser.fcm_token) {
                                 const title = findCreateSessionUser.firstName;
                                 const body = `session end by ${findCreateSessionUser.firstName}`;
-    
+
                                 const text = "join session";
                                 const sendBy = (findCreateSessionUser._id).toString();
                                 const registrationToken = findUser.fcm_token
@@ -2860,14 +2874,14 @@ function socket(io) {
                                     true
                                 );
                             }
-    
-    
+
+
                             const findInNotification = await notificationModel.findOne({
                                 userId: notification
                             })
-    
+
                             if (findInNotification) {
-    
+
                                 await notificationModel.updateOne({
                                     userId: notification
                                 }, {
@@ -2879,7 +2893,7 @@ function socket(io) {
                                         }
                                     }
                                 })
-    
+
                             } else {
                                 const savedata = notificationModel({
                                     userId: notification,
@@ -2890,17 +2904,17 @@ function socket(io) {
                                     }
                                 })
                                 await savedata.save();
-    
+
                             }
                         }
 
-                    }else{
+                    } else {
                         const allRequestedEmails = [];
 
                         const p1 = findSession.participants[0].participants_1 == null ? "" : findSession.participants[0].participants_1
                         const p2 = findSession.participants[0].participants_2 == null ? "" : findSession.participants[0].participants_2
                         const p3 = findSession.participants[0].participants_3 == null ? "" : findSession.participants[0].participants_3
-    
+
                         if (p1) {
                             allRequestedEmails.push(findSession.participants[0].participants_1)
                         }
@@ -2910,22 +2924,22 @@ function socket(io) {
                         if (p3) {
                             allRequestedEmails.push(findSession.participants[0].participants_3)
                         }
-    
-    
+
+
                         for (const notification of allRequestedEmails) {
-    
+
                             const findUser = await userModel.findOne({
                                 _id: notification
                             })
-    
+
                             const findCreateSessionUser = await userModel.findOne({
                                 _id: findSession.cretedSessionUser
                             })
-    
+
                             if (findUser.fcm_token) {
                                 const title = findCreateSessionUser.firstName;
                                 const body = `session end by ${findCreateSessionUser.firstName}`;
-    
+
                                 const text = "join session";
                                 const sendBy = (findCreateSessionUser._id).toString();
                                 const registrationToken = findUser.fcm_token
@@ -2938,14 +2952,14 @@ function socket(io) {
                                     true
                                 );
                             }
-    
-    
+
+
                             const findInNotification = await notificationModel.findOne({
                                 userId: notification
                             })
-    
+
                             if (findInNotification) {
-    
+
                                 await notificationModel.updateOne({
                                     userId: notification
                                 }, {
@@ -2957,7 +2971,7 @@ function socket(io) {
                                         }
                                     }
                                 })
-    
+
                             } else {
                                 const savedata = notificationModel({
                                     userId: notification,
@@ -2968,11 +2982,11 @@ function socket(io) {
                                     }
                                 })
                                 await savedata.save();
-    
+
                             }
                         }
                     }
-                 
+
 
 
                     const res = {
@@ -3183,7 +3197,7 @@ function socket(io) {
 
                     console.log(response);
                     const userRoom = `User${sessionUser.cretedSessionUser}`
-                    console.log("raiseHandSuccess :" , userRoom);
+                    console.log("raiseHandSuccess :", userRoom);
                     console.log(response);
                     io.to(userRoom).emit("raiseHandSuccess", response);
 
@@ -3195,6 +3209,65 @@ function socket(io) {
 
         })
 
+        socket.on("removeMute"  , async(arg) => {
+
+            const findUser = await sessionModel.findOne({
+                _id: arg.session_id
+            })
+
+            if (findUser) {
+
+                const findUser1 = await sessionCommentModel.findOne({
+                    sessionId: arg.session_id,
+                    "raisHand.userId": arg.user_id
+                })
+
+                
+                if (findUser1) {
+
+
+                    const findUser2 = await sessionCommentModel.findOne({
+                        sessionId: arg.session_id,
+                        "joinUser.userId": arg.user_id
+                    })
+                    var intId
+
+                    for(const data of findUser1.raisHand){
+                        for(const data1 of findUser2.joinUser){
+                            if((data.userId).toString() == (data1.userId).toString()){
+                                intId = data1.intId
+                            }
+                        }
+                    }
+
+                    const response = {
+                        intUserId : intId
+                    }
+
+
+                    await sessionCommentModel.updateOne({
+                        sessionId: arg.session_id
+                    }, {
+                        $pull: {
+                            raisHand: {
+                                userId: arg.user_id
+                            }
+                        }
+                    })
+                    const userRoom = `User${arg.user_id}`
+                    io.to(userRoom).emit("removeMuteSuccess", response);
+
+            
+                } else {
+                 
+                    io.emit("removeMuteSuccess", "not in raise hand list!");
+                }
+            } else {
+                io.emit("removeMuteSuccess", "Not Found Session!");
+            }
+
+
+        })
         socket.on("raiseHandAccepted", async (arg) => {
 
             const findUser = await sessionModel.findOne({
@@ -3208,7 +3281,6 @@ function socket(io) {
                     "raisHand.userId": arg.user_id
                 })
 
-
                 if (findUser1) {
                     await sessionCommentModel.updateOne({
                         sessionId: arg.session_id,
@@ -3216,11 +3288,29 @@ function socket(io) {
                     }, {
                         $set: {
                             "raisHand.$.mute": 1
-                        }   
+                        }
                     })
 
                     const userRoom = `User${arg.user_id}`
-                    io.to(userRoom).emit("raiseHandAcceptedSuccess", "raise hand accept success!");
+
+                    const findUser2 = await sessionCommentModel.findOne({
+                        sessionId: arg.session_id,
+                        "joinUser.userId": arg.user_id
+                    })
+                    var intId
+
+                    for(const data of findUser1.raisHand){
+                        for(const data1 of findUser2.joinUser){
+                            if((data.userId).toString() == (data1.userId).toString()){
+                                intId = data1.intId
+                            }
+                        }
+                    }
+
+                    const response = {
+                        intUserId : intId
+                    }
+                    io.to(userRoom).emit("raiseHandAcceptedSuccess",response);
 
                 } else {
                     io.emit("raiseHandAcceptedSuccess", "no found!");
@@ -3266,7 +3356,7 @@ function socket(io) {
 
 
 
-                        } else if ((participant.participants_2 == null ? "" : ( participant.participants_2).toString()).toString() == (arg.user_id).toString()) {
+                        } else if ((participant.participants_2 == null ? "" : (participant.participants_2).toString()).toString() == (arg.user_id).toString()) {
 
                             const findUser = await userModel.findOne({
                                 _id: mongoose.Types.ObjectId(res.cretedSessionUser)
@@ -3283,7 +3373,7 @@ function socket(io) {
                             publicData.push(response)
 
 
-                        } else if ((participant.participants_3 == null ? "" : ( participant.participants_3).toString())== (arg.user_id).toString()) {
+                        } else if ((participant.participants_3 == null ? "" : (participant.participants_3).toString()) == (arg.user_id).toString()) {
 
                             const findUser = await userModel.findOne({
                                 _id: mongoose.Types.ObjectId(res.cretedSessionUser)
@@ -3609,36 +3699,36 @@ function socket(io) {
                             sessionId: arg.session_id,
                             "liveSession.participants_3.userId": arg.participant_id
                         })
-        
+
                         if (findParticipant1) {
                             await sessionCommentModel.updateOne({
                                 sessionId: arg.session_id,
                                 "liveSession.participants_1.userId": arg.participant_id
                             }, {
                                 $set: {
-                                    "liveSession.participants_1.allow": 3    
-                                }   
+                                    "liveSession.participants_1.allow": 3
+                                }
                             })
-        
-        
-                        } else if(findParticipant2){
+
+
+                        } else if (findParticipant2) {
                             await sessionCommentModel.updateOne({
                                 sessionId: arg.session_id,
                                 "liveSession.participants_2.userId": arg.participant_id
                             }, {
                                 $set: {
-                                    "liveSession.participants_2.allow": 3    
-                                }   
+                                    "liveSession.participants_2.allow": 3
+                                }
                             })
-        
-                        }else if(findParticipant3){
+
+                        } else if (findParticipant3) {
                             await sessionCommentModel.updateOne({
                                 sessionId: arg.session_id,
                                 "liveSession.participants_3.userId": arg.participant_id
                             }, {
                                 $set: {
-                                    "liveSession.participants_3.allow": 3    
-                                }   
+                                    "liveSession.participants_3.allow": 3
+                                }
                             })
                         }
 
