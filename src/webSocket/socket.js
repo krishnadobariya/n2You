@@ -1806,6 +1806,7 @@ function socket(io) {
                     conflictOfIntrest.push(response)
 
                 }
+                
 
                 io.to(userRoom).emit("showConflictOfIntrest", conflictOfIntrest);
             }

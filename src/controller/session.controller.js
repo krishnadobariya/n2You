@@ -4188,22 +4188,26 @@ exports.userList = async (req, res, next) => {
 
             if (findUser) {
                 const data = findUser.joinUser
+                console.log(data);
                 const final_response = [];
                 for (const res of data) {
 
-
-                    const findUser = await userModel.findOne({
-                        _id: res.userId
-                    })
-
-                    console.log(findUser);
-                    const response = {
-                        userId: findUser._id,
-                        userName: findUser.firstName,
-                        profile: findUser.photo[0] ? findUser.photo[0].res : "",
+                    if(res.status == 3){
+                        const findUser = await userModel.findOne({
+                            _id: res.userId
+                        })
+    
+                        console.log(findUser);
+                        const response = {
+                            userId: findUser._id,
+                            userName: findUser.firstName,
+                            profile: findUser.photo[0] ? findUser.photo[0].res : "",
+                        }
+    
+                        final_response.push(response)
                     }
 
-                    final_response.push(response)
+                  
                 }
 
                 res.status(status.OK).json(
