@@ -1806,7 +1806,7 @@ function socket(io) {
                     conflictOfIntrest.push(response)
 
                 }
-                
+
 
                 io.to(userRoom).emit("showConflictOfIntrest", conflictOfIntrest);
             }
@@ -2008,52 +2008,90 @@ function socket(io) {
             const p2 = findIdInSession.participants[0].participants_2 == null ? "" : findIdInSession.participants[0].participants_2
             const p3 = findIdInSession.participants[0].participants_3 == null ? "" : findIdInSession.participants[0].participants_3
 
-        
+
             var val = Math.floor(1000 + Math.random() * 9000);
             console.log(val);
-            
+
 
             const findUser = await sessionCommentModel.findOne({
-                sessionId : arg.session_id
+                sessionId: arg.session_id
             })
 
-            if(findUser == null){
+            if ((findIdInSession.cretedSessionUser).toString() == (arg.create_session_user).toString()) {
                 const response = {
-                    intUserId : val
+                    intUserId: findIdInSession.createUserIntId
                 }
                 const userRoom = `User${arg.create_session_user}`
-                console.log("userroom" , userRoom);
+                console.log("userroom", userRoom);
                 io.to(userRoom).emit("onIntUser", response);
-            }else if(findUser.joinUser[0] == undefined){
+            } else if ((p1).toString() == (arg.create_session_user).toString()) {
                 const response = {
-                    intUserId : val
+                    intUserId: findIdInSession.participants[0].P1IntId
                 }
                 const userRoom = `User${arg.create_session_user}`
-                console.log("userroom" , userRoom);
+                console.log("userroom", userRoom);
                 io.to(userRoom).emit("onIntUser", response);
-            }else{
-                for(const data of findUser.joinUser){
-                    if(data.userId == arg.create_session_user){
-                        const response = {
-                            intUserId : data.intId
-                        }
-                        const userRoom = `User${arg.create_session_user}`
-                        console.log("userroom" , userRoom);
-                        io.to(userRoom).emit("onIntUser", response);
-            
-                    }else{
-                        const response = {
-                            intUserId : val
-                        }
-                        const userRoom = `User${arg.create_session_user}`
-                        console.log("userroom" , userRoom);
-                        io.to(userRoom).emit("onIntUser", response);
-            
-                    }
+            } else if ((p2).toString() == (arg.create_session_user).toString()) {
+                const response = {
+                    intUserId: findIdInSession.participants[0].P2IntId
                 }
+                const userRoom = `User${arg.create_session_user}`
+                console.log("userroom", userRoom);
+                io.to(userRoom).emit("onIntUser", response);
+            } else if ((p3).toString() == (arg.create_session_user).toString()) {
+                const response = {
+                    intUserId: findIdInSession.participants[0].P3IntId
+                }
+                const userRoom = `User${arg.create_session_user}`
+                console.log("userroom", userRoom);
+                io.to(userRoom).emit("onIntUser", response);
+            } else {
+                const response = {
+                    intUserId: val
+                }
+                const userRoom = `User${arg.create_session_user}`
+                console.log("userroom", userRoom);
+                io.to(userRoom).emit("onIntUser", response);
             }
-           
-           
+
+            // if(findUser == null){
+            //     const response = {
+            //         intUserId : val
+            //     }
+            //     const userRoom = `User${arg.create_session_user}`
+            //     console.log("userroom" , userRoom);
+
+            //     io.to(userRoom).emit("onIntUser", response);
+            // }else if(findUser.joinUser[0] == undefined){
+            //     const response = {
+            //         intUserId : val
+            //     }
+            //     const userRoom = `User${arg.create_session_user}`
+            //     console.log("userroom" , userRoom);
+            //     io.to(userRoom).emit("onIntUser", response);
+            // }else{
+            //     for(const data of findUser.joinUser){
+            //         if(data.userId == arg.create_session_user){
+            //             const response = {
+            //                 intUserId : data.intId
+            //             }
+            //             const userRoom = `User${arg.create_session_user}`
+            //             console.log("userroom" , userRoom);
+            //             io.to(userRoom).emit("onIntUser", response);
+
+            //         }else{
+            //             const response = {
+            //                 intUserId : val
+            //             }
+            //             const userRoom = `User${arg.create_session_user}`
+            //             console.log("userroom" , userRoom);
+            //             io.to(userRoom).emit("onIntUser", response);
+
+            //         }
+            //     }
+            // }
+
+
 
             if (findIdInSession) {
 
@@ -2323,8 +2361,6 @@ function socket(io) {
                     }
                 } else if ((p1).toString() == (arg.create_session_user).toString()) {
 
-                    
-console.log("sfdsdfewsdf");
                     const commentSession = await sessionCommentModel.findOne({
                         sessionId: arg.session_id,
                         "joinUser.userId": mongoose.Types.ObjectId(p1)
@@ -2446,7 +2482,7 @@ console.log("sfdsdfewsdf");
                                 joinUser: {
                                     userId: mongoose.Types.ObjectId(p2),
                                     status: 2,
-                                    intId:  findIdInSession.participants[0].P2IntId,
+                                    intId: findIdInSession.participants[0].P2IntId,
                                 }
                             }
                         })
@@ -2752,13 +2788,13 @@ console.log("sfdsdfewsdf");
 
                     io.emit("sessionJoinSuccess", "session started");
                 }
-        
+
             } else {
                 io.emit("sessionJoinSuccess", "seesion not found");
             }
         })
 
-        socket.on('endSession', async (arg) => {    
+        socket.on('endSession', async (arg) => {
 
             const findSession = await sessionModel.findOne({
                 _id: arg.session_id
@@ -3249,7 +3285,7 @@ console.log("sfdsdfewsdf");
 
         })
 
-        socket.on("removeMute"  , async(arg) => {
+        socket.on("removeMute", async (arg) => {
 
             const findUser = await sessionModel.findOne({
                 _id: arg.session_id
@@ -3262,7 +3298,7 @@ console.log("sfdsdfewsdf");
                     "raisHand.userId": arg.user_id
                 })
 
-                
+
                 if (findUser1) {
 
 
@@ -3272,16 +3308,16 @@ console.log("sfdsdfewsdf");
                     })
                     var intId
 
-                    for(const data of findUser1.raisHand){
-                        for(const data1 of findUser2.joinUser){
-                            if((data.userId).toString() == (data1.userId).toString()){
+                    for (const data of findUser1.raisHand) {
+                        for (const data1 of findUser2.joinUser) {
+                            if ((data.userId).toString() == (data1.userId).toString()) {
                                 intId = data1.intId
                             }
                         }
                     }
 
                     const response = {
-                        intUserId : intId
+                        intUserId: intId
                     }
 
 
@@ -3297,9 +3333,9 @@ console.log("sfdsdfewsdf");
                     const userRoom = `User${arg.user_id}`
                     io.to(userRoom).emit("removeMuteSuccess", response);
 
-            
+
                 } else {
-                 
+
                     io.emit("removeMuteSuccess", "not in raise hand list!");
                 }
             } else {
@@ -3339,18 +3375,18 @@ console.log("sfdsdfewsdf");
                     })
                     var intId
 
-                    for(const data of findUser1.raisHand){
-                        for(const data1 of findUser2.joinUser){
-                            if((data.userId).toString() == (data1.userId).toString()){
+                    for (const data of findUser1.raisHand) {
+                        for (const data1 of findUser2.joinUser) {
+                            if ((data.userId).toString() == (data1.userId).toString()) {
                                 intId = data1.intId
                             }
                         }
                     }
 
                     const response = {
-                        intUserId : intId
+                        intUserId: intId
                     }
-                    io.to(userRoom).emit("raiseHandAcceptedSuccess",response);
+                    io.to(userRoom).emit("raiseHandAcceptedSuccess", response);
 
                 } else {
                     io.emit("raiseHandAcceptedSuccess", "no found!");
