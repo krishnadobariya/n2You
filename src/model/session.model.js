@@ -20,6 +20,9 @@ const sessionSchema = mongoose.Schema({
         ref: 'User',
         required: true
     },
+    createUserIntId:{
+        type: Number
+    },
     started: {
         type: Boolean,
         default: false
@@ -33,15 +36,29 @@ const sessionSchema = mongoose.Schema({
             type: mongoose.Schema.Types.ObjectId,
             ref: 'User',
         },
+        P1IntId : {
+            type: Number,
+            default: 0000
+        },
         participants_2: {
             type: mongoose.Schema.Types.ObjectId,
             ref: 'User',
+        },
+        P2IntId : {
+            type: Number,
+            default: 0000
         },
         participants_3: {
             type: mongoose.Schema.Types.ObjectId,
             ref: 'User',
         },
+        P3IntId : {
+            type: Number,
+            default: 0000
+        },
     }],
+
+    
     RoomType: {
         type: String
     }

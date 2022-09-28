@@ -25,6 +25,8 @@ exports.sessionCreate = async (req, res, next) => {
 
         if (findUserInUserModel) {
 
+            var val = Math.floor(1000 + Math.random() * 9000);
+            console.log(val);
             console.log("req.body.selected_date", req.body.selected_date);
             const date = new Date(req.body.selected_date)
             let dates = date.getDate();
@@ -45,6 +47,7 @@ exports.sessionCreate = async (req, res, next) => {
             const createSession = sessionModel({
                 selectedDate: `${year}-${months + 1}-${dates} ${hour}:${minutes}:${second}`,
                 selectedTime: strTime,
+                createUserIntId: val,
                 cretedSessionUser: req.body.creted_session_user,
                 participants: {
                     participants_1: req.body.participants_1 ? req.body.participants_1 : null,
@@ -88,16 +91,46 @@ exports.sessionCreate = async (req, res, next) => {
 
                 }
 
+               
                 // console.log("allRequestedEmails" , allRequestedEmails);
                 const invitedUsers = [];
                 if (p1) {
+                    var val = Math.floor(1000 + Math.random() * 9000);
+                    console.log(val);
                     invitedUsers.push(mongoose.Types.ObjectId(req.body.participants_1))
+                    await sessionModel.updateOne({
+                        _id: saveData._id
+                    }, {
+                        $set: {
+                            "participants.0.P1IntId": val
+                        }
+                    })
                 }
                 if (p2) {
+                    var val = Math.floor(1000 + Math.random() * 9000);
+                    console.log(val);
                     invitedUsers.push(mongoose.Types.ObjectId(req.body.participants_2))
+                    invitedUsers.push(mongoose.Types.ObjectId(req.body.participants_1))
+                    await sessionModel.updateOne({
+                        _id: saveData._id
+                    }, {
+                        $set: {
+                            "participants.0.P2IntId": val
+                        }
+                    })
                 }
                 if (p3) {
+                    var val = Math.floor(1000 + Math.random() * 9000);
+                    console.log(val);
                     invitedUsers.push(mongoose.Types.ObjectId(req.body.participants_3))
+                    invitedUsers.push(mongoose.Types.ObjectId(req.body.participants_1))
+                    await sessionModel.updateOne({
+                        _id: saveData._id
+                    }, {
+                        $set: {
+                            "participants.0.P3IntId": val
+                        }
+                    })
                 }
 
 
@@ -228,13 +261,44 @@ exports.sessionCreate = async (req, res, next) => {
 
 
                 if (p1) {
+                    var val = Math.floor(1000 + Math.random() * 9000);
+                    console.log(val);
+
                     allRequestedEmails.push(mongoose.Types.ObjectId(req.body.participants_1))
+                    await sessionModel.updateOne({
+                        _id: saveData._id
+                    }, {
+                        $set: {
+                            "participants.0.P1IntId": val
+                        }
+                    })
+
                 }
                 if (p2) {
+                    var val = Math.floor(1000 + Math.random() * 9000);
+                    console.log(val);
+
                     allRequestedEmails.push(mongoose.Types.ObjectId(req.body.participants_2))
+                    await sessionModel.updateOne({
+                        _id: saveData._id
+                    }, {
+                        $set: {
+                            "participants.0.P1IntId": val
+                        }
+                    })
                 }
                 if (p3) {
+                    var val = Math.floor(1000 + Math.random() * 9000);
+                    console.log(val);
+
                     allRequestedEmails.push(mongoose.Types.ObjectId(req.body.participants_3))
+                    await sessionModel.updateOne({
+                        _id: saveData._id
+                    }, {
+                        $set: {
+                            "participants.0.P1IntId": val
+                        }
+                    })
                 }
 
 
@@ -4192,22 +4256,22 @@ exports.userList = async (req, res, next) => {
                 const final_response = [];
                 for (const res of data) {
 
-                    if(res.status == 3){
+                    if (res.status == 3) {
                         const findUser = await userModel.findOne({
                             _id: res.userId
                         })
-    
+
                         console.log(findUser);
                         const response = {
                             userId: findUser._id,
                             userName: findUser.firstName,
                             profile: findUser.photo[0] ? findUser.photo[0].res : "",
                         }
-    
+
                         final_response.push(response)
                     }
 
-                  
+
                 }
 
                 res.status(status.OK).json(
@@ -5202,6 +5266,75 @@ exports.sessionInfo = async (req, res, next) => {
             )
         }
 
+    } catch (error) {
+        console.log("error", error);
+        res.status(status.INTERNAL_SERVER_ERROR).json(
+            new APIResponse("Something Went Wrong", "false", 500, "0", error.message)
+        )
+    }
+}
+
+
+exports.listOfSessionInfo = async(req,res,next) =>{
+    try {
+
+        const findSession = await sessionModel.findOne({
+            _id : req.params.session_id
+        })
+
+
+
+        if(findSession){
+
+            const userList = []
+            const p1 = findSession.participants[0].participants_1 == null ? "" : findSession.participants[0].participants_1
+            const p2 = findSession.participants[0].participants_2 == null ? "" : findSession.participants[0].participants_2
+            const p3 = findSession.participants[0].participants_3 == null ? "" : findSession.participants[0].participants_3
+
+
+            console.log(p1);
+    
+            userList.push({userId : findSession.cretedSessionUser , intId : findSession.createUserIntId , status : 1})
+
+            if(p1){
+                userList.push({userId : findSession.participants[0].participants_1 , intId : findSession.participants[0].P1IntId , status : 2})
+            }
+            if(p2){
+                userList.push({userId : findSession.participants[0].participants_2 , intId : findSession.participants[0].P2IntId , status : 2})
+            }
+            if(p3){
+                userList.push({userId : findSession.participants[0].participants_3 , intId : findSession.participants[0].P3IntId , status : 2})
+            }
+
+            const finalResponse = [];
+         
+           for(const user of userList){
+
+            const findUser = await userModel.findOne({
+                _id : user.userId
+            })
+
+            const response = {
+                sessionId: req.params.session_id,
+                userId: findUser._id,
+                userProfile: findUser.photo[0] ? findUser.photo[0].res : "",
+                intId:user.intId,
+                status : user.status
+            }
+
+            finalResponse.push(response)
+           }
+          
+           res.status(status.OK).json(
+            new APIResponse("session info list", "true", 200, "1", finalResponse)
+        )
+
+        }else{
+            res.status(status.NOT_FOUND).json(
+                new APIResponse("session not found", "true", 404, "1",)
+            )
+        }
+        
     } catch (error) {
         console.log("error", error);
         res.status(status.INTERNAL_SERVER_ERROR).json(

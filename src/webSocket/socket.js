@@ -2323,7 +2323,8 @@ function socket(io) {
                     }
                 } else if ((p1).toString() == (arg.create_session_user).toString()) {
 
-
+                    
+console.log("sfdsdfewsdf");
                     const commentSession = await sessionCommentModel.findOne({
                         sessionId: arg.session_id,
                         "joinUser.userId": mongoose.Types.ObjectId(p1)
@@ -2336,7 +2337,7 @@ function socket(io) {
                             $push: {
                                 joinUser: {
                                     userId: mongoose.Types.ObjectId(p1),
-                                    intId: val,
+                                    intId: findIdInSession.participants[0].P1IntId,
                                     status: 2
                                 }
                             }
@@ -2445,7 +2446,7 @@ function socket(io) {
                                 joinUser: {
                                     userId: mongoose.Types.ObjectId(p2),
                                     status: 2,
-                                    intId: val,
+                                    intId:  findIdInSession.participants[0].P2IntId,
                                 }
                             }
                         })
@@ -2552,7 +2553,7 @@ function socket(io) {
                                 joinUser: {
                                     userId: mongoose.Types.ObjectId(p3),
                                     status: 2,
-                                    intId : val
+                                    intId: findIdInSession.participants[0].P1IntId,
                                 }
                             }
                         })
