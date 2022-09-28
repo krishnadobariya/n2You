@@ -333,6 +333,7 @@ cron.schedule("*/60 * * * * *", async function () {
                 _id: getDate.cretedSessionUser
             })
 
+            console.log(findUserInUserModel);
             if (findUserInUserModel.fcm_token) {
                 const title = findUserInUserModel.firstName;
                 const body = "your session started!";
@@ -383,7 +384,7 @@ cron.schedule("*/60 * * * * *", async function () {
         } else {
         }
     }
-    console.log("running a task every 10 second");
+    console.log("running a task every 60 second");
 });
 
 
