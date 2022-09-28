@@ -2771,6 +2771,11 @@ console.log("sfdsdfewsdf");
                         sessionId: arg.session_id
                     })
 
+                    await sessionModel.deleteOne({
+                        _id: arg.session_id
+                    })
+
+
                     await sessionModel.updateOne(
                         {
                             _id: arg.session_id,
