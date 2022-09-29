@@ -380,7 +380,6 @@ exports.userUpdate = async (req, res, next) => {
         }
 
         const profileFile = req.files.profile
-        console.log("profileFile" , profileFile);
         const urls = []
         for (const fileForProfilePic of profileFile) {
             const { path } = fileForProfilePic
@@ -398,52 +397,7 @@ exports.userUpdate = async (req, res, next) => {
         console.log("remove img", url[0]);
         
 
-        if (url[0]) {
-            urls.push()
-            console.log("helloooooo");
-            if (files[0] == undefined) {
-
-                const findUser = await userModel.findOne({
-                    _id: req.params.user_id
-                })
-
-                urls.push(...findUser.photo)
-
-                for (const data of url) {
-                    const indexOfObject = urls.findIndex(object => {
-                        return object.res == data;
-                    });
-                    urls.splice(indexOfObject, 1);
-                }
-
-                console.log("urls", urls);
-            } else {
-
-                const findUser = await userModel.findOne({
-                    _id: req.params.user_id
-                })
-
-                urls.push(...findUser.photo)
-
-                for (const data of url) {
-                    const indexOfObject = urls.findIndex(object => {
-                        return object.res == data;
-                    });
-                    urls.splice(indexOfObject, 1);
-                }
-
-                const files = req.files.photo
-                console.log("files", files);
-                for (const file of files) {
-                    const { path } = file
-
-                    const newPath = await cloudinaryImageUploadMethod(path)
-                    urls.push(newPath)
-                }
-
-            }
-
-        } else {
+        if (url[0] == ' ') {
 
             if (files[0] == undefined) {
                 const findUser = await userModel.findOne({
@@ -492,6 +446,51 @@ exports.userUpdate = async (req, res, next) => {
                 //     const newPath = await cloudinaryImageUploadMethod(path)
                 //     urls.push(newPath)
                 // }
+            }
+
+        } else {
+            urls.push()
+            console.log("helloooooo");
+            if (files[0] == undefined) {
+
+                const findUser = await userModel.findOne({
+                    _id: req.params.user_id
+                })
+
+                urls.push(...findUser.photo)
+
+                for (const data of url) {
+                    const indexOfObject = urls.findIndex(object => {
+                        return object.res == data;
+                    });
+                    urls.splice(indexOfObject, 1);
+                }
+
+                console.log("urls", urls);
+            } else {
+
+                const findUser = await userModel.findOne({
+                    _id: req.params.user_id
+                })
+
+                urls.push(...findUser.photo)
+
+                for (const data of url) {
+                    const indexOfObject = urls.findIndex(object => {
+                        return object.res == data;
+                    });
+                    urls.splice(indexOfObject, 1);
+                }
+
+                const files = req.files.photo
+                console.log("files", files);
+                for (const file of files) {
+                    const { path } = file
+
+                    const newPath = await cloudinaryImageUploadMethod(path)
+                    urls.push(newPath)
+                }
+
             }
 
         }
