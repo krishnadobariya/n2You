@@ -33,14 +33,14 @@ exports.userRegister = async (req, res, next) => {
 
         const profileFile = req.files.profile
         const urls = []
-        for(const fileForProfilePic of profileFile){
+        for (const fileForProfilePic of profileFile) {
             const { path } = fileForProfilePic
 
             const newPath = await cloudinaryImageUploadMethod(path)
             urls.push(newPath)
         }
 
-       
+
         const files = req.files.photo
 
         for (const file of files) {
@@ -379,17 +379,16 @@ exports.userUpdate = async (req, res, next) => {
             })
         }
 
-
         const profileFile = req.files.profile
         const urls = []
-        for(const fileForProfilePic of profileFile){
+        for (const fileForProfilePic of profileFile) {
             const { path } = fileForProfilePic
 
             const newPath = await cloudinaryImageUploadMethod(path)
             urls.push(newPath)
         }
 
-        
+
         const files = req.files.photo
         const urlAll = req.body.images
         const removeFirst = urlAll.slice(1, -1)
@@ -408,15 +407,13 @@ exports.userUpdate = async (req, res, next) => {
 
             } else {
 
-                console.log("111111");
                 const findUser = await userModel.findOne({
                     _id: req.params.user_id
                 })
 
                 urls.push(...findUser.photo)
 
-                const files = req.files
-                console.log("files", files);
+                const files = req.files.photo
                 for (const file of files) {
                     const { path } = file
 
@@ -484,7 +481,7 @@ exports.userUpdate = async (req, res, next) => {
                     urls.splice(indexOfObject, 1);
                 }
 
-                const files = req.files
+                const files = req.files.photo
                 console.log("files", files);
                 for (const file of files) {
                     const { path } = file
@@ -496,9 +493,6 @@ exports.userUpdate = async (req, res, next) => {
             }
 
         }
-
-
-        console.log("urls is sssss", urls);
         if (userFind == null) {
             res.status(status.NOT_FOUND).json(
                 new APIResponse("User not Found", "false", 404, "0")
@@ -562,7 +556,6 @@ exports.userUpdate = async (req, res, next) => {
                 )
             } else {
 
-                console.log("urls is 33333", urls);
 
                 const updateUser = await userModel.updateOne({
                     _id: req.params.user_id

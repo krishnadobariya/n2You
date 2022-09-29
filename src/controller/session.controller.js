@@ -91,7 +91,7 @@ exports.sessionCreate = async (req, res, next) => {
 
                 }
 
-               
+
                 // console.log("allRequestedEmails" , allRequestedEmails);
                 const invitedUsers = [];
                 if (p1) {
@@ -5275,16 +5275,16 @@ exports.sessionInfo = async (req, res, next) => {
 }
 
 
-exports.listOfSessionInfo = async(req,res,next) =>{
+exports.listOfSessionInfo = async (req, res, next) => {
     try {
 
         const findSession = await sessionModel.findOne({
-            _id : req.params.session_id
+            _id: req.params.session_id
         })
 
 
 
-        if(findSession){
+        if (findSession) {
 
             const userList = []
             const p1 = findSession.participants[0].participants_1 == null ? "" : findSession.participants[0].participants_1
@@ -5293,48 +5293,48 @@ exports.listOfSessionInfo = async(req,res,next) =>{
 
 
             console.log(p1);
-    
-            userList.push({userId : findSession.cretedSessionUser , intId : findSession.createUserIntId , status : 1})
 
-            if(p1){
-                userList.push({userId : findSession.participants[0].participants_1 , intId : findSession.participants[0].P1IntId , status : 2})
+            userList.push({ userId: findSession.cretedSessionUser, intId: findSession.createUserIntId, status: 1 })
+
+            if (p1) {
+                userList.push({ userId: findSession.participants[0].participants_1, intId: findSession.participants[0].P1IntId, status: 2 })
             }
-            if(p2){
-                userList.push({userId : findSession.participants[0].participants_2 , intId : findSession.participants[0].P2IntId , status : 2})
+            if (p2) {
+                userList.push({ userId: findSession.participants[0].participants_2, intId: findSession.participants[0].P2IntId, status: 2 })
             }
-            if(p3){
-                userList.push({userId : findSession.participants[0].participants_3 , intId : findSession.participants[0].P3IntId , status : 2})
+            if (p3) {
+                userList.push({ userId: findSession.participants[0].participants_3, intId: findSession.participants[0].P3IntId, status: 2 })
             }
 
             const finalResponse = [];
-         
-           for(const user of userList){
 
-            const findUser = await userModel.findOne({
-                _id : user.userId
-            })
+            for (const user of userList) {
 
-            const response = {
-                sessionId: req.params.session_id,
-                userId: findUser._id,
-                userProfile: findUser.photo[0] ? findUser.photo[0].res : "",
-                intId:user.intId,
-                status : user.status
+                const findUser = await userModel.findOne({
+                    _id: user.userId
+                })
+
+                const response = {
+                    sessionId: req.params.session_id,
+                    userId: findUser._id,
+                    userProfile: findUser.photo[0] ? findUser.photo[0].res : "",
+                    intId: user.intId,
+                    status: user.status
+                }
+
+                finalResponse.push(response)
             }
 
-            finalResponse.push(response)
-           }
-          
-           res.status(status.OK).json(
-            new APIResponse("session info list", "true", 200, "1", finalResponse)
-        )
+            res.status(status.OK).json(
+                new APIResponse("session info list", "true", 200, "1", finalResponse)
+            )
 
-        }else{
+        } else {
             res.status(status.NOT_FOUND).json(
                 new APIResponse("session not found", "true", 404, "1",)
             )
         }
-        
+
     } catch (error) {
         console.log("error", error);
         res.status(status.INTERNAL_SERVER_ERROR).json(
@@ -5343,26 +5343,57 @@ exports.listOfSessionInfo = async(req,res,next) =>{
     }
 }
 
-// exports.rejectList = async(req,res,next) => {
-//     try {
-        
-//         const findSession = await sessionModel.findOne({
-//             _id : req.paramws.session_id
-//         })
+exports.rejectList = async (req, res, next) => {
+    try {
 
-//         if(findSession){
+        const findSession = await sessionModel.findOne({
+            _id: req.paramws.session_id
+        })
 
-//             const findParticipant = await 
+        if (findSession) {
 
-//         }else{
-//             res.status(status.NOT_FOUND).json(
-//                 new APIResponse("session not found", "true", 404, "1",)
-//             )
-//         }
-//     } catch (error) {
-//         console.log("error", error);
-//         res.status(status.INTERNAL_SERVER_ERROR).json(
-//             new APIResponse("Something Went Wrong", "false", 500, "0", error.message)
-//         )
-//     }
-// }`
+            const findParticipant = await sessionComment.findOne({
+                session_id: req.params.session_id,
+                cretedSessionUser: req.params.user_id
+            })
+
+            if (findParticipant) {
+
+                const pariticipant = [];
+                const p1 = findSession.participants[0].participants_1 == null ? "" : findSession.participants[0].participants_1
+                const p2 = findSession.participants[0].participants_2 == null ? "" : findSession.participants[0].participants_2
+                const p3 = findSession.participants[0].participants_3 == null ? "" : findSession.participants[0].participants_3
+                if(p1){
+                    pariticipant.push(p1)
+                }
+                if(p2){
+                    pariticipant.push(p2)
+                }
+                if(p3){
+                    pariticipant.push(p3)
+                }
+                
+                const joinParicipant = findParticipant.joinUser;
+
+                if((joinParicipant.userId).toString() == (pariticipant).toString()){
+                    
+                }
+
+            } else {
+                res.status(status.NOT_FOUND).json(
+                    new APIResponse("session not live", "true", 404, "1",)
+                )
+            }
+
+        } else {
+            res.status(status.NOT_FOUND).json(
+                new APIResponse("session not found", "true", 404, "1",)
+            )
+        }
+    } catch (error) {
+        console.log("error", error);
+        res.status(status.INTERNAL_SERVER_ERROR).json(
+            new APIResponse("Something Went Wrong", "false", 500, "0", error.message)
+        )
+    }
+}
