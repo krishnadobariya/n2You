@@ -453,7 +453,7 @@ exports.userUpdate = async (req, res, next) => {
         } else {
             urls.push()
             console.log("helloooooo");
-            if (files[0] == undefined || files == undefined) {
+            if (files == undefined) {
 
                 const findUser = await userModel.findOne({
                     _id: req.params.user_id
