@@ -31,9 +31,17 @@ exports.userRegister = async (req, res, next) => {
             })
         }
 
-
+        const profileFile = req.files.profile
         const urls = []
-        const files = req.files
+        for(const fileForProfilePic of profileFile){
+            const { path } = fileForProfilePic
+
+            const newPath = await cloudinaryImageUploadMethod(path)
+            urls.push(newPath)
+        }
+
+       
+        const files = req.files.photo
 
         for (const file of files) {
             const { path } = file
@@ -371,11 +379,18 @@ exports.userUpdate = async (req, res, next) => {
             })
         }
 
+
+        const profileFile = req.files.profile
         const urls = []
-        const files = req.files
+        for(const fileForProfilePic of profileFile){
+            const { path } = fileForProfilePic
 
+            const newPath = await cloudinaryImageUploadMethod(path)
+            urls.push(newPath)
+        }
 
-
+        
+        const files = req.files.photo
         const urlAll = req.body.images
         const removeFirst = urlAll.slice(1, -1)
         const url = removeFirst.split(",")

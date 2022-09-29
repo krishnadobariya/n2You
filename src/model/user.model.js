@@ -53,6 +53,10 @@ const userSchema = mongoose.Schema({
         type: Array,
         require: true
     },
+    profile : {
+        type: Array,
+        require: true
+    },
     hopingToFind: {
         type: String,
         require: true

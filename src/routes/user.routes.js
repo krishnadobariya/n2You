@@ -5,9 +5,21 @@ const upload = require('../utils/multer.userImages.utils');
 
 const userController = require("../controller/user.controller");
 
-router.post('/register', upload.array('photo'), userController.userRegister);
+router.post('/register', upload.fields([{
+    name : "photo",
+    maxCount : 6
+},{
+    name : "profile",
+    maxCount : 1
+}]) , userController.userRegister);
 router.post('/login', userController.userLogin);
-router.put('/update/:user_id', upload.array('photo'), userController.userUpdate);
+router.put('/update/:user_id', upload.fields([{
+    name : "photo",
+    maxCount : 6
+},{
+    name : "profile",
+    maxCount : 1
+}]), userController.userUpdate);
 router.put('/update/token/:user_id', userController.tokenUpdate);
 router.get('/search/:user_id', userController.searchFriend);
 router.get('/view/:user_id/:req_user_id', userController.getDataUserWise);

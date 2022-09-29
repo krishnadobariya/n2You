@@ -5342,3 +5342,27 @@ exports.listOfSessionInfo = async(req,res,next) =>{
         )
     }
 }
+
+// exports.rejectList = async(req,res,next) => {
+//     try {
+        
+//         const findSession = await sessionModel.findOne({
+//             _id : req.paramws.session_id
+//         })
+
+//         if(findSession){
+
+//             const findParticipant = await 
+
+//         }else{
+//             res.status(status.NOT_FOUND).json(
+//                 new APIResponse("session not found", "true", 404, "1",)
+//             )
+//         }
+//     } catch (error) {
+//         console.log("error", error);
+//         res.status(status.INTERNAL_SERVER_ERROR).json(
+//             new APIResponse("Something Went Wrong", "false", 500, "0", error.message)
+//         )
+//     }
+// }`
