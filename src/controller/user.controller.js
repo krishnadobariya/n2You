@@ -380,6 +380,7 @@ exports.userUpdate = async (req, res, next) => {
         }
 
         const profileFile = req.files.profile
+    
         const urls = []
         for (const fileForProfilePic of profileFile) {
             const { path } = fileForProfilePic
@@ -390,6 +391,7 @@ exports.userUpdate = async (req, res, next) => {
 
 
         const files = req.files.photo
+        console.log( "files" , files);
         const urlAll = req.body.images
         const removeFirst = urlAll.slice(1, -1)
         const url = removeFirst.split(",")
