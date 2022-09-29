@@ -603,6 +603,8 @@ exports.userUpdate = async (req, res, next) => {
                     email: req.body.email
                 })
 
+                console.log(urls);
+
                 const data = {
                     _id: findUser._id,
                     polyDating: req.body.poly_dating,
@@ -616,7 +618,7 @@ exports.userUpdate = async (req, res, next) => {
                     relationshipSatus: req.body.relationship_satus,
                     IntrestedIn: req.body.intrested_in,
                     Bio: req.body.bio,
-                    photo: urls.shift(),
+                    photo: urls,
                     longitude: req.body.longitude,
                     latitude: req.body.latitude,
                     fcm_token: req.body.fcm_token,
