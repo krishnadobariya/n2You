@@ -616,7 +616,7 @@ exports.userUpdate = async (req, res, next) => {
                     relationshipSatus: req.body.relationship_satus,
                     IntrestedIn: req.body.intrested_in,
                     Bio: req.body.bio,
-                    photo: urls,
+                    photo: urls.shift(),
                     longitude: req.body.longitude,
                     latitude: req.body.latitude,
                     fcm_token: req.body.fcm_token,
