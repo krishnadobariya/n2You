@@ -13,8 +13,9 @@ const sessionComment = require("../model/sessionComment");
 const path = require('path');
 const { log } = require("console");
 const { updateOne } = require("../model/session.model");
-const thumbUpCountInSession = require('../model/sessionThumbUp.model')
-
+const thumbUpCountInSession = require('../model/sessionThumbUp.model');
+const superListModel = require("../model/suparMatch.model");
+const rejectListModel = require("../model/rejectList.model")
 exports.sessionCreate = async (req, res, next) => {
     try {
 
@@ -5344,14 +5345,14 @@ exports.listOfSessionInfo = async (req, res, next) => {
 }
 
 
-exports.likeSesison = async(req,res,next) => {
+exports.likeSesison = async (req, res, next) => {
     try {
 
         const findSession = await sessionModel.findOne({
-            _id : req.params.session_id
+            _id: req.params.session_id
         })
-        
-        if(findSession){
+
+        if (findSession) {
 
             const findParticipant = await sessionComment.findOne({
                 session_id: req.params.session_id,
@@ -5359,40 +5360,39 @@ exports.likeSesison = async(req,res,next) => {
 
             if (findParticipant) {
 
-                const pariticipant = [];
                 const p1 = findSession.participants[0].participants_1 == null ? "" : findSession.participants[0].participants_1
                 const p2 = findSession.participants[0].participants_2 == null ? "" : findSession.participants[0].participants_2
                 const p3 = findSession.participants[0].participants_3 == null ? "" : findSession.participants[0].participants_3
-                
-                if((p1).toString() == (req.params.participant_user_id).toString()){
+
+                if ((p1).toString() == (req.params.participant_user_id).toString()) {
 
                     await sessionComment.updateOne({
-                        sessionId : req.params.session_id
+                        sessionId: req.params.session_id
                     }, {
-                        $push : {
-                                "LikeSession.participants_1.likeUserId" : req.params.user_id
+                        $push: {
+                            "LikeSession.participants_1.likeUserId": req.params.user_id
                         }
                     })
 
-                }else if((p2).toString() == (req.params.participant_user_id).toString()){
+                } else if ((p2).toString() == (req.params.participant_user_id).toString()) {
 
                     await sessionComment.updateOne({
-                        sessionId : req.params.session_id
+                        sessionId: req.params.session_id
                     }, {
-                        $push : {
-                                "LikeSession.participants_2.likeUserId" : req.params.user_id
+                        $push: {
+                            "LikeSession.participants_2.likeUserId": req.params.user_id
                         }
                     })
 
 
-                }else if((p3).toString() == (req.params.participant_user_id).toString()){
+                } else if ((p3).toString() == (req.params.participant_user_id).toString()) {
 
                     await sessionComment.updateOne({
-                        sessionId : req.params.session_id
+                        sessionId: req.params.session_id
                     }, {
-                        $push : {
-                            
-                                "LikeSession.participants_3.likeUserId" : req.params.user_id
+                        $push: {
+
+                            "LikeSession.participants_3.likeUserId": req.params.user_id
                         }
                     })
                 }
@@ -5408,7 +5408,7 @@ exports.likeSesison = async(req,res,next) => {
             }
 
 
-        }else{
+        } else {
             res.status(status.NOT_FOUND).json(
                 new APIResponse("session not found", "true", 404, "1",)
             )
@@ -5417,81 +5417,81 @@ exports.likeSesison = async(req,res,next) => {
         console.log("error", error);
         res.status(status.INTERNAL_SERVER_ERROR).json(
             new APIResponse("Something Went Wrong", "false", 500, "0", error.message)
-        )  
+        )
     }
 }
 
-exports.getLikeUserDetail = async(req,res,next) => {
+exports.getLikeUserDetail = async (req, res, next) => {
     try {
 
         const findSession = await sessionModel.findOne({
-            _id : req.params.session_id
+            _id: req.params.session_id
         })
 
-        if(findSession){
+        if (findSession) {
 
             const findSessionComment = await sessionComment.findOne({
-                sessionId : req.params.session_id
+                sessionId: req.params.session_id
             })
 
             const user = findSessionComment.LikeSession
 
             const final_response = [];
-            for(const data of user){
-                if(data.participants_3[0] == undefined){
+            for (const data of user) {
 
-                }else{
+                console.log(data);
+                if (data.participants_3[0] == undefined) {
+
+                } else {
 
                     const count = (data.participants_3)
                     console.log(count.length);
                     const findUser = await userModel.findOne({
-                        _id : findSession.participants[0].participants_3
+                        _id: findSession.participants[0].participants_3
                     })
 
                     const response = {
-                        _id : findUser._id,
-                        userName : findUser.firstName,
-                        userProfile : findUser.photo[0] ? findUser.photo[0].res : "",
-                        totalLikeCount : count.length
+                        _id: findUser._id,
+                        userName: findUser.firstName,
+                        userProfile: findUser.photo[0] ? findUser.photo[0].res : "",
+                        totalLikeCount: count.length
                     }
-
                     final_response.push(response)
-
                 }
 
-                if(data.participants_2[0] == undefined){
+                if (data.participants_2[0] == undefined) {
 
-                }else{
+                } else {
                     const count = (data.participants_2)
                     console.log(count.length);
                     const findUser = await userModel.findOne({
-                        _id : findSession.participants[0].participants_2
+                        _id: findSession.participants[0].participants_2
                     })
 
                     const response = {
-                        _id : findUser._id,
-                        userName : findUser.firstName,
-                        userProfile : findUser.photo[0] ? findUser.photo[0].res : "",
-                        totalLikeCount : count.length
+                        _id: findUser._id,
+                        userName: findUser.firstName,
+                        userProfile: findUser.photo[0] ? findUser.photo[0].res : "",
+                        totalLikeCount: count.length
                     }
 
                     final_response.push(response)
                 }
 
-                if(data.participants_1[0] == undefined){
+                if (data.participants_1[0] == undefined) {
 
-                }else{
+                } else {
                     const count = (data.participants_1)
                     console.log(count.length);
                     const findUser = await userModel.findOne({
-                        _id : findSession.participants[0].participants_1
+                        _id: findSession.participants[0].participants_1
                     })
 
                     const response = {
-                        _id : findUser._id,
-                        userName : findUser.firstName,
-                        userProfile : findUser.photo[0] ? ffindUser.photo[0].res : "",
-                        totalLikeCount : count.length
+                        _id: findUser._id,
+                        userName: findUser.firstName,
+                        userProfile: findUser.photo[0] ? findUser.photo[0].res : "",
+                        totalLikeCount: count.length
                     }
 
                     final_response.push(response)
@@ -5502,12 +5502,12 @@ exports.getLikeUserDetail = async(req,res,next) => {
                 new APIResponse("total like session user with count", "true", 200, "1", final_response)
             )
 
-        }else{
+        } else {
             res.status(status.NOT_FOUND).json(
                 new APIResponse("session not found", "true", 404, "1",)
             )
         }
-        
+
     } catch (error) {
         console.log("error", error);
         res.status(status.INTERNAL_SERVER_ERROR).json(
@@ -5516,41 +5516,223 @@ exports.getLikeUserDetail = async(req,res,next) => {
     }
 }
 
-exports.rejectList = async (req, res, next) => {
+exports.rejectOrAccept = async (req, res, next) => {
     try {
 
         const findSession = await sessionModel.findOne({
-            _id: req.paramws.session_id
+            _id: req.params.session_id
         })
 
         if (findSession) {
 
             const findParticipant = await sessionComment.findOne({
-                session_id: req.params.session_id,
-                cretedSessionUser: req.params.user_id
+                session_id: req.params.session_id
             })
 
             if (findParticipant) {
 
-                const pariticipant = [];
-                const p1 = findSession.participants[0].participants_1 == null ? "" : findSession.participants[0].participants_1
-                const p2 = findSession.participants[0].participants_2 == null ? "" : findSession.participants[0].participants_2
-                const p3 = findSession.participants[0].participants_3 == null ? "" : findSession.participants[0].participants_3
-                if(p1){
-                    pariticipant.push(p1)
-                }
-                if(p2){
-                    pariticipant.push(p2)
-                }
-                if(p3){
-                    pariticipant.push(p3)
-                }
-                
-                const joinParicipant = findParticipant.joinUser;
+                // const pariticipant = [];
+                // const p1 = findSession.participants[0].participants_1 == null ? "" : findSession.participants[0].participants_1
+                // const p2 = findSession.participants[0].participants_2 == null ? "" : findSession.participants[0].participants_2
+                // const p3 = findSession.participants[0].participants_3 == null ? "" : findSession.participants[0].participants_3
+                // if (p1) {
+                //     pariticipant.push(p1)
+                // }
+                // if (p2) {
+                //     pariticipant.push(p2)
+                // }
+                // if (p3) {
+                //     pariticipant.push(p3)
+                // }
 
-                if((joinParicipant.userId).toString() == (pariticipant).toString()){
-                    
+                // const joinParicipant = findParticipant.joinUser;
+
+                // for (const data of joinParicipant){
+                // for(const data1 of pariticipant){
+
+                // if ((data.userId).toString() == (data1).toString()) {
+
+                if (req.query.select == 1) {
+
+                    const suparMatchList = await superListModel.findOne({
+                        session_id: req.params.session_id,
+                        userId: req.params.user_id
+                    })
+
+                    console.log("suparMatchList", suparMatchList);
+                    const suparMatchListforLikeUser = await superListModel.findOne({
+                        session_id: req.params.session_id,
+                        userId: req.params.like_user_id
+                    })
+
+                    if (suparMatchList) {
+
+                        await superListModel.updateOne({
+                            session_id: req.params.session_id,
+                            userId: req.params.user_id
+                        }, {
+                            $push: {
+                                matchUserId: {
+                                    userId: req.params.like_user_id
+                                }
+                            }
+                        })
+
+                    } else {
+                        const saveData = superListModel({
+                            session_id: req.params.session_id,
+                            userId: req.params.user_id,
+                            matchUserId: {
+                                userId: req.params.like_user_id
+                            }
+                        })
+
+                        await saveData.save()
+                    }
+
+                    if (suparMatchListforLikeUser) {
+                        await superListModel.updateOne({
+                            session_id: req.params.session_id,
+                            userId: req.params.like_user_id
+                        }, {
+                            $push: {
+                                matchUserId: {
+                                    userId: req.params.user_id
+                                }
+                            }
+                        })
+
+                    } else {
+                        const saveData = superListModel({
+                            session_id: req.params.session_id,
+                            userId: req.params.like_user_id,
+                            matchUserId: {
+                                userId: req.params.user_id
+                            }
+                        })
+
+                        await saveData.save()
+                    }
+                    res.status(status.OK).json(
+                        new APIResponse("accept success", "true", 200, "1",)
+                    )
+
+
+                } else {
+                    const rejectList = await rejectListModel.findOne({
+                        session_id: req.params.session_id,
+                        userId: req.params.user_id
+                    })
+
+
+                    await userModel.updateOne(
+                        {
+                            _id: req.params.user_id
+                        },
+                        {
+                            $pull: {
+                                noBasket: {
+                                    userId: req.params.like_user_id
+                                }
+                            }
+                        });
+
+                    await userModel.updateOne(
+                        {
+                            _id: req.params.user_id
+                        },
+                        {
+                            $pull: {
+                                yesBasket: {
+                                    userId: req.params.like_user_id
+                                }
+                            }
+                        });
+
+                    await userModel.updateOne(
+                        {
+                            _id: req.params.like_user_id
+                        },
+                        {
+                            $pull: {
+                                noBasket: {
+                                    userId: req.params.user_id
+                                }
+                            }
+                        });
+
+                    await userModel.updateOne(
+                        {
+                            _id: req.params.like_user_id
+                        },
+                        {
+                            $pull: {
+                                yesBasket: {
+                                    userId: req.params.user_id
+                                }
+                            }
+                        });
+
+                    const rejectListforLikeUser = await rejectListModel.findOne({
+                        session_id: req.params.session_id,
+                        userId: req.params.like_user_id
+                    })
+
+                    if (rejectList) {
+
+                        await rejectListModel.updateOne({
+                            session_id: req.params.session_id,
+                            userId: req.params.user_id
+                        }, {
+                            $push: {
+                                matchUserId: {
+                                    userId: req.params.like_user_id
+                                }
+                            }
+                        })
+
+                    } else {
+                        const saveData = rejectListModel({
+                            session_id: req.params.session_id,
+                            userId: req.params.user_id,
+                            matchUserId: {
+                                userId: req.params.like_user_id
+                            }
+                        })
+
+                        await saveData.save()
+                    }
+
+                    if (rejectListforLikeUser) {
+                        await rejectListModel.updateOne({
+                            session_id: req.params.session_id,
+                            userId: req.params.like_user_id
+                        }, {
+                            $push: {
+                                matchUserId: {
+                                    userId: req.params.user_id
+                                }
+                            }
+                        })
+
+                    } else {
+                        const saveData = rejectListModel({
+                            session_id: req.params.session_id,
+                            userId: req.params.like_user_id,
+                            matchUserId: {
+                                userId: req.params.user_id
+                            }
+                        })
+
+                        await saveData.save()
+                    }
+                    res.status(status.OK).json(
+                        new APIResponse("reject success", "true", 200, "1",)
+                    )
+
+
                 }
+
 
             } else {
                 res.status(status.NOT_FOUND).json(
@@ -5563,6 +5745,122 @@ exports.rejectList = async (req, res, next) => {
                 new APIResponse("session not found", "true", 404, "1",)
             )
         }
+    } catch (error) {
+        console.log("error", error);
+        res.status(status.INTERNAL_SERVER_ERROR).json(
+            new APIResponse("Something Went Wrong", "false", 500, "0", error.message)
+        )
+    }
+}
+
+
+exports.rejectList = async (req, res, next) => {
+    try {
+
+        const findUser = await rejectListModel.find({
+            userId: req.params.user_id
+        })
+
+        console.log(findUser);
+
+        const final_response = [];
+        const session_detail = [];
+        const rej_user_detail = []
+        for (const data of findUser) {
+
+            console.log("data", data);
+
+
+            console.log("session_detail", session_detail);
+            for (const data1 of data.matchUserId) {
+
+                const findUser = await userModel.findOne({
+                    _id: data1.userId
+                })
+                rej_user_detail.push({
+                    userId: findUser._id,
+                    userProfile: findUser.photo[0] ? findUser.photo[0].res : ""
+                })
+
+            }
+
+            const findInSessionModel = await sessionModel.findOne({
+                _id: data.session_id
+            })
+            const findUser = await userModel.findOne({
+                _id: findInSessionModel.cretedSessionUser
+            })
+            final_response.push({
+                sessionId: data.session_id,
+                reject_by: findInSessionModel.cretedSessionUser,
+                reject_by_user_Profile: findUser.photo[0] ? findUser.photo[0].res : "",
+                reject_list: rej_user_detail
+            })
+
+        }
+
+
+        res.status(status.OK).json(
+            new APIResponse("get reject list", "true", 200, "1", final_response)
+        )
+    } catch (error) {
+        console.log("error", error);
+        res.status(status.INTERNAL_SERVER_ERROR).json(
+            new APIResponse("Something Went Wrong", "false", 500, "0", error.message)
+        )
+    }
+}
+
+
+exports.suparMatchList = async (req, res, next) => {
+    try {
+
+        const findUser = await superListModel.find({
+            userId: req.params.user_id
+        })
+
+        console.log(findUser);
+
+        const final_response = [];
+        const session_detail = [];
+        const sup_user_detail = []
+        for (const data of findUser) {
+
+            console.log("data", data);
+
+
+            console.log("session_detail", session_detail);
+            for (const data1 of data.matchUserId) {
+
+                const findUser = await userModel.findOne({
+                    _id: data1.userId
+                })
+                sup_user_detail.push({
+                    userId: findUser._id,
+                    userProfile: findUser.photo[0] ? findUser.photo[0].res : ""
+                })
+
+            }
+
+            const findInSessionModel = await sessionModel.findOne({
+                _id: data.session_id
+            })
+            const findUser = await userModel.findOne({
+                _id: findInSessionModel.cretedSessionUser
+            })
+            final_response.push({
+                sessionId: data.session_id,
+                accept_by: findInSessionModel.cretedSessionUser,
+                accept_by_user_Profile: findUser.photo[0] ? findUser.photo[0].res : "",
+                accepted_list: sup_user_detail
+            })
+
+        }
+
+
+        res.status(status.OK).json(
+            new APIResponse("get accept list", "true", 200, "1", final_response)
+        )
     } catch (error) {
         console.log("error", error);
         res.status(status.INTERNAL_SERVER_ERROR).json(

@@ -22,6 +22,8 @@ router.get('/info/:session_id' , sessionController.sessionInfo);
 router.get('/listOfSessionInfo/:session_id' , sessionController.listOfSessionInfo);
 router.get("/likeSession/:session_id/:user_id/:participant_user_id" , sessionController.likeSesison);
 router.get("/getLikeUserDetail/:session_id" , sessionController.getLikeUserDetail);
-router.get('/rejectList/:session_id/:user_id' , sessionController.rejectList);
+router.get('/rejectOrAccept/:session_id/:user_id/:like_user_id' , sessionController.rejectOrAccept);
+router.get('/rejectList/:user_id' , sessionController.rejectList);
+router.get('/suparMatchList/:user_id' , sessionController.suparMatchList);
 
 module.exports = router;
