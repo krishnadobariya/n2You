@@ -20,5 +20,8 @@ router.get('/commentSessionList/:session_id' , sessionController.commentSessionL
 router.get('/thumbUpCount/:session_id/:participants_id/:user_id' , sessionController.thumbUpCountInSession);
 router.get('/info/:session_id' , sessionController.sessionInfo);
 router.get('/listOfSessionInfo/:session_id' , sessionController.listOfSessionInfo);
+router.get("/likeSession/:session_id/:user_id/:participant_user_id" , sessionController.likeSesison);
+router.get("/getLikeUserDetail/:session_id" , sessionController.getLikeUserDetail);
 router.get('/rejectList/:session_id/:user_id' , sessionController.rejectList);
+
 module.exports = router;

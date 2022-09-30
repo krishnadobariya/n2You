@@ -18,4 +18,4 @@ const io = new Server(server, {
 });
 require("./src/webSocket/socket")(io);
 
-// heroku logs --tail --app ntwou
+// heroku logs --tail --app ntwo

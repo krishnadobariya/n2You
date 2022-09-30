@@ -5343,6 +5343,179 @@ exports.listOfSessionInfo = async (req, res, next) => {
     }
 }
 
+
+exports.likeSesison = async(req,res,next) => {
+    try {
+
+        const findSession = await sessionModel.findOne({
+            _id : req.params.session_id
+        })
+        
+        if(findSession){
+
+            const findParticipant = await sessionComment.findOne({
+                session_id: req.params.session_id,
+            })
+
+            if (findParticipant) {
+
+                const pariticipant = [];
+                const p1 = findSession.participants[0].participants_1 == null ? "" : findSession.participants[0].participants_1
+                const p2 = findSession.participants[0].participants_2 == null ? "" : findSession.participants[0].participants_2
+                const p3 = findSession.participants[0].participants_3 == null ? "" : findSession.participants[0].participants_3
+                
+                if((p1).toString() == (req.params.participant_user_id).toString()){
+
+                    await sessionComment.updateOne({
+                        sessionId : req.params.session_id
+                    }, {
+                        $push : {
+                                "LikeSession.participants_1.likeUserId" : req.params.user_id
+                        }
+                    })
+
+                }else if((p2).toString() == (req.params.participant_user_id).toString()){
+
+                    await sessionComment.updateOne({
+                        sessionId : req.params.session_id
+                    }, {
+                        $push : {
+                                "LikeSession.participants_2.likeUserId" : req.params.user_id
+                        }
+                    })
+
+
+                }else if((p3).toString() == (req.params.participant_user_id).toString()){
+
+                    await sessionComment.updateOne({
+                        sessionId : req.params.session_id
+                    }, {
+                        $push : {
+                            
+                                "LikeSession.participants_3.likeUserId" : req.params.user_id
+                        }
+                    })
+                }
+
+
+                res.status(status.OK).json(
+                    new APIResponse("like Added SuccessFully", "true", 200, "1")
+                )
+            } else {
+                res.status(status.NOT_FOUND).json(
+                    new APIResponse("session not live", "true", 404, "1",)
+                )
+            }
+
+
+        }else{
+            res.status(status.NOT_FOUND).json(
+                new APIResponse("session not found", "true", 404, "1",)
+            )
+        }
+    } catch (error) {
+        console.log("error", error);
+        res.status(status.INTERNAL_SERVER_ERROR).json(
+            new APIResponse("Something Went Wrong", "false", 500, "0", error.message)
+        )  
+    }
+}
+
+exports.getLikeUserDetail = async(req,res,next) => {
+    try {
+
+        const findSession = await sessionModel.findOne({
+            _id : req.params.session_id
+        })
+
+        if(findSession){
+
+            const findSessionComment = await sessionComment.findOne({
+                sessionId : req.params.session_id
+            })
+
+            const user = findSessionComment.LikeSession
+
+            const final_response = [];
+            for(const data of user){
+                if(data.participants_3[0] == undefined){
+
+                }else{
+
+                    const count = (data.participants_3)
+                    console.log(count.length);
+                    const findUser = await userModel.findOne({
+                        _id : findSession.participants[0].participants_3
+                    })
+
+                    const response = {
+                        _id : findUser._id,
+                        userName : findUser.firstName,
+                        userProfile : findUser.photo[0] ? findUser.photo[0].res : "",
+                        totalLikeCount : count.length
+                    }
+
+                    final_response.push(response)
+
+                }
+
+                if(data.participants_2[0] == undefined){
+
+                }else{
+                    const count = (data.participants_2)
+                    console.log(count.length);
+                    const findUser = await userModel.findOne({
+                        _id : findSession.participants[0].participants_2
+                    })
+
+                    const response = {
+                        _id : findUser._id,
+                        userName : findUser.firstName,
+                        userProfile : findUser.photo[0] ? findUser.photo[0].res : "",
+                        totalLikeCount : count.length
+                    }
+
+                    final_response.push(response)
+                }
+
+                if(data.participants_1[0] == undefined){
+
+                }else{
+                    const count = (data.participants_1)
+                    console.log(count.length);
+                    const findUser = await userModel.findOne({
+                        _id : findSession.participants[0].participants_1
+                    })
+
+                    const response = {
+                        _id : findUser._id,
+                        userName : findUser.firstName,
+                        userProfile : findUser.photo[0] ? ffindUser.photo[0].res : "",
+                        totalLikeCount : count.length
+                    }
+
+                    final_response.push(response)
+                }
+            }
+
+            res.status(status.OK).json(
+                new APIResponse("total like session user with count", "true", 200, "1", final_response)
+            )
+
+        }else{
+            res.status(status.NOT_FOUND).json(
+                new APIResponse("session not found", "true", 404, "1",)
+            )
+        }
+        
+    } catch (error) {
+        console.log("error", error);
+        res.status(status.INTERNAL_SERVER_ERROR).json(
+            new APIResponse("Something Went Wrong", "false", 500, "0", error.message)
+        )
+    }
+}
+
 exports.rejectList = async (req, res, next) => {
     try {
 

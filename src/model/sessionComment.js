@@ -61,62 +61,84 @@ const sessionCommentSchema = mongoose.Schema({
     }],
     participants: [{
         participants_1: [{
-           userId : mongoose.Schema.Types.ObjectId,
-           thumbUp: {
-            type:Number,
-            default: 0
-           }
+            userId: mongoose.Schema.Types.ObjectId,
+            thumbUp: {
+                type: Number,
+                default: 0
+            }
         }],
         participants_2: [{
-            userId : mongoose.Schema.Types.ObjectId,
+            userId: mongoose.Schema.Types.ObjectId,
             thumbUp: {
-             type:Number,
-             default: 0
+                type: Number,
+                default: 0
             }
-         }],
-         participants_3: [{
-            userId : mongoose.Schema.Types.ObjectId,
+        }],
+        participants_3: [{
+            userId: mongoose.Schema.Types.ObjectId,
             thumbUp: {
-             type:Number,
-             default: 0
+                type: Number,
+                default: 0
             }
-         }],
+        }],
     }],
-    liveSession:[{
+    liveSession: [{
         participants_1: [{
-            userId :
-            {   
+            userId:
+            {
                 type: mongoose.Schema.Types.ObjectId,
                 default: mongoose.Types.ObjectId("5f92cbf10cf217478ba93561")
-            } ,
+            },
             allow: {
                 type: Number,
                 default: 0
             }
-         }],
-         participants_2: [{
-            userId :
-            {   
+        }],
+        participants_2: [{
+            userId:
+            {
                 type: mongoose.Schema.Types.ObjectId,
-                default:  mongoose.Types.ObjectId("5f92cbf10cf217478ba93561")
-            } ,
-             allow: {   
+                default: mongoose.Types.ObjectId("5f92cbf10cf217478ba93561")
+            },
+            allow: {
                 type: Number,
                 default: 0
             }
-          }],
-          participants_3: [{
-            userId :
-            {   
+        }],
+        participants_3: [{
+            userId:
+            {
                 type: mongoose.Schema.Types.ObjectId,
-                default:  mongoose.Types.ObjectId("5f92cbf10cf217478ba93561")
-            } ,
-             allow: {
+                default: mongoose.Types.ObjectId("5f92cbf10cf217478ba93561")
+            },
+            allow: {
                 type: Number,
                 default: 0
             }
-          }], 
-     }]
+        }],
+    }],
+
+    LikeSession: [{
+        participants_1: [{
+            likeUserId:
+            {
+                type: mongoose.Schema.Types.ObjectId
+            }
+        }],
+        participants_2: [{
+            likeUserId:
+            {
+                type: mongoose.Schema.Types.ObjectId
+            }
+        }],
+        participants_3: [{
+            likeUserId:
+            {
+                type: mongoose.Schema.Types.ObjectId
+            }
+        }],
+
+    }]
 
 }, {
     timestamps: true
