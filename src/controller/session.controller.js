@@ -5437,66 +5437,159 @@ exports.getLikeUserDetail = async (req, res, next) => {
             const user = findSessionComment.LikeSession
 
             const final_response = [];
-            for (const data of user) {
+            if(user[0] == undefined){
 
-                console.log(data);
-                if (data.participants_3[0] == undefined) {
+                const p1 = findSession.participants[0].participants_1 == null ? "" : findSession.participants[0].participants_1
+                const p2 = findSession.participants[0].participants_2 == null ? "" : findSession.participants[0].participants_2
+                const p3 = findSession.participants[0].participants_3 == null ? "" : findSession.participants[0].participants_3
 
-                } else {
-
-                    const count = (data.participants_3)
-                    console.log(count.length);
+                if(p1){
                     const findUser = await userModel.findOne({
                         _id: findSession.participants[0].participants_3
                     })
-
+    
                     const response = {
                         _id: findUser._id,
                         userName: findUser.firstName,
                         userProfile: findUser.photo[0] ? findUser.photo[0].res : "",
-                        totalLikeCount: count.length
+                        totalLikeCount: 0
                     }
+    
                     final_response.push(response)
+    
                 }
-
-                if (data.participants_2[0] == undefined) {
-
-                } else {
-                    const count = (data.participants_2)
-                    console.log(count.length);
+                if(p2){
                     const findUser = await userModel.findOne({
                         _id: findSession.participants[0].participants_2
                     })
-
+    
                     const response = {
                         _id: findUser._id,
                         userName: findUser.firstName,
                         userProfile: findUser.photo[0] ? findUser.photo[0].res : "",
-                        totalLikeCount: count.length
+                        totalLikeCount: 0
                     }
-
+    
                     final_response.push(response)
                 }
-
-                if (data.participants_1[0] == undefined) {
-
-                } else {
-                    const count = (data.participants_1)
-                    console.log(count.length);
+                if(p3){
                     const findUser = await userModel.findOne({
                         _id: findSession.participants[0].participants_1
                     })
-
+    
                     const response = {
                         _id: findUser._id,
                         userName: findUser.firstName,
                         userProfile: findUser.photo[0] ? findUser.photo[0].res : "",
-                        totalLikeCount: count.length
+                        totalLikeCount: 0
                     }
-
+    
                     final_response.push(response)
                 }
-            }
+             
+               
+
+               
+            }else{
+                for (const data of user) {
+
+                    console.log(data);
+                    if (data.participants_3[0] == undefined) {
+    
+                        const findUser = await userModel.findOne({
+                            _id: findSession.participants[0].participants_3
+                        })
+    
+                        const response = {
+                            _id: findUser._id,
+                            userName: findUser.firstName,
+                            userProfile: findUser.photo[0] ? findUser.photo[0].res : "",
+                            totalLikeCount: 0
+                        }
+    
+                        final_response.push(response)
+                    } else {
+    
+                        const count = (data.participants_3)
+                        console.log(count.length);
+                        const findUser = await userModel.findOne({
+                            _id: findSession.participants[0].participants_3
+                        })
+    
+                        const response = {
+                            _id: findUser._id,
+                            userName: findUser.firstName,
+                            userProfile: findUser.photo[0] ? findUser.photo[0].res : "",
+                            totalLikeCount: count.length
+                        }
+                        final_response.push(response)
+                    }
+    
+                    if (data.participants_2[0] == undefined) {
+    
+                        const findUser = await userModel.findOne({
+                            _id: findSession.participants[0].participants_2
+                        })
+    
+                        const response = {
+                            _id: findUser._id,
+                            userName: findUser.firstName,
+                            userProfile: findUser.photo[0] ? findUser.photo[0].res : "",
+                            totalLikeCount: 0
+                        }
+    
+                        final_response.push(response)
+                    } else {
+                        const count = (data.participants_2)
+                        console.log(count.length);
+                        const findUser = await userModel.findOne({
+                            _id: findSession.participants[0].participants_2
+                        })
+    
+                        const response = {
+                            _id: findUser._id,
+                            userName: findUser.firstName,
+                            userProfile: findUser.photo[0] ? findUser.photo[0].res : "",
+                            totalLikeCount: count.length
+                        }
+    
+                        final_response.push(response)
+                    }
+    
+                    if (data.participants_1[0] == undefined) {
+                      
+                        const findUser = await userModel.findOne({
+                            _id: findSession.participants[0].participants_1
+                        })
+    
+                        const response = {
+                            _id: findUser._id,
+                            userName: findUser.firstName,
+                            userProfile: findUser.photo[0] ? findUser.photo[0].res : "",
+                            totalLikeCount: 0
+                        }
+    
+                        final_response.push(response)
+                    } else {
+                        const count = (data.participants_1)
+                        console.log(count.length);
+                        const findUser = await userModel.findOne({
+                            _id: findSession.participants[0].participants_1
+                        })
+    
+                        const response = {
+                            _id: findUser._id,
+                            userName: findUser.firstName,
+                            userProfile: findUser.photo[0] ? findUser.photo[0].res : "",
+                            totalLikeCount: count.length
+                        }
+    
+                        final_response.push(response)
+                    }
+                }
+
+            } 
+    
 
             res.status(status.OK).json(
                 new APIResponse("total like session user with count", "true", 200, "1", final_response)
