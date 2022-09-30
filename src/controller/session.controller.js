@@ -5487,8 +5487,9 @@ exports.getLikeUserDetail = async (req, res, next) => {
 
             const user = findSessionComment.LikeSession
 
+            console.log(user);
             const final_response = [];
-            if(user[0] == undefined){
+            if(user.participants_1[0] == undefined && user.participants_2[0] == undefined && user.participants_3[0] == undefined){
 
                 const p1 = findSession.participants[0].participants_1 == null ? "" : findSession.participants[0].participants_1
                 const p2 = findSession.participants[0].participants_2 == null ? "" : findSession.participants[0].participants_2
@@ -5542,10 +5543,9 @@ exports.getLikeUserDetail = async (req, res, next) => {
 
                
             }else{
-                for (const data of user) {
+         
 
-                    console.log(data);
-                    if (data.participants_3[0] == undefined) {
+                    if (user.participants_3[0] == undefined) {
     
                         const findUser = await userModel.findOne({
                             _id: findSession.participants[0].participants_3
@@ -5561,7 +5561,7 @@ exports.getLikeUserDetail = async (req, res, next) => {
                         final_response.push(response)
                     } else {
     
-                        const count = (data.participants_3)
+                        const count = (user.participants_3)
                         console.log(count.length);
                         const findUser = await userModel.findOne({
                             _id: findSession.participants[0].participants_3
@@ -5576,7 +5576,7 @@ exports.getLikeUserDetail = async (req, res, next) => {
                         final_response.push(response)
                     }
     
-                    if (data.participants_2[0] == undefined) {
+                    if (user.participants_2[0] == undefined) {
     
                         const findUser = await userModel.findOne({
                             _id: findSession.participants[0].participants_2
@@ -5591,7 +5591,7 @@ exports.getLikeUserDetail = async (req, res, next) => {
     
                         final_response.push(response)
                     } else {
-                        const count = (data.participants_2)
+                        const count = (user.participants_2)
                         console.log(count.length);
                         const findUser = await userModel.findOne({
                             _id: findSession.participants[0].participants_2
@@ -5607,7 +5607,7 @@ exports.getLikeUserDetail = async (req, res, next) => {
                         final_response.push(response)
                     }
     
-                    if (data.participants_1[0] == undefined) {
+                    if (user.participants_1[0] == undefined) {
                       
                         const findUser = await userModel.findOne({
                             _id: findSession.participants[0].participants_1
@@ -5622,7 +5622,7 @@ exports.getLikeUserDetail = async (req, res, next) => {
     
                         final_response.push(response)
                     } else {
-                        const count = (data.participants_1)
+                        const count = (user.participants_1)
                         console.log(count.length);
                         const findUser = await userModel.findOne({
                             _id: findSession.participants[0].participants_1
@@ -5637,7 +5637,7 @@ exports.getLikeUserDetail = async (req, res, next) => {
     
                         final_response.push(response)
                     }
-                }
+                
 
             } 
     
