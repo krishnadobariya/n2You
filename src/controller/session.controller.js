@@ -5658,6 +5658,7 @@ exports.rejectOrAccept = async (req, res, next) => {
                         userId: req.params.like_user_id
                     })
 
+               
                     if (suparMatchList) {
 
                         await superListModel.updateOne({
@@ -5706,6 +5707,32 @@ exports.rejectOrAccept = async (req, res, next) => {
 
                         await saveData.save()
                     }
+
+                    const findUser = await userModel.findOne({
+                        _id : req.params.like_user_id
+                    })
+
+                    const user = await userModel.findOne({
+                        _id : req.params.user_id
+                    })
+
+                    if (findUser.fcm_token) {
+                        const title = (user.firstName);
+                        const body = "Select in Super Match!";
+                        const text = "Session";
+                        const sendBy = (user._id).toString();
+                        const registrationToken = findUser.fcm_token
+                        Notification.sendPushNotificationFCM(
+                            registrationToken,
+                            title,
+                            body,
+                            text,
+                            sendBy,
+                            true
+                        );
+                    }
+                    
+
                     res.status(status.OK).json(
                         new APIResponse("accept success", "true", 200, "1",)
                     )
