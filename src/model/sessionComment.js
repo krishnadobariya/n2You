@@ -118,7 +118,7 @@ const sessionCommentSchema = mongoose.Schema({
         }],
     }],
 
-    LikeSession: [{
+    LikeSession: {
         participants_1: [{
             likeUserId:
             {
@@ -137,8 +137,7 @@ const sessionCommentSchema = mongoose.Schema({
                 type: mongoose.Schema.Types.ObjectId
             }
         }],
-
-    }]
+    }
 
 }, {
     timestamps: true

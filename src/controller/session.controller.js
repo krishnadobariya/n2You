@@ -5365,42 +5365,93 @@ exports.likeSesison = async (req, res, next) => {
                 const p3 = findSession.participants[0].participants_3 == null ? "" : findSession.participants[0].participants_3
 
                 if ((p1).toString() == (req.params.participant_user_id).toString()) {
-
-                    await sessionComment.updateOne({
-                        sessionId: req.params.session_id
-                    }, {
-                        $push: {
-                            "LikeSession.participants_1.likeUserId": req.params.user_id
-                        }
+                    const findUser = await sessionComment.findOne({
+                        sessionId: req.params.session_id,
+                        "LikeSession.participants_1.likeUserId": req.params.user_id
                     })
+
+                    console.log(findUser);
+
+                    if(findUser){
+
+                        res.status(status.ALREADY_REPORTED).json(
+                            new APIResponse("like Already Added", "true", 208, "1")
+                        )
+
+                    }else{
+                        await sessionComment.updateOne({
+                            sessionId: req.params.session_id
+                        }, {
+                            $push: {
+                                "LikeSession.participants_1.likeUserId": req.params.user_id
+                            }
+                        })
+
+                        res.status(status.OK).json(
+                            new APIResponse("like Added SuccessFully", "true", 200, "1")
+                        )
+                    }
+
+                   
 
                 } else if ((p2).toString() == (req.params.participant_user_id).toString()) {
 
-                    await sessionComment.updateOne({
-                        sessionId: req.params.session_id
-                    }, {
-                        $push: {
-                            "LikeSession.participants_2.likeUserId": req.params.user_id
-                        }
+                    const findUser =await sessionComment.findOne({
+                        sessionId: req.params.session_id,
+                        "LikeSession.participants_2.likeUserId": req.params.user_id
                     })
+
+                    if(findUser){
+
+                        res.status(status.ALREADY_REPORTED).json(
+                            new APIResponse("like Already Added", "true", 208, "1")
+                        )
+
+                    }else{
+                        await sessionComment.updateOne({
+                            sessionId: req.params.session_id
+                        }, {
+                            $push: {
+                                "LikeSession.participants_2.likeUserId": req.params.user_id
+                            }
+                        })
+
+                        res.status(status.OK).json(
+                            new APIResponse("like Added SuccessFully", "true", 200, "1")
+                        )
+                    }
 
 
                 } else if ((p3).toString() == (req.params.participant_user_id).toString()) {
 
-                    await sessionComment.updateOne({
-                        sessionId: req.params.session_id
-                    }, {
-                        $push: {
-
-                            "LikeSession.participants_3.likeUserId": req.params.user_id
-                        }
+                    const findUser =await sessionComment.findOne({
+                        sessionId: req.params.session_id,
+                        "LikeSession.participants_3.likeUserId": req.params.user_id
                     })
+
+                    if(findUser){
+
+                        res.status(status.ALREADY_REPORTED).json(
+                            new APIResponse("like Already Added", "true", 208, "1")
+                        )
+
+                    }else{
+                        await sessionComment.updateOne({
+                            sessionId: req.params.session_id
+                        }, {
+                            $push: {
+                                "LikeSession.participants_3.likeUserId": req.params.user_id
+                            }
+                        })
+
+                        res.status(status.OK).json(
+                            new APIResponse("like Added SuccessFully", "true", 200, "1")
+                        )
+                    }
                 }
 
 
-                res.status(status.OK).json(
-                    new APIResponse("like Added SuccessFully", "true", 200, "1")
-                )
+              
             } else {
                 res.status(status.NOT_FOUND).json(
                     new APIResponse("session not live", "true", 404, "1",)
@@ -5770,7 +5821,7 @@ exports.rejectOrAccept = async (req, res, next) => {
                         });
 
                     await userModel.updateOne(
-                        {
+                        {   
                             _id: req.params.like_user_id
                         },
                         {
