@@ -3139,9 +3139,9 @@ function socket(io) {
                 if (p1) {
                     allId.push(findSession.participants[0].participants_1)
                 } else if (p2) {
-                    allId.push(findSession.participants[0].participants_1)
+                    allId.push(findSession.participants[0].participants_2)
                 } else if (p3) {
-                    allId.push(findSession.participants[0].participants_1)
+                    allId.push(findSession.participants[0].participants_3)
                 }
 
                 for (const getNot of allId) {
