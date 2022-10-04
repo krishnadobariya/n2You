@@ -3119,8 +3119,11 @@ function socket(io) {
                     }
                 }).select("_id")
 
+              
 
                 for (const getNot of findUser) {
+                    console.log("getNot" , getNot);
+                    console.log("getNow" ,getNot._id);
                     const userRoom = `User${getNot._id}`
                     io.to(userRoom).emit("nowEnd", "successfully start now");
                 }
@@ -3144,7 +3147,10 @@ function socket(io) {
                     allId.push(findSession.participants[0].participants_3)
                 }
 
+                console.log("allId is" , allId);
                 for (const getNot of allId) {
+                    console.log("getNot" , getNot);
+                    console.log("getNow" ,getNot._id);
                     const userRoom = `User${getNot}`
                     io.to(userRoom).emit("nowEnd", "successfully start now");
                 }
