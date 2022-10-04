@@ -930,11 +930,15 @@ function socket(io) {
                             ],
                         },
                     }
-                }).then(() => {
-                    io.emit("checkUpdate", "User Location Updated!");
-                }).catch((error) => {
-                    io.emit("checkUpdate", error);
                 })
+                
+                
+                const JoinUser = [];
+                const findUser = await userModel.find()
+                
+                for(const data of findUser){
+                    io.to(data._id).emit("checkUpdate", "User Location Updated!");
+                }
             }
         })
 
