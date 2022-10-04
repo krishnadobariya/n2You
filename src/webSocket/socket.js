@@ -937,7 +937,8 @@ function socket(io) {
                 const findUser = await userModel.find()
                 
                 for(const data of findUser){
-                    io.to(data._id).emit("checkUpdate", "User Location Updated!");
+                    const userRoom = `User${data._id}`
+                    io.to(userRoom).emit("checkUpdate", "User Location Updated!");
                 }
             }
         })
@@ -2867,7 +2868,7 @@ function socket(io) {
                         }
 
                         for (const notification of allRequestedEmails) {
-
+                            create_session_user
                             const findUser = await userModel.findOne({
                                 _id: notification
                             })
