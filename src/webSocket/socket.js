@@ -915,6 +915,7 @@ function socket(io) {
                 _id: arg.user_id
             })
 
+            console.log("updateLatLong" , findUser);
             if (findUser == null) {
                 io.emit("checkUpdate", "User Not Found!");
             } else {
@@ -935,10 +936,9 @@ function socket(io) {
                 
                 const JoinUser = [];
                 const findUser = await userModel.find()
-                console.log("data" , data)
+                
                 for(const data of findUser){
                     const userRoom = `User${data._id}`
-                    console.log("userRoom" , userRoom)
                     io.to(userRoom).emit("checkUpdate", "User Location Updated!");
                 }
             }
