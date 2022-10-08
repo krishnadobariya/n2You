@@ -391,12 +391,12 @@ exports.userUpdate = async (req, res, next) => {
 
 
         const files = req.files.photo
-        console.log( "files" , files);
+       
         const urlAll = req.body.images
         const removeFirst = urlAll.slice(1, -1)
         const url = removeFirst.split(",")
 
-        console.log("remove img", url[0]);
+        
         
 
         if (url[0] == ' ') {
@@ -452,7 +452,7 @@ exports.userUpdate = async (req, res, next) => {
 
         } else {
             urls.push()
-            console.log("helloooooo");
+         
             if (files == undefined) {
 
                 const findUser = await userModel.findOne({
@@ -468,7 +468,6 @@ exports.userUpdate = async (req, res, next) => {
                     urls.splice(indexOfObject, 1);
                 }
 
-                console.log("urls", urls);
             } else {
 
                 const findUser = await userModel.findOne({
@@ -485,7 +484,7 @@ exports.userUpdate = async (req, res, next) => {
                 }
 
                 const files = req.files.photo
-                console.log("files", files);
+             
                 for (const file of files) {
                     const { path } = file
 
@@ -603,8 +602,7 @@ exports.userUpdate = async (req, res, next) => {
                     email: req.body.email
                 })
 
-                console.log(urls);
-
+          
                 const data = {
                     _id: findUser._id,
                     polyDating: req.body.poly_dating,
@@ -1466,7 +1464,7 @@ exports.getAllUser = async (req, res, next) => {
 
         const reaquestedAllEmail = [];
         searchName.map((result, index) => {
-            console.log(result.email);
+       
             reaquestedAllEmail.push(result.email)
         })
 
@@ -1856,7 +1854,7 @@ exports.getAllUser = async (req, res, next) => {
                 for (const [key, finalData] of meageAllTable.entries()) {
                     for (const [key, final1Data] of uniqueObjArray.entries()) {
                         if (finalData.email === final1Data.email) {
-                            console.log(finalData.email, final1Data.email);
+                          
                             finalStatus.push({ status: final1Data.status })
                         }
                     }
@@ -1921,7 +1919,7 @@ exports.getAllUser = async (req, res, next) => {
                         final_data.push(getDetail);
                     } else if (findAllUserWithIchat2) {
 
-                        console.log("charoom 2");
+                        
                         chatRoomId.push(findAllUserWithIchat2._id)
                         const km = finalData.distance / 1000;
                         const distance = km.toFixed(2) + " km";
@@ -1935,7 +1933,6 @@ exports.getAllUser = async (req, res, next) => {
                             status: finalStatus[key].status
                         }
 
-                        console.log("getDetail", getDetail);
                         final_data.push(getDetail);
                     } else {
                         const km = finalData.distance / 1000;
@@ -1954,7 +1951,7 @@ exports.getAllUser = async (req, res, next) => {
                     }
                 }
 
-                console.log("final_data", final_data);
+              
                 const final_response = [...final_data, ...UniqueEmail]
 
                 // let uniqueObjArray = [...new Map(final_data.map((item) => [item["details"], item])).values()];
@@ -2310,13 +2307,13 @@ exports.getDataUserWise = async (req, res, next) => {
                                 statusCode.push({ status: 10 })
                             } else {
                                 if ((findStatus.userId).toString() == (req.params.user_id).toString()) {
-                                    console.log("true");
+                                   
                                     if (findStatus.accepted == 4) {
 
-                                        console.log("indStatus.accepted", findStatus.accepted);
+                                      
                                         statusCode.push({ status: findStatus.accepted })
                                     } else {
-                                        console.log("indStatus.accepted", findStatus.accepted);
+                                      
                                         statusCode.push({ status: findStatus.accepted })
                                     }
 
@@ -2336,7 +2333,6 @@ exports.getDataUserWise = async (req, res, next) => {
 
             }
 
-            console.log("statusCode", statusCode);
             let birthDate = new Date(data[0].birthDate);
             birthDate = birthDate.getFullYear();
             let currentDate = new Date(Date.now());
@@ -2644,7 +2640,7 @@ exports.yesBasket = async (req, res, next) => {
 
                 } else {
 
-                    console.log("hellooo");
+                   
                     const RequestedEmailExiestInUser = await requestsModel.findOne(
                         {
                             userId: req.params.user_id,
@@ -2795,16 +2791,12 @@ exports.yesBasket = async (req, res, next) => {
 
                         var difference = reaquestedAllEmail.filter(x => emailGet.indexOf(x) === -1);
 
-                        console.log("difference", difference);
                         const UniqueEmail = [];
 
                         for (const uniqueEmail of difference) {
                             const userDetail = await userModel.findOne({ _id: uniqueEmail });
                             finalData.push(userDetail)
                         }
-
-
-                        console.log("finalData", finalData);
 
                         const findThumbUp = await userModel.findOne({
                             _id: req.params.request_user_id,
@@ -3166,7 +3158,6 @@ exports.yesBasket = async (req, res, next) => {
                                 }]
                             })
 
-                            console.log("findAllUserWithIchat1", findAllUserWithIchat1);
                             const findAllUserWithIchat2 = await chatRoomModel.findOne({
                                 $and: [{
                                     user1: req.params.user_id
@@ -3365,7 +3356,6 @@ exports.yesBasket = async (req, res, next) => {
                         const pagecount = data.length;
                         const pageCount = Math.ceil(pagecount / limit);
 
-                        console.log("page", page);
                         res.status(status.OK).json({
                             "message": "show all yes basket record",
                             "status": true,
@@ -3698,7 +3688,6 @@ exports.yesBasket = async (req, res, next) => {
                             requestedEmailWitchIsInuserRequeted.push(resultEmail);
                         })
 
-                        console.log("requestedEmailWitchIsInuserRequeted", requestedEmailWitchIsInuserRequeted);
 
                         const meageAllTable = await userModel.aggregate([{
                             $match: {
@@ -5032,7 +5021,6 @@ exports.noBasket = async (req, res, next) => {
                     }
                 }
 
-                console.log("NoBasketData", NoBasketData);
                 for (const allNoBasketData of NoBasketData) {
                     const meargeData = await userModel.findOne({
                         _id: allNoBasketData,
@@ -5048,7 +5036,6 @@ exports.noBasket = async (req, res, next) => {
                 }
 
 
-                console.log("reaquestedAllEmail", reaquestedAllEmail);
 
                 if (reaquestedAllEmail[0] == undefined) {
                     res.status(status.OK).json({
