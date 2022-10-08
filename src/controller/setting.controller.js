@@ -178,7 +178,7 @@ exports.getCommentSetting = async (req, res, next) => {
                     commentAccess: findUserInSetting.commentAccess,
                 }
 
-                console.log(data);
+               
                 res.status(status.OK).json(
                     new APIResponse("get Comment Setting", "true", 200, "1", data)
                 );
@@ -189,8 +189,7 @@ exports.getCommentSetting = async (req, res, next) => {
                     commentAccess: true,
                 }
 
-                console.log(data);
-
+             
                 res.status(status.OK).json(
                     new APIResponse("get comment Setting", "true", 200, "1", data)
                 );
