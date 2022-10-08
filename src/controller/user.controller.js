@@ -5911,7 +5911,15 @@ exports.getAllNotification = async (req, res, next) => {
                 );
             } else {
                 const allNotification = [];
-                for (const getNotification of findUserInNotificationModel.notifications) {
+                const data = (findUserInNotificationModel.notifications).reverse()
+                const count = Math.ceil(data.length / req.query.limit)
+                
+                const page = parseInt(req.query.page)
+                const limit = parseInt(req.query.limit)
+                const startIndex = (page - 1) * limit;
+                const endIndex = page * limit;
+
+                for (const getNotification of data.slice(startIndex,endIndex)) {
                     if (getNotification.userId) {
                         const findUserDetail = await userModel.findOne({
                             _id: getNotification.userId
@@ -6038,7 +6046,16 @@ exports.getAllNotification = async (req, res, next) => {
                 }
 
                 res.status(status.OK).json(
-                    new APIResponse("show all notification", "true", 200, "1", allNotification.reverse())
+                   {
+
+                    "message": "show all notification",
+                    "status": "true",
+                    "code": 200,
+                    "statusCode": "1",
+                    "pageCount": count,
+                    "data":allNotification
+                    
+                   }
                 );
 
             }
