@@ -41,16 +41,14 @@ cron.schedule("*/60 * * * * *", async function () {
         let second = date.getUTCSeconds();
         now = new Date(`${year}-${month + 1}-${dates} ${hour}:${minute}:${second}`)
 
-        console.log("now", now);
+       
         var sec_num = (finalUserSessionDate - now) / 1000;
         var days = Math.floor(sec_num / (3600 * 24));
         var hours = Math.floor((sec_num - (days * (3600 * 24))) / 3600);
         var minutes = Math.floor((sec_num - (days * (3600 * 24)) - (hours * 3600)) / 60);
 
 
-        console.log("hours", hours);
-        console.log("days", days);
-        console.log("minutes", minutes);
+        
 
         if (hours == 0 && days == 0 && minutes == 30) {
 
@@ -333,7 +331,7 @@ cron.schedule("*/60 * * * * *", async function () {
                 _id: getDate.cretedSessionUser
             })
 
-            console.log(findUserInUserModel);
+         
             if (findUserInUserModel.fcm_token) {
                 const title = findUserInUserModel.firstName;
                 const body = "your session started!";
@@ -384,7 +382,7 @@ cron.schedule("*/60 * * * * *", async function () {
         } else {
         }
     }
-    console.log("running a task every 60 second");
+   
 });
 
 
