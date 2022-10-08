@@ -1903,7 +1903,7 @@ exports.userAllFriendPost = async (req, res, next) => {
                     "blockUnblockUser.blockUserId": resultEmail
                 })
 
-                console.log("findInBlockUser", findInBlockUser);
+                // console.log("findInBlockUser", findInBlockUser);
 
 
                 const findInBlockUsers = await blockUnblockModel.findOne({
@@ -1911,7 +1911,7 @@ exports.userAllFriendPost = async (req, res, next) => {
                     "blockUnblockUser.blockUserId": req.params.user_id
                 })
 
-                console.log("findInBlockUser", findInBlockUsers);
+                // console.log("findInBlockUser", findInBlockUsers);
 
                 if (findInBlockUser || findInBlockUsers) {
 
@@ -2830,7 +2830,7 @@ exports.userAllFriendPost = async (req, res, next) => {
             const pageCount = Math.ceil(data / limit);
 
 
-            console.log("startindex" , startIndex);
+            // console.log("startindex" , startIndex);
             res.status(status.OK).json({
                 "message": "show all post When accept by the user",
                 "status": true,
@@ -3255,7 +3255,7 @@ exports.userAllFriendPost = async (req, res, next) => {
                 userId: req.params.user_id
             })
 
-            console.log("getNotification", getNotification);
+            // console.log("getNotification", getNotification);
 
             if (getNotification == null) {
                 var count = 0
