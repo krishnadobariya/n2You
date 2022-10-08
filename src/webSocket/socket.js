@@ -3574,6 +3574,7 @@ function socket(io) {
             const final_data = [...privateData, ...publicData];
 
             const userRoom = `User${arg.user_id}`
+            console.log("USERrOOM IS" , userRoom);
             io.to(userRoom).emit("liveSessionSuccess", final_data);
 
 
