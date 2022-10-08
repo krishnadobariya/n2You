@@ -3112,18 +3112,18 @@ function socket(io) {
                 _id: arg.session_id
             })
 
+            console.log("findSession" , findSession);
+
+            console.log("findSession.roomType" , findSession.roomType);
             
             if (findSession.roomType == "Public") {
 
+                console.log("public room");
                 const findUser = await userModel.find({
                     _id: {
                         $ne: arg.create_session_user
                     }
                 })
-
-              
-
-            
 
                 for (const getNot of findUser) {
                     console.log("getNot" , getNot);
