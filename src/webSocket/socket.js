@@ -3114,9 +3114,9 @@ function socket(io) {
                 _id: arg.session_id
             })
 
-            console.log("findSession" , findSession);
+            // console.log("findSession" , findSession);
 
-            console.log("findSession.roomType" , findSession.RoomType);
+            // console.log("findSession.roomType" , findSession.RoomType);
             
             if (findSession.RoomType == "Public") {
 
