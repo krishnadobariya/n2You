@@ -41,7 +41,7 @@ exports.CommetInsert = async (req, res, next) => {
                             userId: req.params.req_user_id
                         })
 
-                        console.log("findInNotification", findInNotification);
+                        // console.log("findInNotification", findInNotification);
                         const findUser = await userModel.findOne({
                             _id: req.params.user_id
                         }).select("firstName")
@@ -102,7 +102,7 @@ exports.CommetInsert = async (req, res, next) => {
                             userId: req.params.req_user_id
                         })
 
-                        console.log("findInNotification", findInNotification);
+                        // console.log("findInNotification", findInNotification);
 
                         const findUser = await userModel.findOne({
                             _id: req.params.user_id
