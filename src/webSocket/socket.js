@@ -3108,15 +3108,17 @@ function socket(io) {
 
             console.log("callFor join User");
 
+            console.log("arg.session_id" , arg.session_id);
+
             const findSession = await sessionModel.findOne({
                 _id: arg.session_id
             })
 
             console.log("findSession" , findSession);
 
-            console.log("findSession.roomType" , findSession.roomType);
+            console.log("findSession.roomType" , findSession.RoomType);
             
-            if (findSession.roomType == "Public") {
+            if (findSession.RoomType == "Public") {
 
                 console.log("public room");
                 const findUser = await userModel.find({
