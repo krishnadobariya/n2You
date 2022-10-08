@@ -3415,6 +3415,7 @@ function socket(io) {
             })
 
 
+            console.log("data" , data);
          
             const publicData = [];
             const privateData = [];
@@ -3426,6 +3427,7 @@ function socket(io) {
                     for (const participant of res.participants) {
                         if ((participant.participants_1).toString() == (arg.user_id).toString()) {
 
+                            console.log("logout user is");
                             const findUser = await userModel.findOne({
                                 _id: mongoose.Types.ObjectId(res.cretedSessionUser)
                             })
