@@ -3408,6 +3408,8 @@ function socket(io) {
 
         socket.on("liveSession", async (arg) => {
 
+            console.log("user_id" , arg.user_id);
+
             const data = await sessionModel.find({
                 started: true, cretedSessionUser: {
                     $ne: arg.user_id
