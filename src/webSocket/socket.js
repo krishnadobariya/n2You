@@ -3427,7 +3427,7 @@ function socket(io) {
                     for (const participant of res.participants) {
                         if ((participant.participants_1).toString() == (arg.user_id).toString()) {
 
-                            console.log("logout user is");
+                            console.log("logout user i");
                             const findUser = await userModel.findOne({
                                 _id: mongoose.Types.ObjectId(res.cretedSessionUser)
                             })
@@ -3445,7 +3445,7 @@ function socket(io) {
 
 
                         } else if ((participant.participants_2 == null ? "" : (participant.participants_2).toString()).toString() == (arg.user_id).toString()) {
-
+                            console.log("logout user 2");
                             const findUser = await userModel.findOne({
                                 _id: mongoose.Types.ObjectId(res.cretedSessionUser)
                             })
@@ -3462,7 +3462,7 @@ function socket(io) {
 
 
                         } else if ((participant.participants_3 == null ? "" : (participant.participants_3).toString()) == (arg.user_id).toString()) {
-
+                            console.log("logout user 3");
                             const findUser = await userModel.findOne({
                                 _id: mongoose.Types.ObjectId(res.cretedSessionUser)
                             })
@@ -3478,6 +3478,7 @@ function socket(io) {
                             publicData.push(response)
 
                         } else if ((res.cretedSessionUser).toString() == (arg.user_id).toString()) {
+                            console.log("logout user create user");
                             const findUser = await userModel.findOne({
                                 _id: mongoose.Types.ObjectId(res.cretedSessionUser)
                             })
@@ -3492,6 +3493,8 @@ function socket(io) {
 
                             publicData.push(response)
                         } else {
+
+                            console.log("logout viewer");
                             const findUser = await userModel.findOne({
                                 _id: mongoose.Types.ObjectId(res.cretedSessionUser)
                             })
