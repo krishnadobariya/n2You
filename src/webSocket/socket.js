@@ -3128,7 +3128,6 @@ function socket(io) {
                 })
 
                 for (const getNot of findUser) {
-                    console.log("getNot" , getNot);
                     console.log("getNow" ,getNot._id);
                     const userRoom = `User${getNot._id}`
                     io.to(userRoom).emit("nowEnd", "successfully start now");
