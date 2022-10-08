@@ -97,7 +97,7 @@ exports.sessionCreate = async (req, res, next) => {
                 const invitedUsers = [];
                 if (p1) {
                     var val = Math.floor(1000 + Math.random() * 9000);
-                    console.log(val);
+                   
                     invitedUsers.push(mongoose.Types.ObjectId(req.body.participants_1))
                     await sessionModel.updateOne({
                         _id: saveData._id
@@ -109,7 +109,7 @@ exports.sessionCreate = async (req, res, next) => {
                 }
                 if (p2) {
                     var val = Math.floor(1000 + Math.random() * 9000);
-                    console.log(val);
+                    
                     invitedUsers.push(mongoose.Types.ObjectId(req.body.participants_2))
                     invitedUsers.push(mongoose.Types.ObjectId(req.body.participants_1))
                     await sessionModel.updateOne({
@@ -122,7 +122,7 @@ exports.sessionCreate = async (req, res, next) => {
                 }
                 if (p3) {
                     var val = Math.floor(1000 + Math.random() * 9000);
-                    console.log(val);
+                    
                     invitedUsers.push(mongoose.Types.ObjectId(req.body.participants_3))
                     invitedUsers.push(mongoose.Types.ObjectId(req.body.participants_1))
                     await sessionModel.updateOne({
@@ -135,14 +135,14 @@ exports.sessionCreate = async (req, res, next) => {
                 }
 
 
-                console.log("allRequestedEmails", allRequestedEmails);
-                console.log("invitedUsers", invitedUsers);
+                // console.log("allRequestedEmails", allRequestedEmails);
+                // console.log("invitedUsers", invitedUsers);
 
                 for (const notification of allRequestedEmails) {
                     const findUser = await userModel.findOne({
                         _id: notification
                     })
-                    console.log("findUser", findUser.fcm_token, findUser._id);
+                 
                     if (findUser.fcm_token) {
                         const title = findUserInUserModel.firstName;
                         const body = `${findUserInUserModel.firstName} create session ${timeSession}`;
@@ -199,7 +199,6 @@ exports.sessionCreate = async (req, res, next) => {
                         _id: invitedUser
                     })
 
-                    console.log("findUser", findUser.fcm_token, findUser._id);
 
                     if (findUser.fcm_token) {
                         const title = findUserInUserModel.firstName;
@@ -263,7 +262,7 @@ exports.sessionCreate = async (req, res, next) => {
 
                 if (p1) {
                     var val = Math.floor(1000 + Math.random() * 9000);
-                    console.log(val);
+                    
 
                     allRequestedEmails.push(mongoose.Types.ObjectId(req.body.participants_1))
                     await sessionModel.updateOne({
@@ -277,7 +276,7 @@ exports.sessionCreate = async (req, res, next) => {
                 }
                 if (p2) {
                     var val = Math.floor(1000 + Math.random() * 9000);
-                    console.log(val);
+                    
 
                     allRequestedEmails.push(mongoose.Types.ObjectId(req.body.participants_2))
                     await sessionModel.updateOne({
@@ -290,7 +289,7 @@ exports.sessionCreate = async (req, res, next) => {
                 }
                 if (p3) {
                     var val = Math.floor(1000 + Math.random() * 9000);
-                    console.log(val);
+                    
 
                     allRequestedEmails.push(mongoose.Types.ObjectId(req.body.participants_3))
                     await sessionModel.updateOne({
@@ -3438,7 +3437,7 @@ exports.mySession = async (req, res, next) => {
             cretedSessionUser: req.params.user_id
         })
 
-        console.log(findUserInsession);
+    
 
         for (const findMySession of findUserInsession) {
             var userSessionDate = new Date(new Date(findMySession.selectedDate).toUTCString())
@@ -3471,9 +3470,7 @@ exports.mySession = async (req, res, next) => {
             var getDate = new Date(findMySession.selectedDate)
             const hoursOne = getDate.getHours()
             const minutesOne = getDate.getMinutes()
-            console.log("hours", hours);
-            console.log("days", days);
-            console.log("minutes", minutes);
+        
 
             const findUserDeatil = await userModel.findOne({
                 _id: findMySession.cretedSessionUser,
@@ -3496,10 +3493,9 @@ exports.mySession = async (req, res, next) => {
 
 
             if (findMySession.sessionEndOrNot == false) {
-                console.log("i am false");
+            
                 if (findUserDeatil && findParticipantsiUserDeatil1 && findParticipantsiUserDeatil2 && findParticipantsiUserDeatil3) {
 
-                    console.log(((days < 0 && hours >= 0 && minutes >= 0) || (days == 0 && hours == 0 && minutes == 0)));
                     const response = {
                         _id: findMySession._id,
                         selectedTime: findMySession.selectedTime,
@@ -3532,7 +3528,6 @@ exports.mySession = async (req, res, next) => {
                     mySession.push(response)
                 } else if (findUserDeatil && findParticipantsiUserDeatil1 == null && findParticipantsiUserDeatil2 == null && findParticipantsiUserDeatil3 == null) {
 
-                    console.log(((days < 0 && hours >= 0 && minutes >= 0) || (days == 0 && hours == 0 && minutes == 0)));
                     const response = {
                         _id: findMySession._id,
                         selectedTime: findMySession.selectedTime,
@@ -3925,9 +3920,7 @@ exports.sessionDetail = async (req, res, next) => {
         var getDate = new Date(findUserInsession.selectedDate)
         const hoursOne = getDate.getHours()
         const minutesOne = getDate.getMinutes()
-        console.log("hours", hours);
-        console.log("days", days);
-        console.log("minutes", minutes);
+       
 
         const findUserDeatil = await userModel.findOne({
             _id: findUserInsession.cretedSessionUser,
@@ -3953,7 +3946,6 @@ exports.sessionDetail = async (req, res, next) => {
 
             if (findUserDeatil && findParticipantsiUserDeatil1 && findParticipantsiUserDeatil2 && findParticipantsiUserDeatil3) {
 
-                console.log(((days < 0 && hours >= 0 && minutes >= 0) || (days == 0 && hours == 0 && minutes == 0)));
                 const response = {
                     _id: findUserInsession._id,
                     selectedTime: findUserInsession.selectedTime,
@@ -3986,7 +3978,6 @@ exports.sessionDetail = async (req, res, next) => {
                 mySession.push(response)
             } else if (findUserDeatil && findParticipantsiUserDeatil1 == null && findParticipantsiUserDeatil2 == null && findParticipantsiUserDeatil3 == null) {
 
-                console.log(((days < 0 && hours >= 0 && minutes >= 0) || (days == 0 && hours == 0 && minutes == 0)));
                 const response = {
                     _id: findUserInsession._id,
                     selectedTime: findUserInsession.selectedTime,
@@ -4253,7 +4244,7 @@ exports.userList = async (req, res, next) => {
 
             if (findUser) {
                 const data = findUser.joinUser
-                console.log(data);
+
                 const final_response = [];
                 for (const res of data) {
 
@@ -4261,8 +4252,7 @@ exports.userList = async (req, res, next) => {
                         const findUser = await userModel.findOne({
                             _id: res.userId
                         })
-
-                        console.log(findUser);
+    
                         const response = {
                             userId: findUser._id,
                             userName: findUser.firstName,
@@ -4366,8 +4356,7 @@ exports.uploadImages = async (req, res, next) => {
                     )
                 } else {
 
-                    console.log("req.params.session_id", req.params.session_id);
-
+                
                     await sessionComment.updateOne({
                         sessionId: mongoose.Types.ObjectId(req.params.session_id)
                     }, {
@@ -4434,7 +4423,7 @@ exports.uploadVideos = async (req, res, next) => {
                 urls.push(newPath);
             }
 
-            console.log(urls);
+          
             const findUser = await sessionComment.findOne({
                 sessionId: mongoose.Types.ObjectId(req.params.session_id),
                 "upload.userId": req.params.user_id
@@ -4469,9 +4458,6 @@ exports.uploadVideos = async (req, res, next) => {
                         new APIResponse("video upload", "true", 201, "1")
                     )
                 } else {
-
-                    console.log("req.params.session_id", req.params.session_id);
-
                     await sessionComment.updateOne({
                         sessionId: mongoose.Types.ObjectId(req.params.session_id)
                     }, {
@@ -4540,7 +4526,7 @@ exports.getUploadeVedioOrImages = async (req, res, next) => {
 
             if (sessionId) {
                 const data = sessionId.upload
-                console.log(data);
+                
                 const id = [];
                 if (data[0] == undefined) {
 
@@ -4832,7 +4818,7 @@ exports.thumbUpCountInSession = async (req, res, next) => {
                     const participantData = [];
                     for (const res of data.participants) {
 
-                        console.log("res.participants_1[0] ", res.participants_1[0]);
+                       
                         if (res.participants_1[0] == undefined) {
 
                         } else {
@@ -4943,7 +4929,7 @@ exports.thumbUpCountInSession = async (req, res, next) => {
 
                     }
 
-                    console.log("req.params.session_id", req.params.session_id);
+                    // console.log("req.params.session_id", req.params.session_id);
 
                     const findParticipant1 = await sessionComment.findOne({
                         sessionId: req.params.session_id
@@ -5003,7 +4989,7 @@ exports.thumbUpCountInSession = async (req, res, next) => {
                     const participantData = [];
                     for (const res of data.participants) {
 
-                        console.log("res.participants_1[0] ", res.participants_1[0]);
+                        // console.log("res.participants_1[0] ", res.participants_1[0]);
                         if (res.participants_1[0] == undefined) {
 
                         } else {
@@ -5011,7 +4997,7 @@ exports.thumbUpCountInSession = async (req, res, next) => {
                                 _id: res.participants_1[0].userId
                             })
 
-                            console.log(findUser1);
+                            // console.log(findUser1);
                             const response = {
                                 participants_1: {
                                     userId: findUser1._id,
@@ -5127,7 +5113,7 @@ exports.sessionInfo = async (req, res, next) => {
                 }
 
                 const InSession = session.liveSession
-                console.log(InSession);
+              
                 if (InSession[0] == undefined) {
                     const final_response = [];
                     for (const user of allPrticipant) {
@@ -5179,8 +5165,7 @@ exports.sessionInfo = async (req, res, next) => {
 
                     const raiseHandUser = [];
                     const data = session.liveSession
-                    console.log(data[0]);
-
+                   
                     raiseHandUser.push({
                         userId: data[0].participants_1[0].userId,
                         status: data[0].participants_1[0].allow
@@ -5196,7 +5181,7 @@ exports.sessionInfo = async (req, res, next) => {
                         status: data[0].participants_3[0].allow
                     })
 
-                    console.log("raiseHandUser", raiseHandUser);
+                   
                     const final_response = [];
                     const userId = [];
 
@@ -5224,7 +5209,7 @@ exports.sessionInfo = async (req, res, next) => {
                         }
                     }
 
-                    console.log(userId);
+                 
                     const ids = [...allPrticipant, ...userId]
                     for (const findres of ids) {
                         for (const id of userId) {
@@ -5293,7 +5278,7 @@ exports.listOfSessionInfo = async (req, res, next) => {
             const p3 = findSession.participants[0].participants_3 == null ? "" : findSession.participants[0].participants_3
 
 
-            console.log(p1);
+           
 
             userList.push({ userId: findSession.cretedSessionUser, intId: findSession.createUserIntId, status: 1 })
 
@@ -5369,8 +5354,6 @@ exports.likeSesison = async (req, res, next) => {
                         sessionId: req.params.session_id,
                         "LikeSession.participants_1.likeUserId": req.params.user_id
                     })
-
-                    console.log(findUser);
 
                     if(findUser){
 
@@ -5487,7 +5470,7 @@ exports.getLikeUserDetail = async (req, res, next) => {
 
             const user = findSessionComment.LikeSession
 
-            console.log(user);
+          
             const final_response = [];
             if(user.participants_1[0] == undefined && user.participants_2[0] == undefined && user.participants_3[0] == undefined){
 
@@ -5562,7 +5545,7 @@ exports.getLikeUserDetail = async (req, res, next) => {
                     } else {
     
                         const count = (user.participants_3)
-                        console.log(count.length);
+                       
                         const findUser = await userModel.findOne({
                             _id: findSession.participants[0].participants_3
                         })
@@ -5592,7 +5575,7 @@ exports.getLikeUserDetail = async (req, res, next) => {
                         final_response.push(response)
                     } else {
                         const count = (user.participants_2)
-                        console.log(count.length);
+                        
                         const findUser = await userModel.findOne({
                             _id: findSession.participants[0].participants_2
                         })
@@ -5623,7 +5606,7 @@ exports.getLikeUserDetail = async (req, res, next) => {
                         final_response.push(response)
                     } else {
                         const count = (user.participants_1)
-                        console.log(count.length);
+                        
                         const findUser = await userModel.findOne({
                             _id: findSession.participants[0].participants_1
                         })
@@ -5703,7 +5686,7 @@ exports.rejectOrAccept = async (req, res, next) => {
                         userId: req.params.user_id
                     })
 
-                    console.log("suparMatchList", suparMatchList);
+                  
                     const suparMatchListforLikeUser = await superListModel.findOne({
                         session_id: req.params.session_id,
                         userId: req.params.like_user_id
@@ -5932,17 +5915,13 @@ exports.rejectList = async (req, res, next) => {
             userId: req.params.user_id
         })
 
-        console.log(findUser);
-
+    
         const final_response = [];
         const session_detail = [];
         const rej_user_detail = []
         for (const data of findUser) {
 
-            console.log("data", data);
-
-
-            console.log("session_detail", session_detail);
+        
             for (const data1 of data.matchUserId) {
 
                 const findUser = await userModel.findOne({
@@ -5990,17 +5969,14 @@ exports.suparMatchList = async (req, res, next) => {
             userId: req.params.user_id
         })
 
-        console.log(findUser);
+        
 
         const final_response = [];
         const session_detail = [];
         const sup_user_detail = []
         for (const data of findUser) {
 
-            console.log("data", data);
-
-
-            console.log("session_detail", session_detail);
+           
             for (const data1 of data.matchUserId) {
 
                 const findUser = await userModel.findOne({
