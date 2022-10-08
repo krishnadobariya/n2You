@@ -3413,15 +3413,17 @@ function socket(io) {
                     $ne: arg.user_id
                 },
             })
+
+
+         
             const publicData = [];
             const privateData = [];
 
             for (const res of data) {
+
+                console.log("res" , res._id);
                 if (res.RoomType == "Public") {
-
-
                     for (const participant of res.participants) {
-
                         if ((participant.participants_1).toString() == (arg.user_id).toString()) {
 
                             const findUser = await userModel.findOne({
