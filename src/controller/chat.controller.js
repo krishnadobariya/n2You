@@ -182,12 +182,12 @@ exports.allUserListWithUnreadCount = async (req, res, next) => {
                         dateAndTime: getChat.dateAndTime
                     }
 
-                    // console.log("lastUnreadMessage", lastUnreadMessage);
+                  
                     lastMessage.push(lastUnreadMessage);
                     const lastValue = lastMessage[lastMessage.length - 1];
-                    // console.log("lastValue", lastValue);
+                 
 
-                    console.log(lastValue);
+                
                     var userNotificationDate = new Date(lastValue.dateAndTime);
                     now = new Date();
                     var sec_num = (now - userNotificationDate) / 1000;
@@ -627,13 +627,13 @@ exports.inAcallOrNot = async (req, res, next) => {
 exports.inAroomOrNot = async (req, res, next) => {
     try {
 
-        console.log("req.params.receiver_id", req.params.receiver_id);
+   
         const findUserInVideoCallRoom = await videoCallModel.findOne({
             receiverId: mongoose.Types.ObjectId(req.params.receiver_id),
             accepted: 0
         })
 
-        console.log("findUserInVideoCallRoom", findUserInVideoCallRoom);
+        // console.log("findUserInVideoCallRoom", findUserInVideoCallRoom);
 
         if (findUserInVideoCallRoom) {
             const receiver = await userModel.findOne({
@@ -651,7 +651,7 @@ exports.inAroomOrNot = async (req, res, next) => {
                 image: sender.photo ? sender.photo[0].res : "",
             }
 
-            console.log("DATA", data);
+            // console.log("DATA", data);
 
             res.status(status.OK).json(
                 new APIResponse("user in a room or not", "true", 200, "1", data)
