@@ -3867,7 +3867,7 @@ function socket(io) {
 
                         }
 
-                    }, 4000);
+                    }, 20000);
 
 
                 } else {
