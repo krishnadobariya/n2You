@@ -3599,6 +3599,7 @@ function socket(io) {
                     const joinUser = [];
                     for (const user of sessionFindInCommentModel.joinUser) {
                         joinUser.push(user.userId)
+                        joinUser.push(sessionFindInCommentModel.cretedSessionUser)
                     }
 
 
@@ -3836,20 +3837,8 @@ function socket(io) {
 
                         for (const users of joinUser) {
 
-                            const findUser1 = await userModel.findOne({
-                                _id: arg.participant_id
-                            })
-
-                            const response = {
-                                sessionId: arg.session_id,
-                                participantId: arg.participant_id,
-                                participantName: findUser1.firstName,
-                                participantProfile: findUser1.photo[0] ? findUser1.photo[0].res : ""
-                            }
-
-
                             const userRoom = `User${users}`
-                            io.to(userRoom).emit("participantsEndSuccess", response);
+                            io.to(userRoom).emit("participantsEndSuccess", "Time Over");
 
                             const findUser = await userModel.findOne({
                                 _id: sessionFindInCommentModel.cretedSessionUser
