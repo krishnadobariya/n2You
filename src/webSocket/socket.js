@@ -3824,15 +3824,15 @@ function socket(io) {
 
 
 
-                        const response = {
-                            sessionId: arg.session_id,
-                            participantId: arg.participant_id,
-                            participantName: findUser.firstName,
-                            participantProfile: findUser.photo[0] ? findUser.photo[0].res : ""
-                        }
+                        // const response = {
+                        //     sessionId: arg.session_id,
+                        //     participantId: arg.participant_id,
+                        //     participantName: findUser.firstName,
+                        //     participantProfile: findUser.photo[0] ? findUser.photo[0].res : ""
+                        // }
 
-                        const userRoom = `User${findUser._id}`
-                        io.emit("participantsEndSuccess", response);
+                        // const userRoom = `User${findUser._id}`
+                        // io.emit("participantsEndSuccess", response);
 
                         for (const users of joinUser) {
 
@@ -3849,7 +3849,7 @@ function socket(io) {
 
 
                             const userRoom = `User${users}`
-                            io.emit("participantsEndSuccess", response);
+                            io.to(userRoom).emit("participantsEndSuccess", response);
 
                             const findUser = await userModel.findOne({
                                 _id: sessionFindInCommentModel.cretedSessionUser
