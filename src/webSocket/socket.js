@@ -3734,12 +3734,11 @@ function socket(io) {
                             sessionId: arg.session_id,
                             participantId: arg.participant_id,
                             participantName: findUser1.firstName,
-                            participantProfile: findUser1.photo[0] ? findUser1.photo[0].res : ""
+                            participantProfile: findUser1.photo[0] ? findUser1.photo[0].res : "",
                         }
 
-
                         const userRoom = `User${users}`
-                        io.to(userRoom).emit("liveSessionSuccess", response);
+                        io.to(userRoom).emit("timeForAllowSuccess", "success allow");
 
                         const findUser = await userModel.findOne({
                             _id: sessionFindInCommentModel.cretedSessionUser
@@ -3768,7 +3767,7 @@ function socket(io) {
 
                     }
 
-                    io.emit("timeForAllowSuccess", "success allow");
+                  
 
                     setTimeout(async function () {
 
