@@ -3739,7 +3739,7 @@ function socket(io) {
 
                         const userRoom = `User${users}`
                         console.log("userRoom" , userRoom);
-                        io.to(userRoom).emit("timeForAllowSuccess", "success allow");
+                        io.emit("timeForAllowSuccess", "success allow");
 
                         const findUser = await userModel.findOne({
                             _id: sessionFindInCommentModel.cretedSessionUser
