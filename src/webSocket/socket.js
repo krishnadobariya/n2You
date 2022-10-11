@@ -1,4 +1,3 @@
-
 const chatModels = require("./models/chat.models");
 const chatRoomModel = require("./models/chatRoom.model");
 const Notification = require("../helper/firebaseHelper");
@@ -12,7 +11,6 @@ const conflictModel = require("../model/polyamorous/conflict.model");
 const notificationModel = require("../model/polyamorous/notification.model");
 const requestModel = require("../model/requests.model");
 const videoCallModel = require("./models/videoCall.model");
-const { deleteOne, updateOne, findOne } = require("../model/user.model");
 const sessionModel = require("../model/session.model");
 const sessionCommentModel = require("../model/sessionComment");
 const { FORBIDDEN } = require("http-status");
@@ -3769,8 +3767,9 @@ function socket(io) {
 
                     }
 
+                    io.emit("timeForAllowSuccess", "success allow");
 
-                    setInterval(async function () {
+                    setTimeout(async function () {
 
 
                         const findUser = await userModel.findOne({
@@ -3833,7 +3832,7 @@ function socket(io) {
                         }
 
                         const userRoom = `User${findUser._id}`
-                        io.to(userRoom).emit("participantsEndSuccess", response);
+                        io.emit("participantsEndSuccess", response);
 
                         for (const users of joinUser) {
 
@@ -3850,7 +3849,7 @@ function socket(io) {
 
 
                             const userRoom = `User${users}`
-                            io.to(userRoom).emit("participantsEndSuccess", response);
+                            io.emit("participantsEndSuccess", response);
 
                             const findUser = await userModel.findOne({
                                 _id: sessionFindInCommentModel.cretedSessionUser
