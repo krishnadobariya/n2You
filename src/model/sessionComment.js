@@ -82,7 +82,7 @@ const sessionCommentSchema = mongoose.Schema({
             }
         }],
     }],
-    liveSession: [{
+    liveSession: {
         participants_1: [{
             userId:
             {
@@ -116,7 +116,7 @@ const sessionCommentSchema = mongoose.Schema({
                 default: 0
             }
         }],
-    }],
+    },
 
     LikeSession: {
         participants_1: [{
