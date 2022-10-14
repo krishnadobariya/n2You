@@ -97,7 +97,7 @@ exports.sessionCreate = async (req, res, next) => {
                 const invitedUsers = [];
                 if (p1) {
                     var val = Math.floor(1000 + Math.random() * 9000);
-                   
+
                     invitedUsers.push(mongoose.Types.ObjectId(req.body.participants_1))
                     await sessionModel.updateOne({
                         _id: saveData._id
@@ -109,7 +109,7 @@ exports.sessionCreate = async (req, res, next) => {
                 }
                 if (p2) {
                     var val = Math.floor(1000 + Math.random() * 9000);
-                    
+
                     invitedUsers.push(mongoose.Types.ObjectId(req.body.participants_2))
                     invitedUsers.push(mongoose.Types.ObjectId(req.body.participants_1))
                     await sessionModel.updateOne({
@@ -122,7 +122,7 @@ exports.sessionCreate = async (req, res, next) => {
                 }
                 if (p3) {
                     var val = Math.floor(1000 + Math.random() * 9000);
-                    
+
                     invitedUsers.push(mongoose.Types.ObjectId(req.body.participants_3))
                     invitedUsers.push(mongoose.Types.ObjectId(req.body.participants_1))
                     await sessionModel.updateOne({
@@ -142,7 +142,7 @@ exports.sessionCreate = async (req, res, next) => {
                     const findUser = await userModel.findOne({
                         _id: notification
                     })
-                 
+
                     if (findUser.fcm_token) {
                         const title = findUserInUserModel.firstName;
                         const body = `${findUserInUserModel.firstName} create session ${timeSession}`;
@@ -262,7 +262,7 @@ exports.sessionCreate = async (req, res, next) => {
 
                 if (p1) {
                     var val = Math.floor(1000 + Math.random() * 9000);
-                    
+
 
                     allRequestedEmails.push(mongoose.Types.ObjectId(req.body.participants_1))
                     await sessionModel.updateOne({
@@ -276,7 +276,7 @@ exports.sessionCreate = async (req, res, next) => {
                 }
                 if (p2) {
                     var val = Math.floor(1000 + Math.random() * 9000);
-                    
+
 
                     allRequestedEmails.push(mongoose.Types.ObjectId(req.body.participants_2))
                     await sessionModel.updateOne({
@@ -289,7 +289,7 @@ exports.sessionCreate = async (req, res, next) => {
                 }
                 if (p3) {
                     var val = Math.floor(1000 + Math.random() * 9000);
-                    
+
 
                     allRequestedEmails.push(mongoose.Types.ObjectId(req.body.participants_3))
                     await sessionModel.updateOne({
@@ -3437,7 +3437,7 @@ exports.mySession = async (req, res, next) => {
             cretedSessionUser: req.params.user_id
         })
 
-    
+
 
         for (const findMySession of findUserInsession) {
             var userSessionDate = new Date(new Date(findMySession.selectedDate).toUTCString())
@@ -3470,7 +3470,7 @@ exports.mySession = async (req, res, next) => {
             var getDate = new Date(findMySession.selectedDate)
             const hoursOne = getDate.getHours()
             const minutesOne = getDate.getMinutes()
-        
+
 
             const findUserDeatil = await userModel.findOne({
                 _id: findMySession.cretedSessionUser,
@@ -3493,7 +3493,7 @@ exports.mySession = async (req, res, next) => {
 
 
             if (findMySession.sessionEndOrNot == false) {
-            
+
                 if (findUserDeatil && findParticipantsiUserDeatil1 && findParticipantsiUserDeatil2 && findParticipantsiUserDeatil3) {
 
                     const response = {
@@ -3920,7 +3920,7 @@ exports.sessionDetail = async (req, res, next) => {
         var getDate = new Date(findUserInsession.selectedDate)
         const hoursOne = getDate.getHours()
         const minutesOne = getDate.getMinutes()
-       
+
 
         const findUserDeatil = await userModel.findOne({
             _id: findUserInsession.cretedSessionUser,
@@ -4252,7 +4252,7 @@ exports.userList = async (req, res, next) => {
                         const findUser = await userModel.findOne({
                             _id: res.userId
                         })
-    
+
                         const response = {
                             userId: findUser._id,
                             userName: findUser.firstName,
@@ -4356,7 +4356,7 @@ exports.uploadImages = async (req, res, next) => {
                     )
                 } else {
 
-                
+
                     await sessionComment.updateOne({
                         sessionId: mongoose.Types.ObjectId(req.params.session_id)
                     }, {
@@ -4423,7 +4423,7 @@ exports.uploadVideos = async (req, res, next) => {
                 urls.push(newPath);
             }
 
-          
+
             const findUser = await sessionComment.findOne({
                 sessionId: mongoose.Types.ObjectId(req.params.session_id),
                 "upload.userId": req.params.user_id
@@ -4526,7 +4526,7 @@ exports.getUploadeVedioOrImages = async (req, res, next) => {
 
             if (sessionId) {
                 const data = sessionId.upload
-                
+
                 const id = [];
                 if (data[0] == undefined) {
 
@@ -4818,7 +4818,7 @@ exports.thumbUpCountInSession = async (req, res, next) => {
                     const participantData = [];
                     for (const res of data.participants) {
 
-                       
+
                         if (res.participants_1[0] == undefined) {
 
                         } else {
@@ -5128,7 +5128,7 @@ exports.sessionInfo = async (req, res, next) => {
                 // }
 
                 const InSession = session.liveSession
-              
+
                 if (InSession.participants_1[0] == undefined) {
 
                     const final_response = [];
@@ -5158,7 +5158,7 @@ exports.sessionInfo = async (req, res, next) => {
 
                     const raiseHandUser = [];
                     const data = session.liveSession
-                   
+
                     raiseHandUser.push({
                         userId: data.participants_1[0].userId,
                         status: data.participants_1[0].allow
@@ -5174,7 +5174,7 @@ exports.sessionInfo = async (req, res, next) => {
                         status: data.participants_3[0].allow
                     })
 
-                   
+
                     const final_response = [];
                     const userId = [];
 
@@ -5182,7 +5182,7 @@ exports.sessionInfo = async (req, res, next) => {
 
                     for (const res of allPrticipant) {
                         for (const res1 of raiseHandUser) {
-;
+                            ;
                             if ((res).toString() == (res1.userId).toString()) {
                                 console.log(res);
                                 console.log(res1);
@@ -5205,7 +5205,7 @@ exports.sessionInfo = async (req, res, next) => {
                         }
                     }
 
-                 
+
                     // const ids = [...allPrticipant, ...userId]
                     // for (const findres of ids) {
                     //     for (const id of userId) {
@@ -5274,7 +5274,7 @@ exports.listOfSessionInfo = async (req, res, next) => {
             const p3 = findSession.participants[0].participants_3 == null ? "" : findSession.participants[0].participants_3
 
 
-           
+
 
             userList.push({ userId: findSession.cretedSessionUser, intId: findSession.createUserIntId, status: 1 })
 
@@ -5351,49 +5351,57 @@ exports.likeSesison = async (req, res, next) => {
                         "LikeSession.participants_1.likeUserId": req.params.user_id
                     })
 
-                    if(findUser){
+                    if (findUser) {
 
                         res.status(status.ALREADY_REPORTED).json(
                             new APIResponse("like Already Added", "true", 208, "1")
                         )
 
-                    }else{
+                    } else {
                         await sessionComment.updateOne({
                             sessionId: req.params.session_id
                         }, {
-                            $push: {
-                                "LikeSession.participants_1.likeUserId": req.params.user_id
+                            "LikeSession.participants_1" :{ 
+                                $push: {
+                                    likeUserId: req.params.user_id
+                                }
                             }
+                          
                         })
 
                         res.status(status.OK).json(
-                            new APIResponse("like Added SuccessFully", "true", 200, "1")
+                            new APIResponse("like Added SuccessFullydwddw", "true", 200, "1")
                         )
                     }
 
-                   
+
 
                 } else if ((p2).toString() == (req.params.participant_user_id).toString()) {
 
-                    const findUser =await sessionComment.findOne({
+                    const findUser = await sessionComment.findOne({
                         sessionId: req.params.session_id,
                         "LikeSession.participants_2.likeUserId": req.params.user_id
                     })
 
-                    if(findUser){
+                    if (findUser) {
 
                         res.status(status.ALREADY_REPORTED).json(
                             new APIResponse("like Already Added", "true", 208, "1")
                         )
 
-                    }else{
+                    } else {
                         await sessionComment.updateOne({
                             sessionId: req.params.session_id
-                        }, {
-                            $push: {
-                                "LikeSession.participants_2.likeUserId": req.params.user_id
+                        }, 
+                            {
+                                "LikeSession.participants_2" :{ 
+                                    $push: {
+                                        likeUserId: req.params.user_id
+                                    }
+                                }
+                              
                             }
-                        })
+                        )
 
                         res.status(status.OK).json(
                             new APIResponse("like Added SuccessFully", "true", 200, "1")
@@ -5403,24 +5411,27 @@ exports.likeSesison = async (req, res, next) => {
 
                 } else if ((p3).toString() == (req.params.participant_user_id).toString()) {
 
-                    const findUser =await sessionComment.findOne({
+                    const findUser = await sessionComment.findOne({
                         sessionId: req.params.session_id,
                         "LikeSession.participants_3.likeUserId": req.params.user_id
                     })
 
-                    if(findUser){
+                    if (findUser) {
 
                         res.status(status.ALREADY_REPORTED).json(
                             new APIResponse("like Already Added", "true", 208, "1")
                         )
 
-                    }else{
+                    } else {
                         await sessionComment.updateOne({
                             sessionId: req.params.session_id
-                        }, {
-                            $push: {
-                                "LikeSession.participants_3.likeUserId": req.params.user_id
+                        },  {
+                            "LikeSession.participants_1" :{ 
+                                $push: {
+                                    likeUserId: req.params.user_id
+                                }
                             }
+                          
                         })
 
                         res.status(status.OK).json(
@@ -5430,7 +5441,7 @@ exports.likeSesison = async (req, res, next) => {
                 }
 
 
-              
+
             } else {
                 res.status(status.NOT_FOUND).json(
                     new APIResponse("session not live", "true", 404, "1",)
@@ -5464,162 +5475,112 @@ exports.getLikeUserDetail = async (req, res, next) => {
                 sessionId: req.params.session_id
             })
 
-            const user = findSessionComment.LikeSession
+            const user = findSessionComment
+            console.log(user);
 
-          
             const final_response = [];
-            if(user.participants_1[0] == undefined && user.participants_2[0] == undefined && user.participants_3[0] == undefined){
 
-                const p1 = findSession.participants[0].participants_1 == null ? "" : findSession.participants[0].participants_1
-                const p2 = findSession.participants[0].participants_2 == null ? "" : findSession.participants[0].participants_2
-                const p3 = findSession.participants[0].participants_3 == null ? "" : findSession.participants[0].participants_3
 
-                if(p1){
-                    const findUser = await userModel.findOne({
-                        _id: findSession.participants[0].participants_3
-                    })
-    
-                    const response = {
-                        _id: findUser._id,
-                        userName: findUser.firstName,
-                        userProfile: findUser.photo[0] ? findUser.photo[0].res : "",
-                        totalLikeCount: 0
-                    }
-    
-                    final_response.push(response)
-    
+
+            if (user.participants_3 == "{}") {
+
+                const findUser = await userModel.findOne({
+                    _id: findSession.participants[0].participants_3
+                })
+
+                const response = {
+                    _id: findUser._id,
+                    userName: findUser.firstName,
+                    userProfile: findUser.photo[0] ? findUser.photo[0].res : "",
+                    totalLikeCount: 0,
+                    likeStatus: 0
                 }
-                if(p2){
-                    const findUser = await userModel.findOne({
-                        _id: findSession.participants[0].participants_2
-                    })
-    
-                    const response = {
-                        _id: findUser._id,
-                        userName: findUser.firstName,
-                        userProfile: findUser.photo[0] ? findUser.photo[0].res : "",
-                        totalLikeCount: 0
-                    }
-    
-                    final_response.push(response)
+
+                final_response.push(response)
+            } else {
+
+                const count = (user.participants_3)
+
+                const findUser = await userModel.findOne({
+                    _id: findSession.participants[0].participants_3
+                })
+
+                const response = {
+                    _id: findUser._id,
+                    userName: findUser.firstName,
+                    userProfile: findUser.photo[0] ? findUser.photo[0].res : "",
+                    totalLikeCount: count.length,
+                    likeStatus: 1
                 }
-                if(p3){
-                    const findUser = await userModel.findOne({
-                        _id: findSession.participants[0].participants_1
-                    })
-    
-                    const response = {
-                        _id: findUser._id,
-                        userName: findUser.firstName,
-                        userProfile: findUser.photo[0] ? findUser.photo[0].res : "",
-                        totalLikeCount: 0
-                    }
-    
-                    final_response.push(response)
+                final_response.push(response)
+            }
+
+            if (user.participants_2 == "{}") {
+
+                const findUser = await userModel.findOne({
+                    _id: findSession.participants[0].participants_2
+                })
+
+                const response = {
+                    _id: findUser._id,
+                    userName: findUser.firstName,
+                    userProfile: findUser.photo[0] ? findUser.photo[0].res : "",
+                    totalLikeCount: 0,
+                    likeStatus: 0
                 }
-             
-               
 
-               
-            }else{
-         
+                final_response.push(response)
+            } else {
+                const count = (user.participants_2)
 
-                    if (user.participants_3[0] == undefined) {
-    
-                        const findUser = await userModel.findOne({
-                            _id: findSession.participants[0].participants_3
-                        })
-    
-                        const response = {
-                            _id: findUser._id,
-                            userName: findUser.firstName,
-                            userProfile: findUser.photo[0] ? findUser.photo[0].res : "",
-                            totalLikeCount: 0
-                        }
-    
-                        final_response.push(response)
-                    } else {
-    
-                        const count = (user.participants_3)
-                       
-                        const findUser = await userModel.findOne({
-                            _id: findSession.participants[0].participants_3
-                        })
-    
-                        const response = {
-                            _id: findUser._id,
-                            userName: findUser.firstName,
-                            userProfile: findUser.photo[0] ? findUser.photo[0].res : "",
-                            totalLikeCount: count.length
-                        }
-                        final_response.push(response)
-                    }
-    
-                    if (user.participants_2[0] == undefined) {
-    
-                        const findUser = await userModel.findOne({
-                            _id: findSession.participants[0].participants_2
-                        })
-    
-                        const response = {
-                            _id: findUser._id,
-                            userName: findUser.firstName,
-                            userProfile: findUser.photo[0] ? findUser.photo[0].res : "",
-                            totalLikeCount: 0
-                        }
-    
-                        final_response.push(response)
-                    } else {
-                        const count = (user.participants_2)
-                        
-                        const findUser = await userModel.findOne({
-                            _id: findSession.participants[0].participants_2
-                        })
-    
-                        const response = {
-                            _id: findUser._id,
-                            userName: findUser.firstName,
-                            userProfile: findUser.photo[0] ? findUser.photo[0].res : "",
-                            totalLikeCount: count.length
-                        }
-    
-                        final_response.push(response)
-                    }
-    
-                    if (user.participants_1[0] == undefined) {
-                      
-                        const findUser = await userModel.findOne({
-                            _id: findSession.participants[0].participants_1
-                        })
-    
-                        const response = {
-                            _id: findUser._id,
-                            userName: findUser.firstName,
-                            userProfile: findUser.photo[0] ? findUser.photo[0].res : "",
-                            totalLikeCount: 0
-                        }
-    
-                        final_response.push(response)
-                    } else {
-                        const count = (user.participants_1)
-                        
-                        const findUser = await userModel.findOne({
-                            _id: findSession.participants[0].participants_1
-                        })
-    
-                        const response = {
-                            _id: findUser._id,
-                            userName: findUser.firstName,
-                            userProfile: findUser.photo[0] ? findUser.photo[0].res : "",
-                            totalLikeCount: count.length
-                        }
-    
-                        final_response.push(response)
-                    }
-                
+                const findUser = await userModel.findOne({
+                    _id: findSession.participants[0].participants_2
+                })
 
-            } 
-    
+                const response = {
+                    _id: findUser._id,
+                    userName: findUser.firstName,
+                    userProfile: findUser.photo[0] ? findUser.photo[0].res : "",
+                    totalLikeCount: count.length,
+                    likeStatus: 1
+                }
+
+                final_response.push(response)
+            }
+
+            if (user.participants_1 == "{}") {
+
+                const findUser = await userModel.findOne({
+                    _id: findSession.participants[0].participants_1
+                })
+
+                const response = {
+                    _id: findUser._id,
+                    userName: findUser.firstName,
+                    userProfile: findUser.photo[0] ? findUser.photo[0].res : "",
+                    totalLikeCount: 0,
+                    likeStatus: 0
+                }
+
+                final_response.push(response)
+            } else {
+                const count = (user.participants_1.likeUserId)
+                console.log(count);
+
+                const findUser = await userModel.findOne({
+                    _id: findSession.participants[0].participants_1
+                })
+
+                const response = {
+                    _id: findUser._id,
+                    userName: findUser.firstName,
+                    userProfile: findUser.photo[0] ? findUser.photo[0].res : "",
+                    totalLikeCount: count.length,
+                    likeStatus: 1
+                }
+
+                final_response.push(response)
+            }
 
             res.status(status.OK).json(
                 new APIResponse("total like session user with count", "true", 200, "1", final_response)
@@ -5682,13 +5643,13 @@ exports.rejectOrAccept = async (req, res, next) => {
                         userId: req.params.user_id
                     })
 
-                  
+
                     const suparMatchListforLikeUser = await superListModel.findOne({
                         session_id: req.params.session_id,
                         userId: req.params.like_user_id
                     })
 
-               
+
                     if (suparMatchList) {
 
                         await superListModel.updateOne({
@@ -5739,11 +5700,11 @@ exports.rejectOrAccept = async (req, res, next) => {
                     }
 
                     const findUser = await userModel.findOne({
-                        _id : req.params.like_user_id
+                        _id: req.params.like_user_id
                     })
 
                     const user = await userModel.findOne({
-                        _id : req.params.user_id
+                        _id: req.params.user_id
                     })
 
                     if (findUser.fcm_token) {
@@ -5761,7 +5722,7 @@ exports.rejectOrAccept = async (req, res, next) => {
                             true
                         );
                     }
-                    
+
 
                     res.status(status.OK).json(
                         new APIResponse("accept success", "true", 200, "1",)
@@ -5800,7 +5761,7 @@ exports.rejectOrAccept = async (req, res, next) => {
                         });
 
                     await userModel.updateOne(
-                        {   
+                        {
                             _id: req.params.like_user_id
                         },
                         {
@@ -5911,13 +5872,13 @@ exports.rejectList = async (req, res, next) => {
             userId: req.params.user_id
         })
 
-    
+
         const final_response = [];
         const session_detail = [];
         const rej_user_detail = []
         for (const data of findUser) {
 
-        
+
             for (const data1 of data.matchUserId) {
 
                 const findUser = await userModel.findOne({
@@ -5965,14 +5926,14 @@ exports.suparMatchList = async (req, res, next) => {
             userId: req.params.user_id
         })
 
-        
+
 
         const final_response = [];
         const session_detail = [];
         const sup_user_detail = []
         for (const data of findUser) {
 
-           
+
             for (const data1 of data.matchUserId) {
 
                 const findUser = await userModel.findOne({
