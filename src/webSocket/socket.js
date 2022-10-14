@@ -3597,9 +3597,9 @@ function socket(io) {
                 if (sessionFindInCommentModel) {
 
                     const joinUser = [];
+                    joinUser.push(sessionFindInCommentModel.cretedSessionUser)
                     for (const user of sessionFindInCommentModel.joinUser) {
                         joinUser.push(user.userId)
-                        joinUser.push(sessionFindInCommentModel.cretedSessionUser)
                     }
 
 
@@ -3731,6 +3731,8 @@ function socket(io) {
                             _id: arg.participant_id
                         })
 
+                        console.log("findUser1" , findUser1);
+
                         const response = {
                             sessionId: arg.session_id,
                             participantId: arg.participant_id,
@@ -3740,7 +3742,7 @@ function socket(io) {
 
                         const userRoom = `User${users}`
                         console.log("userRoom" , userRoom);
-                        io.to(userRoom).emit("timeForAllowSuccess", "success allow");
+                        io.to(userRoom).emit("timeForAllowSuccess", response);
 
                         const findUser = await userModel.findOne({
                             _id: sessionFindInCommentModel.cretedSessionUser
