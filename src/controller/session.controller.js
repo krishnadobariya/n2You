@@ -5106,11 +5106,26 @@ exports.sessionInfo = async (req, res, next) => {
 
                 const allPrticipant = [];
 
-                for (const participant of session.joinUser) {
-                    if (participant.status == 2) {
-                        allPrticipant.push(participant.userId)
-                    }
+
+                const p1 = sessionFind.participants[0].participants_1 == null ? "" : sessionFind.participants[0].participants_1
+                const p2 = sessionFind.participants[0].participants_2 == null ? "" : sessionFind.participants[0].participants_2
+                const p3 = sessionFind.participants[0].participants_3 == null ? "" : sessionFind.participants[0].participants_3
+
+                if (p1) {
+                    allPrticipant.push(sessionFind.participants[0].participants_1)
                 }
+                if (p2) {
+                    allPrticipant.push(sessionFind.participants[0].participants_2)
+                }
+                if (p3) {
+                    allPrticipant.push(sessionFind.participants[0].participants_3)
+                }
+
+                // for (const participant of session.joinUser) {
+                //     if (participant.status == 2) {
+                //         allPrticipant.push(participant.userId)
+                //     }
+                // }
 
                 const InSession = session.liveSession
               

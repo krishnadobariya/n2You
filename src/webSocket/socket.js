@@ -3800,7 +3800,7 @@ function socket(io) {
                                 "liveSession.participants_1.userId": arg.participant_id
                             }, {
                                 $set: {
-                                    "liveSession.participants_1.allow": 3
+                                    "liveSession.participants_1.allow": 2
                                 }
                             })
 
@@ -3811,7 +3811,7 @@ function socket(io) {
                                 "liveSession.participants_2.userId": arg.participant_id
                             }, {
                                 $set: {
-                                    "liveSession.participants_2.allow": 3
+                                    "liveSession.participants_2.allow": 2
                                 }
                             })
 
@@ -3821,7 +3821,7 @@ function socket(io) {
                                 "liveSession.participants_3.userId": arg.participant_id
                             }, {
                                 $set: {
-                                    "liveSession.participants_3.allow": 3
+                                    "liveSession.participants_3.allow": 2
                                 }
                             })
                         }
