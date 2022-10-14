@@ -5129,29 +5129,7 @@ exports.sessionInfo = async (req, res, next) => {
 
                 const InSession = session.liveSession
               
-                if (InSession[0] == undefined) {
-                    const final_response = [];
-                    for (const user of allPrticipant) {
-
-                        const findUser = await userModel.findOne({
-                            _id: user
-                        })
-                        const response = {
-                            userId: (findUser._id).toString(),
-                            profile: findUser.photo[0] ? findUser.photo[0].res : "",
-                            userName: findUser.firstName,
-                            sessionId: req.params.session_id,
-                            status: 0
-                        }
-
-                        final_response.push(response)
-                    }
-                    res.status(status.OK).json(
-                        new APIResponse("session information!", "true", 200, "1", final_response)
-                    )
-
-                }
-                else if (InSession[0].participants_1[0] == undefined) {
+                if (InSession.participants_1[0] == undefined) {
 
                     const final_response = [];
                     for (const user of allPrticipant) {
@@ -5182,29 +5160,32 @@ exports.sessionInfo = async (req, res, next) => {
                     const data = session.liveSession
                    
                     raiseHandUser.push({
-                        userId: data[0].participants_1[0].userId,
-                        status: data[0].participants_1[0].allow
+                        userId: data.participants_1[0].userId,
+                        status: data.participants_1[0].allow
                     })
 
                     raiseHandUser.push({
-                        userId: data[0].participants_2[0].userId,
-                        status: data[0].participants_2[0].allow
+                        userId: data.participants_2[0].userId,
+                        status: data.participants_2[0].allow
                     })
 
                     raiseHandUser.push({
-                        userId: data[0].participants_3[0].userId,
-                        status: data[0].participants_3[0].allow
+                        userId: data.participants_3[0].userId,
+                        status: data.participants_3[0].allow
                     })
 
                    
                     const final_response = [];
                     const userId = [];
 
+
+
                     for (const res of allPrticipant) {
                         for (const res1 of raiseHandUser) {
-
+;
                             if ((res).toString() == (res1.userId).toString()) {
-
+                                console.log(res);
+                                console.log(res1);
                                 const findUser = await userModel.findOne({
                                     _id: res1.userId
                                 })
@@ -5218,39 +5199,39 @@ exports.sessionInfo = async (req, res, next) => {
                                 }
 
                                 final_response.push(response)
-                                userId.push(findUser._id)
+                                // userId.push(findUser._id)
                             } else {
                             }
                         }
                     }
 
                  
-                    const ids = [...allPrticipant, ...userId]
-                    for (const findres of ids) {
-                        for (const id of userId) {
-                            if ((findres).toString() == (id).toString()) {
+                    // const ids = [...allPrticipant, ...userId]
+                    // for (const findres of ids) {
+                    //     for (const id of userId) {
+                    //         if ((findres).toString() == (id).toString()) {
 
-                            } else {
-                                const findUser = await userModel.findOne({
-                                    _id: ids
-                                })
+                    //         } else {
+                    //             const findUser = await userModel.findOne({
+                    //                 _id: ids
+                    //             })
 
-                                const response = {
-                                    userId: (findUser._id).toString(),
-                                    profile: findUser.photo[0] ? findUser.photo[0].res : "",
-                                    userName: findUser.firstName,
-                                    sessionId: req.params.session_id,
-                                    status: 0
-                                }
+                    //             const response = {
+                    //                 userId: (findUser._id).toString(),
+                    //                 profile: findUser.photo[0] ? findUser.photo[0].res : "",
+                    //                 userName: findUser.firstName,
+                    //                 sessionId: req.params.session_id,
+                    //                 status: 0
+                    //             }
 
-                                final_response.push(response)
-                            }
-                        }
-                    }
-                    let uniqueObjArray = [...new Map(final_response.map((item) => [item["userId"], item])).values()];
+                    //             final_response.push(response)
+                    //         }
+                    //     }
+                    // }
+                    // let uniqueObjArray = [...new Map(final_response.map((item) => [item["userId"], item])).values()];
 
                     res.status(status.OK).json(
-                        new APIResponse("session information!", "true", 200, "1", uniqueObjArray)
+                        new APIResponse("session information!", "true", 200, "1", final_response)
                     )
 
                 }
