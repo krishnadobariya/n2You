@@ -3723,6 +3723,7 @@ function socket(io) {
                         )
                     }
 
+                    console.log("joinUser" , joinUser);
 
                     for (const users of joinUser) {
 
@@ -3867,7 +3868,7 @@ function socket(io) {
 
                         }
 
-                    }, 20000);
+                    }, 90000);
 
 
                 } else {
