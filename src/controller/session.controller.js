@@ -6089,6 +6089,7 @@ exports.suparMatchList = async (req, res, next) => {
 
         const sup_user_detail = [];
         for (const data of findUser) {
+            console.log("data.matchUserId" , data.matchUserId);
             for (const data1 of data.matchUserId) {
                 const findUser = await userModel.findOne({
                     _id: data1.userId
@@ -6096,16 +6097,16 @@ exports.suparMatchList = async (req, res, next) => {
                 const findRequestModel = await requestsModel.findOne({
                     userId : req.params.user_id
                 })
-
+                const findUsers = await userModel.findOne({
+                    _id:  data1.userId
+                })
                 if(findRequestModel){
 
                     const findData = await requestsModel.findOne({
                         userId : req.params.user_id,
                         "RequestedEmails.userId" : findUser._id
                     })
-                    const findUsers = await userModel.findOne({
-                        _id:  data1.userId
-                    })
+                  
                     if(findData){
                         for(const user of findRequestModel.RequestedEmails){
                             console.log(user.userId);

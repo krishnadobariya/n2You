@@ -5852,7 +5852,6 @@ exports.moveBasket = async (req, res, next) => {
                 await userModel.updateOne(
                     {
                         _id: req.params.user_id,
-
                     },
                     {
                         $push: {
@@ -5862,7 +5861,6 @@ exports.moveBasket = async (req, res, next) => {
                                 thumbUp: noData[0].thumbUp,
                                 thumbDown: noData[0].thumbDown,
                             }
-
                         }
                     });
 
@@ -5925,7 +5923,6 @@ exports.getAllNotification = async (req, res, next) => {
                             _id: getNotification.userId
                         })
 
-
                         var userNotificationDate = new Date(getNotification.createdAt);
                         now = new Date();
                         var sec_num = (now - userNotificationDate) / 1000;
@@ -5933,11 +5930,9 @@ exports.getAllNotification = async (req, res, next) => {
                         var hours = Math.floor((sec_num - (days * (3600 * 24))) / 3600);
                         var minutes = Math.floor((sec_num - (days * (3600 * 24)) - (hours * 3600)) / 60);
                         var seconds = Math.floor(sec_num - (days * (3600 * 24)) - (hours * 3600) - (minutes * 60));
-
                         if (hours < 10) { hours = "0" + hours; }
                         if (minutes < 10) { minutes = "0" + minutes; }
                         if (seconds < 10) { seconds = "0" + seconds; }
-
                         if (days > 28) {
                             const response = {
                                 _id: getNotification.userId,
@@ -6030,11 +6025,7 @@ exports.getAllNotification = async (req, res, next) => {
                             allNotification.push(response)
                         }
 
-
-
-
                     } else {
-
                         const response = {
 
                             notification: getNotification.notifications,
@@ -6047,17 +6038,14 @@ exports.getAllNotification = async (req, res, next) => {
 
                 res.status(status.OK).json(
                    {
-
                     "message": "show all notification",
                     "status": "true",
                     "code": 200,
                     "statusCode": "1",
                     "pageCount": count,
                     "data":allNotification
-                    
                    }
                 );
-
             }
         }
 
