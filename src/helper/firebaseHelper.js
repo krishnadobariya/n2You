@@ -1,12 +1,12 @@
 const admin = require('./firebase-config')
 
 exports.sendPushNotificationFCM = (registrationToken, title, body, text, sendBy, flag) => {
-    console.log("registrationToken::", registrationToken);
-    console.log("title::", title);
-    console.log("body::", body);
-    console.log("text::", text);
-    console.log("sendBy::", sendBy);
-    console.log("flag::", flag);
+    // console.log("registrationToken::", registrationToken);
+    // console.log("title::", title);
+    // console.log("body::", body);
+    // console.log("text::", text);
+    // console.log("sendBy::", sendBy);
+    // console.log("flag::", flag);
 
     var payload = {
         notification: {
@@ -32,7 +32,7 @@ exports.sendPushNotificationFCM = (registrationToken, title, body, text, sendBy,
 
         admin.messaging().sendToDevice(registrationToken, payload, options)
             .then(function (response) {
-                console.log("Successfully sent message:", response);
+                // console.log("Successfully sent message:", response);
 
             })
             .catch(function (error) {

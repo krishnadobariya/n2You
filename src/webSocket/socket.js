@@ -3761,11 +3761,9 @@ function socket(io) {
 
                     for (const users of joinUser) {
 
-                        console.log(users);
                         const findUser1 = await userModel.findOne({
                             _id: arg.participant_id
                         })
-                        console.log();
                       
                         if ((findSession.cretedSessionUser).toString() == (users).toString()) {
                             const response = {
