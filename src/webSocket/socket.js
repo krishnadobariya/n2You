@@ -3603,7 +3603,7 @@ function socket(io) {
                         joinUser.push(user.userId)
                     }
 
-                    if((sessionFindInCommentModel.liveSession.participants_1[0].userId).toString() != (findSession.participants[0].participants_1).toString()){
+                    if(sessionFindInCommentModel.liveSession.participants_1[0] == undefined){
                         await sessionCommentModel.updateOne({
                             sessionId: arg.session_id,
                         },
@@ -3618,7 +3618,7 @@ function socket(io) {
                         )
                     }
                    
-                    if((sessionFindInCommentModel.liveSession.participants_2[0].userId).toString() != (findSession.participants[0].participants_2).toString()){
+                    if(sessionFindInCommentModel.liveSession.participants_2[0] == undefined){
                         await sessionCommentModel.updateOne({
                             sessionId: arg.session_id,
                         },
@@ -3634,7 +3634,7 @@ function socket(io) {
     
                     }
                    
-                    if((sessionFindInCommentModel.liveSession.participants_2[0].userId).toString() != (findSession.participants[0].participants_2).toString()){
+                    if(sessionFindInCommentModel.liveSession.participants_3[0] == undefined){
                         await sessionCommentModel.updateOne({
                             sessionId: arg.session_id,
                         },
