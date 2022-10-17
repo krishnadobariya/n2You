@@ -5628,13 +5628,14 @@ exports.rejectOrAccept = async (req, res, next) => {
 
                 // if ((data.userId).toString() == (data1).toString()) {
 
-                if (req.query.select == 1) {
+                const user = [];
+                // if((req.params.like_user_id).toString() != findParticipant.)
+                if (req.params.like_user_id) {
 
                     const suparMatchList = await superListModel.findOne({
                         session_id: req.params.session_id,
                         userId: req.params.user_id
                     })
-
 
                     const suparMatchListforLikeUser = await superListModel.findOne({
                         session_id: req.params.session_id,
@@ -5643,7 +5644,6 @@ exports.rejectOrAccept = async (req, res, next) => {
 
 
                     if (suparMatchList) {
-
                         await superListModel.updateOne({
                             session_id: req.params.session_id,
                             userId: req.params.user_id
@@ -5691,6 +5691,54 @@ exports.rejectOrAccept = async (req, res, next) => {
                         await saveData.save()
                     }
 
+                    await userModel.updateOne(
+                        {
+                            _id: req.params.user_id
+                        },
+                        {
+                            $pull: {
+                                noBasket: {
+                                    userId: req.params.like_user_id
+                                }
+                            }
+                        });
+
+                    await userModel.updateOne(
+                        {
+                            _id: req.params.user_id
+                        },
+                        {
+                            $pull: {
+                                yesBasket: {
+                                    userId: req.params.like_user_id
+                                }
+                            }
+                        });
+
+                    await userModel.updateOne(
+                        {
+                            _id: req.params.like_user_id
+                        },
+                        {
+                            $pull: {
+                                noBasket: {
+                                    userId: req.params.user_id
+                                }
+                            }
+                        });
+
+                    await userModel.updateOne(
+                        {
+                            _id: req.params.like_user_id
+                        },
+                        {
+                            $pull: {
+                                yesBasket: {
+                                    userId: req.params.user_id
+                                }
+                            }
+                        });
+
                     const findUser = await userModel.findOne({
                         _id: req.params.like_user_id
                     })
@@ -5715,19 +5763,18 @@ exports.rejectOrAccept = async (req, res, next) => {
                         );
                     }
 
-
                     res.status(status.OK).json(
                         new APIResponse("accept success", "true", 200, "1",)
                     )
 
 
                 } else {
+
                     const rejectList = await rejectListModel.findOne({
                         session_id: req.params.session_id,
                         userId: req.params.user_id
                     })
 
-
                     await userModel.updateOne(
                         {
                             _id: req.params.user_id
@@ -5751,38 +5798,8 @@ exports.rejectOrAccept = async (req, res, next) => {
                                 }
                             }
                         });
-
-                    await userModel.updateOne(
-                        {
-                            _id: req.params.like_user_id
-                        },
-                        {
-                            $pull: {
-                                noBasket: {
-                                    userId: req.params.user_id
-                                }
-                            }
-                        });
-
-                    await userModel.updateOne(
-                        {
-                            _id: req.params.like_user_id
-                        },
-                        {
-                            $pull: {
-                                yesBasket: {
-                                    userId: req.params.user_id
-                                }
-                            }
-                        });
-
-                    const rejectListforLikeUser = await rejectListModel.findOne({
-                        session_id: req.params.session_id,
-                        userId: req.params.like_user_id
-                    })
 
                     if (rejectList) {
-
                         await rejectListModel.updateOne({
                             session_id: req.params.session_id,
                             userId: req.params.user_id
@@ -5806,34 +5823,9 @@ exports.rejectOrAccept = async (req, res, next) => {
                         await saveData.save()
                     }
 
-                    if (rejectListforLikeUser) {
-                        await rejectListModel.updateOne({
-                            session_id: req.params.session_id,
-                            userId: req.params.like_user_id
-                        }, {
-                            $push: {
-                                matchUserId: {
-                                    userId: req.params.user_id
-                                }
-                            }
-                        })
-
-                    } else {
-                        const saveData = rejectListModel({
-                            session_id: req.params.session_id,
-                            userId: req.params.like_user_id,
-                            matchUserId: {
-                                userId: req.params.user_id
-                            }
-                        })
-
-                        await saveData.save()
-                    }
                     res.status(status.OK).json(
                         new APIResponse("reject success", "true", 200, "1",)
                     )
-
-
                 }
 
 

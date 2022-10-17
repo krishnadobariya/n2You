@@ -3603,7 +3603,7 @@ function socket(io) {
                         joinUser.push(user.userId)
                     }
 
-                    if(sessionFindInCommentModel.liveSession.participants_1[0] == undefined){
+                    if (sessionFindInCommentModel.liveSession.participants_1[0] == undefined) {
                         await sessionCommentModel.updateOne({
                             sessionId: arg.session_id,
                         },
@@ -3612,13 +3612,13 @@ function socket(io) {
                                     "liveSession.participants_1": {
                                         userId: findSession.participants[0].participants_1,
                                     }
-    
+
                                 }
                             }
                         )
                     }
-                   
-                    if(sessionFindInCommentModel.liveSession.participants_2[0] == undefined){
+
+                    if (sessionFindInCommentModel.liveSession.participants_2[0] == undefined) {
                         await sessionCommentModel.updateOne({
                             sessionId: arg.session_id,
                         },
@@ -3627,14 +3627,14 @@ function socket(io) {
                                     "liveSession.participants_2": {
                                         userId: findSession.participants[0].participants_2,
                                     }
-    
+
                                 }
                             }
                         )
-    
+
                     }
-                   
-                    if(sessionFindInCommentModel.liveSession.participants_3[0] == undefined){
+
+                    if (sessionFindInCommentModel.liveSession.participants_3[0] == undefined) {
                         await sessionCommentModel.updateOne({
                             sessionId: arg.session_id,
                         },
@@ -3643,12 +3643,12 @@ function socket(io) {
                                     "liveSession.participants_3": {
                                         userId: findSession.participants[0].participants_3,
                                     }
-    
+
                                 }
                             }
                         )
                     }
-                  
+
 
 
                     const findParticipant1 = await sessionCommentModel.findOne({
@@ -3680,7 +3680,7 @@ function socket(io) {
                         const sessionFindInCommentModel = await sessionCommentModel.findOne({
                             sessionId: arg.session_id
                         })
-                        console.log("alow value 11" , sessionFindInCommentModel.liveSession);
+                        console.log("alow value 11", sessionFindInCommentModel.liveSession);
 
                         // await sessionCommentModel.updateOne({
                         //     sessionId: arg.session_id,
@@ -3713,7 +3713,7 @@ function socket(io) {
                         const sessionFindInCommentModel = await sessionCommentModel.findOne({
                             sessionId: arg.session_id
                         })
-                        console.log("alow value 12" , sessionFindInCommentModel.liveSession);
+                        console.log("alow value 12", sessionFindInCommentModel.liveSession);
 
                         // await sessionCommentModel.updateOne({
                         //     sessionId: arg.session_id,
@@ -3741,10 +3741,10 @@ function socket(io) {
                             }
                         })
 
- const sessionFindInCommentModel = await sessionCommentModel.findOne({
-                    sessionId: arg.session_id
-                })
-                        console.log("alow value 13" , sessionFindInCommentModel.liveSession);
+                        const sessionFindInCommentModel = await sessionCommentModel.findOne({
+                            sessionId: arg.session_id
+                        })
+                        console.log("alow value 13", sessionFindInCommentModel.liveSession);
 
 
                         // await sessionCommentModel.updateOne({
@@ -3769,56 +3769,56 @@ function socket(io) {
                         const findUser1 = await userModel.findOne({
                             _id: arg.participant_id
                         })
-                      
+
                         if ((findSession.cretedSessionUser).toString() == (users).toString()) {
                             const response = {
                                 sessionId: arg.session_id,
                                 participantId: arg.participant_id,
                                 participantName: findUser1.firstName,
                                 participantProfile: findUser1.photo[0] ? findUser1.photo[0].res : "",
-                                intUserId :findSession.createUserIntId
+                                intUserId: findSession.createUserIntId
                             }
-    
+
                             const userRoom = `User${users}`
-                            io.emit("timeForAllowSuccess", response);
+                            io.to(userRoom).emit("timeForAllowSuccess", response);
 
                         } else if ((findSession.participants[0].participants_1).toString() == (users).toString()) {
-                            
+
                             const response = {
                                 sessionId: arg.session_id,
                                 participantId: arg.participant_id,
                                 participantName: findUser1.firstName,
                                 participantProfile: findUser1.photo[0] ? findUser1.photo[0].res : "",
-                                intUserId : findSession.participants.P1IntId
+                                intUserId: findSession.participants.P1IntId
                             }
-    
+
                             const userRoom = `User${users}`
-                            io.emit("timeForAllowSuccess", response);
+                            io.to(userRoom).emit("timeForAllowSuccess", response);
 
                         } else if ((findSession.participants[0].participants_2).toString() == (users).toString()) {
-                          
+
                             const response = {
                                 sessionId: arg.session_id,
                                 participantId: arg.participant_id,
                                 participantName: findUser1.firstName,
                                 participantProfile: findUser1.photo[0] ? findUser1.photo[0].res : "",
-                                intUserId : findSession.participants[0].P2IntId
+                                intUserId: findSession.participants[0].P2IntId
                             }
-    
+
                             const userRoom = `User${users}`
-                            io.emit("timeForAllowSuccess", response);
+                            io.to(userRoom).emit("timeForAllowSuccess", response);
 
                         } else if ((findSession.participants[0].participants_3).toString() == (users).toString()) {
-                           
+
                             const response = {
                                 sessionId: arg.session_id,
                                 participantId: arg.participant_id,
                                 participantName: findUser1.firstName,
                                 participantProfile: findUser1.photo[0] ? findUser1.photo[0].res : "",
-                                intUserId : findSession.participants[0].P3IntId
+                                intUserId: findSession.participants[0].P3IntId
                             }
                             const userRoom = `User${users}`
-                            io.emit("timeForAllowSuccess", response);
+                            io.to(userRoom).emit("timeForAllowSuccess", response);
 
                         }
 
