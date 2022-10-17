@@ -5390,16 +5390,13 @@ exports.likeSesison = async (req, res, next) => {
                     } else {
                         await sessionComment.updateOne({
                             sessionId: req.params.session_id
-                        }, 
-                            {
-                                "LikeSession.participants_2" :{ 
-                                    $push: {
-                                        likeUserId: req.params.user_id
-                                    }
-                                }
-
+                        },{
+                            $push : {
+                                "LikeSession.participants_2": [{likeUserId: req.params.user_id}]
+    
                             }
-                        )
+                        }
+                       )
 
                         res.status(status.OK).json(
                             new APIResponse("like Added SuccessFully", "true", 200, "1")
@@ -5423,14 +5420,13 @@ exports.likeSesison = async (req, res, next) => {
                     } else {
                         await sessionComment.updateOne({
                             sessionId: req.params.session_id
-                        },  {
-                            "LikeSession.participants_1" :{ 
-                                $push: {
-                                    likeUserId: req.params.user_id
-                                }
+                        },{
+                            $push : {
+                                "LikeSession.participants_3": [{likeUserId: req.params.user_id}]
+    
                             }
-
-                        })
+                        }
+                       )
 
                         res.status(status.OK).json(
                             new APIResponse("like Added SuccessFully", "true", 200, "1")
