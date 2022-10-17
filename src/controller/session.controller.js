@@ -6004,13 +6004,14 @@ exports.rejectList = async (req, res, next) => {
                                     })
 
                                     if(findChatRoomId1){
-                                        sup_user_detail.push({
+                                        rej_user_detail.push({
                                             sessionId: data.session_id,
                                             accept_by: findUser.userId,
                                             accept_by_user_Profile: findUsers.photo[0] ? findUsers.photo[0].res : "",
                                             userId: findUser._id,
                                             userProfile: findUser.photo[0] ? findUser.photo[0].res : "",
                                             status: user.accepted,
+                                            userName:findUser.firstName,
                                             room: findChatRoomId1._id
                                         })
                                     }else{
@@ -6021,6 +6022,7 @@ exports.rejectList = async (req, res, next) => {
                                             userId: findUser._id,
                                             userProfile: findUser.photo[0] ? findUser.photo[0].res : "",
                                             status: user.accepted,
+                                            userName:findUser.firstName,
                                             room: findChatRoomId2._id
                                         })
                                     }
@@ -6033,6 +6035,7 @@ exports.rejectList = async (req, res, next) => {
                                         userId: findUser._id,
                                         userProfile: findUser.photo[0] ? findUser.photo[0].res : "",
                                         status: user.accepted,
+                                        userName:findUser.firstName,
                                         room: ""
                                     })
                                 }
@@ -6047,6 +6050,7 @@ exports.rejectList = async (req, res, next) => {
                             userId: findUser._id,
                             userProfile: findUser.photo[0] ? findUser.photo[0].res : "",
                             status: 0,
+                            userName:findUser.firstName,
                             room: ""
                         })
                     }
@@ -6058,6 +6062,7 @@ exports.rejectList = async (req, res, next) => {
                         userId: findUser._id,
                         userProfile: findUser.photo[0] ? findUser.photo[0].res : "",
                         status: 0,
+                        userName:findUser.firstName,
                         room: ""
                     })
                 }
@@ -6132,6 +6137,7 @@ exports.suparMatchList = async (req, res, next) => {
                                             userId: findUser._id,
                                             userProfile: findUser.photo[0] ? findUser.photo[0].res : "",
                                             status: user.accepted,
+                                            userName:findUser.firstName,
                                             room: findChatRoomId1._id
                                         })
                                     }else{
@@ -6142,6 +6148,7 @@ exports.suparMatchList = async (req, res, next) => {
                                             userId: findUser._id,
                                             userProfile: findUser.photo[0] ? findUser.photo[0].res : "",
                                             status: user.accepted,
+                                            userName:findUser.firstName,
                                             room: findChatRoomId2._id
                                         })
                                     }
@@ -6152,6 +6159,7 @@ exports.suparMatchList = async (req, res, next) => {
                                         accept_by: findUser.userId,
                                         accept_by_user_Profile: findUsers.photo[0] ? findUsers.photo[0].res : "",
                                         userId: findUser._id,
+                                        userName:findUser.firstName,
                                         userProfile: findUser.photo[0] ? findUser.photo[0].res : "",
                                         status: user.accepted,
                                         room: ""
@@ -6166,6 +6174,7 @@ exports.suparMatchList = async (req, res, next) => {
                             accept_by: findUser.userId,
                             accept_by_user_Profile: findUsers.photo[0] ? findUsers.photo[0].res : "",
                             userId: findUser._id,
+                            userName:findUser.firstName,
                             userProfile: findUser.photo[0] ? findUser.photo[0].res : "",
                             status: 0,
                             room: ""
@@ -6177,6 +6186,7 @@ exports.suparMatchList = async (req, res, next) => {
                         accept_by: findUser.userId,
                         accept_by_user_Profile: findUsers.photo[0] ? findUsers.photo[0].res : "",
                         userId: findUser._id,
+                        userName:findUser.firstName,
                         userProfile: findUser.photo[0] ? findUser.photo[0].res : "",
                         status: 0,
                         room: ""
