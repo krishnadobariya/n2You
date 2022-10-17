@@ -3657,9 +3657,6 @@ function socket(io) {
                         "liveSession.participants_3.userId": arg.participant_id
                     })
 
-                    console.log("alow value 1" , sessionFindInCommentModel.liveSession.participants_1[0].allow);
-                    console.log("alow value 2" , sessionFindInCommentModel.liveSession.participants_2[0].allow);
-                    console.log("alow value 3" , sessionFindInCommentModel.liveSession.participants_3[0].allow);
 
                     if (findParticipant1) {
                         console.log("con par 1");
@@ -3673,9 +3670,10 @@ function socket(io) {
                             }
                         })
 
-                        console.log("alow value 11" , sessionFindInCommentModel.liveSession.participants_1[0].allow);
-                        console.log("alow value 21" , sessionFindInCommentModel.liveSession.participants_2[0].allow);
-                        console.log("alow value 31" , sessionFindInCommentModel.liveSession.participants_3[0].allow);
+                        const sessionFindInCommentModel = await sessionCommentModel.findOne({
+                            sessionId: arg.session_id
+                        })
+                        console.log("alow value 11" , sessionFindInCommentModel.liveSession);
 
                         // await sessionCommentModel.updateOne({
                         //     sessionId: arg.session_id,
@@ -3705,10 +3703,10 @@ function socket(io) {
                             }
                         })
 
-
-                        console.log("alow value 12" , sessionFindInCommentModel.liveSession.participants_1[0].allow);
-                        console.log("alow value 22" , sessionFindInCommentModel.liveSession.participants_2[0].allow);
-                        console.log("alow value 32" , sessionFindInCommentModel.liveSession.participants_3[0].allow);
+                        const sessionFindInCommentModel = await sessionCommentModel.findOne({
+                            sessionId: arg.session_id
+                        })
+                        console.log("alow value 12" , sessionFindInCommentModel.liveSession);
 
                         // await sessionCommentModel.updateOne({
                         //     sessionId: arg.session_id,
@@ -3736,10 +3734,10 @@ function socket(io) {
                             }
                         })
 
-
-                        console.log("alow value 13" , sessionFindInCommentModel.liveSession.participants_1[0].allow);
-                        console.log("alow value 23" , sessionFindInCommentModel.liveSession.participants_2[0].allow);
-                        console.log("alow value 33" , sessionFindInCommentModel.liveSession.participants_3[0].allow);
+                        const sessionFindInCommentModel = await sessionCommentModel.findOne({
+                            sessionId: arg.session_id
+                        })
+                        console.log("alow value 13" , sessionFindInCommentModel.liveSession);
 
 
                         // await sessionCommentModel.updateOne({
