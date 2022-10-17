@@ -3603,45 +3603,52 @@ function socket(io) {
                         joinUser.push(user.userId)
                     }
 
-
-                    await sessionCommentModel.updateOne({
-                        sessionId: arg.session_id,
-                    },
-                        {
-                            $set: {
-                                "liveSession.participants_1": {
-                                    userId: findSession.participants[0].participants_1,
+                    if((sessionFindInCommentModel.liveSession.participants_1[0].userId).toString() != (findSession.participants[0].participants_1).toString()){
+                        await sessionCommentModel.updateOne({
+                            sessionId: arg.session_id,
+                        },
+                            {
+                                $set: {
+                                    "liveSession.participants_1": {
+                                        userId: findSession.participants[0].participants_1,
+                                    }
+    
                                 }
-
                             }
-                        }
-                    )
-
-                    await sessionCommentModel.updateOne({
-                        sessionId: arg.session_id,
-                    },
-                        {
-                            $set: {
-                                "liveSession.participants_2": {
-                                    userId: findSession.participants[0].participants_2,
+                        )
+                    }
+                   
+                    if((sessionFindInCommentModel.liveSession.participants_2[0].userId).toString() != (findSession.participants[0].participants_2).toString()){
+                        await sessionCommentModel.updateOne({
+                            sessionId: arg.session_id,
+                        },
+                            {
+                                $set: {
+                                    "liveSession.participants_2": {
+                                        userId: findSession.participants[0].participants_2,
+                                    }
+    
                                 }
-
                             }
-                        }
-                    )
-
-                    await sessionCommentModel.updateOne({
-                        sessionId: arg.session_id,
-                    },
-                        {
-                            $set: {
-                                "liveSession.participants_3": {
-                                    userId: findSession.participants[0].participants_3,
+                        )
+    
+                    }
+                   
+                    if((sessionFindInCommentModel.liveSession.participants_2[0].userId).toString() != (findSession.participants[0].participants_2).toString()){
+                        await sessionCommentModel.updateOne({
+                            sessionId: arg.session_id,
+                        },
+                            {
+                                $set: {
+                                    "liveSession.participants_3": {
+                                        userId: findSession.participants[0].participants_3,
+                                    }
+    
                                 }
-
                             }
-                        }
-                    )
+                        )
+                    }
+                  
 
 
                     const findParticipant1 = await sessionCommentModel.findOne({
@@ -3734,9 +3741,9 @@ function socket(io) {
                             }
                         })
 
-                        const sessionFindInCommentModel = await sessionCommentModel.findOne({
-                            sessionId: arg.session_id
-                        })
+ const sessionFindInCommentModel = await sessionCommentModel.findOne({
+                    sessionId: arg.session_id
+                })
                         console.log("alow value 13" , sessionFindInCommentModel.liveSession);
 
 
