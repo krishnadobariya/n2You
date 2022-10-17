@@ -3667,6 +3667,9 @@ function socket(io) {
                     let second = date.getSeconds();
                     const dateNow = `${year}-${months + 1}-${dates} ${hour}:${minutes}:${second}`
 
+                    console.log("alow value 1" , findParticipant1.liveSession.participants_1.allow);
+                    console.log("alow value 2" , findParticipant2.liveSession.participants_2.allow);
+                    console.log("alow value 3" , findParticipant3.liveSession.participants_3.allow);
 
                     if (findParticipant1) {
                         console.log("con par 1");
@@ -3674,53 +3677,95 @@ function socket(io) {
                         await sessionCommentModel.updateOne({
                             sessionId: arg.session_id,
                             "liveSession.participants_1.userId": arg.participant_id
-                        },
-                            {
-                                $set: {
-
-                                    "liveSession.participants_1": {
-                                        userId: arg.participant_id,
-                                        allow: 1,
-                                        date: `${year}-${months + 1}-${dates} ${hour}:${minutes}:${second}`
-                                    }
-
-                                }
+                        }, {
+                            $set: {
+                                "liveSession.participants_1.allow": 1
                             }
-                        )
+                        })
+
+                        console.log("alow value 11" , findParticipant1.liveSession.participants_1.allow);
+                        console.log("alow value 21" , findParticipant2.liveSession.participants_2.allow);
+                        console.log("alow value 31" , findParticipant3.liveSession.participants_3.allow);
+
+                        // await sessionCommentModel.updateOne({
+                        //     sessionId: arg.session_id,
+                        //     "liveSession.participants_1.userId": arg.participant_id
+                        // },
+                        //     {
+                        //         $set: {
+
+                        //             "liveSession.participants_1": {
+                        //                 userId: arg.participant_id,
+                        //                 allow: 1,
+                        //                 date: `${year}-${months + 1}-${dates} ${hour}:${minutes}:${second}`
+                        //             }
+
+                        //         }
+                        //     }
+                        // )
 
                     } else if (findParticipant2) {
                         console.log("con par 2");
                         await sessionCommentModel.updateOne({
                             sessionId: arg.session_id,
                             "liveSession.participants_2.userId": arg.participant_id
-                        },
-                            {
-                                $set: {
-                                    "liveSession.participants_2": {
-                                        userId: arg.participant_id,
-                                        allow: 1,
-                                        date: `${year}-${months + 1}-${dates} ${hour}:${minutes}:${second}`
-                                    }
-                                }
+                        }, {
+                            $set: {
+                                "liveSession.participants_2.allow": 1
                             }
-                        )
+                        })
+
+
+                        console.log("alow value 12" , findParticipant1.liveSession.participants_1.allow);
+                        console.log("alow value 22" , findParticipant2.liveSession.participants_2.allow);
+                        console.log("alow value 32" , findParticipant3.liveSession.participants_3.allow);
+
+                        // await sessionCommentModel.updateOne({
+                        //     sessionId: arg.session_id,
+                        //     "liveSession.participants_2.userId": arg.participant_id
+                        // },
+                        //     {
+                        //         $set: {
+                        //             "liveSession.participants_2": {
+                        //                 userId: arg.participant_id,
+                        //                 allow: 1,
+                        //                 date: `${year}-${months + 1}-${dates} ${hour}:${minutes}:${second}`
+                        //             }
+                        //         }
+                        //     }
+                        // )
 
                     } else if (findParticipant3) {
                         console.log("con par 3");
                         await sessionCommentModel.updateOne({
                             sessionId: arg.session_id,
                             "liveSession.participants_3.userId": arg.participant_id
-                        },
-                            {
-                                $set: {
-                                    "liveSession.participants_3": {
-                                        userId: arg.participant_id,
-                                        allow: 1,
-                                        date: `${year}-${months + 1}-${dates} ${hour}:${minutes}:${second}`
-                                    }
-                                }
+                        }, {
+                            $set: {
+                                "liveSession.participants_3.allow": 1
                             }
-                        )
+                        })
+
+
+                        console.log("alow value 13" , findParticipant1.liveSession.participants_1.allow);
+                        console.log("alow value 23" , findParticipant2.liveSession.participants_2.allow);
+                        console.log("alow value 33" , findParticipant3.liveSession.participants_3.allow);
+
+
+                        // await sessionCommentModel.updateOne({
+                        //     sessionId: arg.session_id,
+                        //     "liveSession.participants_3.userId": arg.participant_id
+                        // },
+                        //     {
+                        //         $set: {
+                        //             "liveSession.participants_3": {
+                        //                 userId: arg.participant_id,
+                        //                 allow: 1,
+                        //                 date: `${year}-${months + 1}-${dates} ${hour}:${minutes}:${second}`
+                        //             }
+                        //         }
+                        //     }
+                        // )
                     }
 
 
