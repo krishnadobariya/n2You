@@ -3667,6 +3667,8 @@ function socket(io) {
                     let second = date.getSeconds();
                     const dateNow = `${year}-${months + 1}-${dates} ${hour}:${minutes}:${second}`
 
+                    console.log("sessionFindInCommentModel" ,sessionFindInCommentModel.liveSession );
+
                     console.log("alow value 1" , sessionFindInCommentModel.liveSession.participants_1.allow);
                     console.log("alow value 2" , sessionFindInCommentModel.liveSession.participants_2.allow);
                     console.log("alow value 3" , sessionFindInCommentModel.liveSession.participants_3.allow);
