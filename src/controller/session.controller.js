@@ -17,6 +17,7 @@ const thumbUpCountInSession = require('../model/sessionThumbUp.model');
 const superListModel = require("../model/suparMatch.model");
 const rejectListModel = require("../model/rejectList.model");
 const { argv } = require("process");
+const chatRoomModel = require("../webSocket/models/chatRoom.model");
 exports.sessionCreate = async (req, res, next) => {
     try {
 
@@ -5962,7 +5963,6 @@ exports.rejectList = async (req, res, next) => {
             userId: req.params.user_id
         })
 
-
         const final_response = [];
         const session_detail = [];
         const rej_user_detail = []
@@ -5974,31 +5974,101 @@ exports.rejectList = async (req, res, next) => {
                 const findUser = await userModel.findOne({
                     _id: data1.userId
                 })
-                rej_user_detail.push({
-                    userId: findUser._id,
-                    userProfile: findUser.photo[0] ? findUser.photo[0].res : ""
+                const findRequestModel = await requestsModel.findOne({
+                    userId : req.params.user_id
                 })
+                const findUsers = await userModel.findOne({
+                    _id:  data1.userId
+                })
+                if(findRequestModel){
+
+                    const findData = await requestsModel.findOne({
+                        userId : req.params.user_id,
+                        "RequestedEmails.userId" : findUser._id
+                    })
+                   
+                    if(findData){
+                        for(const user of findRequestModel.RequestedEmails){
+                       
+                            if((user.userId).toString() == (findUser._id).toString()){
+                                if(user.accepted == 2){
+
+                                    const findChatRoomId1 = await chatRoomModel.findOne({
+                                        user1:  findUser._id,
+                                        user2: req.params.user_id
+                                    })
+                        
+                                    const findChatRoomId2 = await chatRoomModel.findOne({
+                                        user1:req.params.user_id,
+                                        user2:  findUser._id
+                                    })
+
+                                    if(findChatRoomId1){
+                                        sup_user_detail.push({
+                                            sessionId: data.session_id,
+                                            accept_by: findUser.userId,
+                                            accept_by_user_Profile: findUsers.photo[0] ? findUsers.photo[0].res : "",
+                                            userId: findUser._id,
+                                            userProfile: findUser.photo[0] ? findUser.photo[0].res : "",
+                                            status: user.accepted,
+                                            room: findChatRoomId1._id
+                                        })
+                                    }else{
+                                        rej_user_detail.push({
+                                            sessionId: data.session_id,
+                                            accept_by: findUser.userId,
+                                            accept_by_user_Profile: findUsers.photo[0] ? findUsers.photo[0].res : "",
+                                            userId: findUser._id,
+                                            userProfile: findUser.photo[0] ? findUser.photo[0].res : "",
+                                            status: user.accepted,
+                                            room: findChatRoomId2._id
+                                        })
+                                    }
+                                   
+                                }else{
+                                    rej_user_detail.push({
+                                        sessionId: data.session_id,
+                                        accept_by: findUser.userId,
+                                        accept_by_user_Profile: findUsers.photo[0] ? findUsers.photo[0].res : "",
+                                        userId: findUser._id,
+                                        userProfile: findUser.photo[0] ? findUser.photo[0].res : "",
+                                        status: user.accepted,
+                                        room: ""
+                                    })
+                                }
+                               
+                            }
+                        }
+                    }else{
+                        rej_user_detail.push({
+                            sessionId: data.session_id,
+                            accept_by: findUser.userId,
+                            accept_by_user_Profile: findUsers.photo[0] ? findUsers.photo[0].res : "",
+                            userId: findUser._id,
+                            userProfile: findUser.photo[0] ? findUser.photo[0].res : "",
+                            status: 0,
+                            room: ""
+                        })
+                    }
+                }else{
+                    rej_user_detail.push({
+                        sessionId: data.session_id,
+                        accept_by: findUser.userId,
+                        accept_by_user_Profile: findUsers.photo[0] ? findUsers.photo[0].res : "",
+                        userId: findUser._id,
+                        userProfile: findUser.photo[0] ? findUser.photo[0].res : "",
+                        status: 0,
+                        room: ""
+                    })
+                }
+               
 
             }
-
-            const findInSessionModel = await sessionModel.findOne({
-                _id: data.session_id
-            })
-            const findUser = await userModel.findOne({
-                _id: findInSessionModel.cretedSessionUser
-            })
-            final_response.push({
-                sessionId: data.session_id,
-                reject_by: findInSessionModel.cretedSessionUser,
-                reject_by_user_Profile: findUser.photo[0] ? findUser.photo[0].res : "",
-                reject_list: rej_user_detail
-            })
-
         }
 
 
         res.status(status.OK).json(
-            new APIResponse("get reject list", "true", 200, "1", final_response)
+            new APIResponse("get reject list", "true", 200, "1", rej_user_detail)
         )
     } catch (error) {
         console.log("error", error);
@@ -6017,36 +6087,110 @@ exports.suparMatchList = async (req, res, next) => {
             userId: req.params.user_id
         })
 
-
-        const final_response = [];
-        const session_detail = [];
         const sup_user_detail = [];
         for (const data of findUser) {
             for (const data1 of data.matchUserId) {
                 const findUser = await userModel.findOne({
                     _id: data1.userId
                 })
-                sup_user_detail.push({
-                    userId: findUser._id,
-                    userProfile: findUser.photo[0] ? findUser.photo[0].res : ""
+                const findRequestModel = await requestsModel.findOne({
+                    userId : req.params.user_id
                 })
+
+                if(findRequestModel){
+
+                    const findData = await requestsModel.findOne({
+                        userId : req.params.user_id,
+                        "RequestedEmails.userId" : findUser._id
+                    })
+                    const findUsers = await userModel.findOne({
+                        _id:  data1.userId
+                    })
+                    if(findData){
+                        for(const user of findRequestModel.RequestedEmails){
+                            console.log(user.userId);
+                            console.log("dd" , findUser._id);
+                            if((user.userId).toString() == (findUser._id).toString()){
+                                if(user.accepted == 2){
+
+                                    const findChatRoomId1 = await chatRoomModel.findOne({
+                                        user1:  findUser._id,
+                                        user2: req.params.user_id
+                                    })
+                        
+                                    const findChatRoomId2 = await chatRoomModel.findOne({
+                                        user1:req.params.user_id,
+                                        user2:  findUser._id
+                                    })
+
+                                    if(findChatRoomId1){
+                                        sup_user_detail.push({
+                                            sessionId: data.session_id,
+                                            accept_by: findUser.userId,
+                                            accept_by_user_Profile: findUsers.photo[0] ? findUsers.photo[0].res : "",
+                                            userId: findUser._id,
+                                            userProfile: findUser.photo[0] ? findUser.photo[0].res : "",
+                                            status: user.accepted,
+                                            room: findChatRoomId1._id
+                                        })
+                                    }else{
+                                        sup_user_detail.push({
+                                            sessionId: data.session_id,
+                                            accept_by: findUser.userId,
+                                            accept_by_user_Profile: findUsers.photo[0] ? findUsers.photo[0].res : "",
+                                            userId: findUser._id,
+                                            userProfile: findUser.photo[0] ? findUser.photo[0].res : "",
+                                            status: user.accepted,
+                                            room: findChatRoomId2._id
+                                        })
+                                    }
+                                   
+                                }else{
+                                    sup_user_detail.push({
+                                        sessionId: data.session_id,
+                                        accept_by: findUser.userId,
+                                        accept_by_user_Profile: findUsers.photo[0] ? findUsers.photo[0].res : "",
+                                        userId: findUser._id,
+                                        userProfile: findUser.photo[0] ? findUser.photo[0].res : "",
+                                        status: user.accepted,
+                                        room: ""
+                                    })
+                                }
+                               
+                            }
+                        }
+                    }else{
+                        sup_user_detail.push({
+                            sessionId: data.session_id,
+                            accept_by: findUser.userId,
+                            accept_by_user_Profile: findUsers.photo[0] ? findUsers.photo[0].res : "",
+                            userId: findUser._id,
+                            userProfile: findUser.photo[0] ? findUser.photo[0].res : "",
+                            status: 0,
+                            room: ""
+                        })
+                    }
+                }else{
+                    sup_user_detail.push({
+                        sessionId: data.session_id,
+                        accept_by: findUser.userId,
+                        accept_by_user_Profile: findUsers.photo[0] ? findUsers.photo[0].res : "",
+                        userId: findUser._id,
+                        userProfile: findUser.photo[0] ? findUser.photo[0].res : "",
+                        status: 0,
+                        room: ""
+                    })
+                }
+               
             }
 
-            const findUsers = await userModel.findOne({
-                _id: findUser[0].userId
-            })
-            final_response.push({
-                sessionId: data.session_id,
-                accept_by: findUser.userId,
-                accept_by_user_Profile: findUsers.photo[0] ? findUsers.photo[0].res : "",
-                accepted_list: sup_user_detail
-            })
-
+          
+           
         }
 
 
         res.status(status.OK).json(
-            new APIResponse("get accept list", "true", 200, "1", final_response)
+            new APIResponse("get accept list", "true", 200, "1", sup_user_detail)
         )
     } catch (error) {
         console.log("error", error);
