@@ -5369,7 +5369,7 @@ exports.likeSesison = async (req, res, next) => {
                        )
 
                         res.status(status.OK).json(
-                            new APIResponse("like Added SuccessFullydwddw", "true", 200, "1")
+                            new APIResponse("like Added SuccessFully", "true", 200, "1")
                         )
                     }
                 
