@@ -3657,21 +3657,9 @@ function socket(io) {
                         "liveSession.participants_3.userId": arg.participant_id
                     })
 
-                    const date = new Date;
-                    let dates = date.getDate();
-                    let months = date.getMonth()
-                    let year = date.getFullYear();
-                    let hour = date.getHours();
-                    let hours = date.getHours();
-                    let minutes = date.getMinutes();
-                    let second = date.getSeconds();
-                    const dateNow = `${year}-${months + 1}-${dates} ${hour}:${minutes}:${second}`
-
-                    console.log("sessionFindInCommentModel" ,sessionFindInCommentModel.liveSession );
-
-                    console.log("alow value 1" , sessionFindInCommentModel.liveSession.participants_1.allow);
-                    console.log("alow value 2" , sessionFindInCommentModel.liveSession.participants_2.allow);
-                    console.log("alow value 3" , sessionFindInCommentModel.liveSession.participants_3.allow);
+                    console.log("alow value 1" , sessionFindInCommentModel.liveSession.participants_1[0].allow);
+                    console.log("alow value 2" , sessionFindInCommentModel.liveSession.participants_2[0].allow);
+                    console.log("alow value 3" , sessionFindInCommentModel.liveSession.participants_3[0].allow);
 
                     if (findParticipant1) {
                         console.log("con par 1");
@@ -3685,9 +3673,9 @@ function socket(io) {
                             }
                         })
 
-                        console.log("alow value 11" , sessionFindInCommentModel.liveSession.participants_1.allow);
-                        console.log("alow value 21" , sessionFindInCommentModel.liveSession.participants_2.allow);
-                        console.log("alow value 31" , sessionFindInCommentModel.liveSession.participants_3.allow);
+                        console.log("alow value 11" , sessionFindInCommentModel.liveSession.participants_1[0].allow);
+                        console.log("alow value 21" , sessionFindInCommentModel.liveSession.participants_2[0].allow);
+                        console.log("alow value 31" , sessionFindInCommentModel.liveSession.participants_3[0].allow);
 
                         // await sessionCommentModel.updateOne({
                         //     sessionId: arg.session_id,
@@ -3718,9 +3706,9 @@ function socket(io) {
                         })
 
 
-                        console.log("alow value 12" , sessionFindInCommentModel.liveSession.participants_1.allow);
-                        console.log("alow value 22" , sessionFindInCommentModel.liveSession.participants_2.allow);
-                        console.log("alow value 32" , sessionFindInCommentModel.liveSession.participants_3.allow);
+                        console.log("alow value 12" , sessionFindInCommentModel.liveSession.participants_1[0].allow);
+                        console.log("alow value 22" , sessionFindInCommentModel.liveSession.participants_2[0].allow);
+                        console.log("alow value 32" , sessionFindInCommentModel.liveSession.participants_3[0].allow);
 
                         // await sessionCommentModel.updateOne({
                         //     sessionId: arg.session_id,
@@ -3749,9 +3737,9 @@ function socket(io) {
                         })
 
 
-                        console.log("alow value 13" , sessionFindInCommentModel.liveSession.participants_1.allow);
-                        console.log("alow value 23" , sessionFindInCommentModel.liveSession.participants_2.allow);
-                        console.log("alow value 33" , sessionFindInCommentModel.liveSession.participants_3.allow);
+                        console.log("alow value 13" , sessionFindInCommentModel.liveSession.participants_1[0].allow);
+                        console.log("alow value 23" , sessionFindInCommentModel.liveSession.participants_2[0].allow);
+                        console.log("alow value 33" , sessionFindInCommentModel.liveSession.participants_3[0].allow);
 
 
                         // await sessionCommentModel.updateOne({
@@ -3957,7 +3945,7 @@ function socket(io) {
 
                         }
 
-                    }, 90000);
+                    }, 1000);
 
 
                 } else {
