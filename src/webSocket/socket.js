@@ -3583,6 +3583,8 @@ function socket(io) {
         socket.on("timeForAllow", async (arg) => {
 
 
+            var intUserId = 0
+
             const findSession = await sessionModel.findOne({
                 _id: arg.session_id
             })
@@ -3649,6 +3651,14 @@ function socket(io) {
                         )
                     }
 
+
+                    if((findSession.participants[0].participants_1).toString() == arg.participant_id){
+                        intUserId = findSession.participants[0].P1IntId
+                    }else if((findSession.participants[0].participants_2).toString() == arg.participant_id){
+                        intUserId = findSession.participants[0].P2IntId
+                    }else if((findSession.participants[0].participants_3).toString() == arg.participant_id){
+                        intUserId = findSession.participants[0].P3IntId
+                    }
 
 
                     const findParticipant1 = await sessionCommentModel.findOne({
@@ -3770,57 +3780,16 @@ function socket(io) {
                             _id: arg.participant_id
                         })
 
-                        if ((findSession.cretedSessionUser).toString() == (users).toString()) {
-                            const response = {
-                                sessionId: arg.session_id,
-                                participantId: arg.participant_id,
-                                participantName: findUser1.firstName,
-                                participantProfile: findUser1.photo[0] ? findUser1.photo[0].res : "",
-                                intUserId: findSession.createUserIntId
-                            }
-
-                            const userRoom = `User${users}`
-                            io.to(userRoom).emit("timeForAllowSuccess", response);
-
-                        } else if ((findSession.participants[0].participants_1).toString() == (users).toString()) {
-
-                            const response = {
-                                sessionId: arg.session_id,
-                                participantId: arg.participant_id,
-                                participantName: findUser1.firstName,
-                                participantProfile: findUser1.photo[0] ? findUser1.photo[0].res : "",
-                                intUserId: findSession.participants[0].P1IntId
-                            }
-
-                            const userRoom = `User${users}`
-                            io.to(userRoom).emit("timeForAllowSuccess", response);
-
-                        } else if ((findSession.participants[0].participants_2).toString() == (users).toString()) {
-
-                            const response = {
-                                sessionId: arg.session_id,
-                                participantId: arg.participant_id,
-                                participantName: findUser1.firstName,
-                                participantProfile: findUser1.photo[0] ? findUser1.photo[0].res : "",
-                                intUserId: findSession.participants[0].P2IntId
-                            }
-
-                            const userRoom = `User${users}`
-                            io.to(userRoom).emit("timeForAllowSuccess", response);
-
-                        } else if ((findSession.participants[0].participants_3).toString() == (users).toString()) {
-
-                            const response = {
-                                sessionId: arg.session_id,
-                                participantId: arg.participant_id,
-                                participantName: findUser1.firstName,
-                                participantProfile: findUser1.photo[0] ? findUser1.photo[0].res : "",
-                                intUserId: findSession.participants[0].P3IntId
-                            }
-                            const userRoom = `User${users}`
-                            io.to(userRoom).emit("timeForAllowSuccess", response);
-
+                        const response = {
+                            sessionId: arg.session_id,
+                            participantId: arg.participant_id,
+                            participantName: findUser1.firstName,
+                            participantProfile: findUser1.photo[0] ? findUser1.photo[0].res : "",
+                            intUserId: intUserId
                         }
+
+                        const userRoom = `User${users}`
+                        io.to(userRoom).emit("timeForAllowSuccess", response);
 
                         const findUser = await userModel.findOne({
                             _id: sessionFindInCommentModel.cretedSessionUser
@@ -3848,8 +3817,6 @@ function socket(io) {
                         }
 
                     }
-
-
 
                     setTimeout(async function () {
 

@@ -5629,14 +5629,16 @@ exports.rejectOrAccept = async (req, res, next) => {
                 // if ((data.userId).toString() == (data1).toString()) {
 
                 const user = [];
-                if((req.params.like_user_id).toString() != findParticipant.participants[0].participants_1){
-                    user.push(req.params.like_user_id)
-                }else if((req.params.like_user_id).toString() != findParticipant.participants[0].participants_2){
-                    user.push(req.params.like_user_id)
-                }else if((req.params.like_user_id).toString() != findParticipant.participants[0].participants_2){
-                    user.push(req.params.like_user_id)
+                if((req.params.like_user_id).toString() != findSession.participants[0].participants_1){
+                    user.push(findSession.participants[0].participants_1)
                 }
-                
+                 if((req.params.like_user_id).toString() != findSession.participants[0].participants_2){
+                    user.push(findSession.participants[0].participants_2)
+                }
+                if((req.params.like_user_id).toString() != findSession.participants[0].participants_3){
+                    user.push(findSession.participants[0].participants_3)
+                }
+
                 if (req.params.like_user_id) {
 
                     const suparMatchList = await superListModel.findOne({
@@ -5770,72 +5772,77 @@ exports.rejectOrAccept = async (req, res, next) => {
                         );
                     }
 
-                    res.status(status.OK).json(
-                        new APIResponse("accept success", "true", 200, "1",)
-                    )
 
 
                 } else {
-
-                    const rejectList = await rejectListModel.findOne({
-                        session_id: req.params.session_id,
-                        userId: req.params.user_id
-                    })
-
-                    await userModel.updateOne(
-                        {
-                            _id: req.params.user_id
-                        },
-                        {
-                            $pull: {
-                                noBasket: {
-                                    userId: req.params.like_user_id
-                                }
-                            }
-                        });
-
-                    await userModel.updateOne(
-                        {
-                            _id: req.params.user_id
-                        },
-                        {
-                            $pull: {
-                                yesBasket: {
-                                    userId: req.params.like_user_id
-                                }
-                            }
-                        });
-
-                    if (rejectList) {
-                        await rejectListModel.updateOne({
-                            session_id: req.params.session_id,
-                            userId: req.params.user_id
-                        }, {
-                            $push: {
-                                matchUserId: {
-                                    userId: req.params.like_user_id
-                                }
-                            }
-                        })
-
-                    } else {
-                        const saveData = rejectListModel({
-                            session_id: req.params.session_id,
-                            userId: req.params.user_id,
-                            matchUserId: {
-                                userId: req.params.like_user_id
-                            }
-                        })
-
-                        await saveData.save()
-                    }
-
                     res.status(status.OK).json(
-                        new APIResponse("reject success", "true", 200, "1",)
+                        new APIResponse("not any selected", "true", 200, "1",)
                     )
+                   
                 }
 
+                if(user[0] != undefined){
 
+                    user.map(async(res) => {
+                        const rejectList = await rejectListModel.findOne({
+                            session_id: req.params.session_id,
+                            userId: req.params.user_id
+                        })
+    
+                        await userModel.updateOne(
+                            {
+                                _id: req.params.user_id
+                            },
+                            {
+                                $pull: {
+                                    noBasket: {
+                                        userId:mongoose.Types.ObjectId(res)
+                                    }
+                                }
+                            });
+    
+                        await userModel.updateOne(
+                            {
+                                _id: req.params.user_id
+                            },
+                            {
+                                $pull: {
+                                    yesBasket: {
+                                        userId: mongoose.Types.ObjectId(res)
+                                    }
+                                }
+                            });
+    
+                        if (rejectList) {
+                            await rejectListModel.updateOne({
+                                session_id: req.params.session_id,
+                                userId: req.params.user_id
+                            }, {
+                                $push: {
+                                    matchUserId: {
+                                        userId: mongoose.Types.ObjectId(res)
+                                    }
+                                }
+                            })
+    
+                        } else {
+                            const saveData = rejectListModel({
+                                session_id: req.params.session_id,
+                                userId: req.params.user_id,
+                                matchUserId: {
+                                    userId: mongoose.Types.ObjectId(res)
+                                }
+                            })
+    
+                            await saveData.save()
+                        }
+                    })
+                   
+                }
+
+                res.status(status.OK).json(
+                    new APIResponse("selecte or rejected", "true", 200, "1",)
+                )
             } else {
                 res.status(status.NOT_FOUND).json(
                     new APIResponse("session not live", "true", 404, "1",)
