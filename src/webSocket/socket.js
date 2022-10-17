@@ -3590,18 +3590,18 @@ function socket(io) {
 
             if (findSession) {
 
+                console.log("con 1");
                 const sessionFindInCommentModel = await sessionCommentModel.findOne({
                     sessionId: arg.session_id
                 })
 
                 if (sessionFindInCommentModel) {
-
+                    console.log("con 2");
                     const joinUser = [];
                     joinUser.push(sessionFindInCommentModel.cretedSessionUser)
                     for (const user of sessionFindInCommentModel.joinUser) {
                         joinUser.push(user.userId)
                     }
-
 
 
                     await sessionCommentModel.updateOne({
@@ -3669,6 +3669,7 @@ function socket(io) {
 
 
                     if (findParticipant1) {
+                        console.log("con par 1");
 
                         await sessionCommentModel.updateOne({
                             sessionId: arg.session_id,
@@ -3688,8 +3689,7 @@ function socket(io) {
                         )
 
                     } else if (findParticipant2) {
-
-
+                        console.log("con par 2");
                         await sessionCommentModel.updateOne({
                             sessionId: arg.session_id,
                             "liveSession.participants_2.userId": arg.participant_id
@@ -3706,10 +3706,10 @@ function socket(io) {
                         )
 
                     } else if (findParticipant3) {
-
+                        console.log("con par 3");
                         await sessionCommentModel.updateOne({
                             sessionId: arg.session_id,
-                            "liveSession.participants_2.userId": arg.participant_id
+                            "liveSession.participants_3.userId": arg.participant_id
                         },
                             {
                                 $set: {
