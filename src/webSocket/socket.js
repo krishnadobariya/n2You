@@ -3789,7 +3789,7 @@ function socket(io) {
                                 participantId: arg.participant_id,
                                 participantName: findUser1.firstName,
                                 participantProfile: findUser1.photo[0] ? findUser1.photo[0].res : "",
-                                intUserId: findSession.participants.P1IntId
+                                intUserId: findSession.participants[0].P1IntId
                             }
 
                             const userRoom = `User${users}`

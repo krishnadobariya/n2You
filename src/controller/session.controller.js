@@ -5629,7 +5629,14 @@ exports.rejectOrAccept = async (req, res, next) => {
                 // if ((data.userId).toString() == (data1).toString()) {
 
                 const user = [];
-                // if((req.params.like_user_id).toString() != findParticipant.)
+                if((req.params.like_user_id).toString() != findParticipant.participants[0].participants_1){
+                    user.push(req.params.like_user_id)
+                }else if((req.params.like_user_id).toString() != findParticipant.participants[0].participants_2){
+                    user.push(req.params.like_user_id)
+                }else if((req.params.like_user_id).toString() != findParticipant.participants[0].participants_2){
+                    user.push(req.params.like_user_id)
+                }
+                
                 if (req.params.like_user_id) {
 
                     const suparMatchList = await superListModel.findOne({
