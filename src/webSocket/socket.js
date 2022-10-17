@@ -29,7 +29,7 @@ function socket(io) {
 
             if (arg.user_1 == arg.sender_id) {
 
-               
+
                 const findUserInNotification = await notificationModel.findOne({
                     userId: arg.user_2
                 })
@@ -67,7 +67,7 @@ function socket(io) {
 
             } else if (arg.user_2 == arg.sender_id) {
 
-          
+
                 const findUserInNotification = await notificationModel.findOne({
                     userId: arg.user_1
                 })
@@ -121,10 +121,10 @@ function socket(io) {
 
             const senderName = await userModel.findOne({ _id: arg.user_1, polyDating: 0 });
 
-            
+
             const fcm_token = userFind.fcm_token;
 
-           
+
             // if (arg.sender_id == arg.user_1) {
             //     const userFind = await userModel.findOne({ _id: arg.user_2, polyDating: 0 }).select('name, photo,fcm_token');
             //     fcm_token.push(userFind.fcm_token)
@@ -204,7 +204,7 @@ function socket(io) {
                             const userRoom = `User${arg.user_2}`
                             io.to(userRoom).emit("chatReceive", chat);
                             if (fcm_token) {
-                               
+
                                 const title = senderName.firstName;
                                 const body = arg.text;
                                 const text = arg.text;
@@ -295,7 +295,7 @@ function socket(io) {
                 }
             } else {
 
-               
+
                 const getChatRoom = await chatRoomModel.findOne({
                     user1: arg.user_1,
                     user2: arg.user_2
@@ -307,26 +307,26 @@ function socket(io) {
                 }).select('user1, user2').lean();
 
                 if (getChatRoom == null && alterNateChatRoom == null) {
-                   
+
                     io.emit("chatReceive", "chat room not found");
 
                 } else {
 
-                  
+
 
                     if (getChatRoom) {
                         const find1 = await chatModels.findOne({
                             chatRoomId: getChatRoom._id
                         }).select('chatRoomId').lean();
 
-                        
+
                         if (find1 == null) {
                             if (arg.sender_id == arg.user_1 || arg.sender_id == arg.user_2) {
                                 const findUser = await userModel.findOne({
                                     _id: arg.sender_id
                                 })
 
-                                
+
                                 const data = chatModels({
                                     chatRoomId: getChatRoom._id,
                                     chat: {
@@ -359,7 +359,7 @@ function socket(io) {
                                     receiver: receiver_id[0]
                                 }
 
-                             
+
                                 const userRoom = `User${arg.user_2}`
                                 io.to(userRoom).emit("chatReceive", chat);
                                 if (fcm_token) {
@@ -380,12 +380,12 @@ function socket(io) {
 
 
                             } else {
-                                
+
                                 io.emit("chatReceive", "sender not found");
                             }
                         } else {
 
-                           
+
                             if (arg.sender_id == arg.user_1 || arg.sender_id == arg.user_2) {
 
                                 const findUser = await userModel.findOne({
@@ -425,7 +425,7 @@ function socket(io) {
                                     receiver: receiver_id[0]
                                 }
 
-                                
+
                                 const userRoom = `User${arg.user_2}`
                                 io.to(userRoom).emit("chatReceive", chat);
                                 if (fcm_token) {
@@ -851,7 +851,7 @@ function socket(io) {
                 "chat.sender": arg.user_id
             })
 
-          
+
             if (findRoom == null) {
 
             } else {
@@ -906,7 +906,7 @@ function socket(io) {
                 _id: arg.user_id
             })
 
-           
+
             if (findUser == null) {
                 io.emit("checkUpdate", "User Not Found!");
             } else {
@@ -923,12 +923,12 @@ function socket(io) {
                         },
                     }
                 })
-                
-                
+
+
                 const JoinUser = [];
                 const findUser = await userModel.find()
-                
-                for(const data of findUser){
+
+                for (const data of findUser) {
                     const userRoom = `User${data._id}`
                     io.to(userRoom).emit("checkUpdate", "User Location Updated!");
                 }
@@ -2019,35 +2019,35 @@ function socket(io) {
                     intUserId: findIdInSession.createUserIntId
                 }
                 const userRoom = `User${arg.create_session_user}`
-               
+
                 io.to(userRoom).emit("onIntUser", response);
             } else if ((p1).toString() == (arg.create_session_user).toString()) {
                 const response = {
                     intUserId: findIdInSession.participants[0].P1IntId
                 }
                 const userRoom = `User${arg.create_session_user}`
-               
+
                 io.to(userRoom).emit("onIntUser", response);
             } else if ((p2).toString() == (arg.create_session_user).toString()) {
                 const response = {
                     intUserId: findIdInSession.participants[0].P2IntId
                 }
                 const userRoom = `User${arg.create_session_user}`
-                
+
                 io.to(userRoom).emit("onIntUser", response);
             } else if ((p3).toString() == (arg.create_session_user).toString()) {
                 const response = {
                     intUserId: findIdInSession.participants[0].P3IntId
                 }
                 const userRoom = `User${arg.create_session_user}`
-                
+
                 io.to(userRoom).emit("onIntUser", response);
             } else {
                 const response = {
                     intUserId: val
                 }
                 const userRoom = `User${arg.create_session_user}`
-               
+
                 io.to(userRoom).emit("onIntUser", response);
             }
 
@@ -2464,7 +2464,7 @@ function socket(io) {
 
                 } else if ((p2).toString() == (arg.create_session_user).toString()) {
 
-                    
+
 
                     const commentSession = await sessionCommentModel.findOne({
                         sessionId: arg.session_id,
@@ -2572,7 +2572,7 @@ function socket(io) {
 
                 } else if ((p3).toString() == (arg.create_session_user).toString()) {
 
-                   
+
                     const commentSession = await sessionCommentModel.findOne({
                         sessionId: arg.session_id,
                         "joinUser.userId": mongoose.Types.ObjectId(p3)
@@ -3106,7 +3106,7 @@ function socket(io) {
 
             console.log("callFor join User");
 
-            console.log("arg.session_id" , arg.session_id);
+            console.log("arg.session_id", arg.session_id);
 
             const findSession = await sessionModel.findOne({
                 _id: arg.session_id
@@ -3115,7 +3115,7 @@ function socket(io) {
             // console.log("findSession" , findSession);
 
             // console.log("findSession.roomType" , findSession.RoomType);
-            
+
             if (findSession.RoomType == "Public") {
 
                 console.log("public room");
@@ -3126,7 +3126,7 @@ function socket(io) {
                 })
 
                 for (const getNot of findUser) {
-                    console.log("getNow" ,getNot._id);
+                    console.log("getNow", getNot._id);
                     const userRoom = `User${getNot._id}`
                     io.to(userRoom).emit("nowEnd", "successfully start now");
                 }
@@ -3149,9 +3149,9 @@ function socket(io) {
                     allId.push(findSession.participants[0].participants_3)
                 }
 
-                
+
                 for (const getNot of allId) {
-                    
+
                     const userRoom = `User${getNot}`
                     io.to(userRoom).emit("nowEnd", "successfully start now");
                 }
@@ -3184,7 +3184,7 @@ function socket(io) {
                         AllJoinUser.push(statusWithId)
                     }
 
-                  
+
 
                     const findUser = await userModel.findOne({
                         _id: arg.user_id
@@ -3278,10 +3278,10 @@ function socket(io) {
                         _id: arg.session_id
                     })
 
-                    
+
                     const userRoom = `User${sessionUser.cretedSessionUser}`
-                 
-                    
+
+
                     io.to(userRoom).emit("raiseHandSuccess", response);
 
 
@@ -3406,7 +3406,7 @@ function socket(io) {
 
         socket.on("liveSession", async (arg) => {
 
-            console.log("user_id" , arg.user_id);
+            console.log("user_id", arg.user_id);
 
             const data = await sessionModel.find({
                 started: true, cretedSessionUser: {
@@ -3415,14 +3415,14 @@ function socket(io) {
             })
 
 
-            console.log("data" , data);
-         
+            console.log("data", data);
+
             const publicData = [];
             const privateData = [];
 
             for (const res of data) {
 
-                console.log("res" , res._id);
+                console.log("res", res._id);
                 if (res.RoomType == "Public") {
                     for (const participant of res.participants) {
                         if ((participant.participants_1).toString() == (arg.user_id).toString()) {
@@ -3574,7 +3574,7 @@ function socket(io) {
             const final_data = [...privateData, ...publicData];
 
             const userRoom = `User${arg.user_id}`
-            console.log("USERrOOM IS" , userRoom);
+            console.log("USERrOOM IS", userRoom);
             io.to(userRoom).emit("liveSessionSuccess", final_data);
 
 
@@ -3723,32 +3723,72 @@ function socket(io) {
                         )
                     }
 
-                    console.log("joinUser" , joinUser);
 
                     for (const users of joinUser) {
 
+                        console.log(users);
                         const findUser1 = await userModel.findOne({
                             _id: arg.participant_id
                         })
+                        console.log();
+                      
+                        if ((findSession.cretedSessionUser).toString() == (users).toString()) {
+                            const response = {
+                                sessionId: arg.session_id,
+                                participantId: arg.participant_id,
+                                participantName: findUser1.firstName,
+                                participantProfile: findUser1.photo[0] ? findUser1.photo[0].res : "",
+                                intUserId :findSession.createUserIntId
+                            }
+    
+                            const userRoom = `User${users}`
+                            io.emit("timeForAllowSuccess", response);
 
-                        console.log("findUser1" , findUser1);
+                        } else if ((findSession.participants[0].participants_1).toString() == (users).toString()) {
+                            
+                            const response = {
+                                sessionId: arg.session_id,
+                                participantId: arg.participant_id,
+                                participantName: findUser1.firstName,
+                                participantProfile: findUser1.photo[0] ? findUser1.photo[0].res : "",
+                                intUserId : findSession.participants.P1IntId
+                            }
+    
+                            const userRoom = `User${users}`
+                            io.emit("timeForAllowSuccess", response);
 
-                        const response = {
-                            sessionId: arg.session_id,
-                            participantId: arg.participant_id,
-                            participantName: findUser1.firstName,
-                            participantProfile: findUser1.photo[0] ? findUser1.photo[0].res : "",
+                        } else if ((findSession.participants[0].participants_2).toString() == (users).toString()) {
+                          
+                            const response = {
+                                sessionId: arg.session_id,
+                                participantId: arg.participant_id,
+                                participantName: findUser1.firstName,
+                                participantProfile: findUser1.photo[0] ? findUser1.photo[0].res : "",
+                                intUserId : findSession.participants[0].P2IntId
+                            }
+    
+                            const userRoom = `User${users}`
+                            io.emit("timeForAllowSuccess", response);
+
+                        } else if ((findSession.participants[0].participants_3).toString() == (users).toString()) {
+                           
+                            const response = {
+                                sessionId: arg.session_id,
+                                participantId: arg.participant_id,
+                                participantName: findUser1.firstName,
+                                participantProfile: findUser1.photo[0] ? findUser1.photo[0].res : "",
+                                intUserId : findSession.participants[0].P3IntId
+                            }
+                            const userRoom = `User${users}`
+                            io.emit("timeForAllowSuccess", response);
+
                         }
-
-                        const userRoom = `User${users}`
-                        console.log("userRoom" , userRoom);
-                        io.to(userRoom).emit("timeForAllowSuccess", response);
 
                         const findUser = await userModel.findOne({
                             _id: sessionFindInCommentModel.cretedSessionUser
                         })
 
-                        
+
                         const user = await userModel.findOne({
                             _id: users
                         })
@@ -3771,7 +3811,7 @@ function socket(io) {
 
                     }
 
-                  
+
 
                     setTimeout(async function () {
 
@@ -3847,7 +3887,7 @@ function socket(io) {
                                 _id: sessionFindInCommentModel.cretedSessionUser
                             })
 
-                            
+
                             const user = await userModel.findOne({
                                 _id: users
                             })

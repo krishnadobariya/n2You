@@ -120,22 +120,16 @@ const sessionCommentSchema = mongoose.Schema({
 
     LikeSession: {
         participants_1: [{
-            likeUserId:
-            {
-                type: mongoose.Schema.Types.ObjectId
-            }
+            likeUserId: mongoose.Schema.Types.ObjectId
+            
         }],
         participants_2: [{
-            likeUserId:
-            {
-                type: mongoose.Schema.Types.ObjectId
-            }
+            likeUserId: mongoose.Schema.Types.ObjectId
+            
         }],
         participants_3: [{
-            likeUserId:
-            {
-                type: mongoose.Schema.Types.ObjectId
-            }
+            likeUserId: mongoose.Schema.Types.ObjectId
+            
         }],
     }
 

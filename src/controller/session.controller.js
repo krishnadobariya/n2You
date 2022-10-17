@@ -5107,25 +5107,25 @@ exports.sessionInfo = async (req, res, next) => {
                 const allPrticipant = [];
 
 
-                const p1 = sessionFind.participants[0].participants_1 == null ? "" : sessionFind.participants[0].participants_1
-                const p2 = sessionFind.participants[0].participants_2 == null ? "" : sessionFind.participants[0].participants_2
-                const p3 = sessionFind.participants[0].participants_3 == null ? "" : sessionFind.participants[0].participants_3
+                // const p1 = sessionFind.participants[0].participants_1 == null ? "" : sessionFind.participants[0].participants_1
+                // const p2 = sessionFind.participants[0].participants_2 == null ? "" : sessionFind.participants[0].participants_2
+                // const p3 = sessionFind.participants[0].participants_3 == null ? "" : sessionFind.participants[0].participants_3
 
-                if (p1) {
-                    allPrticipant.push(sessionFind.participants[0].participants_1)
-                }
-                if (p2) {
-                    allPrticipant.push(sessionFind.participants[0].participants_2)
-                }
-                if (p3) {
-                    allPrticipant.push(sessionFind.participants[0].participants_3)
-                }
-
-                // for (const participant of session.joinUser) {
-                //     if (participant.status == 2) {
-                //         allPrticipant.push(participant.userId)
-                //     }
+                // if (p1) {
+                //     allPrticipant.push(sessionFind.participants[0].participants_1)
                 // }
+                // if (p2) {
+                //     allPrticipant.push(sessionFind.participants[0].participants_2)
+                // }
+                // if (p3) {
+                //     allPrticipant.push(sessionFind.participants[0].participants_3)
+                // }
+
+                for (const participant of session.joinUser) {
+                    if (participant.status == 2) {
+                        allPrticipant.push(participant.userId)
+                    }
+                }
 
                 const InSession = session.liveSession
 
@@ -5360,21 +5360,19 @@ exports.likeSesison = async (req, res, next) => {
                     } else {
                         await sessionComment.updateOne({
                             sessionId: req.params.session_id
-                        }, {
-                            "LikeSession.participants_1" :{ 
-                                $push: {
-                                    likeUserId: req.params.user_id
-                                }
+                        },{
+                            $push : {
+                                "LikeSession.participants_1": [{likeUserId: req.params.user_id}]
+    
                             }
-                          
-                        })
+                        }
+                       )
 
                         res.status(status.OK).json(
                             new APIResponse("like Added SuccessFullydwddw", "true", 200, "1")
                         )
                     }
-
-
+                
 
                 } else if ((p2).toString() == (req.params.participant_user_id).toString()) {
 
@@ -5399,7 +5397,7 @@ exports.likeSesison = async (req, res, next) => {
                                         likeUserId: req.params.user_id
                                     }
                                 }
-                              
+
                             }
                         )
 
@@ -5431,7 +5429,7 @@ exports.likeSesison = async (req, res, next) => {
                                     likeUserId: req.params.user_id
                                 }
                             }
-                          
+
                         })
 
                         res.status(status.OK).json(
@@ -5476,13 +5474,10 @@ exports.getLikeUserDetail = async (req, res, next) => {
             })
 
             const user = findSessionComment
-            console.log(user);
 
             const final_response = [];
 
-
-
-            if (user.participants_3 == "{}") {
+            if (user.LikeSession.participants_3[0] == undefined) {
 
                 const findUser = await userModel.findOne({
                     _id: findSession.participants[0].participants_3
@@ -5492,14 +5487,14 @@ exports.getLikeUserDetail = async (req, res, next) => {
                     _id: findUser._id,
                     userName: findUser.firstName,
                     userProfile: findUser.photo[0] ? findUser.photo[0].res : "",
-                    totalLikeCount: 0,
+                    totalLikeCount: 0, 
                     likeStatus: 0
                 }
 
                 final_response.push(response)
             } else {
 
-                const count = (user.participants_3)
+                const count = (user.LikeSession.participants_3)
 
                 const findUser = await userModel.findOne({
                     _id: findSession.participants[0].participants_3
@@ -5515,7 +5510,7 @@ exports.getLikeUserDetail = async (req, res, next) => {
                 final_response.push(response)
             }
 
-            if (user.participants_2 == "{}") {
+            if (user.LikeSession.participants_2[0] == undefined) {
 
                 const findUser = await userModel.findOne({
                     _id: findSession.participants[0].participants_2
@@ -5531,7 +5526,7 @@ exports.getLikeUserDetail = async (req, res, next) => {
 
                 final_response.push(response)
             } else {
-                const count = (user.participants_2)
+                const count = (user.LikeSession.participants_2)
 
                 const findUser = await userModel.findOne({
                     _id: findSession.participants[0].participants_2
@@ -5548,7 +5543,7 @@ exports.getLikeUserDetail = async (req, res, next) => {
                 final_response.push(response)
             }
 
-            if (user.participants_1 == "{}") {
+            if (user.LikeSession.participants_1[0] == undefined) {
 
                 const findUser = await userModel.findOne({
                     _id: findSession.participants[0].participants_1
@@ -5564,7 +5559,8 @@ exports.getLikeUserDetail = async (req, res, next) => {
 
                 final_response.push(response)
             } else {
-                const count = (user.participants_1.likeUserId)
+
+                const count = (user.LikeSession.participants_1)
                 console.log(count);
 
                 const findUser = await userModel.findOne({
