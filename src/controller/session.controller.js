@@ -15,7 +15,8 @@ const { log } = require("console");
 const { updateOne } = require("../model/session.model");
 const thumbUpCountInSession = require('../model/sessionThumbUp.model');
 const superListModel = require("../model/suparMatch.model");
-const rejectListModel = require("../model/rejectList.model")
+const rejectListModel = require("../model/rejectList.model");
+const { argv } = require("process");
 exports.sessionCreate = async (req, res, next) => {
     try {
 
@@ -5360,19 +5361,19 @@ exports.likeSesison = async (req, res, next) => {
                     } else {
                         await sessionComment.updateOne({
                             sessionId: req.params.session_id
-                        },{
-                            $push : {
-                                "LikeSession.participants_1": [{likeUserId: req.params.user_id}]
-    
+                        }, {
+                            $push: {
+                                "LikeSession.participants_1": [{ likeUserId: req.params.user_id }]
+
                             }
                         }
-                       )
+                        )
 
                         res.status(status.OK).json(
                             new APIResponse("like Added SuccessFully", "true", 200, "1")
                         )
                     }
-                
+
 
                 } else if ((p2).toString() == (req.params.participant_user_id).toString()) {
 
@@ -5390,13 +5391,13 @@ exports.likeSesison = async (req, res, next) => {
                     } else {
                         await sessionComment.updateOne({
                             sessionId: req.params.session_id
-                        },{
-                            $push : {
-                                "LikeSession.participants_2": [{likeUserId: req.params.user_id}]
-    
+                        }, {
+                            $push: {
+                                "LikeSession.participants_2": [{ likeUserId: req.params.user_id }]
+
                             }
                         }
-                       )
+                        )
 
                         res.status(status.OK).json(
                             new APIResponse("like Added SuccessFully", "true", 200, "1")
@@ -5420,13 +5421,13 @@ exports.likeSesison = async (req, res, next) => {
                     } else {
                         await sessionComment.updateOne({
                             sessionId: req.params.session_id
-                        },{
-                            $push : {
-                                "LikeSession.participants_3": [{likeUserId: req.params.user_id}]
-    
+                        }, {
+                            $push: {
+                                "LikeSession.participants_3": [{ likeUserId: req.params.user_id }]
+
                             }
                         }
-                       )
+                        )
 
                         res.status(status.OK).json(
                             new APIResponse("like Added SuccessFully", "true", 200, "1")
@@ -5483,7 +5484,7 @@ exports.getLikeUserDetail = async (req, res, next) => {
                     _id: findUser._id,
                     userName: findUser.firstName,
                     userProfile: findUser.photo[0] ? findUser.photo[0].res : "",
-                    totalLikeCount: 0, 
+                    totalLikeCount: 0,
                     likeStatus: 0
                 }
 
@@ -5629,13 +5630,13 @@ exports.rejectOrAccept = async (req, res, next) => {
                 // if ((data.userId).toString() == (data1).toString()) {
 
                 const user = [];
-                if((req.params.like_user_id).toString() != findSession.participants[0].participants_1){
+                if ((req.params.like_user_id).toString() != findSession.participants[0].participants_1) {
                     user.push(findSession.participants[0].participants_1)
                 }
-                 if((req.params.like_user_id).toString() != findSession.participants[0].participants_2){
+                if ((req.params.like_user_id).toString() != findSession.participants[0].participants_2) {
                     user.push(findSession.participants[0].participants_2)
                 }
-                if((req.params.like_user_id).toString() != findSession.participants[0].participants_3){
+                if ((req.params.like_user_id).toString() != findSession.participants[0].participants_3) {
                     user.push(findSession.participants[0].participants_3)
                 }
 
@@ -5778,17 +5779,18 @@ exports.rejectOrAccept = async (req, res, next) => {
                     res.status(status.OK).json(
                         new APIResponse("not any selected", "true", 200, "1",)
                     )
-                   
+
                 }
 
-                if(user[0] != undefined){
+                if (user[0] != undefined) {
 
-                    user.map(async(res) => {
+
+                    for (const res of user) {
                         const rejectList = await rejectListModel.findOne({
                             session_id: req.params.session_id,
                             userId: req.params.user_id
                         })
-    
+
                         await userModel.updateOne(
                             {
                                 _id: req.params.user_id
@@ -5796,11 +5798,11 @@ exports.rejectOrAccept = async (req, res, next) => {
                             {
                                 $pull: {
                                     noBasket: {
-                                        userId:mongoose.Types.ObjectId(res)
+                                        userId: mongoose.Types.ObjectId(res)
                                     }
                                 }
                             });
-    
+
                         await userModel.updateOne(
                             {
                                 _id: req.params.user_id
@@ -5812,7 +5814,7 @@ exports.rejectOrAccept = async (req, res, next) => {
                                     }
                                 }
                             });
-    
+
                         if (rejectList) {
                             await rejectListModel.updateOne({
                                 session_id: req.params.session_id,
@@ -5824,7 +5826,7 @@ exports.rejectOrAccept = async (req, res, next) => {
                                     }
                                 }
                             })
-    
+
                         } else {
                             const saveData = rejectListModel({
                                 session_id: req.params.session_id,
@@ -5833,13 +5835,103 @@ exports.rejectOrAccept = async (req, res, next) => {
                                     userId: mongoose.Types.ObjectId(res)
                                 }
                             })
-    
+
                             await saveData.save()
                         }
-                    })
-                   
+                    }
+
                 }
 
+
+                if (req.query.accessfrd == true) {
+                    const friendList = [];
+
+                    const findUserInRequestModel = await requestsModel.findOne({
+                        userId: req.params.user_id
+                    })
+
+                    if (findUserInRequestModel) {
+                        for (const user of findUserInRequestModel.RequestedEmails) {
+                            if (user.accepted == 2) {
+                                friendList.push(user.userId)
+                            }
+                        }
+                    }
+
+
+                    for (const notifyUser of friendList) {
+                        const findUserInUserModel = await userModel.findOne({
+                            _id: notifyUser
+                        })
+
+                        const findUser = await userModel.findOne({
+                            _id: req.params.user_id,
+                        })
+                        if (findUserInUserModel.fcm_token) {
+                            const title = findUser.firstName;
+                            const body = "super match";
+
+                            const text = "super match list";
+                            const sendBy = (findUserInUserModel._id).toString();
+                            const registrationToken = findUserInUserModel.fcm_token
+                            Notification.sendPushNotificationFCM(
+                                registrationToken,
+                                title,
+                                body,
+                                text,
+                                sendBy,
+                                true
+                            );
+                        }
+                    }
+
+                }
+
+                if (req.query.access == true) {
+
+                    const sessionIds = await sessionModel.findOne({
+                        _id: req.params.session_id
+                    })
+
+                    const paricipant = [];
+                    const p1 = sessionIds.participants[0].participants_1 == null ? "" : sessionIds.participants[0].participants_1
+                    const p2 = sessionIds.participants[0].participants_2 == null ? "" : sessionIds.participants[0].participants_2
+                    const p3 = sessionIds.participants[0].participants_3 == null ? "" : sessionIds.participants[0].participants_3
+                    if (p1) {
+                        paricipant.push((sessionIds.participants[0].participants_1).toString())
+                    } if (p2) {
+                        paricipant.push((sessionIds.participants[0].participants_2).toString())
+                    } if (p3) {
+                        paricipant.push((sessionIds.participants[0].participants_3).toString())
+                    }
+
+
+                    for (const notifyUser of paricipant) {
+                        const findUserInUserModel = await userModel.findOne({
+                            _id: notifyUser
+                        })
+
+                        const findUser = await userModel.findOne({
+                            _id: req.params.user_id,
+                        })
+                        if (findUserInUserModel.fcm_token) {
+                            const title = findUser.firstName;
+                            const body = "super match";
+
+                            const text = "super match list";
+                            const sendBy = (findUserInUserModel._id).toString();
+                            const registrationToken = findUserInUserModel.fcm_token
+                            Notification.sendPushNotificationFCM(
+                                registrationToken,
+                                title,
+                                body,
+                                text,
+                                sendBy,
+                                true
+                            );
+                        }
+                    }
+                }
                 res.status(status.OK).json(
                     new APIResponse("selecte or rejected", "true", 200, "1",)
                 )
@@ -5920,20 +6012,17 @@ exports.rejectList = async (req, res, next) => {
 exports.suparMatchList = async (req, res, next) => {
     try {
 
+        
         const findUser = await superListModel.find({
             userId: req.params.user_id
         })
 
 
-
         const final_response = [];
         const session_detail = [];
-        const sup_user_detail = []
+        const sup_user_detail = [];
         for (const data of findUser) {
-
-
             for (const data1 of data.matchUserId) {
-
                 const findUser = await userModel.findOne({
                     _id: data1.userId
                 })
@@ -5941,19 +6030,15 @@ exports.suparMatchList = async (req, res, next) => {
                     userId: findUser._id,
                     userProfile: findUser.photo[0] ? findUser.photo[0].res : ""
                 })
-
             }
 
-            const findInSessionModel = await sessionModel.findOne({
-                _id: data.session_id
-            })
-            const findUser = await userModel.findOne({
-                _id: findInSessionModel.cretedSessionUser
+            const findUsers = await userModel.findOne({
+                _id: findUser[0].userId
             })
             final_response.push({
                 sessionId: data.session_id,
-                accept_by: findInSessionModel.cretedSessionUser,
-                accept_by_user_Profile: findUser.photo[0] ? findUser.photo[0].res : "",
+                accept_by: findUser.userId,
+                accept_by_user_Profile: findUsers.photo[0] ? findUsers.photo[0].res : "",
                 accepted_list: sup_user_detail
             })
 
