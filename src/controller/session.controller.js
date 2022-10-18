@@ -109,9 +109,7 @@ exports.sessionCreate = async (req, res, next) => {
                 }
                 if (p2) {
                     var val = Math.floor(1000 + Math.random() * 9000);
-
                     invitedUsers.push(mongoose.Types.ObjectId(req.body.participants_2))
-                    invitedUsers.push(mongoose.Types.ObjectId(req.body.participants_1))
                     await sessionModel.updateOne({
                         _id: saveData._id
                     }, {
@@ -122,9 +120,7 @@ exports.sessionCreate = async (req, res, next) => {
                 }
                 if (p3) {
                     var val = Math.floor(1000 + Math.random() * 9000);
-
                     invitedUsers.push(mongoose.Types.ObjectId(req.body.participants_3))
-                    invitedUsers.push(mongoose.Types.ObjectId(req.body.participants_1))
                     await sessionModel.updateOne({
                         _id: saveData._id
                     }, {
