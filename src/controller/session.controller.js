@@ -5651,7 +5651,7 @@ exports.rejectOrAccept = async (req, res, next) => {
                     if (users[0] != undefined) {
 
 
-                        for (const res of user) {
+                        for (const res of users) {
                             const rejectList = await rejectListModel.findOne({
                                 session_id: req.params.session_id,
                                 userId: req.params.user_id
@@ -5843,7 +5843,7 @@ exports.rejectOrAccept = async (req, res, next) => {
                         if (users[0] != undefined) {
 
 
-                            for (const res of user) {
+                            for (const res of users) {
                                 const rejectList = await rejectListModel.findOne({
                                     session_id: req.params.session_id,
                                     userId: req.params.user_id
