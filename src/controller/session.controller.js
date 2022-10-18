@@ -68,15 +68,15 @@ exports.sessionCreate = async (req, res, next) => {
 
                 const userFrd = [];
                 const findUserInRequesModel = await requestsModel.findOne({
-                    userId : req.body.creted_session_user
+                    userId: req.body.creted_session_user
                 })
 
-                const allRequestedEmails = [];  
+                const allRequestedEmails = [];
                 const findUser = await requestsModel.findOne({
-                   userId : req.body.creted_session_user
+                    userId: req.body.creted_session_user
                 })
 
-            
+
                 const p1 = req.body.participants_1 ? req.body.participants_1 : ""
                 const p2 = req.body.participants_2 ? req.body.participants_2 : ""
                 const p3 = req.body.participants_3 ? req.body.participants_3 : ""
@@ -91,9 +91,6 @@ exports.sessionCreate = async (req, res, next) => {
 
                 }
 
-                console.log("allRequestedEmails" , allRequestedEmails);
-
-                // console.log("allRequestedEmails" , allRequestedEmails);
                 const invitedUsers = [];
                 if (p1) {
                     var val = Math.floor(1000 + Math.random() * 9000);
@@ -130,18 +127,14 @@ exports.sessionCreate = async (req, res, next) => {
                     })
                 }
 
-
-                // console.log("allRequestedEmails", allRequestedEmails);
-                // console.log("invitedUsers", invitedUsers);
-
                 for (const notification of allRequestedEmails) {
                     const findUser = await userModel.findOne({
                         _id: notification
                     })
 
                     if (findUser.fcm_token) {
-                        const title = "N2You";
-                        const body = `${findUserInUserModel.firstName} create session ${timeSession}`;
+                        const title = "Session Created";
+                        const body = `${findUserInUserModel.firstName} created session ${timeSession}`;
 
                         const text = "join session";
                         const sendBy = (findUserInUserModel._id).toString();
@@ -166,7 +159,7 @@ exports.sessionCreate = async (req, res, next) => {
                         }, {
                             $push: {
                                 notifications: {
-                                    notifications: `${findUserInUserModel.firstName} create session ${timeSession}`,
+                                    notifications: `${findUserInUserModel.firstName} created session ${timeSession}`,
                                     userId: findUserInUserModel._id,
                                     status: 8
                                 }
@@ -177,7 +170,7 @@ exports.sessionCreate = async (req, res, next) => {
                         const savedata = notificationModel({
                             userId: notification,
                             notifications: {
-                                notifications: `${findUserInUserModel.firstName} create session ${timeSession}`,
+                                notifications: `${findUserInUserModel.firstName} created session ${timeSession}`,
                                 userId: findUserInUserModel._id,
                                 status: 8
                             }
@@ -188,9 +181,6 @@ exports.sessionCreate = async (req, res, next) => {
                     }
                 }
 
-                console.log("invitedUsers" , invitedUsers);
-
-
                 for (const invitedUser of invitedUsers) {
 
                     const findUser = await userModel.findOne({
@@ -199,7 +189,7 @@ exports.sessionCreate = async (req, res, next) => {
 
 
                     if (findUser.fcm_token) {
-                       const title = "N2You";
+                        const title = "Session Invitation";
                         const body = `${findUserInUserModel.firstName} invited you in session ${timeSession}`;
 
                         const text = "join session";
@@ -306,10 +296,8 @@ exports.sessionCreate = async (req, res, next) => {
                         _id: notification
                     })
 
-
-                    console.log("findUser", findUser.fcm_token, findUser._id);
                     if (findUser.fcm_token) {
-                        const title = "N2You";
+                        const title = "Session Invitation";
                         const body = `${findUserInUserModel.firstName} invited you in session ${timeSession}`;
 
                         const text = "join session";
@@ -5626,7 +5614,7 @@ exports.rejectOrAccept = async (req, res, next) => {
 
                 // if ((data.userId).toString() == (data1).toString()) {
 
-               
+
                 if (req.params.like_user_id == "null") {
 
                     const p1 = findSession.participants[0].participants_1 == null ? "" : findSession.participants[0].participants_1
@@ -5701,11 +5689,114 @@ exports.rejectOrAccept = async (req, res, next) => {
                                 await saveData.save()
                             }
                         }
+
+
+
+                        if (req.query.accessfrd == true) {
+                            const friendList = [];
+
+                            const findUserInRequestModel = await requestsModel.findOne({
+                                userId: req.params.user_id
+                            })
+
+
+
+                            if (findUserInRequestModel) {
+                                for (const user of findUserInRequestModel.RequestedEmails) {
+                                    if (user.accepted == 2) {
+                                        friendList.push(user.userId)
+                                    }
+                                }
+                            }
+
+
+                            for (const notifyUser of friendList) {
+                                const findUserInUserModel = await userModel.findOne({
+                                    _id: notifyUser
+                                })
+
+                                const findUser = await userModel.findOne({
+                                    _id: req.params.user_id,
+                                })
+
+                                const requesrUser = await userModel.findOne({
+                                    _id: req.params.like_user_id
+                                })
+                                if (findUserInUserModel.fcm_token) {
+                                    const title = "No one Selected";
+                                    const body = `${findUser.firstName} hasn't selected anyone in live video!`;
+
+                                    const sendBy = (findUserInUserModel._id).toString();
+                                    const registrationToken = findUserInUserModel.fcm_token
+                                    Notification.sendPushNotificationFCM(
+                                        registrationToken,
+                                        title,
+                                        body,
+                                        text,
+                                        sendBy,
+                                        true
+                                    );
+                                }
+                            }
+
+                        }
+
+                        if (req.query.access == true) {
+
+                            const sessionIds = await sessionModel.findOne({
+                                _id: req.params.session_id
+                            })
+
+                            const paricipant = [];
+                            const p1 = sessionIds.participants[0].participants_1 == null ? "" : sessionIds.participants[0].participants_1
+                            const p2 = sessionIds.participants[0].participants_2 == null ? "" : sessionIds.participants[0].participants_2
+                            const p3 = sessionIds.participants[0].participants_3 == null ? "" : sessionIds.participants[0].participants_3
+                            if (p1) {
+                                paricipant.push((sessionIds.participants[0].participants_1).toString())
+                            } if (p2) {
+                                paricipant.push((sessionIds.participants[0].participants_2).toString())
+                            } if (p3) {
+                                paricipant.push((sessionIds.participants[0].participants_3).toString())
+                            }
+
+
+                            for (const notifyUser of paricipant) {
+                                const findUserInUserModel = await userModel.findOne({
+                                    _id: notifyUser
+                                })
+
+                                const findUser = await userModel.findOne({
+                                    _id: req.params.user_id,
+                                })
+
+                                const requesrUser = await userModel.findOne({
+                                    _id: req.params.like_user_id
+                                })
+
+                                if (findUserInUserModel.fcm_token) {
+                                    const title = "No one Selected";
+                                    const body = `${findUser.firstName} hasn't selected anyone in live video!`;
+
+                                    const sendBy = (findUserInUserModel._id).toString();
+                                    const registrationToken = findUserInUserModel.fcm_token
+                                    Notification.sendPushNotificationFCM(
+                                        registrationToken,
+                                        title,
+                                        body,
+                                        text,
+                                        sendBy,
+                                        true
+                                    );
+                                }
+                            }
+                        }
+
+
                         res.status(status.OK).json(
                             new APIResponse("accepted rejected", "true", 200, "1",)
                         )
-                  
-                    }else{
+
+                    } else {
                         res.status(status.OK).json(
                             new APIResponse("not have any participant", "true", 200, "1",)
                         )
@@ -5715,6 +5806,7 @@ exports.rejectOrAccept = async (req, res, next) => {
                         new APIResponse("not any selected", "true", 200, "1",)
                     )
                 } else {
+
                     if ((req.params.like_user_id).toString() != findSession.participants[0].participants_1) {
                         users.push(findSession.participants[0].participants_1)
                     }
@@ -5905,21 +5997,107 @@ exports.rejectOrAccept = async (req, res, next) => {
                             _id: req.params.user_id
                         })
 
-                        if (findUser.fcm_token) {
-                            const title = (user.firstName);
-                            const body = "Select in Super Match!";
-                            const text = "Session";
-                            const sendBy = (user._id).toString();
-                            const registrationToken = findUser.fcm_token
-                            Notification.sendPushNotificationFCM(
-                                registrationToken,
-                                title,
-                                body,
-                                text,
-                                sendBy,
-                                true
-                            );
+
+
+
+                        if (req.query.accessfrd == true) {
+                            const friendList = [];
+
+                            const findUserInRequestModel = await requestsModel.findOne({
+                                userId: req.params.user_id
+                            })
+
+
+
+                            if (findUserInRequestModel) {
+                                for (const user of findUserInRequestModel.RequestedEmails) {
+                                    if (user.accepted == 2) {
+                                        friendList.push(user.userId)
+                                    }
+                                }
+                            }
+
+
+                            for (const notifyUser of friendList) {
+                                const findUserInUserModel = await userModel.findOne({
+                                    _id: notifyUser
+                                })
+
+                                const findUser = await userModel.findOne({
+                                    _id: req.params.user_id,
+                                })
+
+                                const requesrUser = await userModel.findOne({
+                                    _id: req.params.like_user_id
+                                })
+                                if (findUserInUserModel.fcm_token) {
+                                    const title = "New Super Match";
+                                    const body = `${findUser.firstName} and ${requesrUser.firstName} are now super match`;
+
+                                    const sendBy = (findUserInUserModel._id).toString();
+                                    const registrationToken = findUserInUserModel.fcm_token
+                                    Notification.sendPushNotificationFCM(
+                                        registrationToken,
+                                        title,
+                                        body,
+                                        text,
+                                        sendBy,
+                                        true
+                                    );
+                                }
+                            }
+
                         }
+
+                        if (req.query.access == true) {
+
+                            const sessionIds = await sessionModel.findOne({
+                                _id: req.params.session_id
+                            })
+
+                            const paricipant = [];
+                            const p1 = sessionIds.participants[0].participants_1 == null ? "" : sessionIds.participants[0].participants_1
+                            const p2 = sessionIds.participants[0].participants_2 == null ? "" : sessionIds.participants[0].participants_2
+                            const p3 = sessionIds.participants[0].participants_3 == null ? "" : sessionIds.participants[0].participants_3
+                            if (p1) {
+                                paricipant.push((sessionIds.participants[0].participants_1).toString())
+                            } if (p2) {
+                                paricipant.push((sessionIds.participants[0].participants_2).toString())
+                            } if (p3) {
+                                paricipant.push((sessionIds.participants[0].participants_3).toString())
+                            }
+
+
+                            for (const notifyUser of paricipant) {
+                                const findUserInUserModel = await userModel.findOne({
+                                    _id: notifyUser
+                                })
+
+                                const findUser = await userModel.findOne({
+                                    _id: req.params.user_id,
+                                })
+
+                                const requesrUser = await userModel.findOne({
+                                    _id: req.params.like_user_id
+                                })
+
+                                if (findUserInUserModel.fcm_token) {
+                                    const title = "New Super Match";
+                                    const body = `${findUser.firstName} and ${requesrUser.firstName} are now super match`;
+                                    const sendBy = (findUserInUserModel._id).toString();
+                                    const registrationToken = findUserInUserModel.fcm_token
+                                    Notification.sendPushNotificationFCM(
+                                        registrationToken,
+                                        title,
+                                        body,
+                                        text,
+                                        sendBy,
+                                        true
+                                    );
+                                }
+                            }
+                        }
+
 
                         res.status(status.OK).json(
                             new APIResponse("selecte or rejected", "true", 200, "1",)
@@ -5933,98 +6111,6 @@ exports.rejectOrAccept = async (req, res, next) => {
                     }
                 }
 
-
-
-
-                if (req.query.accessfrd == true) {
-                    const friendList = [];
-
-                    const findUserInRequestModel = await requestsModel.findOne({
-                        userId: req.params.user_id
-                    })
-
-                    if (findUserInRequestModel) {
-                        for (const user of findUserInRequestModel.RequestedEmails) {
-                            if (user.accepted == 2) {
-                                friendList.push(user.userId)
-                            }
-                        }
-                    }
-
-
-                    for (const notifyUser of friendList) {
-                        const findUserInUserModel = await userModel.findOne({
-                            _id: notifyUser
-                        })
-
-                        const findUser = await userModel.findOne({
-                            _id: req.params.user_id,
-                        })
-                        if (findUserInUserModel.fcm_token) {
-                            const title = findUser.firstName;
-                            const body = "super match";
-
-                            const text = "super match list";
-                            const sendBy = (findUserInUserModel._id).toString();
-                            const registrationToken = findUserInUserModel.fcm_token
-                            Notification.sendPushNotificationFCM(
-                                registrationToken,
-                                title,
-                                body,
-                                text,
-                                sendBy,
-                                true
-                            );
-                        }
-                    }
-
-                }
-
-                if (req.query.access == true) {
-
-                    const sessionIds = await sessionModel.findOne({
-                        _id: req.params.session_id
-                    })
-
-                    const paricipant = [];
-                    const p1 = sessionIds.participants[0].participants_1 == null ? "" : sessionIds.participants[0].participants_1
-                    const p2 = sessionIds.participants[0].participants_2 == null ? "" : sessionIds.participants[0].participants_2
-                    const p3 = sessionIds.participants[0].participants_3 == null ? "" : sessionIds.participants[0].participants_3
-                    if (p1) {
-                        paricipant.push((sessionIds.participants[0].participants_1).toString())
-                    } if (p2) {
-                        paricipant.push((sessionIds.participants[0].participants_2).toString())
-                    } if (p3) {
-                        paricipant.push((sessionIds.participants[0].participants_3).toString())
-                    }
-
-
-                    for (const notifyUser of paricipant) {
-                        const findUserInUserModel = await userModel.findOne({
-                            _id: notifyUser
-                        })
-
-                        const findUser = await userModel.findOne({
-                            _id: req.params.user_id,
-                        })
-                        if (findUserInUserModel.fcm_token) {
-                            const title = findUser.firstName;
-                            const body = "super match";
-
-                            const text = "super match list";
-                            const sendBy = (findUserInUserModel._id).toString();
-                            const registrationToken = findUserInUserModel.fcm_token
-                            Notification.sendPushNotificationFCM(
-                                registrationToken,
-                                title,
-                                body,
-                                text,
-                                sendBy,
-                                true
-                            );
-                        }
-                    }
-                }
 
             } else {
                 res.status(status.NOT_FOUND).json(

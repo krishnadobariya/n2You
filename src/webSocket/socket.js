@@ -2051,45 +2051,6 @@ function socket(io) {
                 io.to(userRoom).emit("onIntUser", response);
             }
 
-            // if(findUser == null){
-            //     const response = {
-            //         intUserId : val
-            //     }
-            //     const userRoom = `User${arg.create_session_user}`
-            //     console.log("userroom" , userRoom);
-
-            //     io.to(userRoom).emit("onIntUser", response);
-            // }else if(findUser.joinUser[0] == undefined){
-            //     const response = {
-            //         intUserId : val
-            //     }
-            //     const userRoom = `User${arg.create_session_user}`
-            //     console.log("userroom" , userRoom);
-            //     io.to(userRoom).emit("onIntUser", response);
-            // }else{
-            //     for(const data of findUser.joinUser){
-            //         if(data.userId == arg.create_session_user){
-            //             const response = {
-            //                 intUserId : data.intId
-            //             }
-            //             const userRoom = `User${arg.create_session_user}`
-            //             console.log("userroom" , userRoom);
-            //             io.to(userRoom).emit("onIntUser", response);
-
-            //         }else{
-            //             const response = {
-            //                 intUserId : val
-            //             }
-            //             const userRoom = `User${arg.create_session_user}`
-            //             console.log("userroom" , userRoom);
-            //             io.to(userRoom).emit("onIntUser", response);
-
-            //         }
-            //     }
-            // }
-
-
-
             if (findIdInSession) {
 
                 if ((findIdInSession.cretedSessionUser).toString() == (arg.create_session_user).toString()) {
@@ -2115,18 +2076,18 @@ function socket(io) {
                         const p2 = findIdInSession.participants[0].participants_2 == null ? "" : findIdInSession.participants[0].participants_2
                         const p3 = findIdInSession.participants[0].participants_3 == null ? "" : findIdInSession.participants[0].participants_3
 
-                        const findUser = await userModel.find({
-                            _id: {
-                                $ne: arg.create_session_user
-                            },
-                            polyDating: 0
-                        })
+                        const findUser = await requestModel.findOne({
+                            userId : arg.create_session_user
+                         })
 
-                        for (const allRequestedEmail of findUser) {
-                            if (((allRequestedEmail._id).toString() != (p1).toString()) && ((allRequestedEmail._id).toString() != (p2).toString()) && ((allRequestedEmail._id).toString() != (p3).toString())) {
-                                allRequestedEmails.push(allRequestedEmail._id)
+                         for (const allRequestedEmail of findUser.RequestedEmails) {
+
+                            if (((allRequestedEmail.userId).toString() != (p1).toString()) && ((allRequestedEmail.userId).toString() != (p2).toString()) && ((allRequestedEmail.userId).toString() != (p3).toString())) {
+                                allRequestedEmails.push(allRequestedEmail.userId)
                             }
+        
                         }
+        
 
 
                         const invitedUsers = [];
@@ -2217,8 +2178,8 @@ function socket(io) {
                                 _id: findIdInSession.cretedSessionUser
                             })
                             if (findUser.fcm_token) {
-                                const title = findCreateSessionUser.firstName;
-                                const body = `session started which one is created by ${findCreateSessionUser.firstName}`;
+                                const title = `${findCreateSessionUser.firstName} started a live video`;
+                                const body = `Watch live video now! Enjoy`;
 
                                 const text = "join session";
                                 const sendBy = (findCreateSessionUser._id).toString();
@@ -2304,8 +2265,8 @@ function socket(io) {
                             })
 
                             if (findUser.fcm_token) {
-                                const title = findCreateSessionUser.firstName;
-                                const body = `session started which one is created by ${findCreateSessionUser.firstName}`;
+                                const title = `${findCreateSessionUser.firstName} started a live video`;
+                                const body = `Watch live video now! Enjoy`;
 
                                 const text = "join session";
                                 const sendBy = (findCreateSessionUser._id).toString();
@@ -2411,20 +2372,20 @@ function socket(io) {
                             _id: findIdInSession.participants[0].participants_1
                         })
                         if (findUser.fcm_token) {
-                            const title = findCreateSessionUser.firstName;
-                            const body = `session is joing by ${findCreateSessionUser.firstName}`;
+                            // const title = findCreateSessionUser.firstName;
+                            // const body = `session is joing by ${findCreateSessionUser.firstName}`;
 
-                            const text = "join session";
-                            const sendBy = (findCreateSessionUser._id).toString();
-                            const registrationToken = findUser.fcm_token
-                            Notification.sendPushNotificationFCM(
-                                registrationToken,
-                                title,
-                                body,
-                                text,
-                                sendBy,
-                                true
-                            );
+                            // const text = "join session";
+                            // const sendBy = (findCreateSessionUser._id).toString();
+                            // const registrationToken = findUser.fcm_token
+                            // Notification.sendPushNotificationFCM(
+                            //     registrationToken,
+                            //     title,
+                            //     body,
+                            //     text,
+                            //     sendBy,
+                            //     true
+                            // );
                         }
 
 
@@ -2519,20 +2480,20 @@ function socket(io) {
                         })
 
                         if (findUser.fcm_token) {
-                            const title = findCreateSessionUser.firstName;
-                            const body = `session is joing by ${findCreateSessionUser.firstName}`;
+                            // const title = findCreateSessionUser.firstName;
+                            // const body = `session is joing by ${findCreateSessionUser.firstName}`;
 
-                            const text = "join session";
-                            const sendBy = (findCreateSessionUser._id).toString();
-                            const registrationToken = findUser.fcm_token
-                            Notification.sendPushNotificationFCM(
-                                registrationToken,
-                                title,
-                                body,
-                                text,
-                                sendBy,
-                                true
-                            );
+                            // const text = "join session";
+                            // const sendBy = (findCreateSessionUser._id).toString();
+                            // const registrationToken = findUser.fcm_token
+                            // Notification.sendPushNotificationFCM(
+                            //     registrationToken,
+                            //     title,
+                            //     body,
+                            //     text,
+                            //     sendBy,
+                            //     true
+                            // );
                         }
 
 
@@ -2627,20 +2588,20 @@ function socket(io) {
                             _id: findIdInSession.participants[0].participants_3
                         })
                         if (findUser.fcm_token) {
-                            const title = findCreateSessionUser.firstName;
-                            const body = `session is joing by ${findCreateSessionUser.firstName}`;
+                            // const title = findCreateSessionUser.firstName;
+                            // const body = `session is joing by ${findCreateSessionUser.firstName}`;
 
-                            const text = "join session";
-                            const sendBy = (findCreateSessionUser._id).toString();
-                            const registrationToken = findUser.fcm_token
-                            Notification.sendPushNotificationFCM(
-                                registrationToken,
-                                title,
-                                body,
-                                text,
-                                sendBy,
-                                true
-                            );
+                            // const text = "join session";
+                            // const sendBy = (findCreateSessionUser._id).toString();
+                            // const registrationToken = findUser.fcm_token
+                            // Notification.sendPushNotificationFCM(
+                            //     registrationToken,
+                            //     title,
+                            //     body,
+                            //     text,
+                            //     sendBy,
+                            //     true
+                            // );
                         }
 
 
@@ -2714,20 +2675,20 @@ function socket(io) {
                             _id: findIdInSession.participants[0].participants_3
                         })
                         if (findUser.fcm_token) {
-                            const title = findCreateSessionUser.firstName;
-                            const body = `session is joing by ${findCreateSessionUser.firstName}`;
+                            // const title = findCreateSessionUser.firstName;
+                            // const body = `session is joing by ${findCreateSessionUser.firstName}`;
 
-                            const text = "join session";
-                            const sendBy = (findCreateSessionUser._id).toString();
-                            const registrationToken = findUser.fcm_token
-                            Notification.sendPushNotificationFCM(
-                                registrationToken,
-                                title,
-                                body,
-                                text,
-                                sendBy,
-                                true
-                            );
+                            // const text = "join session";
+                            // const sendBy = (findCreateSessionUser._id).toString();
+                            // const registrationToken = findUser.fcm_token
+                            // Notification.sendPushNotificationFCM(
+                            //     registrationToken,
+                            //     title,
+                            //     body,
+                            //     text,
+                            //     sendBy,
+                            //     true
+                            // );
                         }
 
 
@@ -3404,6 +3365,7 @@ function socket(io) {
 
         })
 
+
         socket.on("liveSession", async (arg) => {
 
             console.log("user_id", arg.user_id);
@@ -3800,21 +3762,21 @@ function socket(io) {
                             _id: users
                         })
 
-                        if (user.fcm_token) {
-                            const title = (findUser.firstName);
-                            const body = "Allow In Session!";
-                            const text = "Session";
-                            const sendBy = (findUser._id).toString();
-                            const registrationToken = user.fcm_token
-                            Notification.sendPushNotificationFCM(
-                                registrationToken,
-                                title,
-                                body,
-                                text,
-                                sendBy,
-                                true
-                            );
-                        }
+                        // if (user.fcm_token) {
+                        //     const title = (findUser.firstName);
+                        //     const body = "Allow In Session!";
+                        //     const text = "Session";
+                        //     const sendBy = (findUser._id).toString();
+                        //     const registrationToken = user.fcm_token
+                        //     Notification.sendPushNotificationFCM(
+                        //         registrationToken,
+                        //         title,
+                        //         body,
+                        //         text,
+                        //         sendBy,
+                        //         true
+                        //     );
+                        // }
 
                     }
 
@@ -3897,21 +3859,21 @@ function socket(io) {
                                 _id: users
                             })
 
-                            if (user.fcm_token) {
-                                const title = (findUser.firstName);
-                                const body = "timeOut!";
-                                const text = "Session";
-                                const sendBy = (findUser._id).toString();
-                                const registrationToken = user.fcm_token
-                                Notification.sendPushNotificationFCM(
-                                    registrationToken,
-                                    title,
-                                    body,
-                                    text,
-                                    sendBy,
-                                    true
-                                );
-                            }
+                            // if (user.fcm_token) {
+                            //     const title = (findUser.firstName);
+                            //     const body = "timeOut!";
+                            //     const text = "Session";
+                            //     const sendBy = (findUser._id).toString();
+                            //     const registrationToken = user.fcm_token
+                            //     Notification.sendPushNotificationFCM(
+                            //         registrationToken,
+                            //         title,
+                            //         body,
+                            //         text,
+                            //         sendBy,
+                            //         true
+                            //     );
+                            // }
 
                         }
 
