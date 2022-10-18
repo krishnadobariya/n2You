@@ -5596,7 +5596,7 @@ exports.getLikeUserDetail = async (req, res, next) => {
 
 exports.rejectOrAccept = async (req, res, next) => {
     try {
-        const user = [];
+        const users = [];
         const findSession = await sessionModel.findOne({
             _id: req.params.session_id
         })
@@ -5638,17 +5638,17 @@ exports.rejectOrAccept = async (req, res, next) => {
                     const p3 = findSession.participants[0].participants_3 == null ? "" : findSession.participants[0].participants_3
 
                     if (p1) {
-                        user.push(p1)
+                        users.push(p1)
                     }
                     if (p2) {
-                        user.push(p2)
+                        users.push(p2)
                     }
                     if (p3) {
-                        user.push(p3)
+                        users.push(p3)
                     }
 
 
-                    if (user[0] != undefined) {
+                    if (users[0] != undefined) {
 
 
                         for (const res of user) {
@@ -5720,13 +5720,13 @@ exports.rejectOrAccept = async (req, res, next) => {
                     )
                 } else {
                     if ((req.params.like_user_id).toString() != findSession.participants[0].participants_1) {
-                        user.push(findSession.participants[0].participants_1)
+                        users.push(findSession.participants[0].participants_1)
                     }
                     if ((req.params.like_user_id).toString() != findSession.participants[0].participants_2) {
-                        user.push(findSession.participants[0].participants_2)
+                        users.push(findSession.participants[0].participants_2)
                     }
                     if ((req.params.like_user_id).toString() != findSession.participants[0].participants_3) {
-                        user.push(findSession.participants[0].participants_3)
+                        users.push(findSession.participants[0].participants_3)
                     }
 
 
@@ -5840,7 +5840,7 @@ exports.rejectOrAccept = async (req, res, next) => {
                                 }
                             });
 
-                        if (user[0] != undefined) {
+                        if (users[0] != undefined) {
 
 
                             for (const res of user) {
