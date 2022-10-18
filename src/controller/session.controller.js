@@ -84,7 +84,11 @@ exports.sessionCreate = async (req, res, next) => {
 
 
                 for (const allRequestedEmail of findUser.RequestedEmails) {
+
+                    if (((allRequestedEmail.userId).toString() != (p1).toString()) && ((allRequestedEmail.userId).toString() != (p2).toString()) && ((allRequestedEmail.userId).toString() != (p3).toString())) {
                         allRequestedEmails.push(allRequestedEmail.userId)
+                    }
+
                 }
 
 
@@ -187,6 +191,65 @@ exports.sessionCreate = async (req, res, next) => {
                     }
                 }
 
+
+                for (const invitedUser of invitedUsers) {
+
+                    const findUser = await userModel.findOne({
+                        _id: invitedUser
+                    })
+
+
+                    if (findUser.fcm_token) {
+                       const title = "N2You";
+                        const body = `${findUserInUserModel.firstName} invited you in session ${timeSession}`;
+
+                        const text = "join session";
+                        const sendBy = (findUserInUserModel._id).toString();
+                        const registrationToken = findUser.fcm_token
+                        Notification.sendPushNotificationFCM(
+                            registrationToken,
+                            title,
+                            body,
+                            text,
+                            sendBy,
+                            true
+                        );
+
+                    }
+
+
+                    const findInNotification = await notificationModel.findOne({
+                        userId: invitedUser
+                    })
+
+                    if (findInNotification) {
+
+                        await notificationModel.updateOne({
+                            userId: invitedUser
+                        }, {
+                            $push: {
+                                notifications: {
+                                    notifications: `${findUserInUserModel.firstName} invited you in session ${timeSession}`,
+                                    userId: findUserInUserModel._id,
+                                    status: 8
+                                }
+                            }
+                        })
+                    } else {
+
+                        const savedata = notificationModel({
+                            userId: invitedUser,
+                            notifications: {
+                                notifications: `${findUserInUserModel.firstName} invited you in session ${timeSession}`,
+                                userId: findUserInUserModel._id,
+                                status: 8
+                            }
+                        })
+
+                        await savedata.save();
+
+                    }
+                }
             } else {
 
                 const allRequestedEmails = [];
