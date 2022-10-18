@@ -6049,7 +6049,7 @@ exports.rejectList = async (req, res, next) => {
                             accept_by_user_Profile: findUsers.photo[0] ? findUsers.photo[0].res : "",
                             userId: findUser._id,
                             userProfile: findUser.photo[0] ? findUser.photo[0].res : "",
-                            status: 0,
+                            status: 3,
                             userName:findUser.firstName,
                             room: ""
                         })
@@ -6061,7 +6061,7 @@ exports.rejectList = async (req, res, next) => {
                         accept_by_user_Profile: findUsers.photo[0] ? findUsers.photo[0].res : "",
                         userId: findUser._id,
                         userProfile: findUser.photo[0] ? findUser.photo[0].res : "",
-                        status: 0,
+                        status: 3,
                         userName:findUser.firstName,
                         room: ""
                     })
@@ -6176,7 +6176,7 @@ exports.suparMatchList = async (req, res, next) => {
                             userId: findUser._id,
                             userName:findUser.firstName,
                             userProfile: findUser.photo[0] ? findUser.photo[0].res : "",
-                            status: 0,
+                            status: 3,
                             room: ""
                         })
                     }
@@ -6188,7 +6188,7 @@ exports.suparMatchList = async (req, res, next) => {
                         userId: findUser._id,
                         userName:findUser.firstName,
                         userProfile: findUser.photo[0] ? findUser.photo[0].res : "",
-                        status: 0,
+                        status: 3,
                         room: ""
                     })
                 }
@@ -6203,6 +6203,33 @@ exports.suparMatchList = async (req, res, next) => {
         res.status(status.OK).json(
             new APIResponse("get accept list", "true", 200, "1", sup_user_detail)
         )
+    } catch (error) {
+        console.log("error", error);
+        res.status(status.INTERNAL_SERVER_ERROR).json(
+            new APIResponse("Something Went Wrong", "false", 500, "0", error.message)
+        )
+    }
+}
+
+exports.moveBasketInRejectList = async(req,res,next) => {
+    try {
+
+        const findUserInSession = await sessionModel.findOne({
+            _id : req.params.session_id
+        })
+        
+        if(findUserInSession){
+
+                if(req.query.status == 1){
+
+                }
+            
+
+        }else{
+            res.status(status.NOT_FOUND).json(
+                new APIResponse("session not found", "true", 200, "1")
+            )
+        }
     } catch (error) {
         console.log("error", error);
         res.status(status.INTERNAL_SERVER_ERROR).json(
