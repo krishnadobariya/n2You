@@ -143,7 +143,7 @@ exports.sessionCreate = async (req, res, next) => {
                     })
 
                     if (findUser.fcm_token) {
-                        const title = findUserInUserModel.firstName;
+                        const title = "N2You";
                         const body = `${findUserInUserModel.firstName} create session ${timeSession}`;
 
                         const text = "join session";
@@ -200,7 +200,7 @@ exports.sessionCreate = async (req, res, next) => {
 
 
                     if (findUser.fcm_token) {
-                        const title = findUserInUserModel.firstName;
+                       const title = "N2You";
                         const body = `${findUserInUserModel.firstName} invited you in session ${timeSession}`;
 
                         const text = "join session";
@@ -310,7 +310,7 @@ exports.sessionCreate = async (req, res, next) => {
 
                     console.log("findUser", findUser.fcm_token, findUser._id);
                     if (findUser.fcm_token) {
-                        const title = findUserInUserModel.firstName;
+                        const title = "N2You";
                         const body = `${findUserInUserModel.firstName} invited you in session ${timeSession}`;
 
                         const text = "join session";
