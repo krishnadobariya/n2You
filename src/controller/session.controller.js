@@ -5739,7 +5739,7 @@ exports.rejectOrAccept = async (req, res, next) => {
 
                         }
 
-                        console.log("eq.query.access" , eq.query.access);
+                        console.log("eq.query.access" , req.query.access);
                         if (req.query.access == "true") {
 
                             const sessionIds = await sessionModel.findOne({
