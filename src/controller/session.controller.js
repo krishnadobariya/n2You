@@ -5631,7 +5631,7 @@ exports.rejectOrAccept = async (req, res, next) => {
 
                     if (users[0] != undefined) {
 
-
+                        console.log("req.pa" , req.params.user_id);
                         for (const res of users) {
                             const rejectList = await rejectListModel.findOne({
                                 session_id: req.params.session_id,
@@ -5718,9 +5718,6 @@ exports.rejectOrAccept = async (req, res, next) => {
                                     _id: req.params.user_id,
                                 })
 
-                                const requesrUser = await userModel.findOne({
-                                    _id: req.params.like_user_id
-                                })
                                 if (findUserInUserModel.fcm_token) {
                                     const title = "No one Selected";
                                     const body = `${findUser.firstName} hasn't selected anyone in live video!`;
@@ -5770,9 +5767,7 @@ exports.rejectOrAccept = async (req, res, next) => {
                                     _id: req.params.user_id,
                                 })
 
-                                const requesrUser = await userModel.findOne({
-                                    _id: req.params.like_user_id
-                                })
+                                
 
                                 if (findUserInUserModel.fcm_token) {
                                     const title = "No one Selected";
