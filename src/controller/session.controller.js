@@ -66,30 +66,27 @@ exports.sessionCreate = async (req, res, next) => {
 
             if (req.body.room_type == "Public") {
 
-                const allRequestedEmails = [];
-                const findUser = await userModel.find({
-                    polyDating: 0,
-                    _id: {
-                        $ne: mongoose.Types.ObjectId(req.body.creted_session_user)
-                    }
+                const userFrd = [];
+                const findUserInRequesModel = await requestsModel.findOne({
+                    userId : req.body.creted_session_user
                 })
 
-                // console.log(findUser);
-                for (const find of findUser) {
-                    console.log(find._id);
-                }
+                const allRequestedEmails = [];  
+                const findUser = await requestsModel.findOne({
+                   userId : req.body.creted_session_user
+                })
 
-
+            
                 const p1 = req.body.participants_1 ? req.body.participants_1 : ""
                 const p2 = req.body.participants_2 ? req.body.participants_2 : ""
                 const p3 = req.body.participants_3 ? req.body.participants_3 : ""
 
 
 
-                for (const allRequestedEmail of findUser) {
+                for (const allRequestedEmail of findUser.RequestedEmails) {
 
-                    if (((allRequestedEmail._id).toString() != (p1).toString()) && ((allRequestedEmail._id).toString() != (p2).toString()) && ((allRequestedEmail._id).toString() != (p3).toString())) {
-                        allRequestedEmails.push(allRequestedEmail._id)
+                    if (((allRequestedEmail.userId).toString() != (p1).toString()) && ((allRequestedEmail.userId).toString() != (p2).toString()) && ((allRequestedEmail.userId).toString() != (p3).toString())) {
+                        allRequestedEmails.push(allRequestedEmail.userId)
                     }
 
                 }
