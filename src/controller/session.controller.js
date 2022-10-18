@@ -91,6 +91,7 @@ exports.sessionCreate = async (req, res, next) => {
 
                 }
 
+                console.log("allRequestedEmails" , allRequestedEmails);
 
                 // console.log("allRequestedEmails" , allRequestedEmails);
                 const invitedUsers = [];
@@ -190,6 +191,8 @@ exports.sessionCreate = async (req, res, next) => {
 
                     }
                 }
+
+                console.log("invitedUsers" , invitedUsers);
 
 
                 for (const invitedUser of invitedUsers) {
