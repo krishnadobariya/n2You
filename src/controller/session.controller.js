@@ -6175,6 +6175,7 @@ exports.suparMatchList = async (req, res, next) => {
                                             userId: findUser._id,
                                             userProfile: findUser.photo[0] ? findUser.photo[0].res : "",
                                             status: user.accepted,
+                                            userName:findUser.firstName,
                                             room: ""
                                         })
                                     }
