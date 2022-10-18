@@ -30,7 +30,7 @@ exports.sendPushNotificationFCM = (registrationToken, title, body, sendBy, flag)
 
         admin.messaging().sendToDevice(registrationToken, payload, options)
             .then(function (response) {
-                // console.log("Successfully sent message:", response);
+                console.log("Successfully sent message:", response);
 
             })
             .catch(function (error) {
