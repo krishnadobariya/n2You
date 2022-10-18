@@ -5596,7 +5596,7 @@ exports.getLikeUserDetail = async (req, res, next) => {
 
 exports.rejectOrAccept = async (req, res, next) => {
     try {
-
+        const user = [];
         const findSession = await sessionModel.findOne({
             _id: req.params.session_id
         })
@@ -5630,7 +5630,7 @@ exports.rejectOrAccept = async (req, res, next) => {
 
                 // if ((data.userId).toString() == (data1).toString()) {
 
-                const user = [];
+               
                 if (req.params.like_user_id == "null") {
 
                     const p1 = findSession.participants[0].participants_1 == null ? "" : findSession.participants[0].participants_1
