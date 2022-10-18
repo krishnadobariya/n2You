@@ -5975,35 +5975,35 @@ exports.rejectList = async (req, res, next) => {
                     _id: data1.userId
                 })
                 const findRequestModel = await requestsModel.findOne({
-                    userId : req.params.user_id
+                    userId: req.params.user_id
                 })
                 const findUsers = await userModel.findOne({
-                    _id:  data1.userId
+                    _id: data1.userId
                 })
-                if(findRequestModel){
+                if (findRequestModel) {
 
                     const findData = await requestsModel.findOne({
-                        userId : req.params.user_id,
-                        "RequestedEmails.userId" : findUser._id
+                        userId: req.params.user_id,
+                        "RequestedEmails.userId": findUser._id
                     })
-                   
-                    if(findData){
-                        for(const user of findRequestModel.RequestedEmails){
-                       
-                            if((user.userId).toString() == (findUser._id).toString()){
-                                if(user.accepted == 2){
+
+                    if (findData) {
+                        for (const user of findRequestModel.RequestedEmails) {
+
+                            if ((user.userId).toString() == (findUser._id).toString()) {
+                                if (user.accepted == 2) {
 
                                     const findChatRoomId1 = await chatRoomModel.findOne({
-                                        user1:  findUser._id,
+                                        user1: findUser._id,
                                         user2: req.params.user_id
                                     })
-                        
+
                                     const findChatRoomId2 = await chatRoomModel.findOne({
-                                        user1:req.params.user_id,
-                                        user2:  findUser._id
+                                        user1: req.params.user_id,
+                                        user2: findUser._id
                                     })
 
-                                    if(findChatRoomId1){
+                                    if (findChatRoomId1) {
                                         rej_user_detail.push({
                                             sessionId: data.session_id,
                                             accept_by: findUser.userId,
@@ -6011,10 +6011,10 @@ exports.rejectList = async (req, res, next) => {
                                             userId: findUser._id,
                                             userProfile: findUser.photo[0] ? findUser.photo[0].res : "",
                                             status: user.accepted,
-                                            userName:findUser.firstName,
+                                            userName: findUser.firstName,
                                             room: findChatRoomId1._id
                                         })
-                                    }else if(findChatRoomId2){
+                                    } else if (findChatRoomId2) {
                                         rej_user_detail.push({
                                             sessionId: data.session_id,
                                             accept_by: findUser.userId,
@@ -6022,10 +6022,10 @@ exports.rejectList = async (req, res, next) => {
                                             userId: findUser._id,
                                             userProfile: findUser.photo[0] ? findUser.photo[0].res : "",
                                             status: user.accepted,
-                                            userName:findUser.firstName,
+                                            userName: findUser.firstName,
                                             room: findChatRoomId2._id
                                         })
-                                    }else{
+                                    } else {
                                         rej_user_detail.push({
                                             sessionId: data.session_id,
                                             accept_by: findUser.userId,
@@ -6033,12 +6033,12 @@ exports.rejectList = async (req, res, next) => {
                                             userId: findUser._id,
                                             userProfile: findUser.photo[0] ? findUser.photo[0].res : "",
                                             status: user.accepted,
-                                            userName:findUser.firstName,
+                                            userName: findUser.firstName,
                                             room: ""
                                         })
                                     }
-                                   
-                                }else{
+
+                                } else {
                                     rej_user_detail.push({
                                         sessionId: data.session_id,
                                         accept_by: findUser.userId,
@@ -6046,14 +6046,14 @@ exports.rejectList = async (req, res, next) => {
                                         userId: findUser._id,
                                         userProfile: findUser.photo[0] ? findUser.photo[0].res : "",
                                         status: user.accepted,
-                                        userName:findUser.firstName,
+                                        userName: findUser.firstName,
                                         room: ""
                                     })
                                 }
-                               
+
                             }
                         }
-                    }else{
+                    } else {
                         rej_user_detail.push({
                             sessionId: data.session_id,
                             accept_by: findUser.userId,
@@ -6061,11 +6061,11 @@ exports.rejectList = async (req, res, next) => {
                             userId: findUser._id,
                             userProfile: findUser.photo[0] ? findUser.photo[0].res : "",
                             status: 3,
-                            userName:findUser.firstName,
+                            userName: findUser.firstName,
                             room: ""
                         })
                     }
-                }else{
+                } else {
                     rej_user_detail.push({
                         sessionId: data.session_id,
                         accept_by: findUser.userId,
@@ -6073,11 +6073,11 @@ exports.rejectList = async (req, res, next) => {
                         userId: findUser._id,
                         userProfile: findUser.photo[0] ? findUser.photo[0].res : "",
                         status: 3,
-                        userName:findUser.firstName,
+                        userName: findUser.firstName,
                         room: ""
                     })
                 }
-               
+
 
             }
         }
@@ -6098,51 +6098,51 @@ exports.rejectList = async (req, res, next) => {
 exports.suparMatchList = async (req, res, next) => {
     try {
 
-        
+
         const findUser = await superListModel.find({
             userId: req.params.user_id
         })
 
         const sup_user_detail = [];
         for (const data of findUser) {
-            console.log("data.matchUserId" , data.matchUserId);
+            console.log("data.matchUserId", data.matchUserId);
             for (const data1 of data.matchUserId) {
                 const findUser = await userModel.findOne({
                     _id: data1.userId
                 })
                 const findRequestModel = await requestsModel.findOne({
-                    userId : req.params.user_id
+                    userId: req.params.user_id
                 })
                 const findUsers = await userModel.findOne({
-                    _id:  data1.userId
+                    _id: data1.userId
                 })
-                if(findRequestModel){
+                if (findRequestModel) {
 
                     const findData = await requestsModel.findOne({
-                        userId : req.params.user_id,
-                        "RequestedEmails.userId" : findUser._id
+                        userId: req.params.user_id,
+                        "RequestedEmails.userId": findUser._id
                     })
-                  
-                    if(findData){
-                        for(const user of findRequestModel.RequestedEmails){
+
+                    if (findData) {
+                        for (const user of findRequestModel.RequestedEmails) {
                             console.log(user.userId);
-                            console.log("dd" , findUser._id);
-                            if((user.userId).toString() == (findUser._id).toString()){
-                                if(user.accepted == 2){
+                            console.log("dd", findUser._id);
+                            if ((user.userId).toString() == (findUser._id).toString()) {
+                                if (user.accepted == 2) {
 
                                     const findChatRoomId1 = await chatRoomModel.findOne({
-                                        user1:  findUser._id,
+                                        user1: findUser._id,
                                         user2: req.params.user_id
                                     })
-                        
+
                                     const findChatRoomId2 = await chatRoomModel.findOne({
-                                        user1:req.params.user_id,
-                                        user2:  findUser._id
+                                        user1: req.params.user_id,
+                                        user2: findUser._id
                                     })
 
-                                    
 
-                                    if(findChatRoomId1){
+
+                                    if (findChatRoomId1) {
 
                                         sup_user_detail.push({
                                             sessionId: data.session_id,
@@ -6151,11 +6151,11 @@ exports.suparMatchList = async (req, res, next) => {
                                             userId: findUser._id,
                                             userProfile: findUser.photo[0] ? findUser.photo[0].res : "",
                                             status: user.accepted,
-                                            userName:findUser.firstName,
+                                            userName: findUser.firstName,
                                             room: findChatRoomId1._id
                                         })
 
-                                    }else if(findChatRoomId2){
+                                    } else if (findChatRoomId2) {
 
                                         sup_user_detail.push({
                                             sessionId: data.session_id,
@@ -6164,10 +6164,10 @@ exports.suparMatchList = async (req, res, next) => {
                                             userId: findUser._id,
                                             userProfile: findUser.photo[0] ? findUser.photo[0].res : "",
                                             status: user.accepted,
-                                            userName:findUser.firstName,
+                                            userName: findUser.firstName,
                                             room: findChatRoomId2._id
                                         })
-                                    }else{
+                                    } else {
                                         sup_user_detail.push({
                                             sessionId: data.session_id,
                                             accept_by: findUser.userId,
@@ -6175,55 +6175,55 @@ exports.suparMatchList = async (req, res, next) => {
                                             userId: findUser._id,
                                             userProfile: findUser.photo[0] ? findUser.photo[0].res : "",
                                             status: user.accepted,
-                                            userName:findUser.firstName,
+                                            userName: findUser.firstName,
                                             room: ""
                                         })
                                     }
-                                   
-                                }else{
+
+                                } else {
                                     sup_user_detail.push({
                                         sessionId: data.session_id,
                                         accept_by: findUser.userId,
                                         accept_by_user_Profile: findUsers.photo[0] ? findUsers.photo[0].res : "",
                                         userId: findUser._id,
-                                        userName:findUser.firstName,
+                                        userName: findUser.firstName,
                                         userProfile: findUser.photo[0] ? findUser.photo[0].res : "",
                                         status: user.accepted,
                                         room: ""
                                     })
                                 }
-                               
+
                             }
                         }
-                    }else{
+                    } else {
                         sup_user_detail.push({
                             sessionId: data.session_id,
                             accept_by: findUser.userId,
                             accept_by_user_Profile: findUsers.photo[0] ? findUsers.photo[0].res : "",
                             userId: findUser._id,
-                            userName:findUser.firstName,
+                            userName: findUser.firstName,
                             userProfile: findUser.photo[0] ? findUser.photo[0].res : "",
                             status: 3,
                             room: ""
                         })
                     }
-                }else{
+                } else {
                     sup_user_detail.push({
                         sessionId: data.session_id,
                         accept_by: findUser.userId,
                         accept_by_user_Profile: findUsers.photo[0] ? findUsers.photo[0].res : "",
                         userId: findUser._id,
-                        userName:findUser.firstName,
+                        userName: findUser.firstName,
                         userProfile: findUser.photo[0] ? findUser.photo[0].res : "",
                         status: 3,
                         room: ""
                     })
                 }
-               
+
             }
 
-          
-           
+
+
         }
 
 
@@ -6238,92 +6238,97 @@ exports.suparMatchList = async (req, res, next) => {
     }
 }
 
-exports.moveBasketInRejectList = async(req,res,next) => {
+exports.moveBasketInRejectList = async (req, res, next) => {
     try {
+        if (req.query.status == 1) {
 
-        const findUserInSession = await sessionModel.findOne({
-            _id : req.params.session_id
-        })
-        
-        if(findUserInSession){
 
-                if(req.query.status == 1){
-
-                    const suparMatchList = await superListModel.updateOne({
-                        session_id: req.params.session_id,
-                        userId: req.params.user_id
-                    },{
-                        $pull : {
-                            matchUserId :{
-                                userId : req.params.request_user_id
-                            }
+            await userModel.updateOne(
+                {
+                    _id: req.params.user_id
+                },
+                {
+                    $pull: {
+                        noBasket: {
+                            userId: req.params.req_id
                         }
-                    })
+                    }
+                });
 
-
-
-                    await userModel.updateOne(
-                        {
-                            _id: req.params.user_id
-                        },
-                        {
-                            $pull: {
-                                yesBasket: {
-                                    userId: req.params.request_user_id
-                                }
-                            }
-                        });
-
-                       
-                        await userModel.updateOne(
-                            {
-                                _id: req.params.user_id
-                            },
-                            {
-                                $push: {
-                                    yesBasket: {
-                                        match: 0,
-                                        userId: req.params.requset_id,
-                                        thumbUp: 0,
-                                        thumbDown: 0
-                                    }
-        
-                                }
-                            });
-                }else{
-
-                    await userModel.updateOne(
-                        {
-                            _id: req.params.user_id
-                        },
-                        {
-                            $pull: {
-                                noBasket: {
-                                    userId: req.params.request_user_id
-                                }
-                            }
-                        });
-
-                        await userModel.updateOne(
-                            {
-                                _id: req.params.user_id
-                            },
-                            {
-                                $pull: {
-                                    noBasket: {
-                                        userId: req.params.request_user_id
-                                    }
-                                }
-                            });
-
+            await rejectListModel.updateOne({
+                session_id: req.params.session_id,
+                userId: req.params.user_id
+            }, {
+                $pull: {
+                    matchUserId: {
+                        userId: req.params.req_id
+                    }
                 }
-            
+            })
 
-        }else{
-            res.status(status.NOT_FOUND).json(
-                new APIResponse("session not found", "true", 200, "1")
-            )
+            await userModel.updateOne(
+                {
+                    _id: req.params.user_id
+                },
+                {
+                    $push: {
+                        yesBasket: {
+                            match: 0,
+                            userId: req.params.req_id,
+                            thumbUp: 0,
+                            thumbDown: 0
+                        }
+
+                    }
+                });
+        } else {
+
+
+            await userModel.updateOne(
+                {
+                    _id: req.params.user_id
+                },
+                {
+                    $pull: {
+                        yesBasket: {
+                            userId: req.params.req_id
+                        }
+                    }
+                });
+
+            const suparMatchList = await rejectListModel.updateOne({
+                session_id: req.params.session_id,
+                userId: req.params.user_id
+            }, {
+                $pull: {
+                    matchUserId: {
+                        userId: req.params.req_id
+                    }
+                }
+            })
+
+            await userModel.updateOne(
+                {
+                    _id: req.params.user_id
+                },
+                {
+                    $push: {
+                        noBasket: {
+                            match: 0,
+                            userId: req.params.req_id,
+                            thumbUp: 0,
+                            thumbDown: 0
+                        }
+
+                    }
+                });
         }
+
+        res.status(status.NOT_FOUND).json(
+            new APIResponse("move success", "true", 200, "1")
+        )
+
+
     } catch (error) {
         console.log("error", error);
         res.status(status.INTERNAL_SERVER_ERROR).json(

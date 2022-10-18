@@ -25,5 +25,6 @@ router.get("/getLikeUserDetail/:session_id" , sessionController.getLikeUserDetai
 router.get('/rejectOrAccept/:session_id/:user_id/:like_user_id' , sessionController.rejectOrAccept);
 router.get('/rejectList/:user_id' , sessionController.rejectList);
 router.get('/suparMatchList/:user_id' , sessionController.suparMatchList);
+router.get('/moveBasketInRejectList/:session_id/:user_id/:req_id' , sessionController.moveBasketInRejectList)
 
 module.exports = router;
