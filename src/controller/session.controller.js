@@ -5631,11 +5631,94 @@ exports.rejectOrAccept = async (req, res, next) => {
                 // if ((data.userId).toString() == (data1).toString()) {
 
                 const user = [];
-                if(req.params.like_user_id == "null"){
+                if (req.params.like_user_id == "null") {
+
+                    const p1 = findSession.participants[0].participants_1 == null ? "" : findSession.participants[0].participants_1
+                    const p2 = findSession.participants[0].participants_2 == null ? "" : findSession.participants[0].participants_2
+                    const p3 = findSession.participants[0].participants_3 == null ? "" : findSession.participants[0].participants_3
+
+                    if (p1) {
+                        user.push(p1)
+                    }
+                    if (p2) {
+                        user.push(p2)
+                    }
+                    if (p3) {
+                        user.push(p3)
+                    }
+
+
+                    if (user[0] != undefined) {
+
+
+                        for (const res of user) {
+                            const rejectList = await rejectListModel.findOne({
+                                session_id: req.params.session_id,
+                                userId: req.params.user_id
+                            })
+
+                            await userModel.updateOne(
+                                {
+                                    _id: req.params.user_id
+                                },
+                                {
+                                    $pull: {
+                                        noBasket: {
+                                            userId: mongoose.Types.ObjectId(res)
+                                        }
+                                    }
+                                });
+
+                            await userModel.updateOne(
+                                {
+                                    _id: req.params.user_id
+                                },
+                                {
+                                    $pull: {
+                                        yesBasket: {
+                                            userId: mongoose.Types.ObjectId(res)
+                                        }
+                                    }
+                                });
+
+                            if (rejectList) {
+                                await rejectListModel.updateOne({
+                                    session_id: req.params.session_id,
+                                    userId: req.params.user_id
+                                }, {
+                                    $push: {
+                                        matchUserId: {
+                                            userId: mongoose.Types.ObjectId(res)
+                                        }
+                                    }
+                                })
+
+                            } else {
+                                const saveData = rejectListModel({
+                                    session_id: req.params.session_id,
+                                    userId: req.params.user_id,
+                                    matchUserId: {
+                                        userId: mongoose.Types.ObjectId(res)
+                                    }
+                                })
+
+                                await saveData.save()
+                            }
+                        }
+                        res.status(status.OK).json(
+                            new APIResponse("accepted rejected", "true", 200, "1",)
+                        )
+                  
+                    }else{
+                        res.status(status.OK).json(
+                            new APIResponse("not have any participant", "true", 200, "1",)
+                        )
+                    }
+                } else if (req.params.like_user_id == "none") {
                     res.status(status.OK).json(
                         new APIResponse("not any selected", "true", 200, "1",)
                     )
-                }else{
+                } else {
                     if ((req.params.like_user_id).toString() != findSession.participants[0].participants_1) {
                         user.push(findSession.participants[0].participants_1)
                     }
@@ -5645,20 +5728,22 @@ exports.rejectOrAccept = async (req, res, next) => {
                     if ((req.params.like_user_id).toString() != findSession.participants[0].participants_3) {
                         user.push(findSession.participants[0].participants_3)
                     }
-    
+
+
+
                     if (req.params.like_user_id) {
-    
+
                         const suparMatchList = await superListModel.findOne({
                             session_id: req.params.session_id,
                             userId: req.params.user_id
                         })
-    
+
                         const suparMatchListforLikeUser = await superListModel.findOne({
                             session_id: req.params.session_id,
                             userId: req.params.like_user_id
                         })
-    
-    
+
+
                         if (suparMatchList) {
                             await superListModel.updateOne({
                                 session_id: req.params.session_id,
@@ -5670,7 +5755,7 @@ exports.rejectOrAccept = async (req, res, next) => {
                                     }
                                 }
                             })
-    
+
                         } else {
                             const saveData = superListModel({
                                 session_id: req.params.session_id,
@@ -5679,10 +5764,10 @@ exports.rejectOrAccept = async (req, res, next) => {
                                     userId: req.params.like_user_id
                                 }
                             })
-    
+
                             await saveData.save()
                         }
-    
+
                         if (suparMatchListforLikeUser) {
                             await superListModel.updateOne({
                                 session_id: req.params.session_id,
@@ -5694,7 +5779,7 @@ exports.rejectOrAccept = async (req, res, next) => {
                                     }
                                 }
                             })
-    
+
                         } else {
                             const saveData = superListModel({
                                 session_id: req.params.session_id,
@@ -5703,10 +5788,10 @@ exports.rejectOrAccept = async (req, res, next) => {
                                     userId: req.params.user_id
                                 }
                             })
-    
+
                             await saveData.save()
                         }
-    
+
                         await userModel.updateOne(
                             {
                                 _id: req.params.user_id
@@ -5718,7 +5803,7 @@ exports.rejectOrAccept = async (req, res, next) => {
                                     }
                                 }
                             });
-    
+
                         await userModel.updateOne(
                             {
                                 _id: req.params.user_id
@@ -5730,7 +5815,7 @@ exports.rejectOrAccept = async (req, res, next) => {
                                     }
                                 }
                             });
-    
+
                         await userModel.updateOne(
                             {
                                 _id: req.params.like_user_id
@@ -5742,7 +5827,7 @@ exports.rejectOrAccept = async (req, res, next) => {
                                     }
                                 }
                             });
-    
+
                         await userModel.updateOne(
                             {
                                 _id: req.params.like_user_id
@@ -5755,75 +5840,75 @@ exports.rejectOrAccept = async (req, res, next) => {
                                 }
                             });
 
-                            if (user[0] != undefined) {
+                        if (user[0] != undefined) {
 
 
-                                for (const res of user) {
-                                    const rejectList = await rejectListModel.findOne({
+                            for (const res of user) {
+                                const rejectList = await rejectListModel.findOne({
+                                    session_id: req.params.session_id,
+                                    userId: req.params.user_id
+                                })
+
+                                await userModel.updateOne(
+                                    {
+                                        _id: req.params.user_id
+                                    },
+                                    {
+                                        $pull: {
+                                            noBasket: {
+                                                userId: mongoose.Types.ObjectId(res)
+                                            }
+                                        }
+                                    });
+
+                                await userModel.updateOne(
+                                    {
+                                        _id: req.params.user_id
+                                    },
+                                    {
+                                        $pull: {
+                                            yesBasket: {
+                                                userId: mongoose.Types.ObjectId(res)
+                                            }
+                                        }
+                                    });
+
+                                if (rejectList) {
+                                    await rejectListModel.updateOne({
                                         session_id: req.params.session_id,
                                         userId: req.params.user_id
-                                    })
-            
-                                    await userModel.updateOne(
-                                        {
-                                            _id: req.params.user_id
-                                        },
-                                        {
-                                            $pull: {
-                                                noBasket: {
-                                                    userId: mongoose.Types.ObjectId(res)
-                                                }
-                                            }
-                                        });
-            
-                                    await userModel.updateOne(
-                                        {
-                                            _id: req.params.user_id
-                                        },
-                                        {
-                                            $pull: {
-                                                yesBasket: {
-                                                    userId: mongoose.Types.ObjectId(res)
-                                                }
-                                            }
-                                        });
-            
-                                    if (rejectList) {
-                                        await rejectListModel.updateOne({
-                                            session_id: req.params.session_id,
-                                            userId: req.params.user_id
-                                        }, {
-                                            $push: {
-                                                matchUserId: {
-                                                    userId: mongoose.Types.ObjectId(res)
-                                                }
-                                            }
-                                        })
-            
-                                    } else {
-                                        const saveData = rejectListModel({
-                                            session_id: req.params.session_id,
-                                            userId: req.params.user_id,
+                                    }, {
+                                        $push: {
                                             matchUserId: {
                                                 userId: mongoose.Types.ObjectId(res)
                                             }
-                                        })
-            
-                                        await saveData.save()
-                                    }
+                                        }
+                                    })
+
+                                } else {
+                                    const saveData = rejectListModel({
+                                        session_id: req.params.session_id,
+                                        userId: req.params.user_id,
+                                        matchUserId: {
+                                            userId: mongoose.Types.ObjectId(res)
+                                        }
+                                    })
+
+                                    await saveData.save()
                                 }
-            
                             }
-            
-    
+
+                        }
+
+
                         const findUser = await userModel.findOne({
                             _id: req.params.like_user_id
                         })
-    
+
                         const user = await userModel.findOne({
                             _id: req.params.user_id
                         })
-    
+
                         if (findUser.fcm_token) {
                             const title = (user.firstName);
                             const body = "Select in Super Match!";
@@ -5839,7 +5924,7 @@ exports.rejectOrAccept = async (req, res, next) => {
                                 true
                             );
                         }
-    
+
                         res.status(status.OK).json(
                             new APIResponse("selecte or rejected", "true", 200, "1",)
                         )
@@ -5848,12 +5933,12 @@ exports.rejectOrAccept = async (req, res, next) => {
                         res.status(status.OK).json(
                             new APIResponse("not any selected", "true", 200, "1",)
                         )
-    
+
                     }
                 }
-              
 
-              
+
+
 
                 if (req.query.accessfrd == true) {
                     const friendList = [];
@@ -5944,7 +6029,7 @@ exports.rejectOrAccept = async (req, res, next) => {
                         }
                     }
                 }
-              
+
             } else {
                 res.status(status.NOT_FOUND).json(
                     new APIResponse("session not live", "true", 404, "1",)
