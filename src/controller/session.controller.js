@@ -136,14 +136,13 @@ exports.sessionCreate = async (req, res, next) => {
                         const title = "Session Created";
                         const body = `${findUserInUserModel.firstName} created session ${timeSession}`;
 
-                        const text = "join session";
                         const sendBy = (findUserInUserModel._id).toString();
                         const registrationToken = findUser.fcm_token
                         Notification.sendPushNotificationFCM(
                             registrationToken,
                             title,
                             body,
-                            text,
+                            
                             sendBy,
                             true
                         );
@@ -192,14 +191,13 @@ exports.sessionCreate = async (req, res, next) => {
                         const title = "Session Invitation";
                         const body = `${findUserInUserModel.firstName} invited you in session ${timeSession}`;
 
-                        const text = "join session";
                         const sendBy = (findUserInUserModel._id).toString();
                         const registrationToken = findUser.fcm_token
                         Notification.sendPushNotificationFCM(
                             registrationToken,
                             title,
                             body,
-                            text,
+                            
                             sendBy,
                             true
                         );
@@ -300,14 +298,13 @@ exports.sessionCreate = async (req, res, next) => {
                         const title = "Session Invitation";
                         const body = `${findUserInUserModel.firstName} invited you in session ${timeSession}`;
 
-                        const text = "join session";
                         const sendBy = (findUserInUserModel._id).toString();
                         const registrationToken = findUser.fcm_token
                         Notification.sendPushNotificationFCM(
                             registrationToken,
                             title,
                             body,
-                            text,
+                            
                             sendBy,
                             true
                         );
@@ -5692,7 +5689,7 @@ exports.rejectOrAccept = async (req, res, next) => {
 
 
 
-                        if (req.query.accessfrd == true) {
+                        if (req.query.accessfrd == "true") {
                             const friendList = [];
 
                             const findUserInRequestModel = await requestsModel.findOne({
@@ -5732,7 +5729,6 @@ exports.rejectOrAccept = async (req, res, next) => {
                                         registrationToken,
                                         title,
                                         body,
-                                        text,
                                         sendBy,
                                         true
                                     );
@@ -5741,7 +5737,7 @@ exports.rejectOrAccept = async (req, res, next) => {
 
                         }
 
-                        if (req.query.access == true) {
+                        if (req.query.access == "true") {
 
                             const sessionIds = await sessionModel.findOne({
                                 _id: req.params.session_id
@@ -5783,14 +5779,12 @@ exports.rejectOrAccept = async (req, res, next) => {
                                         registrationToken,
                                         title,
                                         body,
-                                        text,
                                         sendBy,
                                         true
                                     );
                                 }
                             }
                         }
-
 
                         res.status(status.OK).json(
                             new APIResponse("accepted rejected", "true", 200, "1",)
@@ -5807,6 +5801,7 @@ exports.rejectOrAccept = async (req, res, next) => {
                     )
                 } else {
 
+                   
                     if ((req.params.like_user_id).toString() != findSession.participants[0].participants_1) {
                         users.push(findSession.participants[0].participants_1)
                     }
@@ -5998,9 +5993,7 @@ exports.rejectOrAccept = async (req, res, next) => {
                         })
 
 
-
-
-                        if (req.query.accessfrd == true) {
+                        if (req.query.accessfrd == "true") {
                             const friendList = [];
 
                             const findUserInRequestModel = await requestsModel.findOne({
@@ -6040,7 +6033,6 @@ exports.rejectOrAccept = async (req, res, next) => {
                                         registrationToken,
                                         title,
                                         body,
-                                        text,
                                         sendBy,
                                         true
                                     );
@@ -6049,7 +6041,8 @@ exports.rejectOrAccept = async (req, res, next) => {
 
                         }
 
-                        if (req.query.access == true) {
+                       
+                        if (req.query.access == "true") {
 
                             const sessionIds = await sessionModel.findOne({
                                 _id: req.params.session_id
@@ -6090,7 +6083,6 @@ exports.rejectOrAccept = async (req, res, next) => {
                                         registrationToken,
                                         title,
                                         body,
-                                        text,
                                         sendBy,
                                         true
                                     );

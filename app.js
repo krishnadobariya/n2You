@@ -59,15 +59,12 @@ cron.schedule("*/60 * * * * *", async function () {
             if (findUserInUserModel.fcm_token) {
                 const title = findUserInUserModel.firstName;
                 const body = "after 30 min started your session";
-
-                const text = "join session";
                 const sendBy = (findUserInUserModel._id).toString();
                 const registrationToken = findUserInUserModel.fcm_token
                 Notification.sendPushNotificationFCM(
                     registrationToken,
                     title,
                     body,
-                    text,
                     sendBy,
                     true
                 );
@@ -145,15 +142,12 @@ cron.schedule("*/60 * * * * *", async function () {
                     if (findUser.fcm_token) {
                         const title = findCreateSessionUser.firstName;
                         const body = "after 30 min join session";
-
-                        const text = "join session";
                         const sendBy = (findCreateSessionUser._id).toString();
                         const registrationToken = findUser.fcm_token
                         Notification.sendPushNotificationFCM(
                             registrationToken,
                             title,
                             body,
-                            text,
                             sendBy,
                             true
                         );
@@ -203,14 +197,13 @@ cron.schedule("*/60 * * * * *", async function () {
                         const title = findCreateSessionUser.firstName;
                         const body = "after 30 min join session";
 
-                        const text = "join session";
+                
                         const sendBy = (findCreateSessionUser._id).toString();
                         const registrationToken = findUser.fcm_token
                         Notification.sendPushNotificationFCM(
                             registrationToken,
                             title,
-                            body,
-                            text,
+                            body,y,
                             sendBy,
                             true
                         );
@@ -277,14 +270,13 @@ cron.schedule("*/60 * * * * *", async function () {
                         const title = findCreateSessionUser.firstName;
                         const body = "after 30 min join session";
 
-                        const text = "join session";
+                
                         const sendBy = (findCreateSessionUser._id).toString();
                         const registrationToken = findUser.fcm_token
                         Notification.sendPushNotificationFCM(
                             registrationToken,
                             title,
-                            body,
-                            text,
+                            body,y,
                             sendBy,
                             true
                         );
@@ -336,14 +328,13 @@ cron.schedule("*/60 * * * * *", async function () {
                 const title = findUserInUserModel.firstName;
                 const body = "your session started!";
 
-                const text = "join session";
+        
                 const sendBy = (findUserInUserModel._id).toString();
                 const registrationToken = findUserInUserModel.fcm_token
                 Notification.sendPushNotificationFCM(
                     registrationToken,
                     title,
                     body,
-                    text,
                     sendBy,
                     true
                 );

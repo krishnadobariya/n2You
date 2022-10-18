@@ -207,7 +207,6 @@ function socket(io) {
 
                                 const title = senderName.firstName;
                                 const body = arg.text;
-                                const text = arg.text;
                                 const sendBy = arg.user_1;
                                 const registrationToken = fcm_token
 
@@ -215,7 +214,6 @@ function socket(io) {
                                     registrationToken,
                                     title,
                                     body,
-                                    text,
                                     sendBy,
                                     true
                                 );
@@ -273,14 +271,12 @@ function socket(io) {
                                 const title = senderName.firstName;
                                 const body = arg.text;
 
-                                const text = arg.text;
                                 const sendBy = arg.user_1;
                                 const registrationToken = fcm_token
                                 Notification.sendPushNotificationFCM(
                                     registrationToken,
                                     title,
                                     body,
-                                    text,
                                     sendBy,
                                     true
                                 );
@@ -365,14 +361,13 @@ function socket(io) {
                                 if (fcm_token) {
                                     const title = senderName.firstName;
                                     const body = arg.text;
-                                    const text = arg.text;
+
                                     const sendBy = arg.user_1;
                                     const registrationToken = fcm_token
                                     Notification.sendPushNotificationFCM(
                                         registrationToken,
                                         title,
                                         body,
-                                        text,
                                         sendBy,
                                         true
                                     );
@@ -431,14 +426,13 @@ function socket(io) {
                                 if (fcm_token) {
                                     const title = senderName.firstName;
                                     const body = arg.text;
-                                    const text = arg.text;
+
                                     const sendBy = arg.user_1;
                                     const registrationToken = fcm_token
                                     Notification.sendPushNotificationFCM(
                                         registrationToken,
                                         title,
                                         body,
-                                        text,
                                         sendBy,
                                         true
                                     );
@@ -493,7 +487,7 @@ function socket(io) {
                                 if (fcm_token) {
                                     const title = senderName.firstName;
                                     const body = arg.text;
-                                    const text = arg.text;
+
                                     const sendBy = arg.user_1;
 
                                     const registrationToken = fcm_token
@@ -501,7 +495,6 @@ function socket(io) {
                                         registrationToken,
                                         title,
                                         body,
-                                        text,
                                         sendBy,
                                         true
                                     );
@@ -553,7 +546,7 @@ function socket(io) {
                                 if (fcm_token) {
                                     const title = senderName.firstName;
                                     const body = arg.text;
-                                    const text = arg.text;
+
                                     const sendBy = arg.user_1;
 
                                     const registrationToken = fcm_token
@@ -562,7 +555,6 @@ function socket(io) {
                                         registrationToken,
                                         title,
                                         body,
-                                        text,
                                         sendBy,
                                         true
                                     );
@@ -638,8 +630,6 @@ function socket(io) {
                 if (fcm_token) {
                     const title = "n2you Notification";
                     const body = 'room Created';
-
-                    const text = 'room Created';
                     const sendBy = arg.user_1;
                     const registrationToken = fcm_token.fcm_token
 
@@ -647,7 +637,6 @@ function socket(io) {
                         registrationToken,
                         title,
                         body,
-                        text,
                         sendBy,
                         true
                     );
@@ -735,7 +724,6 @@ function socket(io) {
                                 const title = "n2you Notification";
                                 const body = `${arg.sender_id} send request to `;
 
-                                const text = arg.text;
                                 const sendBy = arg.sender_id;
                                 const registrationToken = fcm_token.fcm_token
 
@@ -743,7 +731,6 @@ function socket(io) {
                                     registrationToken,
                                     title,
                                     body,
-                                    text,
                                     sendBy,
                                     true
                                 );
@@ -797,7 +784,6 @@ function socket(io) {
                                 const title = "n2you Notification";
                                 const body = `${arg.sender_id} send request to `;
 
-                                const text = arg.text;
                                 const sendBy = arg.sender_id;
                                 const registrationToken = fcm_token.fcm_token
 
@@ -805,7 +791,6 @@ function socket(io) {
                                     registrationToken,
                                     title,
                                     body,
-                                    text,
                                     sendBy,
                                     true
                                 );
@@ -1373,7 +1358,6 @@ function socket(io) {
                             const fcm_token = checkRequestedEmail.fcm_token
                             const title = "Friend Request";
                             const body = `${checkUserExist.firstName} sent you a friend request.`;
-                            const text = `${checkUserExist.firstName} sent you a friend request.`;
                             const sendBy = arg.user_id;
                             const registrationToken = fcm_token
 
@@ -1381,7 +1365,6 @@ function socket(io) {
                                 registrationToken,
                                 title,
                                 body,
-                                text,
                                 sendBy,
                                 true
                             );
@@ -1488,7 +1471,7 @@ function socket(io) {
                                 const fcm_token = checkRequestedEmail.fcm_token
                                 const title = "Friend Request";
                                 const body = `${checkUserExist.firstName} sent you a friend request.`;
-                                const text = `${checkUserExist.firstName} sent you a friend request.`;
+
                                 const sendBy = arg.user_id;
                                 const registrationToken = fcm_token
 
@@ -1496,7 +1479,6 @@ function socket(io) {
                                     registrationToken,
                                     title,
                                     body,
-                                    text,
                                     sendBy,
                                     true
                                 );
@@ -1872,7 +1854,6 @@ function socket(io) {
                             const fcm_token = receiver.fcm_token
                             const title = "video call Request";
                             const body = `${sender.firstName} join video call.`;
-                            const text = `${sender.firstName} join video call.`;
                             const sendBy = arg.sender_id;
                             const registrationToken = fcm_token
 
@@ -1880,7 +1861,6 @@ function socket(io) {
                                 registrationToken,
                                 title,
                                 body,
-                                text,
                                 sendBy,
                                 true
                             );
@@ -1936,7 +1916,6 @@ function socket(io) {
                         const fcm_token = receiver.fcm_token
                         const title = "video call End Request";
                         const body = `${sender.firstName} End video call.`;
-                        const text = `${sender.firstName} End video call.`;
                         const sendBy = arg.sender_id;
                         const registrationToken = fcm_token
 
@@ -1944,7 +1923,6 @@ function socket(io) {
                             registrationToken,
                             title,
                             body,
-                            text,
                             sendBy,
                             true
                         );
@@ -2115,15 +2093,12 @@ function socket(io) {
                             if (findUser.fcm_token) {
                                 const title = findCreateSessionUser.firstName;
                                 const body = `session started which one is created by ${findCreateSessionUser.firstName}`;
-
-                                const text = "join session";
                                 const sendBy = (findCreateSessionUser._id).toString();
                                 const registrationToken = findUser.fcm_token
                                 Notification.sendPushNotificationFCM(
                                     registrationToken,
                                     title,
                                     body,
-                                    text,
                                     sendBy,
                                     true
                                 );
@@ -2180,15 +2155,12 @@ function socket(io) {
                             if (findUser.fcm_token) {
                                 const title = `${findCreateSessionUser.firstName} started a live video`;
                                 const body = `Watch live video now! Enjoy`;
-
-                                const text = "join session";
                                 const sendBy = (findCreateSessionUser._id).toString();
                                 const registrationToken = findUser.fcm_token
                                 Notification.sendPushNotificationFCM(
                                     registrationToken,
                                     title,
                                     body,
-                                    text,
                                     sendBy,
                                     true
                                 );
@@ -2267,15 +2239,12 @@ function socket(io) {
                             if (findUser.fcm_token) {
                                 const title = `${findCreateSessionUser.firstName} started a live video`;
                                 const body = `Watch live video now! Enjoy`;
-
-                                const text = "join session";
                                 const sendBy = (findCreateSessionUser._id).toString();
                                 const registrationToken = findUser.fcm_token
                                 Notification.sendPushNotificationFCM(
                                     registrationToken,
                                     title,
                                     body,
-                                    text,
                                     sendBy,
                                     true
                                 );
@@ -2833,15 +2802,12 @@ function socket(io) {
                             if (findUser.fcm_token) {
                                 const title = findCreateSessionUser.firstName;
                                 const body = `session end by ${findCreateSessionUser.firstName}`;
-
-                                const text = "join session";
                                 const sendBy = (findCreateSessionUser._id).toString();
                                 const registrationToken = findUser.fcm_token
                                 Notification.sendPushNotificationFCM(
                                     registrationToken,
                                     title,
                                     body,
-                                    text,
                                     sendBy,
                                     true
                                 );
@@ -2895,15 +2861,12 @@ function socket(io) {
                             if (findUser.fcm_token) {
                                 const title = findCreateSessionUser.firstName;
                                 const body = `session end by ${findCreateSessionUser.firstName}`;
-
-                                const text = "join session";
                                 const sendBy = (findCreateSessionUser._id).toString();
                                 const registrationToken = findUser.fcm_token
                                 Notification.sendPushNotificationFCM(
                                     registrationToken,
                                     title,
                                     body,
-                                    text,
                                     sendBy,
                                     true
                                 );
@@ -2973,15 +2936,12 @@ function socket(io) {
                             if (findUser.fcm_token) {
                                 const title = findCreateSessionUser.firstName;
                                 const body = `session end by ${findCreateSessionUser.firstName}`;
-
-                                const text = "join session";
                                 const sendBy = (findCreateSessionUser._id).toString();
                                 const registrationToken = findUser.fcm_token
                                 Notification.sendPushNotificationFCM(
                                     registrationToken,
                                     title,
                                     body,
-                                    text,
                                     sendBy,
                                     true
                                 );
