@@ -5688,6 +5688,7 @@ exports.rejectOrAccept = async (req, res, next) => {
                         }
 
 
+                        console.log("req.query.accessfrd" , req.query.accessfrd);
 
                         if (req.query.accessfrd == "true") {
                             const friendList = [];
@@ -5707,6 +5708,7 @@ exports.rejectOrAccept = async (req, res, next) => {
                             }
 
 
+                            console.log("friendList" , friendList);
                             for (const notifyUser of friendList) {
                                 const findUserInUserModel = await userModel.findOne({
                                     _id: notifyUser
@@ -5737,6 +5739,7 @@ exports.rejectOrAccept = async (req, res, next) => {
 
                         }
 
+                        console.log("eq.query.access" , eq.query.access);
                         if (req.query.access == "true") {
 
                             const sessionIds = await sessionModel.findOne({
@@ -5755,6 +5758,8 @@ exports.rejectOrAccept = async (req, res, next) => {
                                 paricipant.push((sessionIds.participants[0].participants_3).toString())
                             }
 
+
+                            console.log("paricipant" , paricipant);
 
                             for (const notifyUser of paricipant) {
                                 const findUserInUserModel = await userModel.findOne({
