@@ -5809,7 +5809,7 @@ exports.moveBasket = async (req, res, next) => {
                     {
                         $push: {
                             noBasket: {
-                                match: yesData[0].match,
+                                match: 0,
                                 userId: yesData[0].userId,
                                 thumbUp: yesData[0].thumbUp,
                                 thumbDown: yesData[0].thumbDown,
@@ -5856,7 +5856,7 @@ exports.moveBasket = async (req, res, next) => {
                     {
                         $push: {
                             yesBasket: {
-                                match: noData[0].match,
+                                match: 0,
                                 userId: noData[0].userId,
                                 thumbUp: noData[0].thumbUp,
                                 thumbDown: noData[0].thumbDown,

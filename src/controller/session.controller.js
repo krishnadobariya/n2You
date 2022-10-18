@@ -6014,7 +6014,7 @@ exports.rejectList = async (req, res, next) => {
                                             userName:findUser.firstName,
                                             room: findChatRoomId1._id
                                         })
-                                    }else{
+                                    }else if(findChatRoomId2){
                                         rej_user_detail.push({
                                             sessionId: data.session_id,
                                             accept_by: findUser.userId,
@@ -6024,6 +6024,17 @@ exports.rejectList = async (req, res, next) => {
                                             status: user.accepted,
                                             userName:findUser.firstName,
                                             room: findChatRoomId2._id
+                                        })
+                                    }else{
+                                        rej_user_detail.push({
+                                            sessionId: data.session_id,
+                                            accept_by: findUser.userId,
+                                            accept_by_user_Profile: findUsers.photo[0] ? findUsers.photo[0].res : "",
+                                            userId: findUser._id,
+                                            userProfile: findUser.photo[0] ? findUser.photo[0].res : "",
+                                            status: user.accepted,
+                                            userName:findUser.firstName,
+                                            room: ""
                                         })
                                     }
                                    
@@ -6129,7 +6140,10 @@ exports.suparMatchList = async (req, res, next) => {
                                         user2:  findUser._id
                                     })
 
+                                    
+
                                     if(findChatRoomId1){
+
                                         sup_user_detail.push({
                                             sessionId: data.session_id,
                                             accept_by: findUser.userId,
@@ -6140,7 +6154,9 @@ exports.suparMatchList = async (req, res, next) => {
                                             userName:findUser.firstName,
                                             room: findChatRoomId1._id
                                         })
-                                    }else{
+
+                                    }else if(findChatRoomId2){
+
                                         sup_user_detail.push({
                                             sessionId: data.session_id,
                                             accept_by: findUser.userId,
@@ -6150,6 +6166,16 @@ exports.suparMatchList = async (req, res, next) => {
                                             status: user.accepted,
                                             userName:findUser.firstName,
                                             room: findChatRoomId2._id
+                                        })
+                                    }else{
+                                        sup_user_detail.push({
+                                            sessionId: data.session_id,
+                                            accept_by: findUser.userId,
+                                            accept_by_user_Profile: findUsers.photo[0] ? findUsers.photo[0].res : "",
+                                            userId: findUser._id,
+                                            userProfile: findUser.photo[0] ? findUser.photo[0].res : "",
+                                            status: user.accepted,
+                                            room: ""
                                         })
                                     }
                                    
@@ -6221,6 +6247,73 @@ exports.moveBasketInRejectList = async(req,res,next) => {
         if(findUserInSession){
 
                 if(req.query.status == 1){
+
+                    const suparMatchList = await superListModel.updateOne({
+                        session_id: req.params.session_id,
+                        userId: req.params.user_id
+                    },{
+                        $pull : {
+                            matchUserId :{
+                                userId : req.params.request_user_id
+                            }
+                        }
+                    })
+
+
+
+                    await userModel.updateOne(
+                        {
+                            _id: req.params.user_id
+                        },
+                        {
+                            $pull: {
+                                yesBasket: {
+                                    userId: req.params.request_user_id
+                                }
+                            }
+                        });
+
+                       
+                        await userModel.updateOne(
+                            {
+                                _id: req.params.user_id
+                            },
+                            {
+                                $push: {
+                                    yesBasket: {
+                                        match: 0,
+                                        userId: req.params.requset_id,
+                                        thumbUp: 0,
+                                        thumbDown: 0
+                                    }
+        
+                                }
+                            });
+                }else{
+
+                    await userModel.updateOne(
+                        {
+                            _id: req.params.user_id
+                        },
+                        {
+                            $pull: {
+                                noBasket: {
+                                    userId: req.params.request_user_id
+                                }
+                            }
+                        });
+
+                        await userModel.updateOne(
+                            {
+                                _id: req.params.user_id
+                            },
+                            {
+                                $pull: {
+                                    noBasket: {
+                                        userId: req.params.request_user_id
+                                    }
+                                }
+                            });
 
                 }
             
