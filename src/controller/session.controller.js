@@ -5631,7 +5631,6 @@ exports.rejectOrAccept = async (req, res, next) => {
 
                     if (users[0] != undefined) {
 
-                        console.log("req.pa" , req.params.user_id);
                         for (const res of users) {
                             const rejectList = await rejectListModel.findOne({
                                 session_id: req.params.session_id,
@@ -5688,8 +5687,6 @@ exports.rejectOrAccept = async (req, res, next) => {
                         }
 
 
-                        console.log("req.query.accessfrd" , req.query.accessfrd);
-
                         if (req.query.accessfrd == "true") {
                             const friendList = [];
 
@@ -5699,6 +5696,7 @@ exports.rejectOrAccept = async (req, res, next) => {
 
 
 
+                            console.log("findUserInRequestModel" , findUserInRequestModel);
                             if (findUserInRequestModel) {
                                 for (const user of findUserInRequestModel.RequestedEmails) {
                                     if (user.accepted == 2) {
@@ -5736,7 +5734,6 @@ exports.rejectOrAccept = async (req, res, next) => {
 
                         }
 
-                        console.log("eq.query.access" , req.query.access);
                         if (req.query.access == "true") {
 
                             const sessionIds = await sessionModel.findOne({
@@ -5754,9 +5751,6 @@ exports.rejectOrAccept = async (req, res, next) => {
                             } if (p3) {
                                 paricipant.push((sessionIds.participants[0].participants_3).toString())
                             }
-
-
-                            console.log("paricipant" , paricipant);
 
                             for (const notifyUser of paricipant) {
                                 const findUserInUserModel = await userModel.findOne({
@@ -5983,17 +5977,6 @@ exports.rejectOrAccept = async (req, res, next) => {
 
                         }
 
-
-                        const findUser = await userModel.findOne({
-                            _id: req.params.like_user_id
-                        })
-
-                        const user = await userModel.findOne({
-                            _id: req.params.user_id
-                        })
-
-                        console.log(req.query.accessfrd );
-
                         if (req.query.accessfrd == "true") {
 
                             console.log("gvfdverfdgergf");
@@ -6044,7 +6027,6 @@ exports.rejectOrAccept = async (req, res, next) => {
 
                         }
 
-                       console.log("ppppppppppppp" , req.query.access);
                         if (req.query.access == "true") {
 
                             console.log("11111");
