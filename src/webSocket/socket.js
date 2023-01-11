@@ -38,32 +38,32 @@ function socket(io) {
                     _id: arg.user_1
                 })
 
-                if (findUserInNotification) {
+                // if (findUserInNotification) {
 
-                    await notificationModel.updateOne({
-                        userId: arg.user_2
-                    }, {
-                        $push: {
-                            notifications: {
-                                notifications: `${findUser.firstName} message you`,
-                                userId: findUser._id,
-                                status: 7
-                            }
-                        }
-                    })
-                } else {
+                //     await notificationModel.updateOne({
+                //         userId: arg.user_2
+                //     }, {
+                //         $push: {
+                //             notifications: {
+                //                 notifications: `${findUser.firstName} message you`,
+                //                 userId: findUser._id,
+                //                 status: 7
+                //             }
+                //         }
+                //     })
+                // } else {
 
-                    const saveNotification = notificationModel({
-                        userId: arg.user_2,
-                        notifications: {
-                            notifications: `${findUser.firstName} message you`,
-                            userId: findUser._id,
-                            status: 7
-                        }
-                    })
+                //     const saveNotification = notificationModel({
+                //         userId: arg.user_2,
+                //         notifications: {
+                //             notifications: `${findUser.firstName} message you`,
+                //             userId: findUser._id,
+                //             status: 7
+                //         }
+                //     })
 
-                    await saveNotification.save()
-                }
+                //     await saveNotification.save()
+                // }
 
             } else if (arg.user_2 == arg.sender_id) {
 
@@ -76,30 +76,30 @@ function socket(io) {
                     _id: arg.user_2
                 })
 
-                if (findUserInNotification) {
-                    await notificationModel.updateOne({
-                        userId: arg.user_1
-                    }, {
-                        $push: {
-                            notifications: {
-                                notifications: `${findUser.firstName} message you`,
-                                userId: findUser._id,
-                                status: 7
-                            }
-                        }
-                    })
-                } else {
-                    const saveNotification = notificationModel({
-                        userId: arg.user_1,
-                        notifications: {
-                            notifications: `${findUser.firstName} message you`,
-                            userId: findUser._id,
-                            status: 7
-                        }
-                    })
+                // if (findUserInNotification) {
+                //     await notificationModel.updateOne({
+                //         userId: arg.user_1
+                //     }, {
+                //         $push: {
+                //             notifications: {
+                //                 notifications: `${findUser.firstName} message you`,
+                //                 userId: findUser._id,
+                //                 status: 7
+                //             }
+                //         }
+                //     })
+                // } else {
+                //     const saveNotification = notificationModel({
+                //         userId: arg.user_1,
+                //         notifications: {
+                //             notifications: `${findUser.firstName} message you`,
+                //             userId: findUser._id,
+                //             status: 7
+                //         }
+                //     })
 
-                    await saveNotification.save()
-                }
+                //     await saveNotification.save()
+                // }
             }
 
             const date = new Date()
